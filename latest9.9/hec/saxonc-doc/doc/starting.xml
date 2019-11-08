@@ -16,6 +16,7 @@
 
    <section id="installing" title="Installing Saxon/C">
       <h1>Installing Saxon/C</h1>
+
       <p>Saxon/C can be installed on Linux, Mac OS and Windows. In this section we provide a step by
          step installation guide for the three platforms.</p>
 
@@ -34,48 +35,62 @@
             maintenance release version number (for instance 1.2.1). </aside>
 
          <ol>
-         <li><p>To install the Saxon-[EDITION]/C release, first unzip the file
-               <b>libsaxon-[EDITION]C-setupv[VERSION].zip</b> and execute the command:</p>
-         <kbd>./libsaxon-[EDITION]C-setup-v[VERSION]</kbd></li>
+            <li>
+               <p>To install the Saxon-[EDITION]/C release, first unzip the file
+                     <code>libsaxon-[EDITION]C-setupv[VERSION].zip</code> and execute the
+                  command:</p>
+               <kbd>./libsaxon-[EDITION]C-setup-v[VERSION]</kbd>
+            </li>
 
-         <li><p>The first step is to select the destination where the product files will be installed.
-            The product files are unpacked in the directory 'Saxon-[EDITION]C'.</p>
+            <li>
+               <p>The next step is to select the destination where the product files will be
+                  installed. The product files are unpacked in the <code>Saxon-[EDITION]C</code>
+                  directory.</p>
 
-            <kbd>cd Saxonica/Saxon-[EDITION]C[VERSION]/</kbd>
-            <kbd>sudo cp libsaxon[EDITION].so /usr/lib/.</kbd>
+               <kbd>cd Saxonica/Saxon-[EDITION]C[VERSION]/</kbd>
+               <kbd>sudo cp libsaxon[EDITION].so /usr/lib/.</kbd>
 
-         <p>Alternatively you can create a symbolic link to where the saxon library is installed so it can be found. For example:</p>
+               <p>Alternatively you can create a symbolic link to where the saxon library is
+                  installed so it can be found. For example:</p>
 
-         <kbd>ln -s path/Saxonica/Saxon-[EDITION]C[VERSION]/libsaxon[EDITION].so
-            /usr/lib/libsaxon[EDITION].so</kbd></li>
+               <kbd>ln -s path/Saxonica/Saxon-[EDITION]C[VERSION]/libsaxon[EDITION].so
+                  /usr/lib/libsaxon[EDITION].so</kbd>
+            </li>
 
-         <li><p>You need to set up the environment for the JET JVM. The JVM is in the directory
-            'Saxonica/Saxon-[EDITION]C[VERSION]/rt'.</p>
+            <li>
+               <p>You need to set up the environment for the JET JVM. The JVM is in the
+                     <code>Saxonica/Saxon-[EDITION]C[VERSION]/rt</code> directory.</p>
 
-            <kbd>sudo cp -r rt /usr/lib/.</kbd>
+               <kbd>sudo cp -r rt /usr/lib/.</kbd>
 
+               <p>Alternatively you can create a symbolic link to the JetVM library so it can be
+                  found. For example:</p>
 
+               <kbd>ln -s path/Saxonica/Saxon-[EDITION]C[VERSION]/rt /usr/lib/rt</kbd>
+            </li>
 
-            <p>Alternatively you can create a symbolic link to the JetVM library so it can be found. For example:</p>
+            <li>
+               <p>Set the JET-home environment accordingly to where it is installed, e.g.
+                     <code>JET-home=/usr/lib/Saxon-[EDITION]C[VERSION]/rt</code>. The directory
+                     <code>JET-home/lib/amd64</code> must be listed in the
+                     <code>LD_LIBRARY_PATH</code> environment variable. For instance, if you are
+                  using a bash or Bourne shell, use the following command:</p>
 
-            <kbd>ln -s path/Saxonica/Saxon-[EDITION]C[VERSION]/rt /usr/lib/rt</kbd> </li>
+               <kbd style="word-wrap: break-word;">export
+                  LD_LIBRARY_PATH=/usr/lib/rt/lib/amd64:/usr/lib/rt/lib/amd64/jetvm:$LD_LIBRARY_PATH</kbd>
 
-         <li><p>Set the JET-home environment accordingly to where it is installed, e.g.
-            'JET-home=/usr/lib/Saxon-[EDITION]C[VERSION]/rt'. The directory 'JET-home/lib/amd64'
-            must be listed in the LD_LIBRARY_PATH environment variable. For instance, if you are
-            using a bash or Bourne shell, use the following command:</p>  
+               <p>So, for Ubuntu, you can create a file <code>/etc/ld.so.conf.d/jetvm.conf</code>
+                  with content:</p>
 
-         <kbd style="word-wrap: break-word;">export
-            LD_LIBRARY_PATH=/usr/lib/rt/lib/amd64:/usr/lib/rt/lib/amd64/jetvm:$LD_LIBRARY_PATH</kbd>
-         <p>So, for Ubuntu, you can create '/etc/ld.so.conf.d/jetvm.conf', with content:</p>
-         <samp><![CDATA[# JetVM env path (required for Saxon)
+               <samp><![CDATA[# JetVM env path (required for Saxon)
       /usr/lib/rt/lib/amd64
-      /usr/lib/rt/lib/amd64/jetvm]]></samp> 
+      /usr/lib/rt/lib/amd64/jetvm]]></samp>
 
-        <p>Next run: </p>
-            <kbd>sudo ldconfig</kbd></li>
+               <p>Next run: </p>
+               <kbd>sudo ldconfig</kbd>
+            </li>
 
-         <!-- <li><p>The C++ compiler requires the include path to the Java header files during compilation.
+            <!-- <li><p>The C++ compiler requires the include path to the Java header files during compilation.
             We now distribute the jni header files with the C++ code. So this
             In most cases this is achieved simply by installing gcj-jdk. Alternatively, according to
             http://www.network-theory.co.uk/docs/gccintro/gccintro_23.html, add the Java header file
@@ -86,7 +101,10 @@
             >CPLUS_INCLUDE_PATH=/usr/lib/rt/amd64:$JAVA_HOME/include/linux:$JAVA_HOME/include <br/>
             export CPLUS_INCLUDE_PATH</kbd>   </li> -->
 
-         <li><p>You must also copy the saxon-data directory in the same directory as the libsaxon[EDITION].so.</p></li>
+            <li>
+               <p>You must also copy the <code>saxon-data</code> directory into the same directory
+                  as the <code>libsaxon[EDITION].so</code>.</p>
+            </li>
          </ol>
 
          <p>Saxon/C is now installed, and ready to run. Please see <a href="../running">Running
@@ -103,24 +121,33 @@
          <aside>In the following, [EDITION] means one of: HE, PE, EE; and [VERSION] is the
             maintenance release version number (for instance 1.2.1). </aside>
 
-         <ol><li><p>To install any of the Saxon/C releases on the Mac OS system, first unzip the
-         self-contained file <b>libsaxon-[EDITION]-mac-setup-v[VERSION].zip</b>.</p></li>
+         <ol>
+            <li>
+               <p>To install any of the Saxon/C releases on the Mac OS system, first unzip the
+                  self-contained file <code>libsaxon-[EDITION]-mac-setup-v[VERSION].zip</code>.</p>
+            </li>
 
-         <li><p>The first step is to copy the library libsaxon[EDITION].dylib and the 'rt' directories
-            to your install location. The C/C++ interface by default assumes the library files and
-            directories are installed in the directory '/usr/local/lib'. The location of the Saxon/C
-            library can be set using the SAXONC_HOME environment variable. The privileges of the
-            folders and files may need adjusting after copying everything if you encounter
-            permission issues. Use for instance the following commands:</p>
+            <li>
+               <p>The next step is to copy the <code>libsaxon[EDITION].dylib</code> library and the
+                     <code>rt</code> directories to your install location. The C/C++ interface by
+                  default assumes the library files and directories are installed in the
+                     <code>/usr/local/lib</code> directory. The location of the Saxon/C library can
+                  be set using the <code>SAXONC_HOME</code> environment variable. The privileges of
+                  the folders and files may need adjusting after copying everything if you encounter
+                  permission issues. Use for instance the following commands:</p>
 
-         <kbd>cd libsaxon-HEC-mac-setup-v[VERSION]/</kbd>
-         <kbd>sudo cp libsaxonhec.dylib /usr/local/lib/.</kbd>
-            <kbd>sudo cp -r rt /usr/local/lib/.</kbd>   </li>
+               <kbd>cd libsaxon-HEC-mac-setup-v[VERSION]/</kbd>
+               <kbd>sudo cp libsaxonhec.dylib /usr/local/lib/.</kbd>
+               <kbd>sudo cp -r rt /usr/local/lib/.</kbd>
+            </li>
 
-         <li><p>The DYLD_LIBRARY_PATH environment variable must be set as follows:</p>
+            <li>
+               <p>The <code>DYLD_LIBRARY_PATH</code> environment variable must be set as
+                  follows:</p>
 
-         <kbd>export JET_HOME=/usr/local/lib/rt</kbd>
-            <kbd>export DYLD_LIBRARY_PATH=$JET_HOME/lib/jetvm:$DYLD_LIBRARY_PATH</kbd> </li>
+               <kbd>export JET_HOME=/usr/local/lib/rt</kbd>
+               <kbd>export DYLD_LIBRARY_PATH=$JET_HOME/lib/jetvm:$DYLD_LIBRARY_PATH</kbd>
+            </li>
          </ol>
 
          <p>Saxon/C is now installed, and ready to run. Please see <a href="../running">Running
@@ -136,14 +163,19 @@
          <aside>In the following, [EDITION] means one of: HE, PE, EE; and [VERSION] is the
             maintenance release version number (for instance 1.2.1). </aside>
 
-         <ol><li><p>To install the Saxon-[EDITION]/C release, first run the executable
-               <b>libsaxon-[EDITION]-win-setup.exe</b>. </p>
-         </li>
+         <ol>
+            <li>
+               <p>To install the Saxon-[EDITION]/C release, first run the executable
+                     <code>libsaxon-[EDITION]-win-setup.exe</code>. </p>
+            </li>
 
-         <li><p>The first step is to select the destination where the product files will be installed -
-            the default and recommended location is 'C:\Program
-            Files\Saxonica\Saxon[EDITION][VERSION]'. This is the location that the PHP extension
-            looks for the Saxon/C DLL library, so we advise using this default location. </p></li>
+            <li>
+               <p>The next step is to select the destination where the product files will be
+                  installed - the default and recommended location is <code>C:\Program
+                     Files\Saxonica\Saxon[EDITION][VERSION]</code>. This is the location that the
+                  PHP extension looks for the Saxon/C DLL library, so we advise using this default
+                  location. </p>
+            </li>
          </ol>
 
          <p>Saxon/C is now installed, and ready to run. Please see <a href="../running">Running
@@ -298,8 +330,10 @@ $saxonProc->setConfigurationProperty("http://saxon.sf.net/feature/licenseFileLoc
       <h2 class="subtitle">Prerequisites</h2>
 
       <p>Please have the following packages on your machine to build Saxon/C for the PHP language:
-         <code>make</code>, <code>php-devel</code>, (<code>php7.2-dev</code>), <code>apache2</code> or <code>httpd</code>, <code>gcc-c++</code> or <code>g++</code>, <code>gcj-jdk</code> (or just link the
-         <code>jni.h</code> file in the <code>Saxon.C.API</code> directory).</p>
+            <code>make</code>, <code>php-devel</code>, (<code>php7.2-dev</code>),
+            <code>apache2</code> or <code>httpd</code>, <code>gcc-c++</code> or <code>g++</code>,
+            <code>gcj-jdk</code> (or just link the <code>jni.h</code> file in the
+            <code>Saxon.C.API</code> directory).</p>
 
       <p>Saxon/C should already have been installed following the instructions at <a
             href="../installing">Installing Saxon/C</a>.</p>
@@ -309,10 +343,14 @@ $saxonProc->setConfigurationProperty("http://saxon.sf.net/feature/licenseFileLoc
       <!--<p>(Alternatively, you may like to use the installation script <a 
          href="https://saxonica.com/saxon-c/download/install.sh">install.sh</a> supplied by
          Petr Zak - written for a 64-bit machine, but can be changed for a 32-bit machine.)</p>-->
+
       <h3>Building with PHP7</h3>
+
       <p>The PHP extension is in the form of a C/C++ PHP7 extension to Saxon/C created using the
          Zend module API.</p>
+
       <p>To install, run the following commands:</p>
+
       <kbd>cd /usr/lib/Saxonica/Saxon-[EDITION]C[VERSION]/Saxon-C-API/</kbd>
       <kbd>phpize</kbd>
       <kbd>./configure --enable-saxon</kbd>
@@ -320,38 +358,47 @@ $saxonProc->setConfigurationProperty("http://saxon.sf.net/feature/licenseFileLoc
       <kbd>sudo make install</kbd>
 
       <h3>Building with PHP5</h3>
+
       <p>The Saxon/C PHP extension is built for PHP7. To instead build with PHP5, first replace the
-         file config.m4 in the directory 'Saxon-C-API/' with the one held in
-         'Saxon-C-API/PHP5-Build'. Then run the installation steps above.</p>
+            <code>config.m4</code> file in the <code>Saxon-C-API/</code> directory with the one held
+         in <code>Saxon-C-API/PHP5-Build</code>. Then run the installation steps above.</p>
+
       <p>Next create a module conf file: </p>
+
       <kbd>nano /etc/php/7.2/mods-available/20-saxon.ini</kbd>
+
       <p>with content:</p>
+
       <samp><![CDATA[; configuration for php Saxon HE/PE/EE module
          extension=saxon.so]]></samp>
+
       <p>and save the file. Now enable the module for PHP using the command:</p>
+
       <kbd>phpenmod saxon</kbd>
 
-      <p>Alternatively, you can update the php.ini file or add the 20-saxon.ini file under the
-         'conf.d' directory (if using Ubuntu it is usually in the location '/etc/php/7.2/apache2/')
-         to contain the PHP extension. Insert the code <code>extension=saxon.so</code> in the
-         Dynamic Extensions section, then run the following commands:</p>
+      <p>Alternatively, you can update the <code>php.ini</code> file or add the
+            <code>20-saxon.ini</code> file under the <code>conf.d</code> directory (if using Ubuntu
+         it is usually in the location <code>/etc/php/7.2/apache2/</code>) to contain the PHP
+         extension. Insert the code <code>extension=saxon.so</code> in the Dynamic Extensions
+         section, then run the following commands:</p>
 
       <kbd>sudo service apache2 restart</kbd>
       <kbd>php -m | grep saxon -i</kbd>
 
       <p>(Running these should display 'Saxon/C'.)</p>
 
-      <p>If you cannot load the extension from the php.ini file, you need to load it at script
-         execution time using the code: <code>dl(“saxon.so”);</code>. However this is not
+      <p>If you cannot load the extension from the <code>php.ini</code> file, you need to load it at
+         script execution time using the code: <code>dl(“saxon.so”);</code>. However this is not
          recommended as the loading and unloading can be slow.</p>
 
-      <p>When working with PHP, the environment variables LD_LIBRARY_PATH and SAXONC_HOME should be
-         added to the apache environment variables. The apache2 config file is located in one of the
-         following locations depending on your linux distribution: </p>
+      <p>When working with PHP, the environment variables <code>LD_LIBRARY_PATH</code> and
+            <code>SAXONC_HOME</code> should be added to the apache environment variables. The
+         apache2 config file is located in one of the following locations depending on your linux
+         distribution: </p>
       <ul>
-         <li>Ubuntu server: /etc/apache2/envvars</li>
-         <li>Centos server: /etc/sysconfig/httpd</li>
-         <li>SUSE server: /etc/sysconfig/apache2</li>
+         <li>Ubuntu server: <code>/etc/apache2/envvars</code></li>
+         <li>Centos server: <code>/etc/sysconfig/httpd</code></li>
+         <li>SUSE server: <code>/etc/sysconfig/apache2</code></li>
       </ul>
 
       <h2 class="subtitle">Installing on Windows</h2>
@@ -361,7 +408,7 @@ $saxonProc->setConfigurationProperty("http://saxon.sf.net/feature/licenseFileLoc
 
       <p>On Windows we recommend setting the current working directory using the single-argument
          version of the <code>SaxonProcessor</code> constructor, because there remains an issue with
-         building Saxon/C with PHP when using the function VCWD_GETCWD. That is,</p>
+         building Saxon/C with PHP when using the function<code> VCWD_GETCWD</code>. That is,</p>
 
       <samp><![CDATA[$proc = new SaxonProcessor('C://www/html//trax//');]]></samp>
 
@@ -382,7 +429,7 @@ $saxonProc->setConfigurationProperty("http://saxon.sf.net/feature/licenseFileLoc
       <h2 class="subtitle">Prerequisites</h2>
 
       <p>Please have the following packages on your machine to build Saxon/C for the Python
-         language: Python3 and Cython.</p>
+         language: <code>Python3</code> and <code>Cython</code>.</p>
 
       <p>The Saxon/C Python extension API has been developed using Cython for Python3. Cython is
          required to build the extension library. To install Python and Cython on Mac OS, we
@@ -393,14 +440,15 @@ $saxonProc->setConfigurationProperty("http://saxon.sf.net/feature/licenseFileLoc
 
       <h2 class="subtitle">Installing</h2>
 
-      <p>The Python extension is held in the directory 'Saxon.C.API/python-saxon'. The Python
-         extension on the Linux and Mac OS platforms can be built using the following command:</p>
+      <p>The Python extension is held in the directory <code>Saxon.C.API/python-saxon</code>. The
+         Python extension <!--on the Linux and Mac OS platforms--> can be built using the following
+         command:</p>
 
       <kbd>python3 saxon-setup.py build_ext -if</kbd>
 
-      <p>Similarly, on Windows use the following command:</p>
+      <!--<p>Similarly, on Windows use the following command:</p>
 
-      <kbd>python3 saxon-setup.py build_ext -if</kbd>
+      <kbd>python3 saxon-setup.py build_ext -if</kbd>-->
       <!-- TODO -->
 
    </section>
