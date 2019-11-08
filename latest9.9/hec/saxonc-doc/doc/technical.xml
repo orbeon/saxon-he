@@ -9,8 +9,9 @@
         There are currently no links to libxml.</p>
 
     <h2>Limitations</h2>
-    <p>The following limitations apply to the 1.2.1 release:<br/>
-        * No support for the XdmFunction type in the Xdm data model</p>
+    <p>The following limitations apply to the 1.2.1 release:</p>
+    <ul><li>No support for the XdmFunction type in the Xdm data model</li>
+    <li>The bytecode generation feature in the EE edition in Java is not available in Saxon-EE/C</li></ul>
 
     <h2>Feedback/Comments:</h2>
 
