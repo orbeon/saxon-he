@@ -4962,6 +4962,7 @@ latest9.9/hec/Saxon.C.API/php5_saxon.h svn_eol_002dstyle=native
 latest9.9/hec/Saxon.C.API/php_saxon.cpp svn_eol_002dstyle=native
 latest9.9/hec/Saxon.C.API/php_saxon.h svn_eol_002dstyle=native
 latest9.9/hec/Saxon.C.API/readme.md svn_eol_002dstyle=native
+latest9.9/hec/Saxon.C.API/readme.txt svn_eol_002dstyle=native
 latest9.9/hec/command/Query.c svn_eol_002dstyle=native
 latest9.9/hec/command/buildeec-command.sh svn_eol_002dstyle=native
 latest9.9/hec/command/buildpec-command.sh svn_eol_002dstyle=native
