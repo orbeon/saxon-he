@@ -38,7 +38,7 @@
                <b>libsaxon-[EDITION]C-setupv[VERSION].zip</b> and execute the command:</p>
          <kbd>./libsaxon-[EDITION]C-setup-v[VERSION]</kbd></li>
 
-         <li><p>The next step is to select the destination where the product files will be installed.
+         <li><p>The first step is to select the destination where the product files will be installed.
             The product files are unpacked in the directory 'Saxon-[EDITION]C'.</p>
 
             <kbd>cd Saxonica/Saxon-[EDITION]C[VERSION]/</kbd>
@@ -103,10 +103,10 @@
          <aside>In the following, [EDITION] means one of: HE, PE, EE; and [VERSION] is the
             maintenance release version number (for instance 1.2.1). </aside>
 
-         <p>To install any of the Saxon/C releases on the Mac OS system, first unzip the
-            self-contained file <b>libsaxon-[EDITION]-mac-setup-v[VERSION].zip</b>.</p>
+         <ol><li><p>To install any of the Saxon/C releases on the Mac OS system, first unzip the
+         self-contained file <b>libsaxon-[EDITION]-mac-setup-v[VERSION].zip</b>.</p></li>
 
-         <p>The first step is to copy the library libsaxon[EDITION].dylib and the 'rt' directories
+         <li><p>The first step is to copy the library libsaxon[EDITION].dylib and the 'rt' directories
             to your install location. The C/C++ interface by default assumes the library files and
             directories are installed in the directory '/usr/local/lib'. The location of the Saxon/C
             library can be set using the SAXONC_HOME environment variable. The privileges of the
@@ -115,12 +115,13 @@
 
          <kbd>cd libsaxon-HEC-mac-setup-v[VERSION]/</kbd>
          <kbd>sudo cp libsaxonhec.dylib /usr/local/lib/.</kbd>
-         <kbd>sudo cp -r rt /usr/local/lib/.</kbd>
+            <kbd>sudo cp -r rt /usr/local/lib/.</kbd>   </li>
 
-         <p>The DYLD_LIBRARY_PATH environment variable must be set as follows:</p>
+         <li><p>The DYLD_LIBRARY_PATH environment variable must be set as follows:</p>
 
          <kbd>export JET_HOME=/usr/local/lib/rt</kbd>
-         <kbd>export DYLD_LIBRARY_PATH=$JET_HOME/lib/jetvm:$DYLD_LIBRARY_PATH</kbd>
+            <kbd>export DYLD_LIBRARY_PATH=$JET_HOME/lib/jetvm:$DYLD_LIBRARY_PATH</kbd> </li>
+         </ol>
 
          <p>Saxon/C is now installed, and ready to run. Please see <a href="../running">Running
                Saxon/C</a> to get started. Note that the commercial products Saxon-PE/C and
