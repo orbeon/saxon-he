@@ -172,16 +172,15 @@
       <h3>Location of the Saxon license file</h3>
 
       <p>Saxon/C looks in the path relative to where the main library has been installed. For
-         example, in '/usr/lib' if this is where libsaxon[EDITION]c.so has been installed.
-         Alternatively, Saxon also looks for the license according to the environment variable
-         SAXONC_HOME, if this has been set.</p>
+         example, in <code>/usr/lib</code> if this is where <code>libsaxon[EDITION]c.so</code> has
+         been installed. Alternatively, Saxon also looks for the license according to the
+         environment variable <code>SAXONC_HOME</code>, if this has been set.</p>
       <!--<p>The license file can also be placed in the same directory as the stylesheet, but we advise
          against this for PHP servers where the license might be compromised.</p>-->
 
-      <p>Alternatively a user can use the <code>licenseFileLocation</code> configuration property to
-         provide the license location (see the Saxon 9.9 documentation for details of this and other
-            <a href="https://saxonica.com/documentation/index.html#!configuration/config-features"
-            target="_blank">configuration features</a>). For example, to provide the
+      <p>Alternatively the <code>licenseFileLocation</code> configuration property can be used to
+         provide the license location (see <a href="/configuration">Configuration</a> for more
+         details about setting configuration features). For example, to provide the
             <code>licenseFileLocation</code> in PHP:</p>
       <samp><![CDATA[$saxonProc = new Saxon\SaxonProcessor(true);
 $saxonProc->setConfigurationProperty("http://saxon.sf.net/feature/licenseFileLocation", "/usr/lib/saxon-license.lic");]]></samp>
@@ -193,11 +192,11 @@ $saxonProc->setConfigurationProperty("http://saxon.sf.net/feature/licenseFileLoc
          cases, the source files are marked as being "incompatible with secondary licenses", which
          means that the code cannot be combined with code issued under a GPL license (the reason for
          this is the difficulty of contacting all past contributors to gain their assent).</p>
-      
+
       <p>Some components are licensed under the Apache version 2.0 license or under BSD-style
          licenses. For more information see the <a href="https://saxonica.com/license/license.xml"
             target="_blank">Licenses</a> section on the main Saxonica website.</p>
-      
+
       <p>Although Saxon/C technically adheres to the definition of open source software, there are
          practical limitations. Specifically, the "Source Code Form" of the product, in the
          terminology of the MPL license, consists primarily of Java source code, and in order to
@@ -215,8 +214,8 @@ $saxonProc->setConfigurationProperty("http://saxon.sf.net/feature/licenseFileLoc
          location set up as required for Saxon-PE/C or Saxon-EE/C, as described in <a
             href="../licensing">Licensing</a>), you can try running some of the provided samples. </p>
 
-      <p>For example, to run the C++ testXPath sample file on Linux or Mac OS use the following
-         commands (where [PLATFORM] is linux or mac):</p>
+      <p>For example, to run the C++ <code>testXPath</code> sample file on Linux or Mac OS use the
+         following commands (where [PLATFORM] is linux or mac):</p>
 
       <kbd>cd samples/cppTests/</kbd>
       <kbd>./build64-[PLATFORM].sh</kbd>
@@ -228,8 +227,9 @@ $saxonProc->setConfigurationProperty("http://saxon.sf.net/feature/licenseFileLoc
       <kbd>buildCPPSaxon[EDITION].bat</kbd>
       <kbd>testXPath.exe</kbd>
 
-      <p>The 'samples/cppTest' directory provides many more examples in C/C++ which can be run. For
-         more information about these samples see <a href="/samples/samples_c">Samples</a>.</p>
+      <p>The <code>samples/cppTest</code> directory provides many more examples in C/C++ which can
+         be run. For more information about these samples see <a href="/samples/samples_c"
+            >Samples</a>.</p>
 
 
       <h2 class="subtitle">Using Saxon/C in applications</h2>
@@ -238,9 +238,9 @@ $saxonProc->setConfigurationProperty("http://saxon.sf.net/feature/licenseFileLoc
             <code>SaxonProcessor</code>, which acts as a factory class for generating the
          processors, is a good place to start.</p>
 
-      <p>The 'samples/cppTest' directory in the download provides example code in C/C++ (and PHP and
-         Python) which may also be helpful in learning how to use Saxon/C in your application. For
-         further details see <a href="/samples/samples_c">Samples</a>.</p>
+      <p>The <code>samples/cppTest</code> directory in the download provides example code in C/C++
+         (and PHP and Python) which may also be helpful in learning how to use Saxon/C in your
+         application. For further details see <a href="/samples/samples_c">Samples</a>.</p>
 
       <p>There are many parameters and options that can be set to control the way in which Saxon
          behaves. For more information about setting configuration features on
@@ -250,8 +250,9 @@ $saxonProc->setConfigurationProperty("http://saxon.sf.net/feature/licenseFileLoc
       <h2 class="subtitle">Command Line Interface</h2>
 
       <p>Saxon/C can be run from the command line in a similar way to its Java counterpart. See the
-         files Transform.c and Query.c (and for Saxon-EE/C, Validate.c) in the directory 'command'.
-         The build.sh script can be executed to build the command line programs.</p>
+            <code>Transform.c</code> and <code>Query.c</code> files (and <code>Validate.c</code> for
+         Saxon-EE/C) in the <code>command</code> directory. The <code>build.sh</code> script can be
+         executed to build the command line programs.</p>
 
       <p>To run Saxon/C from the command line, the commands look like the following:</p>
 
@@ -294,8 +295,8 @@ $saxonProc->setConfigurationProperty("http://saxon.sf.net/feature/licenseFileLoc
       <h2 class="subtitle">Prerequisites</h2>
 
       <p>Please have the following packages on your machine to build Saxon/C for the PHP language:
-         make, php-devel, (php7.2-dev), apache2 or httpd, gcc-c++ or g++, gcj-jdk (or just link the
-         jni.h file in the Saxon.C.API directory).</p>
+         <code>make</code>, <code>php-devel</code>, (<code>php7.2-dev</code>), <code>apache2</code> or <code>httpd</code>, <code>gcc-c++</code> or <code>g++</code>, <code>gcj-jdk</code> (or just link the
+         <code>jni.h</code> file in the <code>Saxon.C.API</code> directory).</p>
 
       <p>Saxon/C should already have been installed following the instructions at <a
             href="../installing">Installing Saxon/C</a>.</p>
@@ -400,10 +401,10 @@ $saxonProc->setConfigurationProperty("http://saxon.sf.net/feature/licenseFileLoc
       <!-- TODO -->
 
    </section>
-   
+
    <section id="troubleshooting" title="Troubleshooting">
       <h1>Troubleshooting</h1>
-      
+
       <p>After installing Saxon/C, if you notice anomalies in execution, then the apache log file
          usually has useful information on errors reported and crashes. See below for a description
          of some of the common errors and crashes, and their solutions:</p>
@@ -428,8 +429,8 @@ $saxonProc->setConfigurationProperty("http://saxon.sf.net/feature/licenseFileLoc
                <code>/usr/lib/Saxon-C-API/SaxonProcessor.h:3:17: fatal error: jni.h: No such file or
                   directory <br/>#include &lt;jni.h&gt; compilation terminated.</code>
             </p>
-            <p><b>Solution:</b> Link the jni.h on the machine or simply install gcj-jdk which should
-               resolve this error. </p>
+            <p><b>Solution:</b> Link the <code>jni.h</code> on the machine or simply install
+                  <code>gcj-jdk</code> which should resolve this error. </p>
          </li>
          <li>
             <p>
@@ -453,8 +454,8 @@ $saxonProc->setConfigurationProperty("http://saxon.sf.net/feature/licenseFileLoc
             <kbd>sudo apt-get install ia32-libs</kbd>
          </li>
       </ul>
-      
-      
+
+
    </section>
 
 
