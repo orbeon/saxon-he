@@ -24,7 +24,7 @@
                </p>
             </td>
             <td>
-               <p>A SaxonProcessor acts as a factory for generating XSLT, XQuery, XPath and Schema
+               <p>A <code>SaxonProcessor</code> acts as a factory for generating XSLT, XQuery, XPath and Schema
                   compilers. This class is itself the context that needs to be managed.</p>
             </td>
             <td>
@@ -44,8 +44,8 @@
                </p>
             </td>
             <td>
-               <p>An XsltProcessor represents a factory to compile, load and execute a stylesheet.
-                  It is possible to cache the context and the stylesheet in the XsltProcessor.</p>
+               <p>An <code>XsltProcessor</code> represents a factory to compile, load and execute a stylesheet.
+                  It is possible to cache the context and the stylesheet in the <code>XsltProcessor</code>.</p>
             </td>
             <td>
                <p>
@@ -64,7 +64,7 @@
                </p>
             </td>
             <td>
-               <p>An Xslt30Processor represents a factory to compile, load and execute a stylesheet.
+               <p>An <code>Xslt30Processor</code> represents a factory to compile, load and execute a stylesheet.
                   It supports new options for invoking a stylesheet, corresponding to facilities
                   defined in the XSLT 3.0 specification, but is not confined to XSLT 3.0, it can
                   also work well with XSLT 2.0 and XSLT 1.0 stylesheets.</p>
@@ -86,7 +86,7 @@
                </p>
             </td>
             <td>
-               <p>An XQueryProcessor object represents a factory to compile, load and execute
+               <p>An <code>XQueryProcessor</code> object represents a factory to compile, load and execute
                   queries.</p>
             </td>
             <td>
@@ -106,7 +106,7 @@
                </p>
             </td>
             <td>
-               <p>An XPathProcessor represents a factory to compile, load and execute the XPath
+               <p>An <code>XPathProcessor</code> represents a factory to compile, load and execute the XPath
                   query.</p>
             </td>
             <td>
@@ -126,7 +126,7 @@
                </p>
             </td>
             <td>
-               <p>A SchemaValidator represents a factory for validating instance documents against a
+               <p>A <code>SchemaValidator</code> represents a factory for validating instance documents against a
                   schema.</p>
             </td>
             <td>
