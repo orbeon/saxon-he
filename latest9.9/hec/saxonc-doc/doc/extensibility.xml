@@ -17,7 +17,7 @@
          test registers a user written C++ extension function called "userFunction", which is then
          called from an XSLT stylesheet by calling the <code>saxon:native()</code> function.</p>
 
-      <h3>Calling extension functions from XSLT and XQuery</h3>
+      <h2 class="subtitle">Calling extension functions from XSLT and XQuery</h2>
 
       <p>User written C++ extension functions can be called from XSLT and XQuery by using the
             <code>saxon:native()</code> function. This is a Saxon extension function in the Saxon
@@ -30,7 +30,7 @@
       <samp><![CDATA[<xsl:variable name="args" select="['param1-data', .]"/>
 <xsl:variable name="resultVar" select="saxon:native('userFunction', $args)"/>]]></samp>
 
-      <h3>Registering the use of C++ extension functions</h3>
+      <h2 class="subtitle">Registering the use of C++ extension functions</h2>
 
       <p>The user written C++ extension function must be compiled, and a function library built
          containing this function.</p>
@@ -105,7 +105,7 @@ void testTransformToStringExtensionFunc(SaxonProcessor * processor, XsltProcesso
          extension function called "userFunction", which is then called from an XSLT stylesheet by
          calling the <code>php:function()</code> function.</p>
 
-      <h3>Calling extension functions from XSLT and XQuery</h3>
+      <h2 class="subtitle">Calling extension functions from XSLT and XQuery</h2>
 
       <p>User written PHP extension functions can be called from XSLT and XQuery by using the
             <code>php:function()</code> function. This is a Saxon extension function in a special
@@ -120,7 +120,7 @@ void testTransformToStringExtensionFunc(SaxonProcessor * processor, XsltProcesso
       <samp><![CDATA[<xsl:variable name="args" select="['param1-data', .]"/>
 <xsl:variable name="phpCall" select="php:function('userFunction', $args)"/>]]></samp>
 
-      <h3>Registering the use of PHP extension functions</h3>
+      <h2 class="subtitle">Registering the use of PHP extension functions</h2>
 
       <p>The example below illustrates how to write user written extension functions in PHP which
          can be used in XSLT and XQuery. As shown, the use of extension functions is enabled by

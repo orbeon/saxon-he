@@ -5222,6 +5222,7 @@ latest9.9/hec/saxonc-doc/doc/about.xml svn_eol_002dstyle=native
 latest9.9/hec/saxonc-doc/doc/api.xml svn_eol_002dstyle=native
 latest9.9/hec/saxonc-doc/doc/catalog.xml svn_eol_002dstyle=native
 latest9.9/hec/saxonc-doc/doc/changes.xml svn_eol_002dstyle=native
+latest9.9/hec/saxonc-doc/doc/configuration.xml svn_eol_002dstyle=native
 latest9.9/hec/saxonc-doc/doc/extensibility.xml svn_eol_002dstyle=native
 latest9.9/hec/saxonc-doc/doc/implement.xml svn_eol_002dstyle=native
 latest9.9/hec/saxonc-doc/doc/samples.xml svn_eol_002dstyle=native

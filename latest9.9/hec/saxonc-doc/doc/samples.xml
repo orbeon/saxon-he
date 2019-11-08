@@ -15,9 +15,7 @@
    <section id="samples_c" title="C/C++ Samples">
       <h1>C/C++ Samples</h1>
 
-      <h2>Running in C/C++</h2>
-
-      <h4>C</h4>
+      <h2 class="subtitle">C examples</h2>
 
       <p>For C programming see the test harnesses for XSLT, XQuery, Schema Validation and XPath in C
          code along with the build and run script in the directory 'cTests'. The following files are
@@ -31,7 +29,7 @@
          ../SaxonCXPath.c testXSLT.c -o testXSLT -ldl -lc $1</kbd>
 
 
-      <h4>C++</h4>
+      <h2 class="subtitle">C++ examples</h2>
 
       <p>For C++ programming see sample code for XSLT, XQuery, Schema Validation and XPath in C++
          code along with the build and run script in the directory 'cppTests'. The following files
@@ -54,6 +52,8 @@
       <kbd>./testValidator</kbd>
 
       <p>On Windows we have .exe files created which can be executed on the command-line.</p>
+      
+      <h3 class="subtitle">Example code</h3>
 
       <p>See examples C++ code of applications with Saxon/C below:</p>
 
@@ -136,7 +136,7 @@
       <p>And to run a single unit test:</p>
       <kbd>./phpunit --filter testPipeline xslt30_PHPUnit.php</kbd>
 
-      <h2>Example code</h2>
+      <h2 class="subtitle">Example code</h2>
 
       <p>Example using the new XSLT 3.0 API:</p>
       <samp><![CDATA[<?php
@@ -241,6 +241,7 @@
   xp.set_context(xdm_item=node)
   item = xp.evaluate_single('//person[1]')
   if isinstance(item,saxonc.PyXdmNode):
-    print(item.string_value)]]></samp>
+    print(item.string_value)
+    ]]></samp>
    </section>
 </article>

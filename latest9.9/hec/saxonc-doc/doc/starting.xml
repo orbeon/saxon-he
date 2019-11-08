@@ -171,7 +171,7 @@
          more information about these samples see <a href="/samples/samples_c">Samples</a>.</p>
 
 
-      <h2>Using Saxon/C in applications</h2>
+      <h2 class="subtitle">Using Saxon/C in applications</h2>
 
       <p>To get started please browse the <a href="/api">Saxon/C APIs</a>.
             <code>SaxonProcessor</code>, which acts as a factory class for generating the
@@ -186,7 +186,7 @@
          <code>SaxonProcessor</code> and the other processors in Saxon/C, see <a
             href="/configuration">Configuration</a>.</p>
 
-      <h2>Commandline Interface</h2>
+      <h2 class="subtitle">Commandline Interface</h2>
 
       <p>Saxon/C can be run from the commandline in a similar way to its Java counterpart. See the
          files Transform.c and Query.c (and for Saxon-EE/C, Validate.c) in the directory 'command'.
@@ -228,7 +228,7 @@
    <section id="installingphp" title="PHP Extension">
       <h1>PHP Extension</h1>
 
-      <h2>Prerequisites</h2>
+      <h2 class="subtitle">Prerequisites</h2>
 
       <p>Please have the following packages on your machine to build Saxon/C for the PHP language:
          make, php-devel, (php7.2-dev), apache2 or httpd, gcc-c++ or g++, gcj-jdk (or just link the
@@ -237,7 +237,7 @@
       <p>Saxon/C should already have been installed following the instructions at <a
             href="../installing">Installing Saxon/C</a>.</p>
 
-      <h2>Installing on Linux and Mac OS</h2>
+      <h2 class="subtitle">Installing on Linux and Mac OS</h2>
 
       <!--<p>(Alternatively, you may like to use the installation script <a 
          href="https://saxonica.com/saxon-c/download/install.sh">install.sh</a> supplied by
@@ -287,7 +287,7 @@
          <li>SUSE server: /etc/sysconfig/apache2</li>
       </ul>
 
-      <h2>Installing on Windows</h2>
+      <h2 class="subtitle">Installing on Windows</h2>
 
       <p>The PHP extension has not yet been built. It can be built using the PHP source. We hope to
          provide builds for PHP on Windows soon.</p>
@@ -309,7 +309,7 @@
    <section id="installingpython" title="Python Extension">
       <h1>Python Extension</h1>
 
-      <h2>Prerequisites</h2>
+      <h2 class="subtitle">Prerequisites</h2>
 
       <p>Please have the following packages on your machine to build Saxon/C for the Python
          language: Python3 and Cython.</p>
@@ -321,7 +321,7 @@
       <p>Saxon/C should already have been installed following the instructions at <a
             href="../installing">Installing Saxon/C</a>.</p>
 
-      <h2>Installing</h2>
+      <h2 class="subtitle">Installing</h2>
 
       <p>The Python extension is held in the directory 'Saxon.C.API/python-saxon'. The Python
          extension on the Linux and Mac OS platforms can be built using the following command (with
@@ -334,7 +334,7 @@
    <section id="licensing" title="Licensing">
       <h1>Licensing</h1>
 
-      <h2>Saxon-PE/C and Saxon-EE/C</h2>
+      <h2 class="subtitle">Saxon-PE/C and Saxon-EE/C</h2>
 
       <p>Saxon-PE/C and Saxon-EE/C are commercial products, and require a license key. By
          downloading the software, you agree to the terms and conditions published at <a
@@ -363,7 +363,7 @@
       <samp><![CDATA[$saxonProc = new Saxon\SaxonProcessor(true);
 $saxonProc->setConfigurationProperty("http://saxon.sf.net/feature/licenseFileLocation", "/usr/lib/saxon-license.lic");]]></samp>
 
-      <h2>Saxon-HE/C</h2>
+      <h2 class="subtitle">Saxon-HE/C</h2>
 
       <p>Saxon-HE/C is an open-source product. The primary license is the <a target="_blank"
             href="https://www.mozilla.org/MPL/2.0/">Mozilla Public License version 2.0</a>. In most

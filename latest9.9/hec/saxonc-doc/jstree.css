@@ -978,3 +978,10 @@ span.signature{
     margin-top:5px;
     margin-bottom:5px;
 }
+#main h2.codeTitle,
+#main h3.codeTitle,
+#main h4.codeTitle{
+    font-family:monospace;
+    font-weight:bold;
+    color:#3D5B96;
+}

@@ -12,7 +12,7 @@
     <p>The following limitations apply to the 1.2.1 release:<br/>
         * No support for the XdmFunction type in the Xdm data model</p>
 
-    <h3>Feedback/Comments:</h3>
+    <h2>Feedback/Comments:</h2>
 
     <p>Please use the help forums and bug trackers for Saxon/C at <a href="https://saxonica.plan.io/projects/saxon-c" target="_blank">saxonica.plan.io</a> if you need help or advice. Also send email to <a href="mailto:support@saxonica.com">support@saxonica.com</a></p>
 

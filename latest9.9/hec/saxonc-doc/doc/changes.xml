@@ -9,7 +9,7 @@
          project</a> at the Saxonica community site.</p>
 
 
-   <h3>Changes between releases 1.1 and 1.2</h3>
+   <h2 class="subtitle">Changes between releases 1.1 and 1.2</h2>
 
    <ul>
       <li>Updated the core XSLT processor to the Java Saxon 9.9.1.5 version.</li>
@@ -54,7 +54,7 @@
    </ul>
 
 
-   <h3>Changes between releases 1.0 and 1.1</h3>
+   <h2 class="subtitle">Changes between releases 1.0 and 1.1</h2>
 
    <ul>
       <li>Updated the core XSLT processor to the Java Saxon 9.8.0.4 version.</li>
