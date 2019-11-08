@@ -28,6 +28,10 @@
       <kbd>gcc -m32 -I$jdkdir/include -I$jdkdir/include/linux -I
          /System/Library/Frameworks/JavaVM.framework/Headers ../SaxonCGlue.c ../SaxonCProcessor.c
          ../SaxonCXPath.c testXSLT.c -o testXSLT -ldl -lc $1</kbd>
+      
+      <p>To run the executables from the commandline, use a command such as:</p>
+      
+      <kbd>./testXSLT</kbd>
 
 
       <h2 class="subtitle">C++ programming</h2>
@@ -69,70 +73,71 @@
 
       <h3 class="subtitle">Example code</h3>
 
-      <p>See examples C++ code of applications with Saxon/C below:</p>
-
-      <p>C++ Example 1:</p>
+      <p>C++ Example 1: basic XSLT transformation</p>
       
       <samp><![CDATA[SaxonProcessor *processor = new SaxonProcessor(true);
-      XsltProcessor * xslt = processor->newTransformer();
-      cout<<"Hello World"<<endl;
-      cout<<"Test output: "<<xslt->transformFileToString("cat.xml","test.xsl")<<endl;]]>
-      </samp>
+XsltProcessor * xslt = processor->newTransformer();
+cout<<"Hello World"<<endl;
+cout<<"Test output: "<<xslt->transformFileToString("cat.xml","test.xsl")<<endl;
+  ]]></samp>
 
-      <p>C++ Example 2:</p>
+      <p>C++ Example 2: XSLT transformation supplying the value for a stylesheet parameter</p>
       
       <samp><![CDATA[SaxonProcessor * processor = new Saxon\SaxonProcessor(false);
-      XsltProcessor * xslt = processor->newTransformer();
-      xslt->setSourceFile("xml/foo.xml");
-      XdmAtomicValue * xdmvaluex =processor->makeStringValue("Hello to you");
-      if(xdmvaluex !=NULL){
-          cerr<<"xdmvaluex ok"<<endl;
-      }
-      xslt->setParameter("a-param", xdmvaluex);
-      const char * result = test->transformFileToString(NULL, "xsl/foo.xsl");
-      if(result != NULL) {
-          cerr<<result<<endl;
-      } else {
-          cerr<<"Result is NULL"<<endl;
-      }
-      processor->clearParameters(true);
-      processor->clearProperties();]]></samp>
+XsltProcessor * xslt = processor->newTransformer();
+xslt->setSourceFile("xml/foo.xml");
+XdmAtomicValue * xdmvaluex =processor->makeStringValue("Hello to you");
+if(xdmvaluex !=NULL){
+  cerr<<"xdmvaluex ok"<<endl;
+}
+xslt->setParameter("a-param", xdmvaluex);
+const char * result = test->transformFileToString(NULL, "xsl/foo.xsl");
+if(result != NULL) {
+  cerr<<result<<endl;
+} else {
+  cerr<<"Result is NULL"<<endl;
+}
+processor->clearParameters(true);
+processor->clearProperties();
+  ]]></samp>
 
-      <p>C++ Example 3 for using the Xslt30Processor:</p>
+      <p>C++ Example 3: using the <code>Xslt30Processor</code></p>
 
       <samp><![CDATA[SaxonProcessor * processor = new SaxonProcessor(false);
-          Xslt30Processor * xslt = processor->newXslt30Transformer();
-          xslt->setInitialMatchSelectionAsFile("cat.xml");
-          const char * output = xslt->applyTemplatesReturningString("test.xsl");
-          if(output !=NULL){
-              cerr<< output<<endl;
-          }
-          XdmValue * values = new XdmValue(processor);
-          values->addXdmItem((XdmItem*)processor->makeIntegerValue(10));
-          values->addXdmItem((XdmItem*)processor->makeIntegerValue(5));
-          values->addXdmItem((XdmItem*)processor->makeIntegerValue(6));
-          values->addXdmItem((XdmItem*)processor->makeIntegerValue(7));
-          xslt->setParameter("values",(XdmValue *)values);
-          XdmNode * input = processor->parseXmlFromFile("cat.xml");
-          xslt->setInitialMatchSelection((XdmValue*)input);
-          xslt->compileFromFile("test2.xsl");
-          const char * rootValue = trans->callTemplateReturningString(NULL, "main");
-          if(rootValue != NULL) {
-              cerr<<rootValue<<endl;
-          } else {
-              cerr<<"Result is NULL"<<endl;
-          }
-          xslt->clearParameters(true);
-          xslt->clearProperties();]]></samp>
+Xslt30Processor * xslt = processor->newXslt30Transformer();
+xslt->setInitialMatchSelectionAsFile("cat.xml");
+const char * output = xslt->applyTemplatesReturningString("test.xsl");
+if(output !=NULL){
+  cerr<< output<<endl;
+}
+XdmValue * values = new XdmValue(processor);
+values->addXdmItem((XdmItem*)processor->makeIntegerValue(10));
+values->addXdmItem((XdmItem*)processor->makeIntegerValue(5));
+values->addXdmItem((XdmItem*)processor->makeIntegerValue(6));
+values->addXdmItem((XdmItem*)processor->makeIntegerValue(7));
+xslt->setParameter("values",(XdmValue *)values);
+XdmNode * input = processor->parseXmlFromFile("cat.xml");
+xslt->setInitialMatchSelection((XdmValue*)input);
+xslt->compileFromFile("test2.xsl");
+const char * rootValue = trans->callTemplateReturningString(NULL, "main");
+if(rootValue != NULL) {
+  cerr<<rootValue<<endl;
+} else {
+  cerr<<"Result is NULL"<<endl;
+}
+xslt->clearParameters(true);
+xslt->clearProperties();
+  ]]></samp>
 
 
-      <p>C++ example for using the XQueryProcesor:</p>
+      <p>C++ Example 4: basic XQuery processing</p>
 
       <samp><![CDATA[SaxonProcessor *processor = new SaxonProcessor(true);
-          XsltProcessor * xslt = processor->newXQueryProcessor();
-           queryProc->setProperty("s", "cat.xml");
-              queryProc->setProperty("q", "family.xq");
-              queryProc->runQueryToString();]]></samp>
+XsltProcessor * xslt = processor->newXQueryProcessor();
+queryProc->setProperty("s", "cat.xml");
+queryProc->setProperty("q", "family.xq");
+queryProc->runQueryToString();
+  ]]></samp>
 
    </section>
 

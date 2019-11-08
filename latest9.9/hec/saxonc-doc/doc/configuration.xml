@@ -88,7 +88,7 @@ saxonProcessor->setConfigurationProperty("http://saxon.sf.net/feature/multipleSc
 
       <h3 class="codeTitle">setProperty(string $name, string $propValue)</h3>
 
-      <p>The properties available are a subset to those specified for running XSLT from the command
+      <p>The properties available are a subset of those specified for running XSLT from the command
          line (see the <a target="_blank"
             href="http://www.saxonica.com/documentation/index.html#!using-xsl/commandline">Saxon 9.9
             documentation</a> for more information).</p>
@@ -256,7 +256,7 @@ saxonProcessor->setConfigurationProperty("http://saxon.sf.net/feature/multipleSc
 
       <h3 class="codeTitle">setProperty(string $name, string $propValue)</h3>
 
-      <p>The properties available are a subset to those specified for running XQuery from the
+      <p>The properties available are a subset of those specified for running XQuery from the
          command line (see the <a target="_blank"
             href="http://www.saxonica.com/documentation/index.html#!using-xquery/commandline">Saxon
             9.9 documentation</a> for more information).</p>
@@ -531,7 +531,7 @@ saxonProcessor->setConfigurationProperty("http://saxon.sf.net/feature/multipleSc
 
       <h3 class="codeTitle">setProperty(string $name, string $propValue)</h3>
 
-      <p>The properties available are a subset to those specified for running schema validation from
+      <p>The properties available are a subset of those specified for running schema validation from
          the command line (see the <a target="_blank"
             href="http://www.saxonica.com/documentation/index.html#!schema-processing/commandline"
             >Saxon 9.9 documentation</a> for more information).</p>
