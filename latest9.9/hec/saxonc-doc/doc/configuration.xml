@@ -7,6 +7,10 @@
       behaves. For a comprehensive guide to the Saxon configuration features see the <a
          href="http://saxonica.com/documentation/index.html#!configuration/config-features"
          target="_blank">Saxon 9.9 documentation</a>.</p>
+   
+   <aside>Note that a small number of the features are
+      not available with Saxon/C. Please see the <a href="/technical"
+         >Technical Information</a> Limitations section for details.</aside>
 
    <h2 class="subtitle">Setting properties on the SaxonProcessor</h2>
 
@@ -18,9 +22,6 @@
 
 saxonProcessor->setConfigurationProperty("http://saxon.sf.net/feature/multipleSchemaImports",
   "on");]]></samp>
-
-   <p>Note that there are some features that don't work or are under tested. For instance, 'bytecode
-      generation' is not available.</p>
 
    <h2 class="subtitle">Setting properties on the specific processors</h2>
 
@@ -538,7 +539,7 @@ saxonProcessor->setConfigurationProperty("http://saxon.sf.net/feature/multipleSc
             <tr>
                <th>Name</th>
                <th>Example</th>
-               <th>Comment</th>
+               <th>Description</th>
             </tr>
          </thead>
          <tr>
