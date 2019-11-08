@@ -25,7 +25,8 @@
             </td>
             <td>
                <p>A <code>SaxonProcessor</code> acts as a factory for generating XSLT, XQuery, XPath and Schema
-                  compilers. This class is itself the context that needs to be managed.</p>
+                  compilers. This class creates the JET Runtime in a static struct object which is shared across all <code>SaxonProcessor</code>
+                  objects created. For C++ programs the static method <code>SaxonProcessor::release()</code> needs to be called at the end of the program to clean up the JET threads. In Python and PHP world the release method is internally called.</p>
             </td>
             <td>
                <p>
