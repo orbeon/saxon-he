@@ -21,6 +21,7 @@ import net.sf.saxon.om.*;
 import net.sf.saxon.query.DynamicQueryContext;
 import net.sf.saxon.query.XQueryExpression;
 import net.sf.saxon.serialize.SerializationProperties;
+import net.sf.saxon.trans.UncheckedXPathException;
 import net.sf.saxon.trans.XPathException;
 import net.sf.saxon.tree.tiny.TinyBuilder;
 import net.sf.saxon.type.TypeHierarchy;
@@ -426,6 +427,8 @@ public class XQueryEvaluator extends AbstractDestination implements Iterable<Xdm
         try {
             SequenceIterator<?> iter = expression.iterator(context);
             return XdmValue.wrap(iter.materialize());
+        } catch (UncheckedXPathException e) {
+            throw new SaxonApiException(e.getXPathException());
         } catch (XPathException e) {
             throw new SaxonApiException(e);
         }
@@ -448,6 +451,8 @@ public class XQueryEvaluator extends AbstractDestination implements Iterable<Xdm
             SequenceIterator<?> iter = expression.iterator(context);
             Item<?> next = iter.next();
             return next == null ? null : (XdmItem) XdmValue.wrap(next);
+        } catch (UncheckedXPathException e) {
+            throw new SaxonApiException(e.getXPathException());
         } catch (XPathException e) {
             throw new SaxonApiException(e);
         }
@@ -614,6 +619,8 @@ public class XQueryEvaluator extends AbstractDestination implements Iterable<Xdm
             }
             Sequence<?> result = fn.call(vr, controller);
             return XdmValue.wrap(result);
+        } catch (UncheckedXPathException e) {
+            throw new SaxonApiException(e.getXPathException());
         } catch (XPathException e) {
             throw new SaxonApiException(e);
         }

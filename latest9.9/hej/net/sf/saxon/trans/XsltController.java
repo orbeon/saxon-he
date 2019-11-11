@@ -28,7 +28,6 @@ import net.sf.saxon.tree.iter.SingletonIterator;
 import net.sf.saxon.tree.wrapper.SpaceStrippedDocument;
 import net.sf.saxon.tree.wrapper.SpaceStrippedNode;
 import net.sf.saxon.tree.wrapper.TypeStrippedDocument;
-import org.xml.sax.SAXParseException;
 
 import javax.xml.transform.OutputKeys;
 import javax.xml.transform.Source;
@@ -759,22 +758,10 @@ public class XsltController extends Controller {
                 reportFatalError(err);
             }
             throw err;
+        } catch (UncheckedXPathException err) {
+            handleXPathException(err.getXPathException());
         } catch (XPathException err) {
-            Throwable cause = err.getException();
-            if (cause instanceof SAXParseException) {
-                // This generally means the error was already reported.
-                // But if a RuntimeException occurs in Saxon during a callback from
-                // the Crimson parser, Crimson wraps this in a SAXParseException without
-                // reporting it further.
-                SAXParseException spe = (SAXParseException) cause;
-                cause = spe.getException();
-                if (cause instanceof RuntimeException) {
-                    reportFatalError(err);
-                }
-            } else {
-                reportFatalError(err);
-            }
-            throw err;
+            handleXPathException(err);
         } finally {
             inUse = false;
             closeMessageEmitter();
@@ -956,7 +943,10 @@ public class XsltController extends Controller {
 
             initialContext.waitForChildThreads();
             out.close();
-
+        } catch (UncheckedXPathException err) {
+            handleXPathException(err.getXPathException());
+        } catch (XPathException err) {
+            handleXPathException(err);
         } finally {
             if (traceListener != null) {
                 traceListener.close();
@@ -1064,22 +1054,10 @@ public class XsltController extends Controller {
                 reportFatalError(err);
             }
             throw err;
+        } catch (UncheckedXPathException err) {
+            handleXPathException(err.getXPathException());
         } catch (XPathException err) {
-            Throwable cause = err.getException();
-            if (cause instanceof SAXParseException) {
-                // This generally means the error was already reported.
-                // But if a RuntimeException occurs in Saxon during a callback from
-                // the Crimson parser, Crimson wraps this in a SAXParseException without
-                // reporting it further.
-                SAXParseException spe = (SAXParseException) cause;
-                cause = spe.getException();
-                if (cause instanceof RuntimeException) {
-                    reportFatalError(err);
-                }
-            } else {
-                reportFatalError(err);
-            }
-            throw err;
+            handleXPathException(err);
         } finally {
             inUse = false;
             if (close && source instanceof AugmentedSource) {

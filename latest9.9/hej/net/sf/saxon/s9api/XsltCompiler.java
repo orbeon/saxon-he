@@ -17,6 +17,7 @@ import net.sf.saxon.om.Sequence;
 import net.sf.saxon.style.*;
 import net.sf.saxon.trace.XSLTTraceCodeInjector;
 import net.sf.saxon.trans.CompilerInfo;
+import net.sf.saxon.trans.UncheckedXPathException;
 import net.sf.saxon.trans.XPathException;
 import net.sf.saxon.trans.packages.IPackageLoader;
 import net.sf.saxon.trans.packages.PackageDetails;
@@ -524,6 +525,8 @@ public class XsltCompiler {
                 throw new SaxonApiException("Package compilation failed: " + count + " reported");
             }
             return pack;
+        } catch (UncheckedXPathException e) {
+            throw new SaxonApiException(e.getXPathException());
         } catch (XPathException e) {
             throw new SaxonApiException(e);
         }
@@ -784,6 +787,8 @@ public class XsltCompiler {
             CompilerInfo ci2 = new CompilerInfo(compilerInfo);
             PreparedStylesheet pss = Compilation.compileSingletonPackage(config, ci2, source);
             return new XsltExecutable(processor, pss);
+        } catch (UncheckedXPathException e) {
+            throw new SaxonApiException(e.getXPathException());
         } catch (XPathException e) {
             throw new SaxonApiException(e);
         }

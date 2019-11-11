@@ -36,6 +36,7 @@ import net.sf.saxon.type.Untyped;
 import net.sf.saxon.value.DateTimeValue;
 import net.sf.saxon.value.SequenceType;
 import net.sf.saxon.z.IntHashMap;
+import org.xml.sax.SAXParseException;
 
 import javax.xml.transform.ErrorListener;
 import javax.xml.transform.Source;
@@ -478,6 +479,24 @@ public class Controller implements ContextOriginator {
 
     public void warning(String message, String errorCode, Location locator) {
         getErrorListener().warning(new XPathException(message, errorCode, locator));
+    }
+
+    protected void handleXPathException(XPathException err) throws XPathException {
+        Throwable cause = err.getException();
+        if (cause instanceof SAXParseException) {
+            // This generally means the error was already reported.
+            // But if a RuntimeException occurs in Saxon during a callback from
+            // the Crimson parser, Crimson wraps this in a SAXParseException without
+            // reporting it further.
+            SAXParseException spe = (SAXParseException) cause;
+            cause = spe.getException();
+            if (cause instanceof RuntimeException) {
+                reportFatalError(err);
+            }
+        } else {
+            reportFatalError(err);
+        }
+        throw err;
     }
 
 

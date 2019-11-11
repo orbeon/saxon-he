@@ -14,6 +14,7 @@ import net.sf.saxon.lib.ModuleURIResolver;
 import net.sf.saxon.lib.StringCollator;
 import net.sf.saxon.pattern.NodeKindTest;
 import net.sf.saxon.query.StaticQueryContext;
+import net.sf.saxon.trans.UncheckedXPathException;
 import net.sf.saxon.trans.XPathException;
 
 import javax.xml.transform.ErrorListener;
@@ -534,6 +535,8 @@ public class XQueryCompiler {
     public XQueryExecutable compile(String query) throws SaxonApiException {
         try {
             return new XQueryExecutable(processor, env.compileQuery(query));
+        } catch (UncheckedXPathException e) {
+            throw new SaxonApiException(e.getXPathException());
         } catch (XPathException e) {
             throw new SaxonApiException(e);
         }
