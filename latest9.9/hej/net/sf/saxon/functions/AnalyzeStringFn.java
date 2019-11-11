@@ -14,7 +14,6 @@ import net.sf.saxon.event.Receiver;
 import net.sf.saxon.expr.XPathContext;
 import net.sf.saxon.expr.parser.ExplicitLocation;
 import net.sf.saxon.lib.NamespaceConstant;
-import net.sf.saxon.lib.StandardEntityResolver;
 import net.sf.saxon.om.*;
 import net.sf.saxon.regex.RegexIterator;
 import net.sf.saxon.regex.RegularExpression;
@@ -93,18 +92,19 @@ public class AnalyzeStringFn extends RegexFunction {
         if (resultName == null) {
             boolean schemaAware = context.getController().getExecutable().isSchemaAware();
             Configuration config = context.getConfiguration();
-            if (schemaAware && !config.isSchemaAvailable(NamespaceConstant.FN)) {
-                StandardEntityResolver resolver = new StandardEntityResolver();
-                resolver.setConfiguration(config);
-                InputStream inputStream = Configuration.locateResource("xpath-functions.scm", new ArrayList<>(), new ArrayList<>());
-                if (inputStream == null) {
-                    throw new XPathException("Failed to load xpath-functions.scm from the classpath");
+            //noinspection SynchronizationOnLocalVariableOrMethodParameter
+            synchronized(config) {
+                if (schemaAware && !config.isSchemaAvailable(NamespaceConstant.FN)) {
+                    InputStream inputStream = Configuration.locateResource("xpath-functions.scm", new ArrayList<>(), new ArrayList<>());
+                    if (inputStream == null) {
+                        throw new XPathException("Failed to load xpath-functions.scm from the classpath");
+                    }
+                    InputSource is = new InputSource(inputStream);
+                    if (config.isTiming()) {
+                        config.getLogger().info("Loading schema from resources for: " + NamespaceConstant.FN);
+                    }
+                    config.addSchemaSource(new SAXSource(is));
                 }
-                InputSource is = new InputSource(inputStream);
-                if (config.isTiming()) {
-                    config.getLogger().info("Loading schema from resources for: " + NamespaceConstant.FN);
-                }
-                config.addSchemaSource(new SAXSource(is));
             }
             init(context.getConfiguration(), schemaAware);
         }
