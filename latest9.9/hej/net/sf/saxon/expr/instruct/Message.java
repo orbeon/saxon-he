@@ -12,10 +12,8 @@ import net.sf.saxon.event.*;
 import net.sf.saxon.expr.*;
 import net.sf.saxon.expr.parser.*;
 import net.sf.saxon.lib.NamespaceConstant;
-import net.sf.saxon.lib.SerializerFactory;
 import net.sf.saxon.lib.StandardErrorListener;
 import net.sf.saxon.om.*;
-import net.sf.saxon.serialize.SerializationProperties;
 import net.sf.saxon.trace.ExpressionPresenter;
 import net.sf.saxon.trans.Err;
 import net.sf.saxon.trans.XPathException;
@@ -23,8 +21,6 @@ import net.sf.saxon.trans.XsltController;
 import net.sf.saxon.type.*;
 import net.sf.saxon.value.StringValue;
 import net.sf.saxon.value.Whitespace;
-
-import javax.xml.transform.OutputKeys;
 
 /**
  * An xsl:message element in the stylesheet.
@@ -184,11 +180,26 @@ public class Message extends Instruction {
         if (isAssert && !controller.isAssertionsEnabled()) {
             return null;
         }
-        Receiver emitter = controller.makeMessageReceiver();
-        PipelineConfiguration pipe = controller.makePipelineConfiguration();
-        pipe.setHostLanguage(Configuration.XSLT);
-        pipe.setXPathContext(context);
-        emitter.setPipelineConfiguration(pipe);
+
+        boolean abort = false;
+        String term = Whitespace.trim(getTerminate().evaluateAsString(context));
+        switch (term) {
+            case "no":
+            case "false":
+            case "0":
+                // no action
+                break;
+            case "yes":
+            case "true":
+            case "1":
+                abort = true;
+                break;
+            default:
+                XPathException e = new XPathException("The terminate attribute of xsl:message must be yes|true|1 or no|false|0");
+                e.setXPathContext(context);
+                e.setErrorCode("XTDE0030");
+                throw e;
+        }
 
         String code;
         try {
@@ -209,38 +220,32 @@ public class Message extends Instruction {
 
         controller.incrementMessageCounter(errorCode);
 
-        SequenceReceiver rec = new TreeReceiver(emitter);
-        rec = new MessageAdapter(rec, errorCode.getEQName(), getLocation());
+        Receiver emitter = controller.makeMessageReceiver();
+        PipelineConfiguration pipe = controller.makePipelineConfiguration();
+        pipe.setHostLanguage(Configuration.XSLT);
+        pipe.setXPathContext(context);
+        emitter.setPipelineConfiguration(pipe);
+
+        Builder builder = null;
+        Receiver rec;
+        if (abort) {
+            builder = controller.makeBuilder();
+            rec = new MessageAdapter(new TreeReceiver(builder), errorCode.getEQName(), getLocation());
+            rec.open();
+        } else {
+            rec = new MessageAdapter(new TreeReceiver(emitter), errorCode.getEQName(), getLocation());
+        }
 
         Receiver saved = context.getReceiver();
 
-        SerializationProperties props = new SerializationProperties();
-        props.setProperty(OutputKeys.OMIT_XML_DECLARATION, "yes");
-        SerializerFactory sf = context.getConfiguration().getSerializerFactory();
-
-        Receiver receiver = sf.getReceiver(rec, props, pipe);
-        context.setReceiver(receiver);
-
-        boolean abort = false;
-        String term = Whitespace.trim(getTerminate().evaluateAsString(context));
-        switch (term) {
-            case "no":
-            case "false":
-            case "0":
-                // no action
-                break;
-            case "yes":
-            case "true":
-            case "1":
-                abort = true;
-                break;
-            default:
-                XPathException e = new XPathException("The terminate attribute of xsl:message must be yes|no|true|false|1|0");
-                e.setXPathContext(context);
-                e.setErrorCode("XTDE0030");
-                throw e;
-        }
-
+//        SerializationProperties props = new SerializationProperties();
+//        props.setProperty(OutputKeys.OMIT_XML_DECLARATION, "yes");
+//        SerializerFactory sf = context.getConfiguration().getSerializerFactory();
+//
+//        Receiver receiver = sf.getReceiver(rec, props, pipe);
+//        context.setReceiver(receiver);
+//
+//
 
         rec.startDocument(abort ? ReceiverOptions.TERMINATE : 0);
 
@@ -261,12 +266,16 @@ public class Message extends Instruction {
         rec.close();
         context.setReceiver(saved);
         if (abort) {
+            builder.close();
+            NodeInfo content = builder.getCurrentRoot();
+            content.copy(emitter, CopyOptions.ALL_NAMESPACES, getLocation());
             TerminationException te = new TerminationException(
                     "Processing terminated by " + StandardErrorListener.getInstructionName(this) +
                             " at line " + getLocation().getLineNumber() +
                             " in " + StandardErrorListener.abbreviatePath(getLocation().getSystemId()));
             te.setLocation(getLocation());
             te.setErrorCodeQName(errorCode);
+            te.setErrorObject(content);
             throw te;
         }
         return null;
