@@ -322,6 +322,12 @@ public class Copy extends ElementCreator {
             if (visitor.isOptimizeForStreaming()) {
                 UType type = contextItemType.getItemType().getUType();
                 if (!type.intersection(MultipleNodeKindTest.LEAF.getUType()).equals(UType.VOID)) {
+                    // Bug 4346: only do this optimization once
+                    Expression p = getParentExpression();
+                    if (p instanceof Choose && ((Choose) p).size() == 2 && ((Choose) p).getAction(1) == this &&
+                            ((Choose) p).getAction(0) instanceof CopyOf) {
+                        return exp;
+                    }
                     Expression copyOf = new CopyOf(
                             new ContextItemExpression(), false, getValidationAction(), getSchemaType(), false);
                     NodeTest leafTest = new MultipleNodeKindTest(type.intersection(MultipleNodeKindTest.LEAF.getUType()));
