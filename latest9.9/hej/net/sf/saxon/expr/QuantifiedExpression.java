@@ -245,6 +245,7 @@ public class QuantifiedExpression extends Assignation {
     /*@NotNull*/
     public Expression copy(RebindingMap rebindings) {
         QuantifiedExpression qe = new QuantifiedExpression();
+        rebindings.put(this, qe);
         ExpressionTool.copyLocationInfo(this, qe);
         qe.setOperator(operator);
         qe.setVariableQName(variableName);
@@ -254,7 +255,7 @@ public class QuantifiedExpression extends Assignation {
         qe.setAction(newAction);
         qe.variableName = variableName;
         qe.slotNumber = slotNumber;
-        ExpressionTool.rebindVariableReferences(newAction, this, qe);
+        //ExpressionTool.rebindVariableReferences(newAction, this, qe);
         return qe;
     }
 

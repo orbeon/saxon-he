@@ -687,9 +687,10 @@ public class LetExpression extends Assignation implements TailCallReturner {
         let.setRequiredType(requiredType);
         let.setSequence(getSequence().copy(rebindings));
         let.setInstruction(isInstruction());
+        rebindings.put(this, let);
         Expression newAction = getAction().copy(rebindings);
         let.setAction(newAction);
-        ExpressionTool.rebindVariableReferences(newAction, this, let);
+        //ExpressionTool.rebindVariableReferences(newAction, this, let);
         return let;
     }
 

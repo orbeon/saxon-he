@@ -68,6 +68,7 @@ public class OuterForExpression extends ForExpression {
     public Expression copy(RebindingMap rebindings) {
         OuterForExpression forExp = new OuterForExpression();
         ExpressionTool.copyLocationInfo(this, forExp);
+        rebindings.put(this, forExp);
         forExp.setRequiredType(requiredType);
         forExp.setVariableQName(variableName);
         forExp.setSequence(getSequence().copy(rebindings));

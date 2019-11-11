@@ -312,13 +312,12 @@ public class ForExpression extends Assignation {
         forExp.setRequiredType(requiredType);
         forExp.setVariableQName(variableName);
         forExp.setSequence(getSequence().copy(rebindings));
-        //rebindings.put(this, forExp);
+        rebindings.put(this, forExp);
         Expression newAction = getAction().copy(rebindings);
         forExp.setAction(newAction);
         forExp.variableName = variableName;
         forExp.slotNumber = slotNumber;
-        // TODO: should be able to do this by adding a mapping to rebindings as above. But -s:app-Walmsley -t:d1e41271 crashes.
-        ExpressionTool.rebindVariableReferences(newAction, this, forExp);
+        //ExpressionTool.rebindVariableReferences(newAction, this, forExp);
         return forExp;
     }
 

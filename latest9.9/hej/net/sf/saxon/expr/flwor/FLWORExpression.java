@@ -9,7 +9,6 @@ package net.sf.saxon.expr.flwor;
 
 import net.sf.saxon.expr.*;
 import net.sf.saxon.expr.parser.*;
-import net.sf.saxon.om.Item;
 import net.sf.saxon.om.SequenceIterator;
 import net.sf.saxon.query.QueryModule;
 import net.sf.saxon.trace.ExpressionPresenter;
@@ -20,7 +19,6 @@ import net.sf.saxon.type.ItemType;
 import net.sf.saxon.value.SequenceType;
 
 import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.List;
 
 /**
@@ -385,23 +383,21 @@ public class FLWORExpression extends Expression {
     public Expression copy(RebindingMap rebindings) {
         //verifyParentPointers();
         List<Clause> newClauses = new ArrayList<>();
-        List<LocalVariableBinding> oldBindings = new ArrayList<>();
-        List<LocalVariableBinding> newBindings = new ArrayList<>();
         FLWORExpression f2 = new FLWORExpression();
         for (Clause c : clauses) {
             Clause c2 = c.copy(f2, rebindings);
             c2.setLocation(c.getLocation());
             c2.setRepeated(c.isRepeated());
-            oldBindings.addAll(Arrays.asList(c.getRangeVariables()));
-            newBindings.addAll(Arrays.asList(c2.getRangeVariables()));
+            LocalVariableBinding[] oldBindings = c.getRangeVariables();
+            LocalVariableBinding[] newBindings = c2.getRangeVariables();
+            assert oldBindings.length == newBindings.length;
+            for (int i=0; i<oldBindings.length; i++) {
+                rebindings.put(oldBindings[i], newBindings[i]);
+            }
             newClauses.add(c2);
         }
         f2.init(newClauses, getReturnClause().copy(rebindings));
         ExpressionTool.copyLocationInfo(this, f2);
-        for (int i = 0; i < oldBindings.size(); i++) {
-            ExpressionTool.rebindVariableReferences(f2, oldBindings.get(i), newBindings.get(i));
-        }
-        //f2.verifyParentPointers();
         return f2;
     }
 
