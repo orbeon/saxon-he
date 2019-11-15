@@ -2351,7 +2351,7 @@ cdef class PyXQueryProcessor:
         if not len(kwds) == 0:
           
             if "input_file_name" in kwds:
-                self.set_context(kwds["input_file_name"])
+                self.set_context(file_name=kwds["input_file_name"])
             elif "input_xdm_item" in kwds:
                 self.set_context(xdm_item=(kwds["xdm_item"]))
 
@@ -2395,7 +2395,7 @@ cdef class PyXQueryProcessor:
           return ustring
 
         if "input_file_name" in kwds:
-          self.set_context(kwds["input_file_name"])
+          self.set_context(file_name=kwds["input_file_name"])
         elif "input_xdm_item" in kwds:
           self.set_context(xdm_item=(kwds["xdm_item"]))
         if "query_file" in kwds:
