@@ -291,9 +291,7 @@ public class XSLKey extends StyleElement implements StylesheetComponent {
             }
         }
 
-        ExpressionVisitor visitor = makeExpressionVisitor();
-        ContextItemStaticInfo contextItemType = getConfiguration().makeContextItemStaticInfo(match.getItemType(), false);
-        use = use.optimize(visitor, contextItemType);
+
         ItemType useItemType = use.getItemType();
         if (useItemType == ErrorType.getInstance()) {
             useItemType = BuiltInAtomicType.STRING; // corner case, prevents crashing
@@ -348,7 +346,9 @@ public class XSLKey extends StyleElement implements StylesheetComponent {
      */
 
     public void optimize(ComponentDeclaration declaration) throws XPathException {
-        // already done earlier
+        ExpressionVisitor visitor = makeExpressionVisitor();
+        ContextItemStaticInfo contextItemType = getConfiguration().makeContextItemStaticInfo(match.getItemType(), false);
+        use = use.optimize(visitor, contextItemType);
     }
 
 
