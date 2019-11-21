@@ -193,7 +193,7 @@ public class Query {
         options.addRecognizedOption("update", CommandLineOptions.TYPE_ENUMERATION | CommandLineOptions.VALUE_REQUIRED,
                                     "Enable or disable XQuery updates, or enable the syntax but discard the updates");
         options.setPermittedValues("update", new String[]{"on", "off", "discard"}, null);
-        options.addRecognizedOption("val", CommandLineOptions.TYPE_ENUMERATION | CommandLineOptions.VALUE_REQUIRED,
+        options.addRecognizedOption("val", CommandLineOptions.TYPE_ENUMERATION,
                                     "Apply validation to source documents");
         options.setPermittedValues("val", new String[]{"strict", "lax"}, "strict");
         options.addRecognizedOption("wrap", CommandLineOptions.TYPE_BOOLEAN,

@@ -189,7 +189,7 @@ public class Transform {
         options.addRecognizedOption("u", CommandLineOptions.TYPE_BOOLEAN,
                                     "Interpret filename arguments as URIs");
         options.setPermittedValues("u", new String[]{"on", "off"}, "on");
-        options.addRecognizedOption("val", CommandLineOptions.TYPE_ENUMERATION | CommandLineOptions.VALUE_REQUIRED,
+        options.addRecognizedOption("val", CommandLineOptions.TYPE_ENUMERATION,
                                     "Apply validation to source documents");
         options.setPermittedValues("val", new String[]{"strict", "lax"}, "strict");
         options.addRecognizedOption("versionmsg", CommandLineOptions.TYPE_BOOLEAN,
