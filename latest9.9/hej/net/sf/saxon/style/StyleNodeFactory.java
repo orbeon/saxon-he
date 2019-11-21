@@ -177,11 +177,16 @@ public class StyleNodeFactory implements NodeFactory {
 
         String uri = elemName.getURI();
 
-        if (toplevel && !uri.isEmpty() && !uri.equals(NamespaceConstant.XSLT)) {
+        if (toplevel && !uri.equals(NamespaceConstant.XSLT)) {
             DataElement d = new DataElement();
             d.setNamespaceDeclarations(namespaces, namespacesUsed);
             d.initialise(elemName, elemType, attlist, parent, sequence);
             d.setLocation(baseURI, lineNumber, columnNumber);
+            if (uri.isEmpty()) {
+                XPathException te = new XPathException("Top-level elements must be in a namespace", "XTSE0130");
+                te.setLocator(location.saveLocation());
+                pipe.getErrorListener().error(te);
+            }
             return d;
 
         } else {   // not recognized as an XSLT element, not top-level
