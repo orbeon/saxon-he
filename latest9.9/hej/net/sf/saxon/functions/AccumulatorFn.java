@@ -19,7 +19,6 @@ import net.sf.saxon.trans.XPathException;
 import net.sf.saxon.trans.XsltController;
 import net.sf.saxon.type.ItemType;
 import net.sf.saxon.type.Type;
-import org.jetbrains.annotations.NotNull;
 
 /**
  * Non-streaming implementation of accumulator-before() and accumulator-after()
@@ -70,7 +69,6 @@ public abstract class AccumulatorFn extends SystemFunction {
      * @throws XPathException the the accumulator is not recognised or if the name is invalid
      */
 
-    @NotNull
     private Accumulator getAccumulator(String name, AccumulatorRegistry registry) throws XPathException {
         StructuredQName qName;
         try {

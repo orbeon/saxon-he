@@ -444,13 +444,13 @@ public final class FilterExpression extends BinaryExpression implements ContextS
         // If there are two non-positional filters, consider changing their order based on the estimated cost
         // of evaluation, so we evaluate the cheapest predicates first
 
-//        if (!filterIsPositional && getLhsExpression() instanceof FilterExpression &&
-//                !((FilterExpression) getLhsExpression()).isFilterIsPositional()) {
-//            Expression f2 = opt.reorderPredicates(this, visitor, contextItemType);
-//            if (f2 != this) {
-//                return f2;
-//            }
-//        }
+        if (!filterIsPositional && getLhsExpression() instanceof FilterExpression &&
+                !((FilterExpression) getLhsExpression()).isFilterIsPositional()) {
+            Expression f2 = opt.reorderPredicates(this, visitor, contextItemType);
+            if (f2 != this) {
+                return f2;
+            }
+        }
 
         final Sequence<?> sequence = tryEarlyEvaluation(visitor);
         if (sequence != null) {
@@ -469,10 +469,11 @@ public final class FilterExpression extends BinaryExpression implements ContextS
      * and we assume that a sequence has length 5. The resulting estimates may be used, for
      * example, to reorder the predicates in a filter expression so cheaper predicates are
      * evaluated first.
+     * @return the estimated cost
      */
     @Override
-    public int getCost() {
-        return getLhsExpression().getCost() + 5 * getRhsExpression().getCost();
+    public double getCost() {
+        return Math.max(getLhsExpression().getCost() + 5 * getRhsExpression().getCost(), MAX_COST);
     }
 
     /**

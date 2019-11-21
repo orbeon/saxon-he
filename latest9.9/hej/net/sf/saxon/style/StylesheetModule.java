@@ -21,7 +21,6 @@ import net.sf.saxon.tree.tiny.TinyBuilder;
 import net.sf.saxon.type.Type;
 import net.sf.saxon.value.NestedIntegerValue;
 import net.sf.saxon.value.Whitespace;
-import org.jetbrains.annotations.NotNull;
 import org.xml.sax.InputSource;
 import org.xml.sax.XMLReader;
 
@@ -243,7 +242,6 @@ public class StylesheetModule {
         }
     }
 
-    @NotNull
     private static ParseOptions makeStylesheetParseOptions(Source styleSource, PipelineConfiguration pipe) {
         ParseOptions options;
         if (styleSource instanceof AugmentedSource) {

@@ -494,14 +494,15 @@ public class SlashExpression extends BinaryExpression
      * and we assume that a sequence has length 5. The resulting estimates may be used, for
      * example, to reorder the predicates in a filter expression so cheaper predicates are
      * evaluated first.
+     * @return
      */
     @Override
-    public int getCost() {
-        int factor = Cardinality.allowsMany(getLhsExpression().getCardinality()) ? 10 : 1;
-        int lh = getLhsExpression().getCost() + 1;
-        int rh = getRhsExpression().getCost();
-        double product = (double) lh  + factor * (double) rh;
-        return product > 1e7 ? 10000000 : Math.max(lh + factor * rh, 10000000);
+    public double getCost() {
+        int factor = Cardinality.allowsMany(getLhsExpression().getCardinality()) ? 5 : 1;
+        double lh = getLhsExpression().getCost() + 1;
+        double rh = getRhsExpression().getCost();
+        double product = lh  + factor * rh;
+        return Math.max(product, MAX_COST);
     }
 
     public Expression tryToMakeSorted(ExpressionVisitor visitor, ContextItemStaticInfo contextItemType) throws XPathException {

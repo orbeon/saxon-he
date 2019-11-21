@@ -77,7 +77,7 @@ public abstract class Expression implements IdentityComparable, ExportAgent, Loc
     private int[] slotsUsed;
     private int evaluationMethod;
     private Map<String, Object> extraProperties;
-    private int cost = -1;
+    private double cost = -1;
     private int cachedHashCode = -1;
 
 //    public int serial;  // used to identify expressions for internal diagnostics
@@ -633,16 +633,21 @@ public abstract class Expression implements IdentityComparable, ExportAgent, Loc
      * of evaluating its operands.
      */
 
-    public int getCost() {
+    public double getCost() {
         if (cost < 0) {
-            int i = getNetCost();
+            double i = getNetCost();
             for (Operand o : operands()) {
                 i += o.getChildExpression().getCost();
+                if (i > MAX_COST) {
+                    break;
+                }
             }
             cost = i;
         }
         return cost;
     }
+
+    public final static double MAX_COST = 1e9;
 
     /**
      * Return the net cost of evaluating this expression, excluding the cost of evaluating

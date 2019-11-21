@@ -78,7 +78,7 @@ public class OrExpression extends BooleanExpression {
     }
 
     @Override
-    public int getCost() {
+    public double getCost() {
         // Assume the RHS will be evaluated 50% of the time
         return getLhsExpression().getCost() + getRhsExpression().getCost() / 2;
     }

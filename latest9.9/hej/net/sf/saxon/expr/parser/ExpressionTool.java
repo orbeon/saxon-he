@@ -1201,9 +1201,6 @@ public class ExpressionTool {
                 body = body.optimize(visitor, cisi);
             }
             body.setParentExpression(null);
-            if (opt.isOptionSet(OptimizerOptions.LOOP_LIFTING)) {
-                body = LoopLifter.process(body, visitor, cisi);
-            }
             if (extractGlobals && compilation != null) {
                 Expression exp2 = opt.promoteExpressionsToGlobal(body, compilation.getPrincipalStylesheetModule(), visitor);
                 if (exp2 != null) {
@@ -1212,6 +1209,10 @@ public class ExpressionTool {
                     body = exp2.optimize(visitor, cisi);
                 }
             }
+            if (opt.isOptionSet(OptimizerOptions.LOOP_LIFTING)) {
+                body = LoopLifter.process(body, visitor, cisi);
+            }
+
         } else {
             body = avoidDocumentSort(body);
         }

@@ -24,7 +24,6 @@ import net.sf.saxon.tree.wrapper.AbstractNodeWrapper;
 import net.sf.saxon.tree.wrapper.SiblingCountingNode;
 import net.sf.saxon.type.Type;
 import net.sf.saxon.type.UType;
-import org.jetbrains.annotations.NotNull;
 import org.w3c.dom.*;
 
 import java.util.ArrayList;
@@ -775,7 +774,6 @@ public class DOMNodeWrapper extends AbstractNodeWrapper implements SiblingCounti
         }
     }
 
-    @NotNull
     private DOMNodeWrapper spannedWrapper(Node currNode) {
         Node currText = currNode;
         int thisSpan = 1;

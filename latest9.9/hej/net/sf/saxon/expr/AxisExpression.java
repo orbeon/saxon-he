@@ -710,9 +710,10 @@ public final class AxisExpression extends Expression {
      * and we assume that a sequence has length 5. The resulting estimates may be used, for
      * example, to reorder the predicates in a filter expression so cheaper predicates are
      * evaluated first.
+     * @return
      */
     @Override
-    public int getCost() {
+    public double getCost() {
         switch (axis) {
             case AxisInfo.SELF:
             case AxisInfo.PARENT:

@@ -111,7 +111,7 @@ public class ManualIterator<T extends Item<?>> implements FocusIterator<T>, Unfa
 
     public int getLength() throws XPathException {
         if (lastPositionFinder == null) {
-            throw new UnsupportedOperationException("last() cannot be used when streaming");
+            throw new XPathException("Saxon streaming restriction: last() cannot be used when consuming a sequence of streamed nodes, even if the items being processed are grounded");
         } else {
             return lastPositionFinder.getLength();
         }
