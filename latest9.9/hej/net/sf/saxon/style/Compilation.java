@@ -170,6 +170,7 @@ public class Compilation {
 //            "] do not match name and version in configuration file [" + expectedNameAndVersion + "]");
 //        }
         PackageLibrary library = compilerInfo.getPackageLibrary();
+        library.getCompilerInfo().setTargetEdition(compilerInfo.getTargetEdition());
         XPathException lastError = null;
 
         for (UsePack use : packageDependencies) {

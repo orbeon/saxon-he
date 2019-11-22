@@ -58,6 +58,10 @@ public class PackageLibrary {
         this.config = compilerInfo.getConfiguration();
     }
 
+    public CompilerInfo getCompilerInfo() {
+        return compilerInfo;
+    }
+
     /**
      * Create a package library as a copy of an existing package library
      *
