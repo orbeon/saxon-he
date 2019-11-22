@@ -143,7 +143,7 @@ public class XSLCharacterMap extends StyleElement {
 
         PrincipalStylesheetModule psm = getPrincipalStylesheetModule();
         ComponentDeclaration other = psm.getCharacterMap(getObjectName());
-        if (other.getSourceElement() != this) {
+        if (other != null && other.getSourceElement() != this) {
             if (decl.getPrecedence() == other.getPrecedence()) {
                 compileError("There are two character-maps with the same name and import precedence", "XTSE1580");
             } else if (decl.getPrecedence() < other.getPrecedence()) {
