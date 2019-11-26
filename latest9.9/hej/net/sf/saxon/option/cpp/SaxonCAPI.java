@@ -399,7 +399,7 @@ public class SaxonCAPI {
                 valueForCpp = convertObjectToXdmValue(values[i]);
                 initialTemplateParameters.put(qname, valueForCpp);
                 if (debug) {
-                    System.err.println("DEBUG: XSLT30TransformerForCpp itparam: " + paramName);
+                    System.err.println("DEBUG: SaxonCAPI itparam: " + paramName);
                 }
 
             } else if (params[i].startsWith("sparam:")) {
@@ -411,7 +411,7 @@ public class SaxonCAPI {
                 valueForCpp = convertObjectToXdmValue(values[i]);
                 staticParameters.put(qname, valueForCpp);
                 if (debug) {
-                    System.err.println("DEBUG: XSLT30TransformerForCpp sparam: " + paramName);
+                    System.err.println("DEBUG: SaxonCAPI sparam: " + paramName);
                 }
 
             } else if (params[i].startsWith("param:")) {
@@ -421,7 +421,7 @@ public class SaxonCAPI {
                 QName qname = QName.fromClarkName(paramName);
                 valueForCpp = convertObjectToXdmValue(values[i]);
                 if (debug) {
-                    System.err.println("DEBUG: XSLT30TransformerForCpp param: " + paramName);
+                    System.err.println("DEBUG: SaxonCAPI param: " + paramName);
                 }
 
                 if (qname != null && valueForCpp != null) {
@@ -437,7 +437,7 @@ public class SaxonCAPI {
             } */
             else {
                 if (debug) {
-                    System.err.println("DEBUG: XSLT30TransformerForCpp: param-name: " +params[i] + ", type of Value= "+values[i].getClass().getName());
+                    System.err.println("DEBUG: SaxonCAPI: param-name: " +params[i] + ", type of Value= "+values[i].getClass().getName());
                 }
                 map.put(params[i], values[i]);
             }

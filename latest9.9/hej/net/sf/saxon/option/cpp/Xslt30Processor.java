@@ -827,6 +827,15 @@ public class Xslt30Processor extends SaxonCAPI {
 
 
             }
+
+            if(map.containsKey("baseoutput")) {
+                valuei = map.get("baseoutput");
+                if (valuei instanceof String) {
+                    transformer.setBaseOutputURI((String) valuei);
+                }
+
+            }
+
             if (map.containsKey("im")) {
                 valuei = map.get("im");
                 if (valuei instanceof String) {

@@ -454,6 +454,14 @@ public class XsltProcessor extends SaxonCAPI {
                             throw new SaxonCException(err.getMessage());
                         }
 
+                    } else if (params[i].equals("baseoutput")) {
+                        if(values[i] instanceof String) {
+
+                            transformer.setBaseOutputURI((String)values[i]);
+                        }
+
+
+
                     } else if (params[i].equals("o") && outfile == null) {
                         if (values[i] instanceof String) {
                             outfile = (String) values[i];
