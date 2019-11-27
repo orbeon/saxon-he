@@ -442,7 +442,7 @@ $saxonProc->setConfigurationProperty("http://saxon.sf.net/feature/licenseFileLoc
 
       <p>The Python extension is held in the directory <code>Saxon.C.API/python-saxon</code>. </p>
 
-      <h3>Linux and Mac OS Platform</h3>
+      <h3>Linux and Mac OS Platforms</h3>
       <p>The Python extension on the Linux and Mac OS platforms can be built using the following
          command:</p>
 
