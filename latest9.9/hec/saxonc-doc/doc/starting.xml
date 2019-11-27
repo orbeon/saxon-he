@@ -440,13 +440,17 @@ $saxonProc->setConfigurationProperty("http://saxon.sf.net/feature/licenseFileLoc
 
       <h2 class="subtitle">Installing</h2>
 
-      <p>The Python extension is held in the directory <code>Saxon.C.API/python-saxon</code>. The
-         Python extension on the Linux and Mac OS platforms can be built using the following
+      <p>The Python extension is held in the directory <code>Saxon.C.API/python-saxon</code>. </p>
+
+      <h3>Linux and Mac OS Platform</h3>
+      <p>The Python extension on the <b>Linux</b> and <b>Mac OS platforms can be built using the following
          command:</p>
 
       <kbd>python3 saxon-setup.py build_ext -if</kbd>
 
-      <p>the Python extension on the Windows platform can be built using the following instructions:</p>
+      <h3>Windows Platform</h3>
+
+      <p>The Python extension on the Windows platform can be built using the following instructions:</p>
        <p>Install Python 3.X with VS 2017 or 2019 which can then be run
           with command "py" from Powershell.</p>
 
