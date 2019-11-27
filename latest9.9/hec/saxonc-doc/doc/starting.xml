@@ -441,15 +441,27 @@ $saxonProc->setConfigurationProperty("http://saxon.sf.net/feature/licenseFileLoc
       <h2 class="subtitle">Installing</h2>
 
       <p>The Python extension is held in the directory <code>Saxon.C.API/python-saxon</code>. The
-         Python extension <!--on the Linux and Mac OS platforms--> can be built using the following
+         Python extension on the Linux and Mac OS platforms can be built using the following
          command:</p>
 
       <kbd>python3 saxon-setup.py build_ext -if</kbd>
 
-      <!--<p>Similarly, on Windows use the following command:</p>
+      <p>the Python extension on the Windows platform can be built using the following instructions:</p>
+       <p>Install Python 3.X with VS 2017 or 2019 which can then be run
+          with command "py" from Powershell.</p>
 
-      <kbd>python3 saxon-setup.py build_ext -if</kbd>-->
-      <!-- TODO -->
+
+      <ul><li>For Python: update pip</li>
+         <li>Use pip to install Cython: pip install Cython</li>
+       <li>open Powershell for Python 3.X (with administrator rights if you
+          installed in C:\Program Files)</li>
+      </ul>
+      <kbd>cd C:\Program Files\Saxonica\SaxonEDITIONX.X.X</kbd>
+      <kbd>cd Saxon.C.API\python-saxon</kbd>
+      <kbd>py saxon-setup.py build_ext -if</kbd>
+       <p>For arbitrary Powershell Windows need to set: $Env:PYTHONPATH +=
+       ";C:\Program Files\Saxonica\SaxonEDITIONX.X.X\Saxon.C.API\python-saxon" to
+       ensure that "import saxonc" in any Python program finds the saxonc module</p>
 
    </section>
 
