@@ -1181,6 +1181,8 @@ public class Xslt30TestSuiteDriverHE extends TestDriver {
         alwaysOn.add("recognize_id_as_uri_fragment");
         alwaysOn.add("feature/XPath_3.1");
         alwaysOn.add("feature/backwards_compatibility");
+        alwaysOn.add("feature/HTML4");
+        alwaysOn.add("feature/HTML5");
 
         needsPE.add("feature/Saxon-PE");
         needsPE.add("feature/dynamic_evaluation");
@@ -1408,6 +1410,10 @@ public class Xslt30TestSuiteDriverHE extends TestDriver {
 
             case "unicode-version":
                 return value.equals("6.0"); // Avoid running Unicode 9.0 tests - they are slow!
+
+            case "default_html_version": {
+                return value.equals("4");
+            }
 
             default:
                 println("**** dependency not recognized for HE: " + type);
