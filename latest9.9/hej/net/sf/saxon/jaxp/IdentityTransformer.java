@@ -297,7 +297,9 @@ public class IdentityTransformer extends Transformer {
         try {
             value = getConfiguration().getSerializerFactory().checkOutputProperty(name, value);
         } catch (XPathException err) {
-            throw new IllegalArgumentException(err.getMessage());
+            if(!name.startsWith("{")) {
+                throw new IllegalArgumentException(err.getMessage());
+            }
         }
         localOutputProperties.setProperty(name, value);
     }
