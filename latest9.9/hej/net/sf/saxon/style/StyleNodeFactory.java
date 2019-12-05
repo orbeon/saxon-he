@@ -183,9 +183,9 @@ public class StyleNodeFactory implements NodeFactory {
             d.initialise(elemName, elemType, attlist, parent, sequence);
             d.setLocation(baseURI, lineNumber, columnNumber);
             if (uri.isEmpty()) {
-                XPathException te = new XPathException("Top-level elements must be in a namespace", "XTSE0130");
+                XPathException te = new XPathException("Top-level elements must be in a namespace: " + elemName + " is not", "XTSE0130");
                 te.setLocator(location.saveLocation());
-                pipe.getErrorListener().error(te);
+                pipe.getErrorListener().fatalError(te);
             }
             return d;
 
