@@ -10,6 +10,8 @@ package net.sf.saxon.style;
 import net.sf.saxon.Configuration;
 import net.sf.saxon.PreparedStylesheet;
 import net.sf.saxon.event.*;
+import net.sf.saxon.expr.parser.ExplicitLocation;
+import net.sf.saxon.expr.parser.Location;
 import net.sf.saxon.lib.*;
 import net.sf.saxon.om.*;
 import net.sf.saxon.trans.XPathException;
@@ -272,6 +274,7 @@ public class StylesheetModule {
             Sender.send(styleSource, sourcePipeline, options);
             config.reuseStyleParser(styleParser);
         }
+        
     }
 
     /**
@@ -463,6 +466,12 @@ public class StylesheetModule {
 
             } else if (child instanceof DataElement) {
                 foundNonImport = true;
+                if (((DataElement) child).getNodeName().getURI().isEmpty()) {
+                    Location loc = new ExplicitLocation(child);
+                    previousElement.compileError(
+                            "Top-level elements must be in a namespace: " + ((DataElement) child).getNodeName().getLocalPart() + " is not",
+                            "XTSE0130", loc);
+                }
             } else {
                 previousElement = (StyleElement) child;
                 if (child instanceof XSLGeneralIncorporate) {

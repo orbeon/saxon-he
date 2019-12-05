@@ -2462,6 +2462,10 @@ public abstract class StyleElement extends ElementImpl {
         compileError(new XPathException(message, errorCode, this));
     }
 
+    public void compileError(String message, String errorCode, Location loc) {
+        compileError(new XPathException(message, errorCode, loc));
+    }
+
     /**
      * Compile time error, specifying an error code and the name of the attribute that
      * is in error.
