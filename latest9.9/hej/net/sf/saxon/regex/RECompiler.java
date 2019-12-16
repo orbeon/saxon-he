@@ -814,6 +814,10 @@ public class RECompiler {
                     }
                     break atomLoop;
 
+                case '}':
+                    syntaxError("Unescaped right curly brace");
+                    break atomLoop;
+
                 case '\\': {
                     // Get the escaped character (advances input automatically)
                     int idxBeforeEscape = idx;
