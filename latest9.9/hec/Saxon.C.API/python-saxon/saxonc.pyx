@@ -2490,7 +2490,7 @@ cdef class PyXQueryProcessor:
         """
         py_content_string = base_uri.encode('UTF-8') if base_uri is not None else None
         c_content = py_content_string if base_uri is not None else ""
-        self.thisxqptr.setQueryBaseURI(base_uri)
+        self.thisxqptr.setQueryBaseURI(c_content)
 
      def set_cwd(self, cwd):
         """
