@@ -9,8 +9,11 @@ package net.sf.saxon.style;
 
 import net.sf.saxon.expr.Expression;
 import net.sf.saxon.expr.instruct.ValueOf;
+import net.sf.saxon.om.NodeInfo;
 import net.sf.saxon.trans.XPathException;
 import net.sf.saxon.tree.linked.TextImpl;
+
+import static net.sf.saxon.style.StyleElement.isYes;
 
 /**
  * A text node in an XSLT 3.0 stylesheet that may or may not contain a text value template
@@ -36,8 +39,13 @@ public class TextValueTemplateNode extends TextImpl {
     }
 
     public void validate() throws XPathException {
+        boolean disable = false;
+        NodeInfo parent = getParent();
+        if (parent instanceof XSLText && isYes(parent.getAttributeValue("", "disable-output-escaping"))) {
+            disable = true;
+        }
         contentExp = AttributeValueTemplate.make(getStringValue(), getStaticContext());
-        contentExp = new ValueOf(contentExp, false, true);
+        contentExp = new ValueOf(contentExp, disable, true);
         contentExp.setRetainedStaticContext(((StyleElement)getParent()).makeRetainedStaticContext());
         contentExp = ((StyleElement)getParent()).typeCheck("tvt", contentExp);
     }
