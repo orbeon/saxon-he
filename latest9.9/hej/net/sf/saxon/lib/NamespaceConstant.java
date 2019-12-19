@@ -387,7 +387,16 @@ public class NamespaceConstant {
 
     public static boolean isReserved(/*@Nullable*/ String uri) {
         return uri != null &&
-                (uri.equals(XSLT) || uri.equals(FN) || uri.equals(XML) || uri.equals(SCHEMA) || uri.equals(SCHEMA_INSTANCE));
+                (uri.equals(XSLT) ||
+                         uri.equals(FN) ||
+                         uri.equals(MATH) ||
+                         uri.equals(MAP_FUNCTIONS) ||
+                         uri.equals(ARRAY_FUNCTIONS) ||
+                         uri.equals(XML) ||
+                         uri.equals(SCHEMA) ||
+                         uri.equals(SCHEMA_INSTANCE) ||
+                        uri.equals(ERR) ||
+                        uri.equals(XMLNS));
     }
 
     /**
