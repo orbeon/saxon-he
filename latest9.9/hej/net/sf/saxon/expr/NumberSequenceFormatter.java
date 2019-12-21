@@ -188,16 +188,16 @@ public class NumberSequenceFormatter extends Expression {
     /*@NotNull*/
     public Expression copy(RebindingMap rebindings) {
         NumberSequenceFormatter exp = new NumberSequenceFormatter(
-                copy(valueOp), copy(formatOp),
-                copy(groupSizeOp), copy(groupSeparatorOp), copy(letterValueOp),
-                copy(ordinalOp), copy(startAtOp),
-                copy(langOp), formatter, backwardsCompatible);
+                copy(valueOp, rebindings), copy(formatOp, rebindings),
+                copy(groupSizeOp, rebindings), copy(groupSeparatorOp, rebindings), copy(letterValueOp, rebindings),
+                copy(ordinalOp, rebindings), copy(startAtOp, rebindings),
+                copy(langOp, rebindings), formatter, backwardsCompatible);
         ExpressionTool.copyLocationInfo(this, exp);
         return exp;
     }
 
-    private Expression copy(Operand op) {
-        return op == null ? null : op.getChildExpression().copy(new RebindingMap());
+    private Expression copy(Operand op, RebindingMap rebindings) {
+        return op == null ? null : op.getChildExpression().copy(rebindings);
     }
 
     /*@NotNull*/
