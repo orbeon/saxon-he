@@ -81,6 +81,9 @@ cdef extern from "../SaxonProcessor.h":
         # set the current working directory
         void setcwd(const char* cwd)
 
+        # Set the base output URI.
+        void setBaseOutputURI(const char * baseURI)
+
         #Set the source document from an XdmNode for the transformation.
         void setSourceFromXdmNode(XdmNode * value)
 
@@ -149,6 +152,9 @@ cdef extern from "../SaxonProcessor.h":
         Xslt30Processor() except +
         # set the current working directory
         void setcwd(const char* cwd)
+
+        # Set the base output URI.
+        void setBaseOutputURI(const char * baseURI)
 
         void setGlobalContextItem(XdmItem * value)
 

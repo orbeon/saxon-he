@@ -470,6 +470,25 @@ cdef class PyXsltProcessor:
         cdef char * c_cwd = py_cwd_string if cwd is not None else "" 
         self.thisxptr.setcwd(c_cwd)
 
+
+     def set_base_output_uri(self, base_uri):
+        """
+        set_base_output_uri(self, base_uri)
+        Set the base output URI. The default is the base URI of the principal output
+        of the transformation. If a base output URI is supplied using this function then it takes precedence
+        over any base URI defined in the principal output, and
+        it may cause the base URI of the principal output to be modified in situ.
+        The base output URI is used for resolving relative URIs in the 'href' attribute
+        of the xsl:result-document instruction; it is accessible to XSLT stylesheet
+        code using the XPath {@code current-output-uri()} function.
+
+        Args:
+            base_uri (str): the base output URI
+        """
+        py_uri_string = base_uri.encode('UTF-8') if base_uri is not None else None
+        cdef char * c_uri = py_uri_string if base_uri is not None else ""
+        self.thisxptr.setBaseOutputURI(c_uri)
+
      def set_source(self, **kwds):
         """Set the source document for the transformation.
 
@@ -812,7 +831,9 @@ cdef class PyXsltProcessor:
    
         Args:
             **kwds: Possible keyword arguments stylesheet_text (str), stylesheet_file (str) or stylsheetnode (PyXdmNode). Also possible
-                    to add the options save (boolean) and output_file, which creates an exported stylesheet to file (SEF).
+                    to add the options save (boolean), static_base_uri (str) and output_file (str), which creates an exported stylesheet to file (SEF).
+                    The static_base_uri keyword argument can only be used with stylesheet_text. The base URI is part of the static context, and is used to
+                    resolve any relative URIs appearing within an XPath expression.
 
         Example:
             1. xsltproc.compile_stylesheet(stylesheet_text="<xsl:stylesheet xmlns:xsl='http://www.w3.org/1999/XSL/Transform' version='2.0'>
@@ -825,7 +846,7 @@ cdef class PyXsltProcessor:
 
             2. xsltproc.compile_stylesheet(stylesheet_file="test1.xsl", save=True, output_file="test1.sef")
         """
-        py_error_message = "CompileStylesheet should only be one of the keyword option: (stylesheet_text|stylesheet_file|stylesheet_node), also in allowed in addition the optional keyword 'save' boolean with the keyword 'outputfile' keyword"
+        py_error_message = "CompileStylesheet should only be one of the keyword option: (stylesheet_text|stylesheet_file|stylesheet_node), also allowed in addition the optional keyword 'save' boolean with the keyword 'outputfile' keyword"
         if len(kwds) >3:
           raise Exception(py_error_message)
         cdef char * c_outputfile
@@ -849,6 +870,10 @@ cdef class PyXsltProcessor:
           py_output_string = kwds["output_file"].encode('UTF-8')
           c_outputfile = py_output_string
           if "stylesheet_text" in kwds:
+            if "static_base_uri" in kwds:
+              py_baseuri_string = kwds["static_base_uri"].encode('UTF-8')
+              c_baseuri = py_baseuri_string
+              self.thisxptr.setcwd(c_baseuri)
             py_stylesheet_string = kwds["stylesheet_text"].encode('UTF-8')
             c_stylesheet = py_stylesheet_string
             self.thisxptr.compileFromStringAndSave(c_stylesheet, c_outputfile)
@@ -868,6 +893,10 @@ cdef class PyXsltProcessor:
           if "stylesheet_text" in kwds:
             py_stylesheet_string = kwds["stylesheet_text"].encode('UTF-8')
             c_stylesheet = py_stylesheet_string
+            if "static_base_uri" in kwds:
+              py_baseuri_string = kwds["static_base_uri"].encode('UTF-8')
+              c_baseuri = py_baseuri_string
+              self.thisxptr.setcwd(c_baseuri)
             self.thisxptr.compileFromString(c_stylesheet)
           elif "stylesheet_file" in kwds:
             py_stylesheet_string = kwds["stylesheet_file"].encode('UTF-8')
@@ -988,6 +1017,24 @@ cdef class PyXslt30Processor:
         py_cwd_string = cwd.encode('UTF-8') if cwd is not None else None
         cdef char * c_cwd = py_cwd_string if cwd is not None else ""
         self.thisxptr.setcwd(c_cwd)
+
+     def set_base_output_uri(self, base_uri):
+        """
+        set_base_output_uri(self, base_uri)
+        Set the base output URI. The default is the base URI of the principal output
+        of the transformation. If a base output URI is supplied using this function then it takes precedence
+        over any base URI defined in the principal output, and
+        it may cause the base URI of the principal output to be modified in situ.
+        The base output URI is used for resolving relative URIs in the 'href' attribute
+        of the xsl:result-document instruction; it is accessible to XSLT stylesheet
+        code using the XPath {@code current-output-uri()} function.
+
+        Args:
+            base_uri (str): the base output URI
+        """
+        py_uri_string = base_uri.encode('UTF-8') if base_uri is not None else None
+        cdef char * c_uri = py_uri_string if base_uri is not None else ""
+        self.thisxptr.setBaseOutputURI(c_uri)
 
      def set_global_context_item(self, **kwds):
         """Set the global context item for the transformation.
@@ -1261,6 +1308,8 @@ cdef class PyXslt30Processor:
 
         Args:
             **kwds: Possible arguments: source_file (str) or xdm_node (PyXdmNode). Other allowed argument: stylesheet_file (str)
+                                        and base_output_uri (str) which is used for for resolving relative URIs in the href
+                                        attribute of the xsl:result-document instruction.
 
 
         Example:
@@ -1285,6 +1334,9 @@ cdef class PyXslt30Processor:
             if key == "source_file":
               py_source_string = value.encode('UTF-8') if value is not None else None
               c_sourcefile = py_source_string if value is not None else ""
+            if key == "base_output_uri":
+              c_base_output_uri = make_c_str(value)
+              self.thisxptr.setBaseOutputURI(c_base_output_uri)
             if key == "stylesheet_file":
               py_stylesheet_string = value.encode('UTF-8') if value is not None else None
               c_stylesheetfile = py_stylesheet_string if value is not None else ""
@@ -1311,7 +1363,8 @@ cdef class PyXslt30Processor:
         Execute transformation to a file. It is possible to specify the as an argument or using the set_output_file method.
         Args:
             **kwds: Possible optional arguments: source_file (str) or xdm_node (PyXdmNode). Other allowed argument: stylesheet_file (str), output_file (str)
-
+                                                 and base_output_uri (str) which is used for for resolving relative URIs in the href attribute of the
+                                                 xsl:result-document instruction.
 
         Example:
 
@@ -1337,6 +1390,9 @@ cdef class PyXslt30Processor:
                         if key == "source_file":
                                 py_source_string = value.encode('UTF-8') if value is not None else None
                                 c_sourcefile = py_source_string if value is not None else ""
+                        if key == "base_output_uri":
+                                c_base_output_uri = make_c_str(value)
+                                self.thisxptr.setBaseOutputURI(c_base_output_uri)
                         if key == "output_file":
                                 py_output_string = value.encode('UTF-8') if value is not None else None
                                 c_outputfile = py_output_string if value is not None else ""
@@ -1362,6 +1418,8 @@ cdef class PyXslt30Processor:
 
         Args:
             **kwds: Possible optional arguments: source_file (str) or xdm_node (PyXdmNode). Other allowed argument: stylesheet_file (str)
+                                                 and base_output_uri (str) which is used for for resolving relative URIs in the href attribute
+                                                 of the xsl:result-document instruction.
 
 
 
@@ -1389,6 +1447,9 @@ cdef class PyXslt30Processor:
           if isinstance(value, str):
             if key == "source_file":
               c_sourcefile = make_c_str(value)
+            if key == "base_output_uri":
+              c_base_output_uri = make_c_str(value)
+              self.thisxptr.setBaseOutputURI(c_base_output_uri)
             if key == "stylesheet_file":
               c_stylesheetfile = make_c_str(value)
           elif key == "xdm_node":
@@ -1425,7 +1486,9 @@ cdef class PyXslt30Processor:
         Invoke the stylesheet by applying templates to a supplied input sequence, Saving the results as an XdmValue.
 
         Args:
-            **kwds: Possible optional arguments: source_file (str) or xdm_value (PyXdmValue). Other allowed argument: stylesheet_file (str)
+            **kwds: Possible optional arguments: source_file (str) or xdm_value (PyXdmValue). Other allowed argument: stylesheet_file (str) and
+                                                 base_output_uri (str) which is used for for resolving relative URIs in the href attribute of
+                                                 the xsl:result-document instruction.
 
 
 
@@ -1454,6 +1517,9 @@ cdef class PyXslt30Processor:
             if key == "source_file":
               c_sourcefile = make_c_str(value)
               self.thisxptr.setInitialMatchSelectionAsFile(c_sourcefile)
+            if key == "base_output_uri":
+              c_base_output_uri = make_c_str(value)
+              self.thisxptr.setBaseOutputURI(c_base_output_uri)
             if key == "stylesheet_file":
               c_stylesheetfile = make_c_str(value)
           elif key == "xdm_value":
@@ -1489,7 +1555,9 @@ cdef class PyXslt30Processor:
         Invoke the stylesheet by applying templates to a supplied input sequence, Saving the results as a str.
 
         Args:
-            **kwds: Possible optional arguments: source_file (str) or xdm_value (PyXdmValue). Other allowed argument: stylesheet_file (str)
+            **kwds: Possible optional arguments: source_file (str) or xdm_value (PyXdmValue). Other allowed argument: stylesheet_file (str) and
+                                                 base_output_uri (str) which is used for for resolving relative URIs in the href attribute of
+                                                 the xsl:result-document instruction
 
 
 
@@ -1514,6 +1582,9 @@ cdef class PyXslt30Processor:
             if key == "source_file":
               c_sourcefile = make_c_str(value)
               self.thisxptr.setInitialMatchSelectionAsFile(c_sourcefile)
+            if key == "base_output_uri":
+              c_base_output_uri = make_c_str(value)
+              self.thisxptr.setBaseOutputURI(c_base_output_uri)
             if key == "stylesheet_file":
               c_stylesheetfile = make_c_str(value)
           elif key == "xdm_value":
@@ -1532,7 +1603,9 @@ cdef class PyXslt30Processor:
 
         Args:
             **kwds: Possible optional arguments: source_file (str) or xdm_value (PyXdmValue). 
-            Other allowed argument: stylesheet_file (str) and the required argument output_file (str)
+            Other allowed argument: stylesheet_file (str) and the required argument output_file (str),
+            base_output_uri (str) which is used for for resolving relative URIs in the href attribute of
+            the xsl:result-document instruction.
 
 
         Returns:
@@ -1558,6 +1631,9 @@ cdef class PyXslt30Processor:
             if key == "source_file":
               c_sourcefile = make_c_str(value)
               self.thisxptr.setInitialMatchSelectionAsFile(c_sourcefile)
+            if key == "base_output_uri":
+              c_base_output_uri = make_c_str(value)
+              self.thisxptr.setBaseOutputURI(c_base_output_uri)
             if key == "output_file":
               py_output_string = value.encode('UTF-8') if value is not None else None
               c_outputfile = py_output_string if value is not None else ""
@@ -1577,8 +1653,8 @@ cdef class PyXslt30Processor:
 
         Args:
 			template_name(str): The name of the template to invoke. If None is supplied then call the initial-template
-            **kwds: Possible optional arguments: source_file (str) or xdm_value (PyXdmValue). Other allowed argument: stylesheet_file (str)
-
+            **kwds: Possible optional arguments: source_file (str) or xdm_value (PyXdmValue). Other allowed argument: stylesheet_file (str),
+                    base_output_uri (str) which is used for for resolving relative URIs in the href attribute of the xsl:result-document instruction
 
 
         Returns:
@@ -1610,6 +1686,9 @@ cdef class PyXslt30Processor:
             if key == "source_file":
               c_sourcefile = make_c_str(value)
               self.thisxptr.setInitialMatchSelectionAsFile(c_sourcefile)
+            if key == "base_output_uri":
+              c_base_output_uri = make_c_str(value)
+              self.thisxptr.setBaseOutputURI(c_base_output_uri)
             if key == "stylesheet_file":
               c_stylesheetfile = make_c_str(value)
           elif key == "xdm_node":
@@ -1649,7 +1728,8 @@ cdef class PyXslt30Processor:
 
         Args:
 			template_name(str): The name of the template to invoke. If None is supplied then call the initial-template
-            **kwds: Possible optional arguments: source_file (str) or xdm_Value (PyXdmValue). Other allowed argument: stylesheet_file (str)
+            **kwds: Possible optional arguments: source_file (str) or  xdm_Value (PyXdmValue). Other allowed argument: stylesheet_file (str)
+            base_output_uri (str) which is used for for resolving relative URIs in the href attribute of the xsl:result-document instruction
 
 
 
@@ -1682,6 +1762,9 @@ cdef class PyXslt30Processor:
             if key == "source_file":
               c_sourcefile = make_c_str(value)
               self.thisxptr.setInitialMatchSelectionAsFile(c_sourcefile)
+            if key == "base_output_uri":
+              c_base_output_uri = make_c_str(value)
+              self.thisxptr.setBaseOutputURI(c_base_output_uri)
             if key == "stylesheet_file":
               c_stylesheetfile = make_c_str(value)
           elif key == "xdm_value":
@@ -1703,7 +1786,7 @@ cdef class PyXslt30Processor:
         Args:
 			template_name(str): The name of the template to invoke. If None is supplied then call the initial-template
             **kwds: Possible optional arguments: source_file (str) or xdm_node (PyXdmNode). Other allowed argument: stylesheet_file (str)
-
+                    base_output_uri (str) which is used for for resolving relative URIs in the href attribute of the xsl:result-document instruction
 
 
         Returns:
@@ -1737,6 +1820,9 @@ cdef class PyXslt30Processor:
             if key == "source_file":
               c_sourcefile = make_c_str(value)
               self.thisxptr.setInitialMatchSelectionAsFile(c_sourcefile)
+            if key == "base_output_uri":
+              c_base_output_uri = make_c_str(value)
+              self.thisxptr.setBaseOutputURI(c_base_output_uri)
             if key == "output_file":
               py_output_string = value.encode('UTF-8') if value is not None else None
               c_outputfile = py_output_string if value is not None else ""
@@ -1877,6 +1963,9 @@ cdef class PyXslt30Processor:
             if key == "source_file":
               c_sourcefile = make_c_str(value)
               self.thisxptr.setInitialMatchSelectionAsFile(c_sourcefile)
+            if key == "base_output_uri":
+              c_base_output_uri = make_c_str(value)
+              self.thisxptr.setBaseOutputURI(c_base_output_uri)
             if key == "stylesheet_file":
               c_stylesheetfile = make_c_str(value)
               if isfile(value) == False:
@@ -1951,6 +2040,9 @@ cdef class PyXslt30Processor:
             if key == "source_file":
               c_sourcefile = make_c_str(value)
               self.thisxptr.setInitialMatchSelectionAsFile(c_sourcefile)
+            if key == "base_output_uri":
+              c_base_output_uri = make_c_str(value)
+              self.thisxptr.setBaseOutputURI(c_base_output_uri)
             if key == "output_file":
               py_output_string = value.encode('UTF-8') if value is not None else None
               c_outputfile = py_output_string if value is not None else ""
@@ -1981,7 +2073,7 @@ cdef class PyXslt30Processor:
         self.thisxptr.callFunctionReturningFile(c_stylesheetfile, c_functionName, argumentV, len(args), c_outputfile)
 
 
-     def add_package(self, *file_names):
+     def add_package(self, list file_names):
         """
         add_package(self, file_name)
         Add an XSLT 3.0 package to the library.
@@ -1990,9 +2082,15 @@ cdef class PyXslt30Processor:
             file_name (str): The file name of the XSLT package
 
         """
-        """cdef const char* c_string
-        c_String = make_c_str(file_name)"""
         """TODO: add addPackages on array of file names self.thisxptr.addPackages(c_string)"""
+        len_ = len(file_names)
+        cdef const char* c_string
+        cdef const char ** cfile_names = self.thisxptr.createCharArray(len_)
+        for x in range(len_):
+          c_string = make_c_str(file_names[x])
+          cfile_names[x] = c_string
+        self.thisxptr.addPackages(cfile_names, len_)
+
 
      def clearPackages(self):
         """
@@ -2591,20 +2689,6 @@ cdef class PyXPathProcessor:
         if self.thisxpptr != NULL:
            del self.thisxpptr
 
-     def set_base_uri(self, uri):
-        """
-        set_base_uri(self, uri)
-        Set the static base URI for XPath expressions compiled using this PyXPathCompiler. The base URI is part of the static context,
-        and is used to resolve any relative URIs appearing within an XPath expression, for example a relative URI passed as an argument
-        to the doc() function. If no static base URI is supplied, then the current working directory is used.
-
-
-        Args:
-            uri (str): This string will be used as the static base URI
-
-        """
-        
-        self.thisxpptr.setBaseURI(make_c_str(uri))
 
      def evaluate(self, xpath_str):
         """
