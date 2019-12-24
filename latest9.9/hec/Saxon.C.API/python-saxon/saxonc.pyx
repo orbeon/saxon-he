@@ -2073,13 +2073,13 @@ cdef class PyXslt30Processor:
         self.thisxptr.callFunctionReturningFile(c_stylesheetfile, c_functionName, argumentV, len(args), c_outputfile)
 
 
-     def add_package(self, list file_names):
+     def add_packages(self, list file_names):
         """
-        add_package(self, file_name)
-        Add an XSLT 3.0 package to the library.
+        add_packages(self, file_name)
+        File names of XsltPackages stored on filestore are added to a set of packages.
 
         Args:
-            file_name (str): The file name of the XSLT package
+            file_names (list): The file names of the XSLT package as list
 
         """
         len_ = len(file_names)
