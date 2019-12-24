@@ -2082,7 +2082,6 @@ cdef class PyXslt30Processor:
             file_name (str): The file name of the XSLT package
 
         """
-        """TODO: add addPackages on array of file names self.thisxptr.addPackages(c_string)"""
         len_ = len(file_names)
         cdef const char* c_string
         cdef const char ** cfile_names = self.thisxptr.createCharArray(len_)
