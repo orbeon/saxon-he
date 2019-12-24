@@ -46,11 +46,30 @@ public:
 	*/
     SaxonProcessor * getSaxonProcessor(){return proc;}
 
-    //!set the current working directory
+    //!set the current working directory (cwd). This method also applies to the
+    // static base URI for XSLT stylesheets when supplied as lexical string.
     /**
+      * The cwd is used to set the base URI is part of the static context, and is used to resolve
+      * any relative URIs appearing within XSLT.
       * @param cwd - Current working directory
      */
    void setcwd(const char* cwd);
+
+
+      //!Set the base output URI.
+          /**
+           * <p>This defaults to the base URI of the {@link Destination} for the principal output
+           * of the transformation if a destination is supplied and its base URI is known.</p>
+           * <p>If a base output URI is supplied using this method then it takes precedence
+           * over any base URI defined in the supplied {@code Destination} object, and
+           * it may cause the base URI of the {@code Destination} object to be modified in situ.</p>
+           * <p> The base output URI is used for resolving relative URIs in the <code>href</code> attribute
+           * of the <code>xsl:result-document</code> instruction; it is accessible to XSLT stylesheet
+           * code using the XPath {@code current-output-uri()} function</p>
+           *
+           * @param baseUri - the base output URI
+           */
+      void setBaseOutputURI(const char * baseURI);
 
 
 
@@ -217,8 +236,18 @@ public:
      //! Clear property values set
     void clearProperties();
 
+    /**
+    * Utility method for working with Saxon/C on Python
+    */
     XdmValue ** createXdmValueArray(int len){
 	return (new XdmValue*[len]);
+    }
+
+    /**
+    * Utility method for working with Saxon/C on Python
+    */
+    XdmValue ** createCharArray(int len){
+	return (new char*[len]);
     }
 
     void deleteXdmValueArray(XdmValue ** arr, int len){

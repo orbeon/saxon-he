@@ -454,6 +454,21 @@ public:
     */
     XdmAtomicValue * makeAtomicValue(const char * type, const char * value);
 
+
+
+    XdmArray * makeArray(short * input, int length);
+
+
+
+
+    XdmArray * makeArray(int * input, int length);
+
+    XdmArray * makeArray(long * input, int length);
+
+
+
+    XdmArray * makeArray(bool * input, int length);
+
      /**
      * Get the string representation of the XdmValue.
      * @return char array

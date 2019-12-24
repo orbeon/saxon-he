@@ -111,7 +111,7 @@ XdmValue::XdmValue(jobject val, bool arr){
 
 
 			} else if (SaxonProcessor::sxn_environ->env->IsInstanceOf(resulti, functionItemClass)           == JNI_TRUE) {
-				continue;
+				xdmItem = new XdmFunctionItem(resulti);
 			}
 			//xdmItem->setProcessor(proc);
 			addXdmItem(xdmItem);

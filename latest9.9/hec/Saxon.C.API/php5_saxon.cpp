@@ -1065,6 +1065,22 @@ PHP_METHOD(XsltProcessor, transformToFile)
     }
 }
 
+PHP_METHOD(XsltProcessor, setBaseOutputURI)
+{
+    XsltProcessor *xsltProcessor;
+    char * name;
+    int len1;
+
+    if (zend_parse_parameters(ZEND_NUM_ARGS() TSRMLS_CC, "s", &name, &len1) == FAILURE) {
+        RETURN_NULL();
+    }
+    xsltProcessor_object *obj = (xsltProcessor_object *) zend_object_store_get_object(getThis() TSRMLS_CC);
+    xsltProcessor = obj->xsltProcessor;
+    if (xsltProcessor != NULL) {
+        xsltProcessor->setBaseOutputURI(name);
+    }
+}
+
 PHP_METHOD(XsltProcessor, compileFromFile)
 {
     XsltProcessor *xsltProcessor;
@@ -1519,6 +1535,22 @@ PHP_METHOD(Xslt30Processor, __destruct)
 
     delete xslt30Processor;
     
+}
+
+PHP_METHOD(Xslt30Processor, setBaseOutputURI)
+{
+    Xslt30Processor *xslt30Processor;
+    char * name;
+    int len1;
+
+    if (zend_parse_parameters(ZEND_NUM_ARGS() TSRMLS_CC, "s", &name, &len1) == FAILURE) {
+        RETURN_NULL();
+    }
+    xslt30Processor_object *obj = (xslt30Processor_object *) zend_object_store_get_object(getThis() TSRMLS_CC);
+    xslt30Processor = obj->xslt30Processor;
+    if (xslt30Processor != NULL) {
+        xslt30Processor->setBaseOutputURI(name);
+    }
 }
 
 

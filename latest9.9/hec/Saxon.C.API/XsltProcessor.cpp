@@ -75,6 +75,12 @@ void XsltProcessor::setOutputFile(const char * ofile) {
 	setProperty("o", ofile);
 }
 
+void XsltProcessor::setBaseOutputURI(const char * baseURI) {
+	if(baseURI != NULL) {
+  	    setProperty("baseoutput", baseURI);
+	}
+}
+
 void XsltProcessor::setParameter(const char* name, XdmValue * value) {
 	if(value != NULL && name != NULL){
 		value->incrementRefCount();

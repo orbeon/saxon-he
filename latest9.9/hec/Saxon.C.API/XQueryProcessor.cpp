@@ -310,7 +310,10 @@ std::map<std::string,std::string>& XQueryProcessor::getProperties(){
 				return xdmItem;
 			
 			} else if (SaxonProcessor::sxn_environ->env->IsInstanceOf(result, functionItemClass)           == JNI_TRUE) {
-				return NULL;
+                xdmItem =  new XdmFunctionItem(result);
+                xdmItem->setProcessor(proc);
+                SaxonProcessor::sxn_environ->env->DeleteLocalRef(result);
+                return xdmItem;
 			} else {
 				value = new XdmValue(result, true);
 				value->setProcessor(proc);

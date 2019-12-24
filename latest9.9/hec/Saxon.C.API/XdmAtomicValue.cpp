@@ -54,7 +54,6 @@
     }
 
     bool XdmAtomicValue::getBooleanValue(){
-	if(proc != NULL) {
 		jclass xdmNodeClass = lookForClass(SaxonProcessor::sxn_environ->env, "net/sf/saxon/s9api/XdmAtomicValue");
 		jmethodID bmID = (jmethodID) SaxonProcessor::sxn_environ->env->GetMethodID(xdmNodeClass,
 					"getBooleanValue",
@@ -69,14 +68,10 @@
 				return (bool)result;
 			}
 		}
-	} else {
-		std::cerr<<"Error: Processor not set in XdmAtomicValue"<<std::endl;
-	}
 	return false;
     }
 
     double XdmAtomicValue::getDoubleValue(){
-	if(proc != NULL) {
 		jclass xdmNodeClass = lookForClass(SaxonProcessor::sxn_environ->env, "net/sf/saxon/s9api/XdmAtomicValue");
 		jmethodID bmID = (jmethodID) SaxonProcessor::sxn_environ->env->GetMethodID(xdmNodeClass,
 					"getDoubleValue",
@@ -92,9 +87,7 @@
 			}
 //checkForException(*(SaxonProcessor::sxn_environ), NULL);
 		}
-	} else {
-		std::cerr<<"Error: Processor not set in XdmAtomicValue"<<std::endl;
-	}
+
 	return 0;
     }
 
@@ -105,7 +98,6 @@
     }
 
     long XdmAtomicValue::getLongValue(){
-		if(proc != NULL) {
 		jclass xdmNodeClass = lookForClass(SaxonProcessor::sxn_environ->env, "net/sf/saxon/s9api/XdmAtomicValue");
 		jmethodID bmID = (jmethodID) SaxonProcessor::sxn_environ->env->GetMethodID(xdmNodeClass,
 					"getLongValue",
@@ -120,8 +112,6 @@
 				return (long)result;
 			}
 		}
-	} else {
-		std::cerr<<"Error: Processor not set in XdmAtomicValue"<<std::endl;
-	}
+
 	return 0;
      }

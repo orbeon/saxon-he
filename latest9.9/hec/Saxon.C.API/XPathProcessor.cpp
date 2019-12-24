@@ -115,7 +115,7 @@ if (!mID) {
 				xdmItem = new XdmNode(resulti);
 
 			} else if (SaxonProcessor::sxn_environ->env->IsInstanceOf(resulti, functionItemClass)           == JNI_TRUE) {
-				continue;
+				xdmItem =  new XdmFunctionItem(resulti);
 			}
 			xdmItem->setProcessor(proc);
 			if(sizex == 1) {
@@ -304,9 +304,9 @@ void XPathProcessor::setBaseURI(const char * uriStr) {
 setProperty("resources", proc->getResourcesDirectory());
 jmethodID mID =
 		(jmethodID) SaxonProcessor::sxn_environ->env->GetMethodID(cppClass, "setBaseURI",
-				"(Ljava/lang/String;)Z");
+				"(Ljava/lang/String;)V");
 if (!mID) {
-	std::cerr << "Error: MyClassInDll." << "setBaseURI" << " not found\n"
+	std::cerr << "Error: Saxonc." << "setBaseURI" << " not found\n"
 			<< std::endl;
 
 } else {

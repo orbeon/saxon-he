@@ -80,8 +80,7 @@ public:
 
      //!Set the source node for validation
     /**
-     * @param The name of the file to be validated. Default is NULL
-       @return Result of the validation stored and returned as an XdmNode object
+     * @param The source document supplied as an XdmNode, which will be used to validate against the schema using the validate methods.
     */
     void setSourceNode(XdmNode * source);
 

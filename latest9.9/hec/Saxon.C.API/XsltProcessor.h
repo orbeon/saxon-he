@@ -56,6 +56,22 @@ public:
    void setcwd(const char* cwd);
 
 
+   //!Set the base output URI.
+       /**
+        * <p>This defaults to the base URI of the {@link Destination} for the principal output
+        * of the transformation if a destination is supplied and its base URI is known.</p>
+        * <p>If a base output URI is supplied using this method then it takes precedence
+        * over any base URI defined in the supplied {@code Destination} object, and
+        * it may cause the base URI of the {@code Destination} object to be modified in situ.</p>
+        * <p> The base output URI is used for resolving relative URIs in the <code>href</code> attribute
+        * of the <code>xsl:result-document</code> instruction; it is accessible to XSLT stylesheet
+        * code using the XPath {@code current-output-uri()} function</p>
+        *
+        * @param baseUri - the base output URI
+        */
+   void setBaseOutputURI(const char * baseURI);
+
+
 
     //!Set the source document from an XdmNode for the transformation.
      /**

@@ -1317,6 +1317,28 @@ PHP_METHOD(XsltProcessor, setOutputFile)
     }
 }
 
+
+PHP_METHOD(XsltProcessor, setBaseOutputURI)
+{
+    XsltProcessor *xsltProcessor;
+    char * baseOutputURI = NULL;
+    size_t len1;
+
+    if (zend_parse_parameters(ZEND_NUM_ARGS() , "s", &baseOutputURI, &len1) == FAILURE) {
+        RETURN_NULL();
+    }
+
+    zend_object* pobj = Z_OBJ_P(getThis());
+    xsltProcessor_object *obj = (xsltProcessor_object *)((char *)pobj - XtOffsetOf(xsltProcessor_object, std));
+    xsltProcessor = obj->xsltProcessor;
+    if (xsltProcessor != NULL && baseOutputURI != NULL) {
+
+	 xsltProcessor->setBaseOutputURI(baseOutputURI);
+
+
+    }
+}
+
 int size_t2int(size_t val) {
     return (val <= INT_MAX) ? (int)((ssize_t)val) : -1;
 }
@@ -1623,6 +1645,28 @@ PHP_METHOD(Xslt30Processor, __destruct)
      }
 
 
+}
+
+
+PHP_METHOD(Xslt30Processor, setBaseOutputURI)
+{
+    Xslt30Processor *xslt30Processor;
+    char * baseOutputURI = NULL;
+    size_t len1;
+
+    if (zend_parse_parameters(ZEND_NUM_ARGS() , "s", &baseOutputURI, &len1) == FAILURE) {
+        RETURN_NULL();
+    }
+
+    zend_object* pobj = Z_OBJ_P(getThis());
+    xslt30Processor_object *obj = (xslt30Processor_object *)((char *)pobj - XtOffsetOf(xslt30Processor_object, std));
+    xslt30Processor = obj->xslt30Processor;
+    if (xslt30Processor != NULL && baseOutputURI != NULL) {
+
+	 xslt30Processor->setBaseOutputURI(baseOutputURI);
+
+
+    }
 }
 
 

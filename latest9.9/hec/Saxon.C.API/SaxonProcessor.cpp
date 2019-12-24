@@ -563,14 +563,14 @@ const char * SaxonProcessor::getResourcesDirectory(){
 
 XdmNode * SaxonProcessor::parseXmlFromString(const char* source){
 	
-    jmethodID mID = (jmethodID)SaxonProcessor::sxn_environ->env->GetStaticMethodID(saxonCAPIClass, "parseXmlString", "(Lnet/sf/saxon/s9api/Processor;Lnet/sf/saxon/s9api/SchemaValidator;Ljava/lang/String;)Lnet/sf/saxon/s9api/XdmNode;");
+    jmethodID mID = (jmethodID)SaxonProcessor::sxn_environ->env->GetStaticMethodID(saxonCAPIClass, "parseXmlString", "(Ljava/lang/String;Lnet/sf/saxon/s9api/Processor;Lnet/sf/saxon/s9api/SchemaValidator;Ljava/lang/String;)Lnet/sf/saxon/s9api/XdmNode;");
     if (!mID) {
 	std::cerr<<"\nError: Saxonc."<<"parseXmlString()"<<" not found"<<std::endl;
         return NULL;
     }
 //TODO SchemaValidator
 
-   jobject xdmNodei = SaxonProcessor::sxn_environ->env->CallStaticObjectMethod(saxonCAPIClass, mID, proc, NULL, SaxonProcessor::sxn_environ->env->NewStringUTF(source));
+   jobject xdmNodei = SaxonProcessor::sxn_environ->env->CallStaticObjectMethod(saxonCAPIClass, mID, SaxonProcessor::sxn_environ->env->NewStringUTF(cwd.c_str()), proc, NULL, SaxonProcessor::sxn_environ->env->NewStringUTF(source));
 	if(xdmNodei) {
 		XdmNode * value = new XdmNode(xdmNodei);
 		value->setProcessor(this);
