@@ -280,13 +280,13 @@ public class Xslt30Processor extends SaxonCAPI {
         StringReader reader = new StringReader(str);
         compiler.setSchemaAware(schemaAware);
         source = new StreamSource(reader);
-       /* if (cwd != null && cwd.length() > 0) {
+        if (cwd != null && cwd.length() > 0) {
             if (!cwd.endsWith("/")) {
                 cwd = cwd.concat("/");
             }
-            source.setSystemId(cwd + "file");
+            source.setSystemId(cwd);
 
-        }    */
+        }
 
         compiler.setErrorListener(errorListener);
         try {
@@ -365,6 +365,7 @@ public class Xslt30Processor extends SaxonCAPI {
                     compiler.setParameter(qname, valueForCpp);
 
                 }
+
             }
 
 
@@ -1081,6 +1082,7 @@ public class Xslt30Processor extends SaxonCAPI {
     public void compilePackages(XsltCompiler compiler) throws SaxonApiException {
         try {
             PackageLibrary library = new PackageLibrary(compiler.getUnderlyingCompilerInfo(), packagesToLoad);
+            compiler.getUnderlyingCompilerInfo().setPackageLibrary(library);
         } catch (XPathException e) {
             throw new SaxonApiException(e);
         }
@@ -1170,7 +1172,7 @@ public class Xslt30Processor extends SaxonCAPI {
         // Processor processor = cpp.getProcessor();
         // XsltTransformer transformer = cpp.xsltParseStylesheetFile(args[0]).load();
         //XdmNode sourceNode = cpp.xmlParseFile(cwd, "xml/foo.xml");
-        XdmNode sourceNode2 = SaxonCAPI.parseXmlString(processor, null, "<result><assert-xml file=\"type-0501.out\"/></result>");
+        XdmNode sourceNode2 = SaxonCAPI.parseXmlString(null, processor, null, "<result><assert-xml file=\"type-0501.out\"/></result>");
         XdmValue node1 = (XdmValue) cpp.createXdmAtomicItem("string", "textXXXXX");
 
         XdmValue resultNode2 = cpp.parseXmlString("<?xml version=\"1.0\" encoding=\"UTF-8\"?><html><head><title>Untitled</title></head><body leftmargin=\"100\"></body></html>");

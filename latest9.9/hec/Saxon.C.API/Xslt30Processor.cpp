@@ -865,7 +865,7 @@ XdmValue * Xslt30Processor::applyTemplatesReturningValue(const char * stylesheet
               	jmethodID apmID =
               			(jmethodID) SaxonProcessor::sxn_environ->env->GetMethodID(cppClass,
               					"addPackages",
-              					"([Ljava/lang/String;)V");
+              					"(Ljava/lang/String;[Ljava/lang/String;)V");
               	if (!apmID) {
               		std::cerr << "Error: "<<getDllname() << "addPackage" << " not found\n"
               				<< std::endl;
