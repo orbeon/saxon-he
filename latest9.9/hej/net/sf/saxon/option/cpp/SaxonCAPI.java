@@ -557,7 +557,7 @@ public class SaxonCAPI {
      */
     public XdmNode parseXmlString(SchemaValidator validator, String xml) throws SaxonApiException {
         try {
-            doc = parseXmlString(processor, validator, xml);
+            doc = parseXmlString(null, processor, validator, xml);
             if (debug) {
                 System.err.println("xmlParseString, Processor: " + System.identityHashCode(processor));
             }
@@ -629,14 +629,22 @@ public class SaxonCAPI {
     }
 
     // This method used to be used internally
-    public static XdmNode parseXmlString(Processor processor, SchemaValidator validator, String xml) throws SaxonApiException {
+    public static XdmNode parseXmlString(String cwd, Processor processor, SchemaValidator validator, String xml) throws SaxonApiException {
         try {
             StringReader reader = new StringReader(xml);
             DocumentBuilder builder = processor.newDocumentBuilder();
             if (validator != null) {
                 builder.setSchemaValidator(validator);
             }
-            XdmNode doc = builder.build(new SAXSource(new InputSource(reader)));
+            Source source = new SAXSource(new InputSource(reader));
+            if (cwd != null && cwd.length() > 0) {
+                if (!cwd.endsWith("/")) {
+                    cwd = cwd.concat("/");
+                }
+                source.setSystemId(cwd);
+            }
+            
+            XdmNode doc = builder.build(source);
             if (debug) {
                 System.err.println("xmlParseString, Processor: " + System.identityHashCode(processor));
                 System.err.println("XdmNode: " + System.identityHashCode(doc));
