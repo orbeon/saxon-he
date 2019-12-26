@@ -2075,7 +2075,7 @@ cdef class PyXslt30Processor:
 
      def add_packages(self, list file_names):
         """
-        add_packages(self, file_name)
+        add_packages(self, list file_names)
         File names of XsltPackages stored on filestore are added to a set of packages.
 
         Args:
