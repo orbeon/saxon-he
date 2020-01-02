@@ -16,9 +16,9 @@ import net.sf.saxon.om.Item;
 import net.sf.saxon.trans.XPathException;
 import net.sf.saxon.value.StringValue;
 
-import java.io.FileNotFoundException;
-import java.io.IOException;
-import java.io.InputStream;
+import java.io.*;
+import java.net.URL;
+import java.net.URLConnection;
 
 /**
  * This class implements th interface Resource. We handle unparded text here.
@@ -32,24 +32,41 @@ public class UnparsedTextResource implements Resource {
     private String encoding;
     private String href = null;
     private String unparsedText = null;
-    private InputStream inputStream;
+    //private InputStream inputStream;
 
     /**
      * Create an UnparsedTextResource
-     * @param href the URI of the resource
-     * @param details the input stream giving access to the content of the resource, plus encoding info
+     * @param details information about the input
+     * @throws XPathException for an unsupported encoding
      */
 
-    public UnparsedTextResource(String href, AbstractResourceCollection.InputDetails details) {
-        this.href = href;
-        this.inputStream = details.inputStream;
+    public UnparsedTextResource(AbstractResourceCollection.InputDetails details) throws XPathException {
+        this.href = details.resourceUri;
         this.contentType = details.contentType;
         this.encoding = details.encoding;
+        if (details.characterContent != null) {
+            unparsedText = details.characterContent;
+        } else if (details.binaryContent != null) {
+            if (details.encoding == null) {
+                try {
+                    InputStream is = new ByteArrayInputStream(details.binaryContent);
+                    details.encoding = StandardUnparsedTextResolver.inferStreamEncoding(is, null);
+                    is.close();
+                } catch (IOException e) {
+                    throw new XPathException(e); // cannot happen
+                }
+            }
+            try {
+                this.unparsedText = new String(details.binaryContent, details.encoding);
+            } catch (UnsupportedEncodingException e) {
+                throw new XPathException(e);
+            }
+        }
     }
 
     public final static ResourceFactory FACTORY = new ResourceFactory() {
-        public Resource makeResource(Configuration config, String resourceURI, String contentType, AbstractResourceCollection.InputDetails details) throws XPathException {
-            return new UnparsedTextResource(resourceURI, details);
+        public Resource makeResource(Configuration config, AbstractResourceCollection.InputDetails details) throws XPathException {
+            return new UnparsedTextResource(details);
         }
     };
 
@@ -57,31 +74,35 @@ public class UnparsedTextResource implements Resource {
         return href;
     }
 
-    public InputStream getInputStream() {
-        return inputStream;
-    }
-
     public String getEncoding() {
         return encoding;
     }
 
-    public Item getItem(XPathContext context) throws XPathException {
+    public String getContent() throws XPathException {
         if (unparsedText == null) {
-            StringBuilder builder = null;
             try {
+                URL url = new URL(href);
+                URLConnection connection = url.openConnection();
+                InputStream stream = connection.getInputStream();
+                StringBuilder builder = null;
+                
                 String enc = encoding;
                 if (enc == null) {
-                    enc = StandardUnparsedTextResolver.inferStreamEncoding(inputStream, null);
+                    enc = StandardUnparsedTextResolver.inferStreamEncoding(stream, null);
                 }
-                builder = CatalogCollection.makeStringBuilderFromStream(inputStream, enc);
+                builder = CatalogCollection.makeStringBuilderFromStream(stream, enc);
+                unparsedText = builder.toString();
             } catch (FileNotFoundException e) {
                 throw new XPathException(e);
             } catch (IOException e) {
                 throw new XPathException(e);
             }
-            unparsedText = builder.toString();
         }
-        return new StringValue(unparsedText);
+        return unparsedText;
+    }
+
+    public Item getItem(XPathContext context) throws XPathException {
+        return new StringValue(getContent());
     }
 
     /**

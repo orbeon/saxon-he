@@ -19,13 +19,11 @@ public interface ResourceFactory {
     /**
      * Create a Resource with given content
      * @param config the Saxon configuration
-     * @param resourceURI the URI identifying the resource
-     * @param contentType the content type ( = media type or MIME type) of the resource
-     * @param details the stream of bytes making up the binary content of the resource
+     * @param details information about the resource
      * @return the resource
      * @throws XPathException if a failure occurs creating the resource
      */
-    Resource makeResource(Configuration config, String resourceURI, String contentType, AbstractResourceCollection.InputDetails details)
+    Resource makeResource(Configuration config, AbstractResourceCollection.InputDetails details)
         throws XPathException;
 }
 

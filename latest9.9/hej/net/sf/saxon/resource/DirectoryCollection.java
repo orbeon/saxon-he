@@ -91,31 +91,31 @@ public class DirectoryCollection extends AbstractResourceCollection {
         Iterator<String> resourceURIs = getResourceURIs(context);
 
         return new MappingJavaIterator<>(resourceURIs,
-                                         in -> {
-                                             try {
-                                                 InputDetails details = getInputDetails(in);
-                                                 details.parseOptions = options;
-                                                 Resource resource = makeResource(context.getConfiguration(), details, in);
-                                                 if (resource != null) {
-                                                     if (metadata) {
-                                                         return makeMetadataResource(resource, details);
-                                                     } else {
-                                                         return resource;
-                                                     }
-                                                 }
-                                                 return null;
-                                             } catch (XPathException e) {
-                                                 int onError = params.getOnError();
-                                                 if (onError == URIQueryParameters.ON_ERROR_FAIL) {
-                                                     return new FailedResource(in, e);
-                                                 } else if (onError == URIQueryParameters.ON_ERROR_WARNING) {
-                                                     context.getController().warning("collection(): failed to parse " + in + ": " + e.getMessage(), e.getErrorCodeLocalPart(), null);
-                                                     return null;
-                                                 } else {
-                                                     return null;
-                                                 }
-                                             }
-                                         });
+             in -> {
+                 try {
+                     InputDetails details = getInputDetails(in);
+                     details.parseOptions = options;
+                     Resource resource = makeResource(context.getConfiguration(), details);
+                     if (resource != null) {
+                         if (metadata) {
+                             return makeMetadataResource(resource, details);
+                         } else {
+                             return resource;
+                         }
+                     }
+                     return null;
+                 } catch (XPathException e) {
+                     int onError = params.getOnError();
+                     if (onError == URIQueryParameters.ON_ERROR_FAIL) {
+                         return new FailedResource(in, e);
+                     } else if (onError == URIQueryParameters.ON_ERROR_WARNING) {
+                         context.getController().warning("collection(): failed to parse " + in + ": " + e.getMessage(), e.getErrorCodeLocalPart(), null);
+                         return null;
+                     } else {
+                         return null;
+                     }
+                 }
+             });
     }
 
     /**

@@ -18,8 +18,6 @@ import net.sf.saxon.trans.XPathException;
 import net.sf.saxon.value.BooleanValue;
 import net.sf.saxon.value.StringValue;
 
-import java.io.IOException;
-import java.io.InputStream;
 import java.util.HashMap;
 import java.util.Map;
 
@@ -30,41 +28,22 @@ import java.util.Map;
 public class JSONResource implements Resource {
     private String href;
     private String jsonStr;
-    private InputStream inputStream;
-    private String encoding;
+    private AbstractResourceCollection.InputDetails details;
 
     public final static ResourceFactory FACTORY = new ResourceFactory() {
-        public Resource makeResource(Configuration config, String resourceURI, String contentType, AbstractResourceCollection.InputDetails details) throws XPathException {
-            return new JSONResource(resourceURI, details);
+        public Resource makeResource(Configuration config, AbstractResourceCollection.InputDetails details) throws XPathException {
+            return new JSONResource(details);
         }
     };
 
     /**
      * Create the resource
-     * @param href the URI of the resource
      * @param details the inputstream holding the JSON content plus details of encoding etc
      */
 
-    public JSONResource(String href, AbstractResourceCollection.InputDetails details) {
-        this.href = href;
-        this.inputStream = details.inputStream;
-        this.encoding = details.encoding;
-        if (encoding == null) {
-            encoding = "UTF-8";
-        }
-    }
-
-    /**
-     * Create the resource
-     *
-     * @param href the URI of the resource
-     * @param in   the inputstream holding the JSON content
-     */
-
-    public JSONResource(String href, InputStream in) {
-        this.href = href;
-        this.inputStream = in;
-        this.encoding = "utf-8";
+    public JSONResource(AbstractResourceCollection.InputDetails details) {
+        this.href = details.resourceUri;
+        this.details = details;
     }
 
 
@@ -74,12 +53,7 @@ public class JSONResource implements Resource {
 
     public Item getItem(XPathContext context) throws XPathException {
         if (jsonStr == null) {
-            try {
-                StringBuilder sb = CatalogCollection.makeStringBuilderFromStream(inputStream, encoding);
-                jsonStr = sb.toString();
-            } catch (IOException e) {
-                throw new XPathException(e);
-            }
+            jsonStr = details.obtainCharacterContent();
         }
         Map<String, Sequence<?>> options = new HashMap<>();
         options.put("liberal", BooleanValue.FALSE);

@@ -13,9 +13,8 @@ import net.sf.saxon.lib.Resource;
 import net.sf.saxon.trans.XPathException;
 import net.sf.saxon.value.Base64BinaryValue;
 
-import java.io.ByteArrayInputStream;
-import java.io.UnsupportedEncodingException;
 import java.net.URI;
+import java.nio.charset.StandardCharsets;
 
 /**
  * This class handles URIs using the data: URI scheme defined in RFC 2397
@@ -29,10 +28,10 @@ public class DataURIScheme {
      * @param uri a valid URI using the data: URI scheme
      * @return either a BinaryResource (if the URI specifies "base64") or an UnparsedTextResource
      * (otherwise) representing the data part of the URI (the part after the comma)
-     * @throws IllegalArgumentException if the URI is invalid
+     * @throws XPathException if the URI is invalid, or uses an unknown encoding, or cannot be decoded
      */
 
-    public static Resource decode(URI uri) {
+    public static Resource decode(URI uri) throws XPathException {
         assert uri.getScheme().equals("data");
         String path = uri.getSchemeSpecificPart();
         int comma = path.indexOf(',');
@@ -47,7 +46,7 @@ public class DataURIScheme {
             try {
                 byte[] octets = Base64BinaryValue.decode(content);
                 BinaryResource resource =
-                        new BinaryResource(uri.toString(), contentType, new ByteArrayInputStream(octets));
+                        new BinaryResource(uri.toString(), contentType, octets);
                 resource.setData(octets);
                 return resource;
             } catch (XPathException e) {
@@ -58,18 +57,15 @@ public class DataURIScheme {
             if (encoding == null) {
                 encoding = "US-ASCII";
             }
-            try {
-                byte[] utf8content = content.getBytes("UTF-8");
-                AbstractResourceCollection.InputDetails details = new AbstractResourceCollection.InputDetails();
-                details.contentType = getMediaType(contentType);
-                details.encoding = encoding;
-                details.inputStream = new ByteArrayInputStream(utf8content);
-                details.onError = URIQueryParameters.ON_ERROR_FAIL;
-                details.parseOptions = new ParseOptions();
-                return new UnparsedTextResource(uri.toString(), details);
-            } catch (UnsupportedEncodingException e) {
-                throw new IllegalArgumentException("Unsupported encoding " + encoding);
-            }
+            byte[] utf8content = content.getBytes(StandardCharsets.UTF_8);
+            AbstractResourceCollection.InputDetails details = new AbstractResourceCollection.InputDetails();
+            details.resourceUri = uri.toString();
+            details.contentType = getMediaType(contentType);
+            details.encoding = encoding;
+            details.binaryContent = utf8content;
+            details.onError = URIQueryParameters.ON_ERROR_FAIL;
+            details.parseOptions = new ParseOptions();
+            return new UnparsedTextResource(details);
         }
     }
 

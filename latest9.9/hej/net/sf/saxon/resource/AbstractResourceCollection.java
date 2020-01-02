@@ -19,7 +19,10 @@ import org.xml.sax.XMLReader;
 
 import javax.xml.transform.TransformerException;
 import java.io.*;
-import java.net.*;
+import java.net.URI;
+import java.net.URISyntaxException;
+import java.net.URL;
+import java.net.URLConnection;
 
 /**
  * AbstractCollection is an abstract superclass for the various implementations
@@ -153,27 +156,76 @@ public abstract class AbstractResourceCollection implements ResourceCollection {
     }
 
     public static class InputDetails {
-        public InputStream inputStream;
+        public String resourceUri;
+        public byte[] binaryContent;
+        public String characterContent;
         public String contentType;
         public String encoding;
         public ParseOptions parseOptions;
         public int onError = URIQueryParameters.ON_ERROR_FAIL;
+
+        public InputStream getInputStream() throws IOException {
+            URL url = new URL(resourceUri);
+            URLConnection connection = url.openConnection();
+            return connection.getInputStream();
+        }
+
+        public byte[] obtainBinaryContent() throws XPathException {
+            if (binaryContent != null) {
+                return binaryContent;
+            } else if (characterContent != null) {
+                String e = encoding != null ? encoding : "UTF-8";
+                try {
+                    return characterContent.getBytes(e);
+                } catch (UnsupportedEncodingException ex) {
+                    throw new XPathException(e);
+                }
+            } else {
+                try (InputStream stream = getInputStream()) {
+                    return BinaryResource.readBinaryFromStream(stream, resourceUri);
+                } catch (IOException e) {
+                    throw new XPathException(e);
+                }
+            }
+        }
+
+        public String obtainCharacterContent() throws XPathException {
+            if (characterContent != null) {
+                 return characterContent;
+            } else if (binaryContent != null && encoding != null) {
+                try {
+                    return new String(binaryContent, encoding);
+                } catch (UnsupportedEncodingException e) {
+                    throw new XPathException(e);
+                }
+            } else {
+                try (InputStream stream = getInputStream()) {
+                    StringBuilder builder = null;
+                    String enc = encoding;
+                    if (enc == null) {
+                        enc = StandardUnparsedTextResolver.inferStreamEncoding(stream, null);
+                    }
+                    builder = CatalogCollection.makeStringBuilderFromStream(stream, enc);
+                    return characterContent = builder.toString();
+                } catch (IOException e) {
+                    throw new XPathException(e);
+                }
+            }
+        }
     }
 
     protected InputDetails getInputDetails(String resourceURI) throws XPathException {
 
         InputDetails inputDetails = new InputDetails();
         try {
-
+            inputDetails.resourceUri = resourceURI;
             URI uri = new URI(resourceURI);
-
             if ("file".equals(uri.getScheme())) {
-                File file = new File(uri);
-                inputDetails.inputStream = new BufferedInputStream(new FileInputStream(file));
+                inputDetails.contentType = guessContentTypeFromName(resourceURI);
             } else {
                 URL url = uri.toURL();
                 URLConnection connection = url.openConnection();
-                inputDetails.inputStream = connection.getInputStream();
+                //inputDetails.inputStream = connection.getInputStream();
                 inputDetails.contentType = connection.getContentType();
                 inputDetails.encoding = connection.getContentEncoding();
                 for (String param : inputDetails.contentType.replace(" ", "").split(";")) {
@@ -185,36 +237,37 @@ public abstract class AbstractResourceCollection implements ResourceCollection {
                 }
 
             }
-        } catch (URISyntaxException | IOException e) {
+
+            if (inputDetails.contentType == null || config.getResourceFactoryForMediaType(inputDetails.contentType) == null) {
+                InputStream stream;
+                if ("file".equals(uri.getScheme())) {
+                    File file = new File(uri);
+                    stream = new BufferedInputStream(new FileInputStream(file));
+                    if (file.length() <= 1024) {
+                        inputDetails.binaryContent = BinaryResource.readBinaryFromStream(stream, resourceURI);
+                        stream.close();
+                        stream = new ByteArrayInputStream(inputDetails.binaryContent);
+                    }
+                } else {
+                    URL url = uri.toURL();
+                    URLConnection connection = url.openConnection();
+                    stream = connection.getInputStream();
+                }
+                inputDetails.contentType = guessContentTypeFromContent(stream);
+                stream.close();
+            }
+            if (params != null && params.getOnError() != null) {
+                inputDetails.onError = params.getOnError();
+            }
+            return inputDetails;
+
+        } catch(URISyntaxException | IOException e){
             throw new XPathException(e);
         }
-        if (inputDetails.contentType == null || config.getResourceFactoryForMediaType(inputDetails.contentType) == null) {
-            inputDetails.contentType = guessContentType(resourceURI, inputDetails.inputStream);
-        }
-        if (params != null && params.getOnError() != null) {
-            inputDetails.onError = params.getOnError();
-        }
-        return inputDetails;
 
     }
 
-    /**
-     * Guess the content type of a resource from its name and/or its content
-     *
-     * @param resourceURI the resource URI
-     * @param stream      the content of the resource. The stream must be positioned at the start.
-     *                    The method looks ahead in this stream
-     *                    but resets the current position on exit.
-     * @return the media type, or null.
-     */
-
-    protected String guessContentType(String resourceURI, InputStream stream) {
-        String contentTypeFromStream = null;
-        try {
-            contentTypeFromStream = URLConnection.guessContentTypeFromStream(stream);
-        } catch (IOException err) {
-            // ignore the error
-        }
+    protected String guessContentTypeFromName(String resourceURI) {
         String contentTypeFromName = URLConnection.guessContentTypeFromName(resourceURI);
         String extension = null;
         if (contentTypeFromName == null) {
@@ -223,22 +276,14 @@ public abstract class AbstractResourceCollection implements ResourceCollection {
                 contentTypeFromName = config.getMediaTypeForFileExtension(extension);
             }
         }
-        if (contentTypeFromName == null) {
-            return contentTypeFromStream;
-        } else {
-            if (contentTypeFromStream == null) {
-                return contentTypeFromName;
-            } else if (contentTypeFromStream.equals(contentTypeFromName)) {
-                return contentTypeFromStream;
-            } else {
-                // we've got two candidates: which is more reliable?
-                // At this stage, it's pure pragmatism
-                if ("xsl".equals(extension) || "xslt".equals(extension) || "xml".equals(extension)) {
-                    return contentTypeFromName;
-                } else {
-                    return contentTypeFromStream;
-                }
-            }
+        return contentTypeFromName;
+    }
+
+    protected String guessContentTypeFromContent(InputStream stream) {
+        try {
+            return URLConnection.guessContentTypeFromStream(stream);
+        } catch (IOException err) {
+            return null;
         }
     }
 
@@ -264,15 +309,11 @@ public abstract class AbstractResourceCollection implements ResourceCollection {
      * subclass.
      *
      * @param config      The Saxon configuration
-     * @param details     Details of the input, including the input stream delivering the content of the resource.
-     *                    The method is expected to
-     *                    consume this input stream; the caller will close it on return.
-     * @param resourceURI the URI of the entry within the ZIP or JAR file; this will by default be
-     *                    in the form collectionURI!path
+     * @param details     Details of the input.
      * @return a newly created Resource representing the content of this entry in the ZIP or JAR file
      */
 
-    public Resource makeResource(Configuration config, InputDetails details, String resourceURI) throws XPathException {
+    public Resource makeResource(Configuration config, InputDetails details) throws XPathException {
 
         ResourceFactory factory = null;
         String contentType = details.contentType;
@@ -283,7 +324,7 @@ public abstract class AbstractResourceCollection implements ResourceCollection {
             factory = BinaryResource.FACTORY;
         }
 
-        return factory.makeResource(config, resourceURI, contentType, details);
+        return factory.makeResource(config, details);
     }
 
     public Resource makeTypedResource(Configuration config, Resource basicResource) throws XPathException {
@@ -295,14 +336,16 @@ public abstract class AbstractResourceCollection implements ResourceCollection {
         }
         if (basicResource instanceof BinaryResource) {
             InputDetails details = new InputDetails();
-            details.inputStream = new ByteArrayInputStream(((BinaryResource)basicResource).getData());
+            details.binaryContent = ((BinaryResource)basicResource).getData();
             details.contentType = mediaType;
-            return factory.makeResource(config, basicResource.getResourceURI(), mediaType, details);
+            details.resourceUri = basicResource.getResourceURI();
+            return factory.makeResource(config, details);
         } else if (basicResource instanceof UnparsedTextResource) {
             InputDetails details = new InputDetails();
-            details.inputStream = ((UnparsedTextResource) basicResource).getInputStream();
+            details.characterContent = ((UnparsedTextResource) basicResource).getContent();
             details.contentType = mediaType;
-            return factory.makeResource(config, basicResource.getResourceURI(), mediaType, details);
+            details.resourceUri = basicResource.getResourceURI();
+            return factory.makeResource(config, details);
         } else {
             return basicResource;
         }
@@ -317,7 +360,7 @@ public abstract class AbstractResourceCollection implements ResourceCollection {
 
     public Resource makeResource(Configuration config, String resourceURI) throws XPathException {
         InputDetails details = getInputDetails(resourceURI);
-        return makeResource(config, details, resourceURI);
+        return makeResource(config, details);
     }
 
     /**

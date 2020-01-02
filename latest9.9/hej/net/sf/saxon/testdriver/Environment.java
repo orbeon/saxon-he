@@ -784,27 +784,25 @@ public class Environment implements URIResolver {
                 if (href != null) {
                     if (href.startsWith("http")) {
                         try {
+                            details.resourceUri = href;
                             URL url = new URL(href);
                             URLConnection connection = url.openConnection();
                             if (details.contentType == null) {
                                 details.contentType = connection.getContentType();
                             }
-                            details.inputStream = connection.getInputStream();
                         } catch (IOException e) {
                             e.printStackTrace();
                         }
                     } else {
                         File file = new File(env.getBaseURI().resolve(href));
+                        details.resourceUri = file.toURI().toString();
                         try {
-                            details.inputStream = new FileInputStream(file);
-                            Resource resourcej = collectioni.makeResource(config, details, file.toURI().toString());
+                            Resource resourcej = collectioni.makeResource(config, details);
                             if (resourcej != null) {
                                 resourcesi.add(resourcej);
                             } else {
                                 driver.println("** Error in building collection environment: Resource " + href + " not found: ");
                             }
-                        } catch (IOException e) {
-                            driver.println("** IO Error in building collection environment: " + e.getMessage());
 
                         } catch (XPathException e) {
                             driver.println("** Error in building collection environment: " + e.getMessage());

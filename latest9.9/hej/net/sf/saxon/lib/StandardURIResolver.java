@@ -32,6 +32,8 @@ import javax.xml.transform.Source;
 import javax.xml.transform.sax.SAXSource;
 import java.io.ByteArrayInputStream;
 import java.io.InputStream;
+import java.io.Reader;
+import java.io.StringReader;
 import java.net.URI;
 import java.net.URISyntaxException;
 
@@ -218,8 +220,8 @@ public class StandardURIResolver implements NonDelegatingURIResolver {
                     source.setSystemId(uriString);
                 } else {
                     assert resource instanceof UnparsedTextResource;
-                    InputStream is = ((UnparsedTextResource)resource).getInputStream();
-                    source = new SAXSource(new InputSource(is));
+                    Reader reader = new StringReader(((UnparsedTextResource)resource).getContent());
+                    source = new SAXSource(new InputSource(reader));
                     source.setSystemId(uriString);
                 }
             } else {

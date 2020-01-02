@@ -89,8 +89,7 @@ public class StandardUnparsedTextResolver implements UnparsedTextURIResolver {
 
             } else {
                 assert resource instanceof UnparsedTextResource;
-                inputStream = ((UnparsedTextResource) resource).getInputStream();
-                contentEncoding = ((UnparsedTextResource) resource).getEncoding();
+                return new StringReader(((UnparsedTextResource) resource).getContent());
             }
             if (encoding == null) {
                 encoding = contentEncoding;

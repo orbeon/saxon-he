@@ -302,13 +302,22 @@ public class JarCollection extends AbstractResourceCollection {
                                 next = new FailedResource(null, new XPathException(e));
                             }
                         }
-                        InputStream entryContent = new ByteArrayInputStream(output.toByteArray());
                         InputDetails details = new InputDetails();
-                        details.inputStream = entryContent;
-                        details.contentType = guessContentType(entry.getName(), entryContent);
+                        details.binaryContent = output.toByteArray();
+                        details.contentType = guessContentTypeFromName(entry.getName());
+                        if (details.contentType == null) {
+                            ByteArrayInputStream bais = new ByteArrayInputStream(details.binaryContent);
+                            details.contentType = guessContentTypeFromContent(bais);
+                            try {
+                                bais.close();
+                            } catch (IOException e) {
+                                details.contentType = null;
+                            }
+                        }
                         details.parseOptions = options;
                         resourceURI = makeResourceURI(entry.getName());
-                        next = makeResource(context.getConfiguration(), details, resourceURI);
+                        details.resourceUri = resourceURI;
+                        next = makeResource(context.getConfiguration(), details);
                         if (metadata) {
                             Map<String, GroundedValue<?>> properties = makeProperties(entry);
                             next = new MetadataResource(resourceURI, next, properties);

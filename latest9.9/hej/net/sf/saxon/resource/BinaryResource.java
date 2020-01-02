@@ -16,7 +16,13 @@ import net.sf.saxon.om.Item;
 import net.sf.saxon.trans.XPathException;
 import net.sf.saxon.value.Base64BinaryValue;
 
-import java.io.*;
+import java.io.BufferedInputStream;
+import java.io.ByteArrayOutputStream;
+import java.io.IOException;
+import java.io.InputStream;
+import java.net.URI;
+import java.net.URISyntaxException;
+import java.net.URL;
 import java.net.URLConnection;
 
 
@@ -26,31 +32,33 @@ public class BinaryResource implements Resource {
     private String contentType = null;
     private byte[] data;
     private URLConnection connection = null;
-    private InputStream inputStream = null;
 
     /**
      * ResourceFactory suitable for creating a BinaryResource
      */
 
     public static final ResourceFactory FACTORY = new ResourceFactory() {
-        public Resource makeResource(Configuration config, String resourceURI, String contentType, AbstractResourceCollection.InputDetails details) throws XPathException {
-            return new BinaryResource(resourceURI, contentType, details.inputStream);
+        public Resource makeResource(Configuration config, AbstractResourceCollection.InputDetails details) throws XPathException {
+            return new BinaryResource(details);
         }
     };
 
     /**
      * Create a binary resource
      *
-     * @param href        the URI of the resource
-     * @param contentType the media type of the resource
-     * @param in          inputStream containing the binary content of the resource. Note that the InputStream
-     *                    is not consumed by this method, but is retained for use by the getItem() method.
+     * @param in  details about the resource
      */
 
-    public BinaryResource(String href, String contentType, InputStream in) {
+    public BinaryResource(AbstractResourceCollection.InputDetails in) {
+        this.contentType = in.contentType;
+        this.href = in.resourceUri;
+        this.data = in.binaryContent;
+    }
+
+    public BinaryResource(String href, String contentType, byte[] content) {
         this.contentType = contentType;
         this.href = href;
-        this.inputStream = in;
+        this.data = content;
     }
 
     /**
@@ -116,7 +124,7 @@ public class BinaryResource implements Resource {
      * @param in the input stream. The method consumes the input stream but does not close it.
      * @param path file name or URI used only for diagnostics
      * @return byte array representing the content of the InputStream
-     * @throws XPathException
+     * @throws XPathException if a failure occurs obtaining a connection or reading the stream
      */
 
     public static byte[] readBinaryFromStream(InputStream in, String path) throws XPathException {
@@ -142,11 +150,16 @@ public class BinaryResource implements Resource {
         } else if (connection != null) {
             data = readBinaryFromConn(connection);
             return new Base64BinaryValue(data);
-        } else if (inputStream != null) {
-            data = readBinaryFromStream(inputStream, href);
-            return new Base64BinaryValue(data);
+        } else {
+            try {
+                URL url = new URI(href).toURL();
+                connection = url.openConnection();
+                data = readBinaryFromConn(connection);
+                return new Base64BinaryValue(data);
+            } catch (URISyntaxException | IOException e) {
+                throw new XPathException(e);
+            }
         }
-        return null;
 
     }
 

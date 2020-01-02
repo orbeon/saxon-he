@@ -73,7 +73,8 @@ public class CatalogCollection extends AbstractResourceCollection {
                     InputDetails id = getInputDetails(in);
                     id.parseOptions = new ParseOptions(context.getConfiguration().getParseOptions());
                     id.parseOptions.setSpaceStrippingRule(whitespaceRules);
-                    return makeResource(context.getConfiguration(), id, in);
+                    id.resourceUri = in;
+                    return makeResource(context.getConfiguration(), id);
                 }
             } catch (XPathException e) {
                 int onError = params == null ? URIQueryParameters.ON_ERROR_FAIL : params.getOnError();
