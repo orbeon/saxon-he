@@ -628,7 +628,6 @@ public class SaxonCAPI {
         return valueForCpp;
     }
 
-    // This method used to be used internally
     public static XdmNode parseXmlString(String cwd, Processor processor, SchemaValidator validator, String xml) throws SaxonApiException {
         try {
             StringReader reader = new StringReader(xml);
