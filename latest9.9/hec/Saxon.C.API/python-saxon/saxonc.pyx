@@ -55,7 +55,15 @@ cdef class PySaxonProcessor:
             license(bool): Flag that a license is to be used. The Default is false.
             
         """
-        self.thisptr = new saxoncClasses.SaxonProcessor(license)
+        cdef const char * c_str = NULL
+        if config_file is not None:
+            c_str = make_c_str(config_file)
+            if c_str is not NULL:
+                self.thisptr = new saxoncClasses.SaxonProcessor(c_str)
+            else:
+                raise Exception("Configuration file for SaxonProcessor is None")
+        else:
+            self.thisptr = new saxoncClasses.SaxonProcessor(license)
             
     def __dealloc__(self):
         """The destructor."""
@@ -3431,7 +3439,7 @@ cdef class PyXdmItem(PyXdmValue):
      def get_node_value(self):
         """
         get_node_value(self)
-        Get the subclass PyXdmNode for this PyXdmItem object current object is an atomic value
+        Get the subclass PyXdmNode for this PyXdmItem object current object if it is a node value
     
         Returns:
             PyXdmNode: Subclass this object to PyXdmNode or error 
@@ -3459,7 +3467,7 @@ cdef class PyXdmItem(PyXdmValue):
      def get_atomic_value(self):
         """
         get_atomic_value(self)
-        Get the subclass PyXdmAtomicValue for this PyXdmItem object current object is an atomic value
+        Get the subclass PyXdmAtomicValue for this PyXdmItem object current object if it is an atomic value
     
         Returns:
             PyXdmAtomicValue: Subclass this object to PyXdmAtomicValue or error 
