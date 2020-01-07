@@ -26,7 +26,7 @@ def test_create_bool():
     assert isinstance(sp2, PySaxonProcessor)
 
 
-@pytest.mark.skip('Error: SaxonDll.processor is NULL in constructor(configFile)')
+'''@pytest.mark.skip('Error: SaxonDll.processor is NULL in constructor(configFile)')'''
 def test_create_config():
     """Create SaxonProcessor object with a configuration file argument"""
     conf_xml = b"""\
@@ -139,7 +139,7 @@ def test_create_config():
         with open(fname, 'r') as f:
             print(f.read())
 
-        sp = SaxonProcessor(fname.encode('utf-8'))
+        sp = SaxonProcessor(config_file=fname.encode('utf-8'))
         assert isinstance(sp, SaxonProcessor)
     finally:
         os.unlink(fname)
@@ -884,6 +884,32 @@ def test_declare_variable_value2(saxonproc):
 
     assert result is None
 
+def test_packages(saxonproc):
+    xsl = """\
+    <xsl:package name = \"package-002.xsl\" package-version = \"2.1.0.5\"
+    version = \"3.0\" xmlns:xsl=\"http://www.w3.org/1999/XSL/Transform\">
+    <xsl:param name='c' select='2'/>
+    <xsl:mode/>
+    <xsl:template match='/'>
+    <out><xsl:apply-templates/></out>
+    </xsl:template>
+    <xsl:template match='/*'>
+    <in><xsl:value-of select='name()'/></in>
+    </xsl:template>
+    </xsl:package>
+    """
+    xsltproc = saxonproc.new_xslt30_processor()
+    xsltproc.compile_stylesheet(stylesheet_text=xsl, save=True, output_file='package02.xsltpack')
+    xsltproc = None
+    xsltproc2 = saxonproc.new_xslt30_processor()
+    xsltproc2.transform_to_string(source_file=data_dir+"books.xml", stylesheet_file="package02.xsltpack")
+
+def test_add_packages():
+    sp = SaxonProcessor(config_file=data_dir+"config_file.xml")
+    assert isinstance(sp, SaxonProcessor)
+    xsl = sp.new_xslt30_processor()
+    result = xsl.transform_to_string(source_file=data_dir+"package-00.xml", stylesheet_file=data_dir+"package-019.xsl")
+    assert 'You found me!' in result
 
 
 '''Test case should be run last to test release() '''

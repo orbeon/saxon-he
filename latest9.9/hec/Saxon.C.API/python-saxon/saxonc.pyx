@@ -2081,31 +2081,31 @@ cdef class PyXslt30Processor:
         self.thisxptr.callFunctionReturningFile(c_stylesheetfile, c_functionName, argumentV, len(args), c_outputfile)
 
 
-     def add_packages(self, list file_names):
-        """
+"""     def add_packages(self, list file_names):
+        \"""
         add_packages(self, list file_names)
         File names of XsltPackages stored on filestore are added to a set of packages.
 
         Args:
             file_names (list): The file names of the XSLT package as list
 
-        """
+        \"""
         len_ = len(file_names)
         cdef const char* c_string
         cdef const char ** cfile_names = self.thisxptr.createCharArray(len_)
         for x in range(len_):
           c_string = make_c_str(file_names[x])
           cfile_names[x] = c_string
-        self.thisxptr.addPackages(cfile_names, len_)
+        self.thisxptr.addPackages(cfile_names, len_)  """
 
 
-     def clearPackages(self):
-        """
+"""     def clearPackages(self):
+        \"""
         clear_packages(self)
         Clear saved XSLT 3.0 package in the library.
 
-        """
-        self.thisxptr.clearPackages()
+        \"""
+        self.thisxptr.clearPackages()"""
 	
 
         
