@@ -56,6 +56,7 @@ cdef class PySaxonProcessor:
             
         """
         cdef const char * c_str = NULL
+        cdef bool l = license
         if config_file is not None:
             c_str = make_c_str(config_file)
             if c_str is not NULL:
@@ -63,7 +64,7 @@ cdef class PySaxonProcessor:
             else:
                 raise Exception("Configuration file for SaxonProcessor is None")
         else:
-            self.thisptr = new saxoncClasses.SaxonProcessor(license)
+            self.thisptr = new saxoncClasses.SaxonProcessor(l)
             
     def __dealloc__(self):
         """The destructor."""
