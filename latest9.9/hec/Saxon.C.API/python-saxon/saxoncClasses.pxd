@@ -7,7 +7,7 @@ from libcpp.map cimport map
 cdef extern from "../SaxonProcessor.h":
     cdef cppclass SaxonProcessor:
         SaxonProcessor(bool) except +
-        #SaxonProcessor(const char * configFile) except +
+        SaxonProcessor(const char * configFile) except +
         bool license
         char * version()
         void release()
