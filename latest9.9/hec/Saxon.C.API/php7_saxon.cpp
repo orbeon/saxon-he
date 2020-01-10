@@ -5760,7 +5760,7 @@ PHP_MINIT_FUNCTION(saxon)
 {
 
 
-    php_saxonc_initialize();
+    //php_saxonc_initialize(); - commented out code which causes PHP to hang see bug issue #4371
 
     zend_class_entry ce;
     INIT_CLASS_ENTRY(ce, "Saxon\\SaxonProcessor", SaxonProcessor_methods);
