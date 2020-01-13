@@ -519,6 +519,57 @@ void exampleParam(SaxonProcessor * saxonProc, XsltProcessor  *proc){
                         
             }
 
+// test parameter and properties maps where we update key, value pair.
+void exampleParam2(SaxonProcessor * saxonProc, XsltProcessor  *proc){
+                cout<< "\nExampleParam:</b><br/>"<<endl;
+		proc->setSourceFromFile("../php/xml/foo.xml");
+                proc->compileFromFile("../php/xsl/foo.xsl");
+
+		XdmAtomicValue * xdmvalue = saxonProc->makeStringValue("Hello to you");
+		XdmAtomicValue * xdmvalue2i = saxonProc->makeStringValue("Hello from me");
+		if(xdmvalue !=NULL){
+
+			proc->setParameter("a-param", (XdmValue*)xdmvalue);
+			proc->setParameter("a-param", (XdmValue*)xdmvalue2i);
+		} else {
+			cout<< "Xdmvalue is null"<<endl;
+		}
+                const char * result = proc->transformToString();
+		if(result != NULL) {
+			cout<<"Output:"<<result<<endl;
+		} else {
+			cout<<"Result is NULL<br/>"<<endl;
+		}
+
+                //proc->clearParameters();
+                //unset($result);
+                //echo 'again with a no parameter value<br/>';
+
+		proc->setProperty("!indent", "no");
+		proc->setProperty("!indent", "yes");
+                const char *result2 = proc->transformToString();
+
+                proc->clearProperties();
+		if(result2 != NULL) {
+			cout<<result2<<endl;
+		}
+
+              //  unset($result);
+               // echo 'again with no parameter and no properties value set. This should fail as no contextItem set<br/>';
+                XdmAtomicValue * xdmValue2 = saxonProc->makeStringValue("goodbye to you");
+		proc->setParameter("a-param", (XdmValue*)xdmValue2);
+
+                const char *result3 = proc->transformToString();
+		if(result3 != NULL) {
+                	cout<<"Output ="<<result3<<endl;
+		} else {
+			cout<<"Error in result"<<endl;
+		}
+		proc->clearParameters();
+		proc->clearProperties();
+
+            }
+
 
 /* XMarkbench mark test q12.xsl with just-in-time=true*/
 void xmarkTest1(XsltProcessor  *proc){
@@ -666,7 +717,7 @@ int main()
 testCatalog(processor);
   
     XsltProcessor * trans = processor->newXsltProcessor();
-   /*exampleSimple1Err(trans);
+   exampleSimple1Err(trans);
     exampleSimple1(trans);
     exampleSimple_xmark(trans);
     exampleSimple2(trans);
@@ -700,9 +751,11 @@ testCatalog(processor);
 
     exampleParam(processor, trans);
 
+    exampleParam2(processor, trans);
+
     xmarkTest1(trans);
 
-    xmarkTest2(trans);*/
+    xmarkTest2(trans);
 
    //Available in PE and EE
    //testTransformToStringExtensionFunc(processor, trans);

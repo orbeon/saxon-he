@@ -574,8 +574,7 @@ void exampleParam(SaxonProcessor * saxonProc, Xslt30Processor  *proc, sResultCou
 		if(xdmvalue !=NULL){
 			
 			proc->setParameter("a-param", (XdmValue*)xdmvalue);
-			sresult->failure++;
-			sresult->failureList.push_back("examplePara-0");
+
 		} else {
 			cout<< "Xdmvalue is null - ====== FAIL ====="<<endl;
 			sresult->failure++;
@@ -621,8 +620,75 @@ void exampleParam(SaxonProcessor * saxonProc, Xslt30Processor  *proc, sResultCou
 		proc->clearParameters();
 		proc->clearProperties(); 
                         
-            }
+}
 
+// test parameter and properties maps where we update key, value pair.
+void exampleParam2(SaxonProcessor * saxonProc, Xslt30Processor  *proc, sResultCount *sresult){
+                cout<< "\nExampleParam:</b><br/>"<<endl;
+		proc->setInitialMatchSelectionAsFile("../php/xml/foo.xml");
+                proc->compileFromFile("../php/xsl/foo.xsl");
+
+		XdmAtomicValue * xdmvalue = saxonProc->makeStringValue("Hello to you");
+		XdmAtomicValue * xdmvalue2i = saxonProc->makeStringValue("Hello from me");
+		if(xdmvalue !=NULL){
+
+			proc->setParameter("a-param", (XdmValue*)xdmvalue);
+			proc->setParameter("a-param", (XdmValue*)xdmvalue2i);
+
+		} else {
+			cout<< "Xdmvalue is null - ====== FAIL ====="<<endl;
+			sresult->failure++;
+			sresult->failureList.push_back("exampleParam-1");
+		}
+                const char * result = proc->applyTemplatesReturningString();
+		if(result != NULL) {
+		    string sresult = string(result);
+		    if(sresult.compare("Hello from me") == 0) {}
+			cout<<"Output:"<<result<<endl;
+			sresult->success++;
+			}  else {
+			    out<<"Result is "<<result<<""<br/>  ======= fail ====="<<endl;
+			    sresult->failure++;
+            	sresult->failureList.push_back("exampleParam-2");
+			}
+		} else {
+			cout<<"Result is NULL<br/>  ======= fail ====="<<endl;
+			sresult->failure++;
+			sresult->failureList.push_back("exampleParam-2");
+		}
+
+                //proc->clearParameters();
+                //unset($result);
+                //echo 'again with a no parameter value<br/>';
+
+		proc->setProperty("!indent", "no");
+		proc->setProperty("!indent", "yes");
+        const char *result2 = proc->applyTemplatesReturningString();
+
+                proc->clearProperties();
+		if(result2 != NULL) {
+			cout<<result2<<endl;
+			sresult->success++;
+		}
+
+              //  unset($result);
+               // echo 'again with no parameter and no properties value set. This should fail as no contextItem set<br/>';
+                XdmAtomicValue * xdmValue2 = saxonProc->makeStringValue("goodbye to you");
+		proc->setParameter("a-param", (XdmValue*)xdmValue2);
+
+                const char *result3 = proc->applyTemplatesReturningString();
+		if(result3 != NULL) {
+                	cout<<"Output ="<<result3<<endl;
+			sresult->success++;
+		} else {
+			cout<<"Error in result ===== FAIL ======="<<endl;
+			sresult->failure++;
+			sresult->failureList.push_back("exampleParam");
+		}
+		proc->clearParameters();
+		proc->clearProperties();
+
+}
 
 /* XMarkbench mark test q12.xsl with just-in-time=true*/
 void xmarkTest1(Xslt30Processor  *proc, sResultCount * sresult){
