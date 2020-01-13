@@ -792,3 +792,207 @@ void SaxonProcessor::release(){
 
    }
 
+#if CVERSION_API_NO >= 123
+
+   XdmArray * SaxonProcessor::makeArray(short * input, int length){
+           if(input == NULL) {
+                   cerr<<"Error found when converting string to XdmArray";
+                   return NULL;
+           }
+         jclass xdmArrayClass = lookForClass(SaxonProcessor::sxn_environ->env, "Lnet/sf/saxon/s9api/XdmArray;");
+         jmethodID mmID = (jmethodID)SaxonProcessor::sxn_environ->env->GetStaticMethodID(xdmArrayClass, "makeArray", "([S)Lnet/sf/saxon/s9api/XdmArray;");
+             if (!mmID) {
+         	std::cerr<<"\nError: Saxonc.Dll "<<"makeArray([S)"<<" not found"<<std::endl;
+                 return NULL;
+             }
+
+
+             jshortArray sArray = NULL;
+
+             sArray = SaxonProcessor::sxn_environ->env->NewShortArray((jint) length);
+             jshort fill[length];
+             for (int i=0; i<length; i++) {
+                fill[i] =input[i];
+             }
+             SaxonProcessor::sxn_environ->env->SetShortArrayRegion(valueArray, 0, length, fill);
+
+             
+            jobject xdmArrayi = SaxonProcessor::sxn_environ->env->CallStaticObjectMethod(xdmArrayClass, mmID, sArray);
+        if(!xdmArrayi) {
+            cerr<<"Error found when converting string to XdmArray";
+            return NULL;
+        }
+              if(exceptionOccurred()) {
+         	   checkAndCreateException(saxonCAPIClass);
+              } else {
+         	XdmArray * value = new XdmArray(xdmArrayi);
+         	value->setProcessor(this);
+         	return value;
+            }
+            return NULL;
+   }
+
+
+   XdmArray * SaxonProcessor::makeArray(int * input, int length){
+           if(input == NULL) {
+                   cerr<<"Error found when converting string to XdmArray";
+                   return NULL;
+           }
+         jclass xdmArrayClass = lookForClass(SaxonProcessor::sxn_environ->env, "Lnet/sf/saxon/s9api/XdmArray;");
+         jmethodID mmID = (jmethodID)SaxonProcessor::sxn_environ->env->GetStaticMethodID(xdmArrayClass, "makeArray", "([I)Lnet/sf/saxon/s9api/XdmArray;");
+             if (!mmID) {
+         	std::cerr<<"\nError: Saxonc.Dll "<<"makeArray([I)"<<" not found"<<std::endl;
+                 return NULL;
+             }
+
+
+             jintArray iArray = NULL;
+
+             jArray = SaxonProcessor::sxn_environ->env->NewShortArray((jint) length);
+             jint fill[length];
+             for (int i=0; i<length; i++) {
+                fill[i] =input[i];
+             }
+             SaxonProcessor::sxn_environ->env->SetIntArrayRegion(valueArray, 0, length, fill);
+
+
+            jobject xdmArrayi = SaxonProcessor::sxn_environ->env->CallStaticObjectMethod(xdmArrayClass, mmID, iArray);
+        if(!xdmArrayi) {
+            cerr<<"Error found when converting string to XdmArray";
+            return NULL;
+        }
+              if(exceptionOccurred()) {
+         	   checkAndCreateException(saxonCAPIClass);
+              } else {
+         	XdmArray * value = new XdmArray(xdmArrayi);
+         	value->setProcessor(this);
+         	return value;
+            }
+            return NULL;
+
+   }
+
+   XdmArray * SaxonProcessor::makeArray(long * input, int length){
+           if(input == NULL) {
+                   cerr<<"Error found when converting string to XdmArray";
+                   return NULL;
+           }
+         jclass xdmArrayClass = lookForClass(SaxonProcessor::sxn_environ->env, "Lnet/sf/saxon/s9api/XdmArray;");
+         jmethodID mmID = (jmethodID)SaxonProcessor::sxn_environ->env->GetStaticMethodID(xdmArrayClass, "makeArray", "([J)Lnet/sf/saxon/s9api/XdmArray;");
+             if (!mmID) {
+         	std::cerr<<"\nError: Saxonc.Dll "<<"makeArray([J)"<<" not found"<<std::endl;
+                 return NULL;
+             }
+
+
+             jlongArray lArray = NULL;
+
+             lArray = SaxonProcessor::sxn_environ->env->NewLongArray((jint) length);
+             jlong fill[length];
+             for (int i=0; i<length; i++) {
+                fill[i] =input[i];
+             }
+             SaxonProcessor::sxn_environ->env->SetLongArrayRegion(lArray, 0, length, fill);
+
+
+            jobject xdmArrayi = SaxonProcessor::sxn_environ->env->CallStaticObjectMethod(xdmArrayClass, mmID, iArray);
+        if(!xdmArrayi) {
+            cerr<<"Error found when converting string to XdmArray";
+            return NULL;
+        }
+              if(exceptionOccurred()) {
+         	   checkAndCreateException(saxonCAPIClass);
+              } else {
+         	XdmArray * value = new XdmArray(xdmArrayi);
+         	value->setProcessor(this);
+         	return value;
+            }
+            return NULL;
+   }
+
+
+
+   XdmArray * SaxonProcessor::makeArray(bool * input, int length){
+           if(input == NULL) {
+                   cerr<<"Error found when converting string to XdmArray";
+                   return NULL;
+           }
+         jclass xdmArrayClass = lookForClass(SaxonProcessor::sxn_environ->env, "Lnet/sf/saxon/s9api/XdmArray;");
+         jmethodID mmID = (jmethodID)SaxonProcessor::sxn_environ->env->GetStaticMethodID(xdmArrayClass, "makeArray", "([Z)Lnet/sf/saxon/s9api/XdmArray;");
+             if (!mmID) {
+         	std::cerr<<"\nError: Saxonc.Dll "<<"makeArray([Z)"<<" not found"<<std::endl;
+                 return NULL;
+             }
+
+
+             jintArray bArray = NULL;
+
+             bArray = SaxonProcessor::sxn_environ->env->NewLongArray((jint) length);
+             jboolean fill[length];
+             for (int i=0; i<length; i++) {
+                fill[i] =input[i];
+             }
+             SaxonProcessor::sxn_environ->env->SetBoolenArrayRegion(bArray, 0, length, fill);
+
+
+            jobject xdmArrayi = SaxonProcessor::sxn_environ->env->CallStaticObjectMethod(xdmArrayClass, mmID, bArray);
+        if(!xdmArrayi) {
+            cerr<<"Error found when converting string to XdmArray";
+            return NULL;
+        }
+              if(exceptionOccurred()) {
+         	   checkAndCreateException(saxonCAPIClass);
+              } else {
+         	XdmArray * value = new XdmArray(xdmArrayi);
+         	value->setProcessor(this);
+         	return value;
+            }
+            return NULL;
+
+
+   }
+
+
+
+   XdmArray * SaxonProcessor::makeArray(const char ** input, int length){
+        if(input == NULL || length <= 0) {
+                cerr<<"Error found when converting string to XdmArray";
+                return NULL;
+        }
+       	jobject obj = NULL;
+       	jclass xdmArrayClass = lookForClass(SaxonProcessor::sxn_environ->env, "Lnet/sf/saxon/s9api/XdmArray;");
+       	jmethodID mmID = (jmethodID)SaxonProcessor::sxn_environ->env->GetStaticMethodID(xdmArrayClass, "makeArray", "([Ljava/lang/Object;)Lnet/sf/saxon/s9api/XdmArray;");
+
+        jmethodID mID_atomic = (jmethodID)(SaxonProcessor::sxn_environ->env->GetMethodID (xdmAtomicClass, "<init>", "(Ljava/lang/String;)V"));
+        jobjectArray valueArray = NULL;
+        jobject obj2 = NULL;
+        valueArray = SaxonProcessor::sxn_environ->env->NewObjectArray((jint) length, xdmAtomicClass, 0);
+        for(int i = 0; i< length; i++) {
+            if(input[i] == NULL) {
+                cerr<<"Error found when converting string to XdmArray";
+                return NULL;
+            }
+            obj = getJavaStringValue(SaxonProcessor::sxn_environ, input[i]);
+            obj2 = (jobject)(SaxonProcessor::sxn_environ->env->NewObject(xdmAtomicClass, mID_atomic, obj));
+            SaxonProcessor::sxn_environ->env->SetObjectArrayElement(valueArray, i,obj2);
+        }
+
+        jobject xdmArrayi = SaxonProcessor::sxn_environ->env->CallStaticObjectMethod(xdmArrayClass, mmID, valueArray);
+        if(!xdmArrayi) {
+            cerr<<"Error found when converting string to XdmArray";
+            return NULL;
+        }
+
+        if(exceptionOccurred()) {
+            checkAndCreateException(saxonCAPIClass);
+        } else {
+            XdmArray * value = new XdmArray(xdmArrayi, length);
+       	    value->setProcessor(this);
+            return value;
+        }
+        return NULL;
+       }
+
+#endif
+
+

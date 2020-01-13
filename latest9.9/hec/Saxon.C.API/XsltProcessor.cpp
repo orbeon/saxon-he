@@ -84,7 +84,22 @@ void XsltProcessor::setBaseOutputURI(const char * baseURI) {
 void XsltProcessor::setParameter(const char* name, XdmValue * value) {
 	if(value != NULL && name != NULL){
 		value->incrementRefCount();
-		parameters["param:"+std::string(name)] = value;
+		int s = parameter.size();
+		std::String skey = "param:"+std::string(name);
+		parameters[skey] = value;
+		if(s == parameter.size()) {
+            std::map<std::string, XdmValue*>::iterator it;
+            it = parameters.find(skey);
+            if (it != parameters.end()) {
+                XdmValue * valuei = it->second;
+                valuei->decrementRefCount();
+                if(valuei != NULL && valuei->getRefCount() < 1){
+                    delete value;
+                }
+                parameter.erase(skey);
+                parameters[skey] = value;
+            }
+		}
 	} 
 }
 
@@ -118,7 +133,18 @@ void XsltProcessor::setJustInTimeCompilation(bool jit){
 
 void XsltProcessor::setProperty(const char* name, const char* value) {	
 	if(name != NULL) {
-		properties.insert(std::pair<std::string, std::string>(std::string(name), std::string((value == NULL ? "" : value))));
+	    int s = parameter.size();
+		std:string skey = std::string(name);
+		properties.insert(std::pair<std::string, std::string>(skey, std::string((value == NULL ? "" : value))));
+
+		if(s == parameter.size()) {
+            std::map<std::string, std::string>::iterator it;
+            it = parameters.find(skey);
+            if (it != parameters.end()) {
+                properties.erase(skey);
+                properties[skey] = std::string((value == NULL ? "" : value));
+            }
+		}
 	}
 }
 

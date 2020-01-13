@@ -246,7 +246,7 @@ public:
     /**
     * Utility method for working with Saxon/C on Python
     */
-    XdmValue ** createCharArray(int len){
+    char** createCharArray(int len){
 	return (new char*[len]);
     }
 

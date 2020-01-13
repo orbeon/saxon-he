@@ -1339,6 +1339,7 @@ PHP_METHOD(XsltProcessor, setBaseOutputURI)
     }
 }
 
+
 int size_t2int(size_t val) {
     return (val <= INT_MAX) ? (int)((ssize_t)val) : -1;
 }

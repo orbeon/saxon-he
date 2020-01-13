@@ -35,7 +35,7 @@ public:
 
     const char* getName();
 
-    int getArity();
+    virtual int getArity();
 
     static XdmFunctionItem * getSystemFunction(const char * name, int arity);
 

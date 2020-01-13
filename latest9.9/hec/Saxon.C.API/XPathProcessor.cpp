@@ -374,7 +374,22 @@ return false;
 void XPathProcessor::setParameter(const char * name, XdmValue* value) {
 	if(value != NULL){
 		value->incrementRefCount();
-		parameters["param:"+std::string(name)] = value;
+		int s = parameter.size();
+		std::String skey = "param:"+std::string(name);
+		parameters[skey] = value;
+		if(s == parameter.size()) {
+            std::map<std::string, XdmValue*>::iterator it;
+            it = parameters.find(skey);
+            if (it != parameters.end()) {
+                XdmValue * valuei = it->second;
+                valuei->decrementRefCount();
+                if(valuei != NULL && valuei->getRefCount() < 1){
+                    delete value;
+                }
+                parameter.erase(skey);
+                parameters[skey] = value;
+            }
+		}
 	}
 }
 
@@ -383,12 +398,20 @@ bool XPathProcessor::removeParameter(const char * name) {
 }
 
 void XPathProcessor::setProperty(const char * name, const char * value) {
-#ifdef DEBUG	
-	if(value == NULL) {
-		std::cerr<<"XPathProc setProperty is NULL"<<std::endl;
+	if(name != NULL) {
+	    int s = properties.size();
+		std:string skey = std::string(name);
+		properties.insert(std::pair<std::string, std::string>(skey, std::string((value == NULL ? "" : value))));
+
+		if(s == properties.size()) {
+            std::map<std::string, std::string>::iterator it;
+            it = properties.find(skey);
+            if (it != properties.end()) {
+                properties.erase(skey);
+                properties[skey] = std::string((value == NULL ? "" : value));
+            }
+		}
 	}
-#endif
-	properties.insert(std::pair<std::string, std::string>(std::string(name), std::string((value == NULL ? "" : value))));
 }
 
 void XPathProcessor::clearParameters(bool delVal) {

@@ -115,11 +115,21 @@ void Xslt30Processor::setBaseOutputURI(const char * baseURI) {
 void Xslt30Processor::setParameter(const char* name, XdmValue * value, bool _static) {
 	if(value != NULL && name != NULL){
 		value->incrementRefCount();
-		if (_static) {
-			parameters["sparam:"+std::string(name)] = value;
-		
-		} else {
-			parameters["param:"+std::string(name)] = value;
+		int s = parameter.size();
+		std::String skey = (_static ? "sparam:"+std::string(name) : "param:"+std::string(name));
+		parameters[skey] = value;
+		if(s == parameter.size()) {
+            std::map<std::string, XdmValue*>::iterator it;
+            it = parameters.find(skey);
+            if (it != parameters.end()) {
+                XdmValue * valuei = it->second;
+                valuei->decrementRefCount();
+                if(valuei != NULL && valuei->getRefCount() < 1){
+                    delete value;
+                }
+                parameter.erase(skey);
+                parameters[skey] = value;
+            }
 		}
 	 }
 }
@@ -175,7 +185,18 @@ void Xslt30Processor::setResultAsRawValue(bool option) {
 
 void Xslt30Processor::setProperty(const char* name, const char* value) {	
 	if(name != NULL) {
-		properties.insert(std::pair<std::string, std::string>(std::string(name), std::string((value == NULL ? "" : value))));
+	    int s = properties.size();
+		std:string skey = std::string(name);
+		properties.insert(std::pair<std::string, std::string>(skey, std::string((value == NULL ? "" : value))));
+
+		if(s == properties.size()) {
+            std::map<std::string, std::string>::iterator it;
+            it = properties.find(skey);
+            if (it != properties.end()) {
+                properties.erase(skey);
+                properties[skey] = std::string((value == NULL ? "" : value));
+            }
+		}
 	}
 }
 

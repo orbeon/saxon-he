@@ -29,21 +29,21 @@ public:
 
     }
 
-    XdmArray(jobject);
-
-    XdmArray(XdmValue ** values, int length);
+    XdmArray(jobject, int length);
 
     int arrayLength();
 
-    XdmValue get(int n);
+    XdmValue* get(int n);
 
-    XdmArray put(int n, XdmValue * value);
+    XdmArray* put(int n, XdmValue * value);
 
-    XdmArray addMember(XdmValue value);
+    XdmArray* addMember(XdmValue* value);
 
-    XdmArray concat(XdmValue value);    
+    XdmArray* concat(XdmArray * value);
 
     std::List asList();
+
+    int getArity(){return 1;}
 
 	/**
 	* Get the type of the object
@@ -58,6 +58,7 @@ private:
 
     std::string fname;
     int arity;
+    int length;
 
 };
 

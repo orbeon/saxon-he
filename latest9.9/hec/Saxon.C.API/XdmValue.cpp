@@ -111,7 +111,10 @@ XdmValue::XdmValue(jobject val, bool arr){
 
 
 			} else if (SaxonProcessor::sxn_environ->env->IsInstanceOf(resulti, functionItemClass)           == JNI_TRUE) {
+			      //Not Supported yet
+#if CVERSION_API_NO >= 123
 				xdmItem = new XdmFunctionItem(resulti);
+#endif
 			}
 			//xdmItem->setProcessor(proc);
 			addXdmItem(xdmItem);

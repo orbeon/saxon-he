@@ -21,8 +21,8 @@
 #endif
 
 //#define DEBUG //remove
-#define CVERSION "1.2.1"
-#define CVERSION_API_NO 121
+#define CVERSION "1.2.2"
+#define CVERSION_API_NO 122
 #include <string>
 #include <iostream>
 #include <sstream>  
@@ -49,6 +49,11 @@ class XdmValue;
 class XdmNode;
 class XdmItem;
 class XdmAtomicValue;
+
+#if CVERSION_API_NO >= 123
+class XdmArray;
+class XdmMap;
+#endif
 
 
 
@@ -301,6 +306,7 @@ friend class SchemaValidator;
 friend class XPathProcessor;
 friend class XdmValue;
 friend class XdmAtomicValue;
+
 public:
 
    //! A default constructor.
@@ -454,20 +460,47 @@ public:
     */
     XdmAtomicValue * makeAtomicValue(const char * type, const char * value);
 
+#if CVERSION_API_NO >= 123
+    /**
+        * Make an XdmArray whose members are from string representation
+        * @param input the input array of booleans
+        * @return an XdmArray whose members are xs:boolean values corresponding one-to-one with the input
+   */
+    XdmArray * makeArray(const char ** input, int length);
 
 
+    /**
+        * Make an XdmArray whose members are xs:short values
+        * @param input the input array of booleans
+        * @return an XdmArray whose members are xs:boolean values corresponding one-to-one with the input
+   */
     XdmArray * makeArray(short * input, int length);
 
 
 
-
+    /**
+        * Make an XdmArray whose members are xs:int values
+        * @param input the input array of booleans
+        * @return an XdmArray whose members are xs:boolean values corresponding one-to-one with the input
+   */
     XdmArray * makeArray(int * input, int length);
 
+    /**
+        * Make an XdmArray whose members are xs:long values
+        * @param input the input array of booleans
+        * @return an XdmArray whose members are xs:boolean values corresponding one-to-one with the input
+   */
     XdmArray * makeArray(long * input, int length);
 
-
-
+    /**
+        * Make an XdmArray whose members are xs:boolean values
+        * @param input the input array of booleans
+        * @return an XdmArray whose members are xs:boolean values corresponding one-to-one with the input
+   */
     XdmArray * makeArray(bool * input, int length);
+    
+
+#endif
 
      /**
      * Get the string representation of the XdmValue.

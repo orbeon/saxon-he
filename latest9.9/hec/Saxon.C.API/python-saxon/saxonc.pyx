@@ -47,7 +47,7 @@ cdef class PySaxonProcessor:
     # @contextlib.contextmanager
     def __cinit__(self, config_file= None, license=False):
         """
-        __cinit__(self, license=False)
+        __cinit__(self, config_file=None, license=False)
         The constructor.
 
         Args:
