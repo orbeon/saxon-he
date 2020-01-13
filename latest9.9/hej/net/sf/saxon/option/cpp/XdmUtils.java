@@ -17,6 +17,7 @@ import net.sf.saxon.type.Type;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Map;
 
 /**
  * * This utility class consists generic functions for use with XDM data model.
@@ -85,6 +86,27 @@ public class XdmUtils {
         return null;
     }
 
+    public static XdmValue [] convertXdmArrayToArrayObject(XdmArray value) {
+        XdmValue arr [] = new XdmValue[value.arrayLength()];
+        value.asList().toArray(arr);
+        return arr;
+
+    }
+
+
+    public static XdmMap makeXdmMap(XdmAtomicValue [] keyArr, XdmValue [] valueArray) {
+        XdmMap map = new XdmMap();
+
+        for(int i=0; i< keyArr.length;i++){
+            map.put(keyArr[i], valueArray[i]);
+        }
+        return map;
+
+        
+
+
+    }
+
     /**
      * Convert the nodeKind enum type to a integer
      *
@@ -142,10 +164,6 @@ public class XdmUtils {
         }
         return XdmUtils.getEQName(qname);
 
-    }
-
-    public XdmNode[] getChildNodes() {
-        return null;
     }
 
 

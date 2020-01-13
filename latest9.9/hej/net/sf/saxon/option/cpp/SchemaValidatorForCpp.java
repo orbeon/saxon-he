@@ -403,6 +403,23 @@ public class SchemaValidatorForCpp extends SaxonCAPI {
 
     }
 
+
+    /**
+     * Export a precompiled Schema Component Model containing all the components (except built-in components)
+     * that have been loaded into this Processor.
+     * @param cwd The current working directory
+     * @param outputfile   The file name to which the SCM will be saved
+     * @throws SaxonApiException
+     */
+    public void exportSchema(String cwd, String outputfile) throws SaxonApiException {
+
+
+        Serializer serializer = resolveOutputFile(processor, cwd, outputfile);
+        schemaManager.exportComponents(serializer);
+
+
+    }
+
     private void setProperties(String[] params, Object[] values) throws SaxonApiException {
         if (params != null && values != null) {
             for (int i = 0; i < params.length; i++) {
