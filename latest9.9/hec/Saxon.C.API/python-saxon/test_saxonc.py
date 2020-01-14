@@ -514,6 +514,28 @@ def testApplyTemplatesToXdm(saxonproc):
     second = result.item_at(1)
     assert second.is_atomic            
     assert second.get_atomic_value().double_value == 17.0
+
+
+def testItemAtDownCast(saxonproc):
+    source = "<?xml version='1.0'?>  <xsl:stylesheet xmlns:xsl='http://www.w3.org/1999/XSL/Transform'  xmlns:xs='http://www.w3.org/2001/XMLSchema'  version='3.0'>  <xsl:template match='*'>     <xsl:param name='a' as='xs:double'/>     <xsl:param name='b' as='xs:float'/>     <xsl:sequence select='., $a + $b'/>  </xsl:template>  </xsl:stylesheet>"
+    trans = saxonproc.new_xslt30_processor()
+    trans.compile_stylesheet(stylesheet_text=source)
+    trans.set_property("!omit-xml-declaration", "yes")
+    paramArr = {"a":saxonproc.make_integer_value(12), "b":saxonproc.make_integer_value(5)}
+    trans.set_initial_template_parameters(False, paramArr)
+    trans.set_result_as_raw_value(True)
+    in_put = saxonproc.parse_xml(xml_text="<e/>")
+    trans.set_initial_match_selection(xdm_value=in_put)
+    result = trans.apply_templates_returning_value()
+    assert result is not None
+    assert result.size == 2
+    first = result.item_at(0)
+    assert first.is_atomic == False
+    assert isinstance(first, PyXdmNode)
+    assert "e" in first.name
+    second = result.item_at(1)
+    assert isinstance(second, PyXdmAtomic)
+    assert second.double_value == 17.0
     
 
 

@@ -3338,17 +3338,34 @@ cdef class PyXdmValue:
         Args:
             index (int): the index of the item required. Counting from zero
         Returns:
-            PyXdmItem: Get the item indicated at the index. If the item does not exist return None.
+            PyXdmItem: Get the item indicated at the index. This could be PyXdmNode or PyXdmAtomicValue object. If the item does not exist return None.
         
 
         """
-        cdef PyXdmItem val = PyXdmItem()
-        val.derivedptr = val.thisvptr = self.thisvptr.itemAt(index)
-        if val.derivedptr == NULL:
+        cdef PyXdmValue val = None
+        cdef PyXdmAtomicValue aval = None
+        cdef PyXdmNode nval = None
+        cdef PyXdmItem val = None // remove PyXdmItem()
+        cdef saxoncClasses.XdmItem * xdmItem = NULL
+        xdmItem = self.thisvptr.itemAt(index)
+        if xdmItem == NULL:
             return None
-        else:
-            val.derivedptr.incrementRefCount()
-            return val
+        else :
+            cdef type_ = xdmItem.getType()
+
+            xdmItem.incrementRefCount()
+            if type_== 4:
+                aval = PyXdmAtomicValue()
+                aval.derivedaptr = aval.derivedptr = aval.thisvptr = <saxoncClasses.XdmAtomicValue *>xdmItem
+                return aval
+            elif type_ == 3:
+                nval = PyXdmNode()
+                nval.derivednptr = nval.derivedptr = nval.thisvptr = <saxoncClasses.XdmNode*>xdmItem
+                return nval
+            else:
+                val = PyXdmItem()
+                val.thisvptr = xdmItem
+                return val
 
      @property
      def size(self):
