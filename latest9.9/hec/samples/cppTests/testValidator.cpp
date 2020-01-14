@@ -133,9 +133,33 @@ void testValidator5(SaxonProcessor * processor, SchemaValidator * val){
 	} else {
 		cout<<endl<<"Error: Validation Report is NULL - This should not be NULL. Probably no valid license file found."<<endl;
 	}
+}
 
-	
 
+void testValidator6(SaxonProcessor * processor, SchemaValidator * val){
+  processor->exceptionClear();
+  val->clearParameters(true);
+  val->clearProperties();
+  cout<<endl<<"Test 6: Validate Schema from string and export"<<endl;
+  string invalid_xml = "<?xml version='1.0'?><request><a/><!--comment--></request>";
+  const char* sch1 = "<xs:schema xmlns:xs='http://www.w3.org/2001/XMLSchema' elementFormDefault='qualified' attributeFormDefault='unqualified'><xs:element name='request'><xs:complexType><xs:sequence><xs:element name='a' type='xs:string'/><xs:element name='b' type='xs:string'/></xs:sequence><xs:assert test='count(child::node()) = 3'/></xs:complexType></xs:element></xs:schema>";
+
+
+        string doc1 = "<request xmlns='http://myexample/family'><Parent>John</Parent><Child1>Alice</Child1></request>";
+
+	 XdmNode * input = processor->parseXmlFromString(doc1.c_str());
+	//val->setSourceNode(input);
+
+	//val->setProperty("string", doc1.c_str());
+	val->setProperty("xsdversion", "1.1");
+
+	val->registerSchemaFromString(sch1);
+	val->exportSchema("exportedSchema.scm");
+    const char * error = val->checkException();
+
+    if(error != NULL) {
+       cout<<endl<<"Error: Validation error: "<<error<<endl;
+    }
 }
 
 int main()
@@ -158,6 +182,7 @@ int main()
 	processor->setConfigurationProperty("xsdversion", "1.1");
 	SchemaValidator * validator3 = processor->newSchemaValidator();
 	testValidator5(processor, validator3);
+	testValidator6(processor, validator3);
 	delete validator;
 	delete validator2;
 	delete validator3;
