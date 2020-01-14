@@ -3003,11 +3003,28 @@ cdef class PySchemaValidator:
             self.thissvptr.registerSchemaFromFile(c_source)
         else:
           raise Exception(py_error_message)
+
+     def export_schema(self, file_name):
+        """
+        export_schema(self, file_name)
+        Export a precompiled Schema Component Model containing all the components (except built-in components) that have been loaded
+
+        Args:
+            file_name (str):The file name that will be used for thje saved SCM
+
+        """
+        py_value_string = file_name.encode('UTF-8') if file_name is not None else None
+        c_source = py_value_string
+        if file_name is not None:
+            self.thissvptr.exportSchema(c_source)
+        else:
+            raise Warning("Unable to export the Schema. file_name has the value None")
+
         
      def set_output_file(self, output_file):
         """
-        set_output_file(self, output_file)        
-        Set the name of the output file that will be used by the valida tor.
+        set_output_file(self, output_file)
+        Set the name of the output file that will be used by the validator.
 
         Args:
             output_file (str):The output file name for use by the validator
@@ -3019,6 +3036,7 @@ cdef class PySchemaValidator:
             self.thissvptr.setOutputFile(c_source)
         else:
             raise Warning("Unable to set output_file. output_file has the value None")
+
      def validate(self, **kwds):
         """
         validate(self, **kwds)

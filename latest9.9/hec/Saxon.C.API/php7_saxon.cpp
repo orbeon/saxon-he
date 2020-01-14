@@ -4373,6 +4373,24 @@ PHP_METHOD(SchemaValidator, setOutputFile)
 }
 
 
+PHP_METHOD(SchemaValidator, exportSchema)
+{
+    SchemaValidator *schemaValidator;
+    char * name;
+    int len1;
+
+    if (zend_parse_parameters(ZEND_NUM_ARGS() , "s", &name, &len1) == FAILURE) {
+        RETURN_NULL();
+    }
+    zend_object* pobj = Z_OBJ_P(getThis());
+   schemaValidator_object * obj = (schemaValidator_object *)((char *)pobj - XtOffsetOf(schemaValidator_object, std));
+    schemaValidator = obj->schemaValidator;
+    if (schemaValidator != NULL) {
+        schemaValidator->exportSchema(name);
+    }
+}
+
+
 PHP_METHOD(SchemaValidator, setProperty)
 {
     SchemaValidator *schemaValidator;

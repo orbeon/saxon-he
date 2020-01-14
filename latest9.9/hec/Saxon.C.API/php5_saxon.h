@@ -271,6 +271,7 @@ jobject JNICALL phpNativeCall
     PHP_METHOD(SchemaValidator,  __destruct);
     PHP_METHOD(SchemaValidator,  setSourceNode);
     PHP_METHOD(SchemaValidator,  setOutputFile);
+    PHP_METHOD(SchemaValidator,  exportSchema);
     PHP_METHOD(SchemaValidator, registerSchemaFromFile);
     PHP_METHOD(SchemaValidator, registerSchemaFromString);
     PHP_METHOD(SchemaValidator, validate); 

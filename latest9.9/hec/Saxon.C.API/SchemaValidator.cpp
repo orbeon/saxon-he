@@ -144,6 +144,32 @@ SchemaValidator::SchemaValidator(SaxonProcessor* p, std::string curr){
 	
  }
 
+ void SchemaValidator::exportSchema(const char * fileName) {
+      if (fileName == NULL) {
+      		std::cerr << "Error:: fileName string cannot be empty or NULL" << std::endl;
+      	     return;
+              }
+
+      	jmethodID mID =
+      		(jmethodID) SaxonProcessor::sxn_environ->env->GetMethodID(cppClass, "exportSchema",
+      				"(Ljava/lang/String;Ljava/lang/String;)V");
+      	if (!mID) {
+      		std::cerr << "Error: libsaxon." << "exportSchema" << " not found\n"
+      			<< std::endl;
+      	} else {
+
+
+      			SaxonProcessor::sxn_environ->env->CallVoidMethod(cppV, mID,
+      					SaxonProcessor::sxn_environ->env->NewStringUTF(cwdV.c_str()),
+      					SaxonProcessor::sxn_environ->env->NewStringUTF(fileName));
+
+
+
+      }
+      	proc->checkAndCreateException(cppClass);
+
+ }
+
   void SchemaValidator::registerSchemaFromString(const char * sourceStr){
 	setProperty("resources", proc->getResourcesDirectory());
 	

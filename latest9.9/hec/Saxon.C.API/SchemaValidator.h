@@ -56,6 +56,12 @@ public:
 
   void registerSchemaFromString(const char * schemaStr);
 
+  //! Export a precompiled Schema Component Model containing all the components (except built-in components) that have been loaded by using the register methods.
+  /**
+  *
+  */
+  void exportSchema(const char * fileName);
+
   /*!
    Set the name of the output file that will be used by the validator.
   * @param outputFile the output file name for later use

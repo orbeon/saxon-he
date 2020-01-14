@@ -316,6 +316,8 @@ cdef extern from "../SaxonProcessor.h":
 
         void registerSchemaFromString(const char * schemaStr)
 
+        void exportSchema(const char * fileName)
+
         void setOutputFile(const char * outputFile)
 
         void validate(const char * sourceFile) except +

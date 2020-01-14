@@ -2,6 +2,7 @@ from tempfile import mkstemp
 import pytest
 from saxonc import *
 import os
+from os.path import isfile
 
 
 @pytest.fixture
@@ -39,6 +40,37 @@ def testValdiator3(saxonproc2):
 
     assert val.exception_occurred()
     assert nodea is None
+
+def testExportSchema(saxonproc2):
+    saxonproc2.set_cwd('.')
+    saxonproc2.set_configuration_property("xsdversion", "1.1")
+    val = saxonproc2.new_schema_validator()
+    assert val is not None
+    print(type(val))
+    print(val.exception_occurred())
+    sch1 = "<xs:schema xmlns:xs='http://www.w3.org/2001/XMLSchema' elementFormDefault='qualified' attributeFormDefault='unqualified'><xs:element name='request'><xs:complexType><xs:sequence><xs:element name='a' type='xs:string'/><xs:element name='b' type='xs:string'/></xs:sequence><xs:assert test='count(child::node()) = 3'/></xs:complexType></xs:element></xs:schema>"
+    val.register_schema(xsd_text=sch1)
+    val.export_schema(file_name="exportedSchema.scm")
+    assert os.path.exists("exportedSchema.scm")
+
+
+def testExportSchema(saxonproc2):
+    saxonproc2.set_configuration_property("xsdversion", "1.1")
+    val = saxonproc2.new_schema_validator()
+
+    val.register_schema(xsd_file="exportedSchema.scm")
+
+    invalid_xml = "<?xml version='1.0'?><request><a/><!--comment--></request>"
+    input_ = saxonproc2.parse_xml(xml_text=invalid_xml)
+    assert input_ is not None
+    print(type(input_))
+    val.set_source_node(input_)
+    val.validate()
+    assert val.exception_occurred()
+
+    assert val.exception_occurred()
+    assert nodea is None
+    
 
 def release(saxonproc):
    saxonproc.release()
