@@ -3345,13 +3345,14 @@ cdef class PyXdmValue:
         cdef PyXdmValue val = None
         cdef PyXdmAtomicValue aval = None
         cdef PyXdmNode nval = None
-        cdef PyXdmItem val = None // remove PyXdmItem()
+        cdef PyXdmItem val = None
+        cdef type_ = None
         cdef saxoncClasses.XdmItem * xdmItem = NULL
         xdmItem = self.thisvptr.itemAt(index)
         if xdmItem == NULL:
             return None
         else :
-            cdef type_ = xdmItem.getType()
+            type_ = xdmItem.getType()
 
             xdmItem.incrementRefCount()
             if type_== 4:
