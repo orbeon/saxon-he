@@ -78,6 +78,7 @@ public class UnicodeBlocks {
 
         ParseOptions options = new ParseOptions();
         options.setSchemaValidationMode(Validation.SKIP);
+        options.setDTDValidationMode(Validation.SKIP);
         options.setSpaceStrippingRule(AllElementsSpaceStrippingRule.getInstance());
         TreeInfo doc;
         try {

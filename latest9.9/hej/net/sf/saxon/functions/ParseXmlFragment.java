@@ -19,6 +19,7 @@ import net.sf.saxon.expr.PackageData;
 import net.sf.saxon.expr.XPathContext;
 import net.sf.saxon.expr.parser.Location;
 import net.sf.saxon.lib.ParseOptions;
+import net.sf.saxon.lib.Validation;
 import net.sf.saxon.om.*;
 import net.sf.saxon.style.StylesheetPackage;
 import net.sf.saxon.trans.XPathException;
@@ -96,6 +97,8 @@ public class ParseXmlFragment extends SystemFunction implements Callable {
                 }
                 Receiver s = b;
                 ParseOptions options = new ParseOptions();
+                options.setDTDValidationMode(Validation.SKIP);
+                options.setSchemaValidationMode(Validation.SKIP);
                 List<Boolean> safetyCheck = new ArrayList<>();
                 reader.setEntityResolver((publicId, systemId) -> {
                     if ("http://www.saxonica.com/parse-xml-fragment/actual.xml".equals(systemId)) {

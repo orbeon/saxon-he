@@ -56,6 +56,7 @@ class UnicodeDataParserFromXML {
 
         ParseOptions options = new ParseOptions();
         options.setSchemaValidationMode(Validation.SKIP);
+        options.setDTDValidationMode(Validation.SKIP);
         TreeInfo doc = config.buildDocumentTree(new StreamSource(in, "normalizationData.xml"), options);
         NodeInfo canonicalClassKeys = null;
         NodeInfo canonicalClassValues = null;

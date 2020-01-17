@@ -135,6 +135,7 @@ public class PackageLoaderHE implements IPackageLoader {
         ParseOptions options = new ParseOptions();
         options.setSpaceStrippingRule(AllElementsSpaceStrippingRule.getInstance());
         options.setSchemaValidationMode(Validation.SKIP);
+        options.setDTDValidationMode(Validation.SKIP);
 
         final List<ProxyReceiver> filters = new ArrayList<>(1);
         FilterFactory checksumFactory = new FilterFactory() {

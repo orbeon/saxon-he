@@ -114,6 +114,7 @@ public class Categories {
         Configuration config = new Configuration();
         ParseOptions options = new ParseOptions();
         options.setSchemaValidationMode(Validation.SKIP);
+        options.setDTDValidationMode(Validation.SKIP);
         options.setTreeModel(Builder.TINY_TREE);
         NodeInfo doc;
         try {

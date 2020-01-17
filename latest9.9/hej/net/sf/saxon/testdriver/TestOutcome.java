@@ -768,6 +768,8 @@ public class TestOutcome {
                 } else {
                     driver.println("Serialized result:");
                     driver.println(principalSerializedResult);
+                    driver.println("Serialized result, codepoints:");
+                    driver.println(Arrays.toString(StringValue.expand(principalSerializedResult)));
                     return false;
                 }
             } catch (XPathException e) {

@@ -135,6 +135,7 @@ public class CatalogCollection extends AbstractResourceCollection {
         Source source = DocumentFn.resolveURI(href, null, null, context);
         ParseOptions options = new ParseOptions();
         options.setSchemaValidationMode(Validation.SKIP);
+        options.setDTDValidationMode(Validation.SKIP);
         TreeInfo catalog = context.getConfiguration().buildDocumentTree(source, options);
         if (catalog == null) {
             // we failed to read the catalogue
