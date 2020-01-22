@@ -83,6 +83,7 @@ public class IntHashSet implements IntSet {
             s._nhi = _nhi;
             s._shift = _shift;
             s._size = _size;
+            s._mask = _mask;
             s._values = new int[_values.length];
             System.arraycopy(_values, 0, s._values, 0, _values.length);
             //s._values = Arrays.copyOf(_values, _values.length);
