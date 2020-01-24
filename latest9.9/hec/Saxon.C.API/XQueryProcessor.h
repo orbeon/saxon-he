@@ -36,6 +36,17 @@ public:
     */
     XQueryProcessor(SaxonProcessor *p, std::string cwd="");
 
+    /**
+      * XQueryProcessor copy constructor.
+      * @param other - XsltProcessor
+    */
+    XQueryProcessor(const XQueryProcessor &other);
+
+    /**
+      * Clone the XQueryProcessor with the same internal state, which can be used in separate threads.
+    */
+    XQueryProcessor * clone();
+
     ~XQueryProcessor(){
 	clearProperties();
 	clearParameters();
@@ -257,13 +268,10 @@ public:
     
 
 private:
-        std::string cwdXQ; /*!< current working directory */
+    std::string cwdXQ; /*!< current working directory */
 	SaxonProcessor * proc;
 	jclass  cppClass;
 	jobject cppXQ;
-	//std::string outputfile1; /*!< output file where result will be saved */
-	bool queryFileExists;
-	std::string failure; //for testing
 	std::map<std::string,XdmValue*> parameters; /*!< map of parameters used for the transformation as (string, value) pairs */
 	std::map<std::string,std::string> properties; /*!< map of properties used for the transformation as (string, string) pairs */
 };

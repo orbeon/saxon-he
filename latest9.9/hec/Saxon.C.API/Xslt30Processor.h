@@ -38,7 +38,18 @@ public:
     */
     Xslt30Processor(SaxonProcessor* proc, std::string cwd="");
 
+	/**
+	 * Xslt30Processor copy constructor.
+	 * @param other - Xslt30Processor
+	 */
+    Xslt30Processor(const Xslt30Processor &other);
+
      ~Xslt30Processor();
+
+	/**
+	 * Clone the Xslt30Processor with the same internal state, which can be used in separate threads.
+	 */
+    Xslt30Processor * clone();
 
 	//! Get the SaxonProcessor object
 	/**
@@ -258,10 +269,13 @@ public:
     }
 
     /**
-     * Get the messages written using the <code>xsl:message</code> instruction
-     * @return XdmValue - Messages returned as an XdmValue.
+     * This method gives users the option to switch on or off the <code>xsl:message</code> feature. It is also possible
+     * to send the <code>xsl:message</code> outputs to file given by file name.
+     * @param show - boolean to indicate if xsl:message should be outputted. Default is on.
+     * @param  filename - If the filename argument is present then the xsl:message output is appended to the given
+     *                    filename with location cwd+filename
      */
-    XdmValue * getXslMessages();//TODO allow notification of message as they occur
+    void setupXslMessage(bool show, const char* filename=NULL);
 
 
       //!Perform a one shot transformation.
@@ -553,13 +567,10 @@ public:
 private:
 	SaxonProcessor* proc;/*! */
 	jclass  cppClass;
-	jobject cppXT, stylesheetObject, xdmValuei, selection;
+	jobject cppXT, stylesheetObject, selection;
 	XdmValue * selectionV;
-        std::string cwdXT; /*!< current working directory */
-	std::string outputfile1; /*!< output file where result will be saved */
-	std::string failure; //for testing
-	bool nodeCreated;
-	bool tunnel;
+    std::string cwdXT; /*!< current working directory */
+	bool tunnel, jitCompilation;
 	std::map<std::string,XdmValue*> parameters; /*!< map of parameters used for the transformation as (string, value) pairs */
 	
 	std::map<std::string,std::string> properties; /*!< map of properties used for the transformation as (string, string) pairs */

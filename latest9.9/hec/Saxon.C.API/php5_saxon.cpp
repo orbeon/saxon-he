@@ -1383,12 +1383,14 @@ PHP_METHOD(XsltProcessor, clearProperties)
 }
 
 
-PHP_METHOD(XsltProcessor, getXslMessages)
+PHP_METHOD(XsltProcessor, setupXslMessage)
 {
     XsltProcessor *xsltProcessor;
-
-    if (ZEND_NUM_ARGS()>0) {
-        WRONG_PARAM_COUNT;
+    bool show = false;
+    char * filename = NULL;
+    size_t len1;
+    if (zend_parse_parameters(ZEND_NUM_ARGS() TSRMLS_CC, "bs", &show, &filename &len1) == FAILURE) {
+        RETURN_NULL();
     }
 
     xsltProcessor_object *obj = (xsltProcessor_object *) zend_object_store_get_object(getThis() TSRMLS_CC);
@@ -1396,21 +1398,9 @@ PHP_METHOD(XsltProcessor, getXslMessages)
 
     if (xsltProcessor != NULL) {
 
-	XdmValue * node = xsltProcessor->getXslMessages();
-        if(node != NULL) {
-            if (object_init_ex(return_value, xdmValue_ce) != SUCCESS) {
-                RETURN_NULL();
-            } else {
-                struct xdmValue_object* vobj  = (struct xdmValue_object*) zend_object_store_get_object(return_value TSRMLS_CC);
-                assert (vobj != NULL);
-                vobj->xdmValue = node;
-            }
-        } else if(xsltProcessor->exceptionOccurred()){
-            xsltProcessor->checkException();
-        }
-    } else {
-        RETURN_NULL();
-    }
+	    xsltProcessor->setupXslMessage(show, filename);
+	}
+
 }
 
 
@@ -2829,40 +2819,26 @@ PHP_METHOD(Xslt30Processor, clearProperties)
     }
 }
 
-
-
-PHP_METHOD(Xslt30Processor, getXslMessages)
+PHP_METHOD(Xslt30Processor, setupXslMessage)
 {
     Xslt30Processor *xslt30Processor;
-
-    if (ZEND_NUM_ARGS()>0) {
-        WRONG_PARAM_COUNT;
+    bool show = false;
+    char * filename = NULL;
+    size_t len1;
+    if (zend_parse_parameters(ZEND_NUM_ARGS() TSRMLS_CC, "bs", &show, &filename &len1) == FAILURE) {
+        RETURN_NULL();
     }
 
-    
     xslt30Processor_object *obj = (xslt30Processor_object *) zend_object_store_get_object(getThis() TSRMLS_CC);
     xslt30Processor = obj->xslt30Processor;
 
     if (xslt30Processor != NULL) {
 
-	XdmValue * values = xslt30Processor->getXslMessages();
-        if(values != NULL) {
-            if (object_init_ex(return_value, xdmValue_ce) != SUCCESS) {
-                RETURN_NULL();
-            } else {
-                struct xdmValue_object* vobj = (struct xdmValue_object*)zend_object_store_get_object(return_value TSRMLS_CC);
+	    xslt30Processor->setupXslMessage(show, filename);
+	}
 
-                assert (vobj != NULL);
-                vobj->xdmValue = values;
-            }
-        } else if(xslt30Processor->exceptionOccurred()){
-            xslt30Processor->checkException();
-	    RETURN_NULL();
-        }
-    } else {
-        RETURN_NULL();
-    }
 }
+
 
 
 
@@ -5187,6 +5163,7 @@ zend_function_entry XsltProcessor_methods[] = {
     PHP_ME(XsltProcessor,  clearProperties, NULL, ZEND_ACC_PUBLIC)
     PHP_ME(XsltProcessor,  exceptionOccurred, NULL, ZEND_ACC_PUBLIC)
     PHP_ME(XsltProcessor,  exceptionClear, NULL, ZEND_ACC_PUBLIC)
+    PHP_ME(XsltProcessor,  setupXslMessage, NULL, ZEND_ACC_PUBLIC)
     PHP_ME(XsltProcessor,  getErrorCode, NULL, ZEND_ACC_PUBLIC)
     PHP_ME(XsltProcessor,  getErrorMessage, NULL, ZEND_ACC_PUBLIC)
     PHP_ME(XsltProcessor,  getExceptionCount, NULL, ZEND_ACC_PUBLIC)
@@ -5228,6 +5205,7 @@ zend_function_entry Xslt30Processor_methods[] = {
     PHP_ME(Xslt30Processor,  setProperty, NULL, ZEND_ACC_PUBLIC)
     PHP_ME(Xslt30Processor,  clearParameters, NULL, ZEND_ACC_PUBLIC)
     PHP_ME(Xslt30Processor,  clearProperties, NULL, ZEND_ACC_PUBLIC)
+    PHP_ME(Xslt30Processor,  setupXslMessage, NULL, ZEND_ACC_PUBLIC)
     PHP_ME(Xslt30Processor,  exceptionOccurred, NULL, ZEND_ACC_PUBLIC)
     PHP_ME(Xslt30Processor,  exceptionClear, NULL, ZEND_ACC_PUBLIC)
     PHP_ME(Xslt30Processor,  getErrorCode, NULL, ZEND_ACC_PUBLIC)

@@ -386,7 +386,7 @@ void XPathProcessor::setParameter(const char * name, XdmValue* value) {
                 if(valuei != NULL && valuei->getRefCount() < 1){
                     delete value;
                 }
-                parameter.erase(skey);
+                parameters.erase(skey);
                 parameters[skey] = value;
             }
 		}

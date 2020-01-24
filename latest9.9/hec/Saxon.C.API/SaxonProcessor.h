@@ -333,6 +333,13 @@ public:
 
     SaxonProcessor& operator=( const SaxonProcessor& other );
 
+
+	/**
+	 * Xslt30Processor copy constructor.
+	 * @param other - Xslt30Processor
+	 */
+    SaxonProcessor(const SaxonProcessor &other);
+
    /*!
 
       * Destructor

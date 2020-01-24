@@ -68,7 +68,7 @@ public:
 
 	/**
 	 * A copy constructor.
-	 * @param val - Xdmvalue
+	 * @param other - Xdmvalue
 	 */
 	XdmValue(const XdmValue &other);
 

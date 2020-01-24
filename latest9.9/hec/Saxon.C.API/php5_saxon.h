@@ -173,7 +173,7 @@ jobject JNICALL phpNativeCall
     PHP_METHOD(XsltProcessor,  getErrorCode);
     PHP_METHOD(XsltProcessor,  getErrorMessage);
     PHP_METHOD(XsltProcessor,  getExceptionCount);
-    PHP_METHOD(XsltProcessor,  getXslMessages);
+    PHP_METHOD(XsltProcessor,  setupXslMessage);
 
     //PHP_METHOD(Xslt30Processor,  __construct);
     PHP_METHOD(Xslt30Processor, callFunctionReturningValue);
@@ -217,7 +217,7 @@ jobject JNICALL phpNativeCall
     PHP_METHOD(Xslt30Processor,  getErrorCode);
     PHP_METHOD(Xslt30Processor,  getErrorMessage);
     PHP_METHOD(Xslt30Processor,  getExceptionCount);
-    PHP_METHOD(Xslt30Processor,  getXslMessages);
+    PHP_METHOD(Xslt30Processor,  setupXslMessage);
 
 
 

@@ -107,7 +107,7 @@ cdef extern from "../SaxonProcessor.h":
 
         void clearProperties()
 
-        XdmValue * getXslMessages()
+        void setupXslMessage(bool show, const char* filename=NULL)
 
         void transformFileToFile(const char* sourcefile, const char* stylesheetfile, const char* outputfile)
         
@@ -209,7 +209,7 @@ cdef extern from "../SaxonProcessor.h":
         void clearProperties()
 
         # Get the messages written using the <code>xsl:message</code> instruction
-        XdmValue * getXslMessages()
+        void setupXslMessage(bool show, const char* filename=NULL)
 
         # Perform a one shot transformation. The result is stored in the supplied outputfile.
         void transformFileToFile(const char* sourcefile, const char* stylesheetfile, const char* outputfile)

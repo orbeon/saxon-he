@@ -654,19 +654,18 @@ cdef class PyXsltProcessor:
         """
 
         self.thisxptr.clearProperties()
-     def get_xsl_messages(self):
+
+     def setup_xsl_message(self, show, file_name = None):
         """
-        Get the messages written using the <code>xsl:message</code> instruction
-        get_xsl_message(self)
-        
-        Returns:
-            PyXdmValue: Messages returned as an XdmValue. 
+        setup_xsl_message(self, **kwds)
+        gives users the option to switch on or off the <code>xsl:message</code> feature. It is also possible
+        to send the <code>xsl:message</code> outputs to file given by file name.
 
         """
+        py_name_string = file_name.encode('UTF-8') if file_name is not None else None
+        cdef char * c_file_name = py_name_string if file_name is not None else NULL
+        self.thisxptr.getXslMessages(show, c_file_name)
 
-        cdef PyXdmValue val = PyXdmValue()
-        val.thisvptr = self.thisxptr.getXslMessages()
-        return val
 
      def transform_to_string(self, **kwds):
         """
@@ -1296,19 +1295,16 @@ cdef class PyXslt30Processor:
         if len(kwds) > 0:
             self.thisxptr.setInitialTemplateParameters(parameters, c_tunnel);
 
-     def get_xsl_messages(self):
+     def setup_xsl_message(self, show, file_name = None):
         """
-        Get the messages written using the <code>xsl:message</code> instruction
-        get_xsl_message(self)
-
-        Returns:
-            PyXdmValue: Messages returned as an XdmValue.
+        setup_xsl_message(self, **kwds)
+        gives users the option to switch on or off the <code>xsl:message</code> feature. It is also possible
+        to send the <code>xsl:message</code> outputs to file given by file name.
 
         """
-
-        cdef PyXdmValue val = PyXdmValue()
-        val.thisvptr = self.thisxptr.getXslMessages()
-        return val
+        py_name_string = file_name.encode('UTF-8') if file_name is not None else None
+        cdef char * c_file_name = py_name_string if file_name is not None else NULL
+        self.thisxptr.getXslMessages(show, c_file_name)
 
      def transform_to_string(self, **kwds):
         """

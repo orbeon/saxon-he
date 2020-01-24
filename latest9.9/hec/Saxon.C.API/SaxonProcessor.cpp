@@ -448,6 +448,19 @@ SaxonProcessor& SaxonProcessor::operator=( const SaxonProcessor& other ){
 	return *this;
 }
 
+SaxonProcessor(const SaxonProcessor &other) {
+	versionClass = other.versionClass;
+	procClass = other.procClass;
+	saxonCAPIClass = other.saxonCAPIClass;
+	cwd = other.cwd;
+	proc = other.proc;
+	//SaxonProcessor::sxn_environ= other.environ;
+	parameters = other.parameters;
+	configProperties = other.configProperties;
+	licensei = other.licensei;
+	exception = other.exception;
+}
+
 XsltProcessor * SaxonProcessor::newXsltProcessor(){
     applyConfigurationProperties();
     return (new XsltProcessor(this, cwd));
