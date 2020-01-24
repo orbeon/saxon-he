@@ -16,7 +16,6 @@ import net.sf.saxon.om.SequenceTool;
 import net.sf.saxon.om.StandardNames;
 import net.sf.saxon.om.StructuredQName;
 import net.sf.saxon.s9api.*;
-import net.sf.saxon.serialize.SerializationProperties;
 import net.sf.saxon.trans.XPathException;
 import net.sf.saxon.type.BuiltInAtomicType;
 import net.sf.saxon.type.BuiltInType;
@@ -47,24 +46,14 @@ import java.util.*;
 
 public class SaxonCAPI {
 
-    SerializationProperties serializationProperties = new SerializationProperties();
-    Properties props = new Properties();
+    //Properties props = new Properties();
     protected Processor processor = null;
-    protected XdmNode doc = null;
-    protected List<SaxonCException> saxonExceptions = new ArrayList<SaxonCException>();
-    protected List<SaxonCException> saxonWarnings = new ArrayList<SaxonCException>();
+    //protected List<SaxonCException> saxonExceptions = new ArrayList<SaxonCException>();
+    //protected List<SaxonCException> saxonWarnings = new ArrayList<SaxonCException>();
     public static boolean debug = false;
-    protected Serializer serializer = null;
-    protected InputStream in = null;
     protected boolean schemaAware = false;
-    protected Source source = null;
-    protected Map<QName, XdmValue> globals = new HashMap<>();
-    protected Map<QName, XdmValue> parameters = new HashMap<>();
-    protected Map<QName, XdmValue> staticParameters = new HashMap<>();
-    //protected List<QName> variables = new ArrayList<>();
     public static String RESOURCES_DIR = null;
-    protected Map<QName, XdmValue> initialTemplateParameters = new HashMap<>();
-    protected boolean returnXdmValue = false;
+
 
 
     /**
@@ -104,7 +93,7 @@ public class SaxonCAPI {
             if (debug) {
                 System.err.println("New processor created, Processor: " + System.identityHashCode(processor));
             }
-        }
+        }   
     }
 
     public static void setLibrary(String cwd, String libName) {
@@ -142,7 +131,7 @@ public class SaxonCAPI {
     /**
      * Error Listener to capture errors
      */
-    protected ErrorListener errorListener = new StandardErrorListener() {
+   /* protected ErrorListener errorListener = new StandardErrorListener() {
 
         @Override
         public void warning(TransformerException exception) {
@@ -180,7 +169,7 @@ public class SaxonCAPI {
             } catch (Exception ex) {
             }
         }
-    };
+    };   */
 
     public static String getProductVersion(Processor processor) {
         return processor.getUnderlyingConfiguration().getProductTitle();
@@ -287,14 +276,6 @@ public class SaxonCAPI {
         debug = d;
     }
 
-    /**
-     * get the input stream
-     *
-     * @return InputStream - created input stream
-     */
-    public InputStream getInputStream() {
-        return in;
-    }
 
 
     /**
@@ -302,12 +283,12 @@ public class SaxonCAPI {
      *
      * @return SaxCEExeption[] -- array of the exceptions
      */
-    public SaxonCException[] getExceptions() {
+    /*public SaxonCException[] getExceptions() {
         if (saxonExceptions.size() > 0) {
             return saxonExceptions.toArray(new SaxonCException[saxonExceptions.size()]);
         } else
             return null;
-    }
+    } */
 
 
     /**
@@ -315,12 +296,12 @@ public class SaxonCAPI {
      *
      * @return SaxCEExeption[] -- array of the exceptions
      */
-    public SaxonCException[] getWarnings() {
+   /* public SaxonCException[] getWarnings() {
         if (saxonWarnings.size() > 0) {
             return saxonWarnings.toArray(new SaxonCException[saxonWarnings.size()]);
         } else
             return null;
-    }
+    }  */
 
 
     /**
@@ -328,17 +309,17 @@ public class SaxonCAPI {
      *
      * @return boolean - Return true if exception thrown during the process and false otherwise.
      */
-    public boolean checkException() {
+    /* public boolean checkException() {
         return saxonExceptions.size() > 0;
-    }
+    } */
 
     /**
      * Clear exceptions recorded during the process
      */
-    public void clearExceptions() {
+     /*void clearExceptions() {
         saxonWarnings.clear();
         saxonExceptions.clear();
-    }
+    }   */
 
     /**
      * Get a particular exceptions
@@ -346,13 +327,13 @@ public class SaxonCAPI {
      * @param i - index into the list of thrown exceptions
      * @return SaxonCException - Saxon/C wrapped exception
      */
-    public SaxonApiException getException(int i) {
+    /*public SaxonApiException getException(int i) {
         if (i < saxonExceptions.size()) {
             return saxonExceptions.get(i);
         } else {
             return null;
         }
-    }
+    }  */
 
 
     /**
@@ -361,13 +342,17 @@ public class SaxonCAPI {
      *
      * @param params
      * @param values
+     * @param props
+     * @param parameters
+     * @param staticParameters   - For XSLT use
+     * @param globals
+     * @param initialTemplateParameters - Initial template parameter for use with XSLT
      * @param forXslt
      * @return Map of String, Object pairs
      * @throws SaxonApiException
      */
-    Map<String, Object> convertArraysToMap(String[] params, Object[] values, boolean forXslt) throws SaxonApiException {
+    Map<String, Object> convertArraysToMap(String[] params, Object[] values, Properties props, Map<QName, XdmValue> parameters, Map<QName, XdmValue> staticParameters, Map<QName, XdmValue> globals, Map<QName, XdmValue> initialTemplateParameters, boolean forXslt) throws SaxonApiException {
         Map<String, Object> map = new HashMap();
-        globals = new HashMap<>();
         if (params == null || values == null) {
             return map;
         }
@@ -381,7 +366,13 @@ public class SaxonCAPI {
                 if (prop == null) {
                     throw new SaxonApiException("Property name " + name + " not found");
                 }
-                props.put(prop.getQName().getClarkName(),  values[i]);
+                if(props != null) {
+                    props.put(prop.getQName().getClarkName(), values[i]);
+                } else {
+                    if(debug) {
+                        System.err.println("Error Java property option found but Java Property object is null: Probably XPathProcessor in use");
+                    }
+                }
             } else if (params[i].startsWith("--") && values[i] != null) {
                 try {
                     processor.setConfigurationProperty("http://saxon.sf.net/feature/" + params[i].substring(2), (String) values[i]);
@@ -390,7 +381,7 @@ public class SaxonCAPI {
                 }
 
 
-            } else if (params[i].startsWith("itparam:")) {
+            } else if (initialTemplateParameters != null && params[i].startsWith("itparam:")) {
                 //initial template parameters
                 String paramName = params[i].substring(8);
                 Object value = values[i];
@@ -402,7 +393,7 @@ public class SaxonCAPI {
                     System.err.println("DEBUG: SaxonCAPI itparam: " + paramName);
                 }
 
-            } else if (params[i].startsWith("sparam:")) {
+            } else if (staticParameters != null && params[i].startsWith("sparam:")) {
                 //static parameters
                 String paramName = params[i].substring(7);
                 Object value = values[i];
@@ -428,7 +419,9 @@ public class SaxonCAPI {
                     if(forXslt) {
                         globals.put(qname, valueForCpp);
                     } else {
-                       parameters.put(qname, valueForCpp);
+                        if(parameters != null) {
+                            parameters.put(qname, valueForCpp);
+                        }
                     }
                 }
             } /*else if (!forXslt && params[i].startsWith("dvar:")) {
@@ -510,10 +503,10 @@ public class SaxonCAPI {
      */
     public XdmNode parseXmlFile(String cwd, String filename) throws SaxonApiException {
         try {
-            doc = parseXmlFile(processor, cwd, null, filename);
+            XdmNode doc = parseXmlFile(processor, cwd, null, filename);
             return doc;
         } catch (SaxonApiException ex) {
-            saxonExceptions.add(new SaxonCException(ex.getCause()));
+            //saxonExceptions.add(new SaxonCException(ex.getCause()));
             throw ex;
         }
     }
@@ -529,10 +522,10 @@ public class SaxonCAPI {
      */
     public XdmNode parseXmlFile(String cwd, SchemaValidator validator, String filename) throws SaxonApiException {
         try {
-            doc = parseXmlFile(processor, cwd, validator, filename);
+            XdmNode doc = parseXmlFile(processor, cwd, validator, filename);
             return doc;
         } catch (SaxonApiException ex) {
-            saxonExceptions.add(new SaxonCException(ex.getCause()));
+            //saxonExceptions.add(new SaxonCException(ex.getCause()));
             throw ex;
         }
     }
@@ -557,13 +550,12 @@ public class SaxonCAPI {
      */
     public XdmNode parseXmlString(SchemaValidator validator, String xml) throws SaxonApiException {
         try {
-            doc = parseXmlString(null, processor, validator, xml);
+            XdmNode doc = parseXmlString(null, processor, validator, xml);
             if (debug) {
                 System.err.println("xmlParseString, Processor: " + System.identityHashCode(processor));
             }
             return doc;
         } catch (SaxonApiException ex) {
-            saxonExceptions.add(new SaxonCException(ex.getCause()));
             throw ex;
         }
     }
@@ -701,7 +693,7 @@ public class SaxonCAPI {
      * @param filename
      * @return file object
      */
-    public File absoluteFile(String cwd, String filename) {
+    public static File absoluteFile(String cwd, String filename) {
         char separatorChar = '/';
         if (File.separatorChar != '/') {
             filename.replace(separatorChar, File.separatorChar);
@@ -730,7 +722,7 @@ public class SaxonCAPI {
      * @return File object
      * @throws SaxonApiException
      */
-    public File resolveFile(String cwd, String filename) throws SaxonApiException {
+    public static File resolveFile(String cwd, String filename) throws SaxonApiException {
         URI cwdURI = null;
         File file = null;
         if (cwd != null && cwd.length() > 0) {
@@ -764,7 +756,7 @@ public class SaxonCAPI {
      * @return Source
      * @throws SaxonApiException
      */
-    public Source resolveFileToSource(String cwd, String filename) throws SaxonApiException {
+    public static Source resolveFileToSource(String cwd, String filename) throws SaxonApiException {
 
         Source source = null;
         File file = null;
@@ -839,7 +831,4 @@ public class SaxonCAPI {
         return serializer;
     }
 
-    public Map<QName, XdmValue> getGlobals() {
-        return globals;
-    }
 }

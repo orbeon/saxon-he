@@ -9,6 +9,7 @@ import javax.xml.transform.Source;
 import java.io.File;
 import java.net.URI;
 import java.net.URISyntaxException;
+import java.util.HashMap;
 import java.util.Map;
 
 /**
@@ -110,8 +111,7 @@ public class XPathProcessor extends SaxonCAPI {
             uri = new URI(uriStr);
             compiler.setBaseURI(uri);
         } catch (URISyntaxException e) {
-            SaxonCException ex = new SaxonCException(e);
-            saxonExceptions.add(ex);
+            SaxonApiException ex = new SaxonApiException(e);
             throw ex;
         }
 
@@ -125,16 +125,14 @@ public class XPathProcessor extends SaxonCAPI {
     public void setProperties(String[] params, Object[] values) throws SaxonApiException {
         if (selector != null) {
             try {
-                Map<String, Object> parameterMap = convertArraysToMap(params, values, false);
-                applyXPathProperties(this, "", processor, selector, parameterMap);
+                Map<QName, XdmValue> parameters = new HashMap<>();
+                Map<String, Object> map = convertArraysToMap(params, values, null, parameters, null, null, null, false);
+                applyXPathProperties(this, "", processor, selector, map, parameters);
             } catch (SaxonApiException e) {
-                SaxonCException ex = new SaxonCException(e);
-                saxonExceptions.add(ex);
-                throw ex;
+                throw e;
             }
         } else {
-            SaxonCException ex = new SaxonCException("XPathExecutable not created");
-            saxonExceptions.add(ex);
+            SaxonApiException ex = new SaxonApiException("XPathExecutable not created");
             throw ex;
 
         }
@@ -144,7 +142,6 @@ public class XPathProcessor extends SaxonCAPI {
     public void reset() {
         compiler = null;
         selector = null;
-        clearExceptions();
     }
 
 
@@ -164,13 +161,13 @@ public class XPathProcessor extends SaxonCAPI {
                 System.err.println("xpathString: " + xpathStr);
             }
         }
-
-        Map<String, Object> parameterMap = convertArraysToMap(params, values, false);
-        setupXPathCompiler(parameterMap);
+        Map<QName, XdmValue> parameters = new HashMap<>();
+        Map<String, Object> optionsMap = convertArraysToMap(params, values, null, parameters, null, null, null, false);
+        setupXPathCompiler(optionsMap);
         compiler.setSchemaAware(schemaAware);
 
         selector = compiler.compile(xpathStr).load();
-        applyXPathProperties(this, cwd, processor, selector, parameterMap);
+        applyXPathProperties(this, cwd, processor, selector, optionsMap, parameters);
         if (contextItem != null) {
             selector.setContextItem(contextItem);
         }
@@ -241,10 +238,11 @@ public class XPathProcessor extends SaxonCAPI {
                 System.err.println("xpathString: " + xpathStr);
             }
         }
-        Map<String, Object> paramsMap = convertArraysToMap(params, values, false);
-        setupXPathCompiler(paramsMap);
+        Map<QName, XdmValue> parameters = new HashMap<>();
+        Map<String, Object> optionsMap = convertArraysToMap(params, values, null, parameters, null, null, null, false);
+        setupXPathCompiler(optionsMap);
         selector = compiler.compile(xpathStr).load();
-        applyXPathProperties(this, cwd, processor, selector, paramsMap);
+        applyXPathProperties(this, cwd, processor, selector, optionsMap, parameters);
         if (contextItem != null) {
             selector.setContextItem(contextItem);
         }
@@ -263,16 +261,15 @@ public class XPathProcessor extends SaxonCAPI {
      **/
     public boolean effectiveBooleanValue(String cwd, String xpathStr, String[] params, Object[] values) throws SaxonApiException {
 
-        Map<String, Object> paramsMap = convertArraysToMap(params, values, false);
-        setupXPathCompiler(paramsMap);
+        Map<QName, XdmValue> parameters = new HashMap<>();
+        Map<String, Object> optionsMap = convertArraysToMap(params, values, null, parameters, null, null, null, false);
+        setupXPathCompiler(optionsMap);
         selector = compiler.compile(xpathStr).load();
 
         try {
 
-            applyXPathProperties(this, cwd, processor, selector, paramsMap);
+            applyXPathProperties(this, cwd, processor, selector, optionsMap, parameters);
         } catch (SaxonApiException e) {
-            SaxonCException ex = new SaxonCException(e);
-            saxonExceptions.add(ex);
             throw e;
         }
 
@@ -283,8 +280,6 @@ public class XPathProcessor extends SaxonCAPI {
         try {
             result = selector.effectiveBooleanValue();
         } catch (SaxonApiException e) {
-            SaxonCException ex = new SaxonCException(e);
-            saxonExceptions.add(ex);
             throw e;
         }
         return result;
@@ -303,7 +298,7 @@ public class XPathProcessor extends SaxonCAPI {
      * @param selector  - compiled and loaded XPath expression ready for execution.
      * @param map
      */
-    public static void applyXPathProperties(SaxonCAPI api, String cwd, Processor processor, XPathSelector selector, Map<String, Object> map) throws SaxonApiException {
+    public static void applyXPathProperties(SaxonCAPI api, String cwd, Processor processor, XPathSelector selector, Map<String, Object> map, Map<QName, XdmValue> parameters) throws SaxonApiException {
         if (!map.isEmpty()) {
             String outputFilename = null;
             String initialTemplate = null;
@@ -346,9 +341,6 @@ public class XPathProcessor extends SaxonCAPI {
                 }
                 item = (XdmItem) valuei;
                 ((XPathProcessor) api).setContextItem(item);
-                if (item instanceof XdmNode) {
-                    api.doc = (XdmNode) item;
-                }
 
             }
 
@@ -379,18 +371,14 @@ public class XPathProcessor extends SaxonCAPI {
 
             }
         }
-         if (!api.parameters.isEmpty()){
-             Map<QName, XdmValue> variables = api.parameters;
+         if (!parameters.isEmpty()){
+             Map<QName, XdmValue> variables = parameters;
              for(Map.Entry<QName, XdmValue> entry: variables.entrySet()){
                  selector.setVariable(entry.getKey(), entry.getValue());
 
              }
          }
-                       
 
-    if (!api.props.isEmpty() && api.serializer != null) {
-                api.serializer.setOutputProperties(api.props);
-            }
 
     }
 
