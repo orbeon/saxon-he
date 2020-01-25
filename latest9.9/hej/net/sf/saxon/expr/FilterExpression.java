@@ -519,9 +519,9 @@ public final class FilterExpression extends BinaryExpression implements ContextS
                 XPathContext context = visitor.getStaticContext().makeEarlyEvaluationContext();
                 return iterate(context).materialize();
             }
-        } catch (XPathException e) {
+        } catch (Exception e) {
             // can happen for a variety of reasons, for example the filter references a global parameter,
-            // references the doc() function, etc.
+            // references the doc() function, uses element constructors, etc.
             return null;
         }
         return null;
