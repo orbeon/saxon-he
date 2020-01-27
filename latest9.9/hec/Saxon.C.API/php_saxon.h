@@ -225,7 +225,6 @@ jobject JNICALL phpNativeCall
     PHP_METHOD(Xslt30Processor, applyTemplatesReturningValue);
     PHP_METHOD(Xslt30Processor, applyTemplatesReturningString);
     PHP_METHOD(Xslt30Processor, applyTemplatesReturningFile);
-    PHP_METHOD(Xslt30Processor, addPackages);
     PHP_METHOD(Xslt30Processor, setBaseOutputURI);
     PHP_METHOD(Xslt30Processor, setInitialTemplateParameters);
     PHP_METHOD(Xslt30Processor, setInitialMatchSelection);

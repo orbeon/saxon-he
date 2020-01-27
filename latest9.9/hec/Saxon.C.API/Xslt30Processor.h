@@ -474,18 +474,6 @@ public:
     XdmValue * callFunctionReturningValue(const char * stylesheetFilename, const char* functionName, XdmValue ** arguments, int argument_length);
 
 
-    //! File names of XsltPackages stored on filestore are added to a set of packages.
-    /***
-     * The added XSLT packages will be imported later when compiling
-     * @param fileNames - packs array of file names of XSLT packages stored in filestore
-     * @param length - The number of package names in the array
-     */
-
-    void addPackages(const char ** fileNames, int length);
-
-    void clearPackages();
-
-
 
     //! Internal method to release cached stylesheet
     /**

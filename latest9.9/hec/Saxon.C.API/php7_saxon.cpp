@@ -2152,7 +2152,7 @@ PHP_METHOD(Xslt30Processor, applyTemplatesReturningFile){
 }
 
 
-PHP_METHOD(Xslt30Processor, addPackages){
+/*PHP_METHOD(Xslt30Processor, addPackages){
     HashTable *arr_hash;
     Xslt30Processor *xslt30Processor;
     char* functionName = NULL;
@@ -2182,10 +2182,7 @@ PHP_METHOD(Xslt30Processor, addPackages){
   if (xslt30Processor != NULL) {
       ZEND_HASH_FOREACH_KEY_VAL(arr_hash, num_key, key, val) {
         if(Z_TYPE_P(val) != NULL && Z_TYPE_P(val)== IS_STRING) {
-      /*std::cerr<<"test type:"<<(Z_OBJCE_P(val)->name)<<std::endl;
-	php_printf("num_key %d =>", num_key);
-	php_printf("key %d =>", key);
-	*/
+
 		arguments[num_key] = (const char*)Z_STRVAL_P(val);
      		
         } 
@@ -2200,7 +2197,7 @@ PHP_METHOD(Xslt30Processor, addPackages){
             }
         }
     }
-}
+}    */
 
 
     PHP_METHOD(Xslt30Processor,setInitialTemplateParameters){

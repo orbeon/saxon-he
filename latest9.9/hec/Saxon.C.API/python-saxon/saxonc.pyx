@@ -664,7 +664,7 @@ cdef class PyXsltProcessor:
         """
         py_name_string = file_name.encode('UTF-8') if file_name is not None else None
         cdef char * c_file_name = py_name_string if file_name is not None else NULL
-        self.thisxptr.getXslMessages(show, c_file_name)
+        self.thisxptr.getXslMessages(bool(show), c_file_name)
 
 
      def transform_to_string(self, **kwds):
@@ -1295,7 +1295,7 @@ cdef class PyXslt30Processor:
         if len(kwds) > 0:
             self.thisxptr.setInitialTemplateParameters(parameters, c_tunnel);
 
-     def setup_xsl_message(self, show, file_name = None):
+     def setup_xsl_message(self, show, str file_name = None):
         """
         setup_xsl_message(self, **kwds)
         gives users the option to switch on or off the <code>xsl:message</code> feature. It is also possible

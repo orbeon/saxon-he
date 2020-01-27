@@ -272,10 +272,6 @@ cdef extern from "../SaxonProcessor.h":
         # Here we wrap the result in an XML document, and return the document as an XdmVale
         XdmValue * callFunctionReturningValue(const char * stylesheetFilename, const char* functionName, XdmValue ** arguments, int argument_length)
 
-        void addPackages(const char ** fileNames, int length)
-
-        void clearPackages()
-
         # Internal method to release cached stylesheet
         void releaseStylesheet()
 
