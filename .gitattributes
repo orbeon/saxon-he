@@ -4971,7 +4971,6 @@ latest9.9/hec/command/buildpec-command.sh svn_eol_002dstyle=native
 latest9.9/hec/command/query svn_mime_002dtype=application%2Foctet-stream
 latest9.9/hec/command/transform svn_mime_002dtype=application%2Foctet-stream
 latest9.9/hec/command/validate svn_mime_002dtype=application%2Foctet-stream
-latest9.9/hec/dll-temp/libsaxonhec.dll svn_mime_002dtype=application%2Foctet-stream
 latest9.9/hec/samples/cTests/build.sh svn_eol_002dstyle=native
 latest9.9/hec/samples/cTests/buildhec.sh svn_eol_002dstyle=native
 latest9.9/hec/samples/cTests/cat.xml svn_eol_002dstyle=native
