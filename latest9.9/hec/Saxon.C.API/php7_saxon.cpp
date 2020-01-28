@@ -43,17 +43,21 @@ zend_class_entry *xdmAtomicValue_ce;
 
 void SaxonProcessor_free_storage(zend_object *object)
 {
+
+//std::cerr<<"_free_Storage called php-saxonProc"<<std::endl;
+ 	
     saxonProcessor_object *obj;
 	
 	obj =  (saxonProcessor_object *)((char *)object - XtOffsetOf(saxonProcessor_object, std));
 
  SaxonProcessor * saxonProc= obj->saxonProcessor;
-    if(saxonProc != NULL) {    
+    if(saxonProc != NULL) {
+	//SaxonProcessor::release();    
 	delete saxonProc;
     }
  zend_object_std_dtor(object);
 
-   // efree(obj);
+    efree(obj);
 }
 
 void SaxonProcessor_destroy_storage(zend_object *pobj)
@@ -107,7 +111,8 @@ PHP_METHOD(SaxonProcessor, __construct)
     if (ZEND_NUM_ARGS()>1 && zend_parse_parameters(ZEND_NUM_ARGS(), "bs", &license, &cwdi, &len1) == FAILURE) {
         RETURN_NULL();
     }
-//std::cerr<<"SaxonProcessorConstructor cp0"<<std::endl;
+std::cerr<<"SaxonProcessorConstructor cp0"<<std::endl;
+
 
     zval *object = getThis();
     SaxonProcessor * saxonProc = NULL;
@@ -168,7 +173,7 @@ PHP_METHOD(SaxonProcessor, __destruct)
     SaxonProcessor * saxonProc= obj->saxonProcessor;
     if(saxonProc != NULL) {
 	//SaxonProcessor::release();    
-//	delete saxonProc;
+	//delete saxonProc;
     }
 }
 
@@ -1167,7 +1172,7 @@ PHP_METHOD(XsltProcessor, compileFromStringAndSave)
     char * stylesheetStr;
     char * filename;
     size_t len1, len2, myint;
-    if (zend_parse_parameters(ZEND_NUM_ARGS() , "ss", &stylesheetStr, filename, &len1, &len2) == FAILURE) {
+    if (zend_parse_parameters(ZEND_NUM_ARGS() , "ss", &stylesheetStr, &filename, &len1, &len2) == FAILURE) {
         RETURN_NULL();
     }
     zend_object* pobj = Z_OBJ_P(getThis()); 
@@ -1184,7 +1189,7 @@ PHP_METHOD(XsltProcessor, compileFromFileAndSave)
     char * stylesheetFilename;
     char * filename;
     size_t len1, len2, myint;
-    if (zend_parse_parameters(ZEND_NUM_ARGS() , "ss", &stylesheetFilename, filename, &len1, &len2) == FAILURE) {
+    if (zend_parse_parameters(ZEND_NUM_ARGS() , "ss", &stylesheetFilename, &filename, &len1, &len2) == FAILURE) {
         RETURN_NULL();
     }
     zend_object* pobj = Z_OBJ_P(getThis()); 
@@ -5497,26 +5502,16 @@ PHP_METHOD(XdmAtomicValue, isAtomic)
 }
 
 
-void php_saxonc_initialize(void){
+/*void php_saxonc_initialize(void){
    if(SaxonProcessor::jvmCreatedCPP == 0){
 	SaxonProcessor::jvmCreatedCPP=1;
-    //SaxonProcessor::sxn_environ= new sxnc_environment;
-	SaxonProcessor::sxn_environ= (sxnc_environment *)malloc(sizeof(sxnc_environment));
-
-    /*
-     * First of all, load required component.
-     * By the time of JET initialization, all components should be loaded.
-     */
+ 	SaxonProcessor::sxn_environ= (sxnc_environment *)malloc(sizeof(sxnc_environment));
 
     SaxonProcessor::sxn_environ->myDllHandle = loadDefaultDll ();
 
-    /*
-     * Initialize JET run-time.
-     * The handle of loaded component is used to retrieve Invocation API.
-     */
     initDefaultJavaRT (SaxonProcessor::sxn_environ); 
     }
-}
+} */
 
 
 // =============================================================
@@ -5801,7 +5796,7 @@ PHP_MINIT_FUNCTION(saxon)
     schemaValidator_ce = zend_register_internal_class(&ce);
     schemaValidator_ce->create_object = schemaValidator_create_handler;
     memcpy(&schemaValidator_object_handlers, zend_get_std_object_handlers(), sizeof(schemaValidator_object_handlers));
-    schemaValidator_object_handlers.offset = XtOffsetOf(xpathProcessor_object, std);
+    schemaValidator_object_handlers.offset = XtOffsetOf(schemaValidator_object, std);
     schemaValidator_object_handlers.free_obj = schemaValidator_free_storage;
     schemaValidator_object_handlers.dtor_obj = schemaValidator_destroy_storage; 
     //schemaValidator_object_handlers.clone_obj = NULL;
@@ -5858,14 +5853,17 @@ PHP_MINFO_FUNCTION(saxon)
 
 PHP_MSHUTDOWN_FUNCTION(saxon) {
 //std::cerr<<"MSHUTDOWN called -start"<<std::endl;
-    SaxonProcessor::release();
-    UNREGISTER_INI_ENTRIES();
+//SaxonProcessor *  proc = new SaxonProcessor();
+ SaxonProcessor::release();   
+//delete proc;
+ UNREGISTER_INI_ENTRIES();
    
     return SUCCESS;
 }
 
 PHP_RSHUTDOWN_FUNCTION(saxon) {
-    //std::cerr<<"RSHUTDOWN called -start"<<std::endl;
+    std::cerr<<"RSHUTDOWN called -start"<<std::endl;
+//    SaxonProcessor::release();
     return SUCCESS;
 }
 
@@ -5884,7 +5882,7 @@ zend_module_entry saxon_module_entry = {
     PHP_MINIT(saxon),        /* MINIT */
     PHP_MSHUTDOWN(saxon),        /* MSHUTDOWN */
     NULL,        /* RINIT */
-    NULL,        /* RSHUTDOWN */
+    PHP_RSHUTDOWN(saxon),        /* RSHUTDOWN */
     PHP_MINFO(saxon),        /* MINFO */
 #if ZEND_MODULE_API_NO >= 20010901
     PHP_SAXON_EXTVER,

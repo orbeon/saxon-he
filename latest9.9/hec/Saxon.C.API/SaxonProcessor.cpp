@@ -495,6 +495,7 @@ SchemaValidator * SaxonProcessor::newSchemaValidator(){
 
 const char * SaxonProcessor::version() {
      if(versionStr == NULL) {
+std::cerr<<"versionStr is null"<<std::endl;
      	static jmethodID MID_version = (jmethodID)SaxonProcessor::sxn_environ->env->GetStaticMethodID(saxonCAPIClass, "getProductVersion", "(Lnet/sf/saxon/s9api/Processor;)Ljava/lang/String;");
     	if (!MID_version) {
         	std::cerr<<"\nError: MyClassInDll "<<"SaxonCAPI.getProductVersion()"<<" not found"<<std::endl;
@@ -509,6 +510,7 @@ const char * SaxonProcessor::version() {
          delete tempVersionStr;
 
     }
+std::cerr<<"versionStr is not null"<<std::endl;
     return versionStr;
 }
 
@@ -694,16 +696,16 @@ XdmNode * SaxonProcessor::parseXmlFromUri(const char* source){
 void SaxonProcessor::release(){
  	if(SaxonProcessor::jvmCreatedCPP!=0) {
 		SaxonProcessor::jvmCreatedCPP =0; 
-		//std::cerr<<"SaxonProc: JVM finalized calling !"<<std::endl;
+		std::cerr<<"SaxonProc: JVM finalized calling !"<<std::endl;
  		finalizeJavaRT (SaxonProcessor::sxn_environ->jvm);
  		
-		//delete SaxonProcessor::sxn_environ;
+		delete SaxonProcessor::sxn_environ;
 	/*clearParameters();
 	clearProperties();*/
 } else {
-#ifdef DEBUG
+//#ifdef DEBUG
      std::cerr<<"SaxonProc: JVM finalize not called!"<<std::endl;
-#endif
+//#endif
 }
 }
 

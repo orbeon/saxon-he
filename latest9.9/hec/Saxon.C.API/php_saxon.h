@@ -159,6 +159,7 @@ jobject JNICALL phpNativeCall
 	PHP_MSHUTDOWN_FUNCTION(saxon);
 	PHP_MINFO_FUNCTION(saxon);
 	PHP_MINIT_FUNCTION(saxon);
+PHP_RINIT_FUNCTION(saxon);
 
     PHP_METHOD(SaxonProcessor,  __construct);
     PHP_METHOD(SaxonProcessor,  __destruct);

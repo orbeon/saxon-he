@@ -129,6 +129,7 @@ jobject JNICALL phpNativeCall
     PHP_METHOD(SaxonProcessor,  parseXmlFromString);
     PHP_METHOD(SaxonProcessor,  parseXmlFromFile);
     PHP_METHOD(SaxonProcessor,  setcwd);
+    PHP_METHOD(SaxonProcessor,  init);
 //    PHP_METHOD(SaxonProcessor,  importDocument);
     PHP_METHOD(SaxonProcessor,  setResourcesDirectory);
     PHP_METHOD(SaxonProcessor,  setCatalog);

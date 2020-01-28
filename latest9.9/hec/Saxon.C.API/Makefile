@@ -23,7 +23,7 @@ exec_prefix = $(prefix)
 libdir = ${exec_prefix}/lib
 prefix = /usr
 phplibdir = /home/ond1/work/svn/latest9.9-saxonc/Saxon.C.API/modules
-phpincludedir = /usr/include/php/20170718
+phpincludedir = /usr/include/php/20180731
 CC = cc
 CFLAGS = -g -O2
 CFLAGS_CLEAN = $(CFLAGS)
@@ -32,11 +32,11 @@ CPPFLAGS = -DHAVE_CONFIG_H
 CXX = g++
 CXXFLAGS = -g -O2
 CXXFLAGS_CLEAN = $(CXXFLAGS)
-EXTENSION_DIR = /usr/lib/php/20170718
-PHP_EXECUTABLE = /usr/bin/php7.2
+EXTENSION_DIR = /usr/lib/php/20180731
+PHP_EXECUTABLE = /usr/bin/php7.3
 EXTRA_LDFLAGS =
 EXTRA_LIBS =
-INCLUDES = -I/usr/include/php/20170718 -I/usr/include/php/20170718/main -I/usr/include/php/20170718/TSRM -I/usr/include/php/20170718/Zend -I/usr/include/php/20170718/ext -I/usr/include/php/20170718/ext/date/lib -I/home/ond1/work/svn/latest9.9-saxonc/Saxon.C.API/jni
+INCLUDES = -I/usr/include/php/20180731 -I/usr/include/php/20180731/main -I/usr/include/php/20180731/TSRM -I/usr/include/php/20180731/Zend -I/usr/include/php/20180731/ext -I/usr/include/php/20180731/ext/date/lib -I/home/ond1/work/svn/latest9.9-saxonc/Saxon.C.API/jni
 LFLAGS =
 LDFLAGS =
 SHARED_LIBTOOL =
@@ -160,7 +160,7 @@ clean:
 	find . -name \*.la -o -name \*.a | xargs rm -f
 	find . -name \*.so | xargs rm -f
 	find . -name .libs -a -type d|xargs rm -rf
-	rm -f libphp$(PHP_MAJOR_VERSION).la $(SAPI_CLI_PATH) $(SAPI_CGI_PATH) $(SAPI_MILTER_PATH) $(SAPI_LITESPEED_PATH) $(SAPI_FPM_PATH) $(OVERALL_TARGET) modules/* libs/*
+	rm -f libphp$(PHP_MAJOR_VERSION).la $(SAPI_CLI_PATH) $(SAPI_CGI_PATH) $(SAPI_LITESPEED_PATH) $(SAPI_FPM_PATH) $(OVERALL_TARGET) modules/* libs/*
 
 distclean: clean
 	rm -f Makefile config.cache config.log config.status Makefile.objects Makefile.fragments libtool main/php_config.h main/internal_functions_cli.c main/internal_functions.c stamp-h buildmk.stamp Zend/zend_dtrace_gen.h Zend/zend_dtrace_gen.h.bak Zend/zend_config.h TSRM/tsrm_config.h
@@ -182,7 +182,7 @@ prof-clean:
 	find . -name \*.lo -o -name \*.o | xargs rm -f
 	find . -name \*.la -o -name \*.a | xargs rm -f
 	find . -name \*.so | xargs rm -f
-	rm -f libphp$(PHP_MAJOR_VERSION).la $(SAPI_CLI_PATH) $(SAPI_CGI_PATH) $(SAPI_MILTER_PATH) $(SAPI_LITESPEED_PATH) $(SAPI_FPM_PATH) $(OVERALL_TARGET) modules/* libs/*
+	rm -f libphp$(PHP_MAJOR_VERSION).la $(SAPI_CLI_PATH) $(SAPI_CGI_PATH) $(SAPI_LITESPEED_PATH) $(SAPI_FPM_PATH) $(OVERALL_TARGET) modules/* libs/*
 
 prof-use:
 	CCACHE_DISABLE=1 $(MAKE) PROF_FLAGS=-fprofile-use all

@@ -709,6 +709,7 @@ std::cerr<<"testCatalog result= "<<result<<std::endl;
 
 int main()
 {
+SaxonProcessor::jvmCreatedCPP = 1;
 
     SaxonProcessor * processor = new SaxonProcessor(true);
     cout<<"Test: XsltProcessor with Saxon version="<<processor->version()<<endl<<endl; 
@@ -763,7 +764,7 @@ testCatalog(processor);
     delete trans;
 delete processor;
     // processor->release();
-
+SaxonProcessor::jvmCreatedCPP = 1;
 
  SaxonProcessor * processor2 = new SaxonProcessor(true);
     cout<<"Test2: XsltProcessor with Saxon version="<<processor2->version()<<endl<<endl; 

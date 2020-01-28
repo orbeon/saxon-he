@@ -20,7 +20,7 @@
     #include <windows.h>
 #endif
 
-//#define DEBUG //remove
+#define DEBUG //remove
 #define CVERSION "1.2.2"
 #define CVERSION_API_NO 122
 #include <string>
