@@ -85,7 +85,7 @@ public class NegateExpression extends UnaryExpression {
 
     /*@NotNull*/
     public ItemType getItemType() {
-        return getBaseExpression().getItemType();
+        return getBaseExpression().getItemType().getPrimitiveItemType();
     }
 
     /**
