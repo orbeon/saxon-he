@@ -512,7 +512,7 @@ public final class ValueComparison extends BinaryExpression implements Compariso
     private Expression optimizeCount(ExpressionVisitor visitor, boolean inverted) throws XPathException {
         SystemFunctionCall countFn = (SystemFunctionCall) (inverted ? getRhsExpression() : getLhsExpression());
         Expression sequence = countFn.getArg(0);
-        sequence = sequence.unordered(false, false);
+        sequence = sequence.unordered(true, false);
         Optimizer opt = visitor.obtainOptimizer();
 
         AtomicValue literalOperand = (AtomicValue) ((Literal) (inverted ? getLhsExpression() : getRhsExpression())).getValue();
