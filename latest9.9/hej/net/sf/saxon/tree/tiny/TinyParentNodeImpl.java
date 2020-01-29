@@ -72,16 +72,20 @@ public abstract class TinyParentNodeImpl extends TinyNodeImpl {
         // we optimize two special cases: firstly, where the node has no children, and secondly,
         // where it has a single text node as a child.
 
+
         if (tree.nodeKind[nodeNr] == Type.TEXTUAL_ELEMENT) {
             return TinyTextImpl.getStringValue(tree, nodeNr);
         } else if (tree.nodeKind[nodeNr] == Type.EXTERNAL_NODE_REFERENCE) {
             GraftedElement graft = tree.externalNodes.get(tree.alpha[nodeNr]);
             return graft.getStringValueCS();
-        } else if (tree.depth[next] <= level) {
-            return "";
-        } else if (tree.nodeKind[next] == Type.TEXT && (next + 1 >= tree.numberOfNodes || tree.depth[next + 1] <= level)) {
-            return TinyTextImpl.getStringValue(tree, next);
+        } else if (next < tree.numberOfNodes) {    // bug 4445
+            if (tree.depth[next] <= level) {
+                return "";
+            } else if (tree.nodeKind[next] == Type.TEXT && (next + 1 >= tree.numberOfNodes || tree.depth[next + 1] <= level)) {
+                return TinyTextImpl.getStringValue(tree, next);
+            }
         }
+
 
         // now handle the general case
 
