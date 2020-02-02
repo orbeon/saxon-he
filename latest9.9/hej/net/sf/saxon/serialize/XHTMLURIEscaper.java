@@ -118,9 +118,9 @@ public class XHTMLURIEscaper extends HTMLURIEscaper {
         if (escapeURIAttributes &&
                 isURLAttribute(currentElement, attName) &&
                 (properties & ReceiverOptions.DISABLE_ESCAPING) == 0) {
-            CharSequence normalized = (isAllAscii(value)
+            CharSequence normalized = isAllAscii(value)
                     ? value
-                    : new Normalizer(Normalizer.C, getConfiguration()).normalize(value));
+                    : Normalizer.make(Normalizer.C, getConfiguration()).normalize(value);
 
             getNextReceiver().attribute(
                     attName, typeCode, escapeURL(normalized, true, getConfiguration()), locationId,

@@ -182,7 +182,7 @@ public final class TinyTree extends GenericTreeInfo implements NodeVectorTree {
      * element nodes from one TinyTree to another. This code is currently disabled by default until
      * it has been more thoroughly tested.
      */
-    public final static boolean useBulkCopy = true;  // Until bug 4089 is resolved
+    public final static boolean useBulkCopy = false;  // because of bug #4433
     public static boolean useGraft = false; // KILROY
 
     /**

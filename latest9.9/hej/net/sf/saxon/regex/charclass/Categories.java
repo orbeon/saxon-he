@@ -190,7 +190,7 @@ public class Categories {
      * @return a predicate that tests whether a given character belongs to the category
      */
 
-    public static Category getCategory(String cat) {
+    public synchronized static Category getCategory(String cat) {
         if (CATEGORIES == null) {
             build();
         }

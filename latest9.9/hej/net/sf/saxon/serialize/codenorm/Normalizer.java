@@ -36,18 +36,29 @@ public class Normalizer {
 
 
     /**
-     * Create a normalizer for a given form.
+     * Create a normalizer for a given form. Private constructor: use the {@link #make factory method}
      *
      * @param form   the normalization form required: for example {@link Normalizer#C}, {@link Normalizer#D}
      * @param config the Saxon configuration
      * @throws XPathException if normalization fails
      */
-    public Normalizer(int form, Configuration config) throws XPathException {
+    private Normalizer(int form, Configuration config) throws XPathException {
         this.form = form;
+    }
+
+    /**
+     * Create a normalizer for a given form: static synchronized factory method
+     *
+     * @param form   the normalization form required: for example {@link Normalizer#C}, {@link Normalizer#D}
+     * @param config the Saxon configuration
+     * @throws XPathException if normalization fails
+     */
+
+    public static synchronized Normalizer make(int form, Configuration config) throws XPathException {
         if (data == null) {
-            //data = UnicodeDataParser.build(); // load 1st time
             data = UnicodeDataParserFromXML.build(config);
         }
+        return new Normalizer(form, config);
     }
 
     /**

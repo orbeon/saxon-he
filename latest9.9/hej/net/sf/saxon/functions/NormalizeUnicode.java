@@ -76,7 +76,7 @@ public class NormalizeUnicode extends SystemFunction {
             return sv;
         }
 
-        Normalizer norm = new Normalizer(fb, c.getConfiguration());
+        Normalizer norm = Normalizer.make(fb, c.getConfiguration());
         CharSequence result = norm.normalize(sv.getStringValueCS());
         return StringValue.makeStringValue(result);
     }

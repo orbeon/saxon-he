@@ -49,7 +49,7 @@ public class UnicodeNormalizer extends ProxyReceiver {
                 err.setErrorCode("SESU0011");
                 throw err;
         }
-        normalizer = new Normalizer(fb, getConfiguration());
+        normalizer = Normalizer.make(fb, getConfiguration());
     }
 
     /**

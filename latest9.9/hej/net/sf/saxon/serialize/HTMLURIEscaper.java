@@ -170,7 +170,7 @@ public class HTMLURIEscaper extends ProxyReceiver {
             char ch = url.charAt(i);
             if (ch < 32 || ch > 126) {
                 if (normalize) {
-                    CharSequence normalized = new Normalizer(Normalizer.C, config).normalize(url);
+                    CharSequence normalized = Normalizer.make(Normalizer.C, config).normalize(url);
                     return reallyEscapeURL(normalized);
                 } else {
                     return reallyEscapeURL(url);
