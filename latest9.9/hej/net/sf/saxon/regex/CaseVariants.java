@@ -88,7 +88,7 @@ public class CaseVariants {
      * @return the case variants of the character, excluding the character itself
      */
 
-    public static int[] getCaseVariants(int code) {
+    public synchronized static int[] getCaseVariants(int code) {
         if (monoVariants == null) {
             build();
         }
