@@ -306,6 +306,10 @@ public class ForEach extends Instruction implements ContextMappingFunction<Item<
             }
         }
 
+        if (getSelect().getCardinality() == StaticProperty.EXACTLY_ONE && getAction() instanceof AxisExpression) {
+            return new SimpleStepExpression(getSelect(), getAction());
+        }
+
         if (threadsOp != null && !Literal.isEmptySequence(getThreads())) {
             return visitor.obtainOptimizer().generateMultithreadedInstruction(this);
         }
