@@ -2613,22 +2613,26 @@ public class XQueryParser extends XPathParser {
         List<String> collations = new ArrayList<>();
         nextToken();
         while (true) {
+            SequenceType type = SequenceType.ANY_SEQUENCE;
             StructuredQName varQName = readVariableName();
-
+            if (t.currentToken == Token.AS) {
+                nextToken();
+                type = parseSequenceType();
+                if (t.currentToken != Token.ASSIGN) {
+                    grumble("In group by, if the type is declared then it must be followed by ':= value'");
+                }
+            }
             if (t.currentToken == Token.ASSIGN) {
                 LetClause letClause = new LetClause();
 
                 clauseList.add(letClause);
                 nextToken();
-
-                SequenceType type = SequenceType.ANY_SEQUENCE;
-                if (t.currentToken == Token.AS) {
-                    nextToken();
-                    type = parseSequenceType();
-                }
+                
                 LocalVariableBinding v = new LocalVariableBinding(varQName, type);
-
-                letClause.initSequence(flwor, parseExprSingle());
+                Expression value = parseExprSingle();
+                RoleDiagnostic role = new RoleDiagnostic(RoleDiagnostic.MISC, "grouping key", 0);
+                Expression atomizedValue = Atomizer.makeAtomizer(value, role);
+                letClause.initSequence(flwor, atomizedValue);
                 letClause.setRangeVariable(v);
                 declareRangeVariable(v);
             }
