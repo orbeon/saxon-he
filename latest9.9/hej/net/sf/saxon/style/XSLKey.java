@@ -304,7 +304,7 @@ public class XSLKey extends StyleElement implements StylesheetComponent {
                 useType = BuiltInAtomicType.STRING;
             }
         }
-        allocateLocalSlots(use);
+
         // first slot in pattern is reserved for current()
         int nextFree = 0;
         if ((match.getDependencies() & StaticProperty.DEPENDS_ON_CURRENT_ITEM) != 0) {
@@ -349,6 +349,7 @@ public class XSLKey extends StyleElement implements StylesheetComponent {
         ExpressionVisitor visitor = makeExpressionVisitor();
         ContextItemStaticInfo contextItemType = getConfiguration().makeContextItemStaticInfo(match.getItemType(), false);
         use = use.optimize(visitor, contextItemType);
+        allocateLocalSlots(use);
     }
 
 
