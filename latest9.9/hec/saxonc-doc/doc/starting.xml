@@ -89,7 +89,7 @@
                <p>Next run: </p>
                <kbd>sudo ldconfig</kbd>
                <p>Ignore the message 'file /lib/libsaxon[EDITION].so is truncated'. The library was created using
-               Excelsior Jet. The library is loaded from within the Saxon/C application and not in the usual way of shared libraries.</p>
+               Excelsior JET. The library is loaded from within the Saxon/C application and not in the usual way of shared libraries.</p>
             </li>
 
             <!-- <li><p>The C++ compiler requires the include path to the Java header files during compilation.
@@ -487,7 +487,7 @@ $saxonProc->setConfigurationProperty("http://saxon.sf.net/feature/licenseFileLoc
             <p><b>Solution:</b> Running the following command should resolve the error:</p>
             <kbd>sudo ldconfig</kbd>
             <p>Ignore the message 'file /lib/libsaxon[EDITION].so is truncated'. The library was created using
-            Excelsior Jet.</p>
+            Excelsior JET.</p>
             <p>Alternatively create a symlink to the java virtual machine. This is not required to
                install or compile, but it is required for PHP code. The following command should
                resolve the issue on a 64-bit machine:</p>
@@ -509,9 +509,8 @@ $saxonProc->setConfigurationProperty("http://saxon.sf.net/feature/licenseFileLoc
                   '/usr/lib/php/modules/saxon.so' - libsaxonhec.so: cannot enable executable stack
                   as shared object requires: Permission denied in Unknown on line 0</code>
             </p>
-            <p><b>Solution:</b> This has been observed on centos systems: SELinux is
-               enforced/enabled.</p>
-            <p>Run the following command to show the security setting for the library files:</p>
+            <p>This has been observed on centos systems when SELinux is enforced/enabled.</p>
+            <p><b>Solution:</b> Run the following command to show the security setting for the library files:</p>
             <kbd>ls -alZ /usr/lib" and 'ls -alZ /usr/lib/php/module/</kbd>
             <p>Then run the following commands or similar to change the security context:</p>
             <kbd>chcon system_u:object_r:lib_t:s0 /usr/lib/libsaxonhec.so</kbd>
@@ -526,8 +525,10 @@ $saxonProc->setConfigurationProperty("http://saxon.sf.net/feature/licenseFileLoc
          </li>
          <li>
             <p><code>Unable to load C:\Program Files\Saxonica\SaxonHEC1.2.1\libsaxonhec.dll Error: : No error</code></p>
-            <p><b>Cause and Solutions:</b> Running 32-bit environments including 32-bit python and PHP builds against Saxon/C which can only run with 64-bit builds.
-            Machine operating system must be 64-bit, python and PHP builds must be 64-bit to run with Saxon/C.</p>
+            <p>Caused by attempting to run Saxon/C in 32-bit environments, including 32-bit Python
+               and PHP builds. Saxon/C can only run with 64-bit builds.</p>
+            <p><b>Solution:</b> 
+            The machine operating system must be 64-bit, and Python and PHP builds must be 64-bit to run with Saxon/C.</p>
          </li>
       </ol>
 
