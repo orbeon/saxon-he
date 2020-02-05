@@ -88,6 +88,8 @@
 
                <p>Next run: </p>
                <kbd>sudo ldconfig</kbd>
+               <p>Ignore the message 'file /lib/libsaxon[EDITION].so is truncated'. The library was created using
+               Excelsior Jet. The library is loaded from within the Saxon/C application and not in the usual way of shared libraries.</p>
             </li>
 
             <!-- <li><p>The C++ compiler requires the include path to the Java header files during compilation.
@@ -429,7 +431,7 @@ $saxonProc->setConfigurationProperty("http://saxon.sf.net/feature/licenseFileLoc
       <h2 class="subtitle">Prerequisites</h2>
 
       <p>Please have the following packages on your machine to build Saxon/C for the Python
-         language: <code>Python3</code> and <code>Cython</code>.</p>
+         language: <code>Python3</code> (64-bit) and <code>Cython</code>.</p>
 
       <p>The Saxon/C Python extension API has been developed using Cython for Python3. Cython is
          required to build the extension library. To install Python and Cython on Mac OS, we
@@ -451,7 +453,7 @@ $saxonProc->setConfigurationProperty("http://saxon.sf.net/feature/licenseFileLoc
       <h3>Windows Platform</h3>
 
       <p>The Python extension on the Windows platform can be built using the following instructions:</p>
-       <p>Install Python 3.X with VS 2017 or 2019 which can then be run
+       <p>Install Python 3.X (64-bit) with VS 2017 or 2019 which can then be run
           with command "py" from Powershell.</p>
 
 
@@ -475,7 +477,7 @@ $saxonProc->setConfigurationProperty("http://saxon.sf.net/feature/licenseFileLoc
       <p>After installing Saxon/C, if you notice anomalies in execution, then the apache log file
          usually has useful information on errors reported and crashes. See below for a description
          of some of the common errors and crashes, and their solutions:</p>
-      <ul>
+      <ol>
          <li>
             <p>
                <code>FATAL ERROR: Unable to load /usr/lib64/rt/lib/amd64/libjava.so (libjvm.so
@@ -484,6 +486,8 @@ $saxonProc->setConfigurationProperty("http://saxon.sf.net/feature/licenseFileLoc
             </p>
             <p><b>Solution:</b> Running the following command should resolve the error:</p>
             <kbd>sudo ldconfig</kbd>
+            <p>Ignore the message 'file /lib/libsaxon[EDITION].so is truncated'. The library was created using
+            Excelsior Jet.</p>
             <p>Alternatively create a symlink to the java virtual machine. This is not required to
                install or compile, but it is required for PHP code. The following command should
                resolve the issue on a 64-bit machine:</p>
@@ -520,7 +524,12 @@ $saxonProc->setConfigurationProperty("http://saxon.sf.net/feature/licenseFileLoc
             </p>
             <kbd>sudo apt-get install ia32-libs</kbd>
          </li>
-      </ul>
+         <li>
+            <p><code>Unable to load C:\Program Files\Saxonica\SaxonHEC1.2.1\libsaxonhec.dll Error: : No error</code></p>
+            <p><b>Cause and Solutions:</b> Running 32-bit environments including 32-bit python and PHP builds against Saxon/C which can only run with 64-bit builds.
+            Machine operating system must be 64-bit, python and PHP builds must be 64-bit to run with Saxon/C.</p>
+         </li>
+      </ol>
 
 
    </section>
