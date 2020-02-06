@@ -116,7 +116,7 @@ public abstract class XSLAcceptExpose extends StyleElement {
                 if (componentTypeCode == -1) {
                     compileError("When component='*' is specified, all names must be wildcards",
                                  this instanceof XSLAccept ? "XTSE3032" : "XTSE3022");
-                } else {
+                } else if (componentTypeCode == StandardNames.XSL_FUNCTION) {
                     StructuredQName name = makeQName(tok.substring(0, hash));
                     test = new NameTest(Type.ELEMENT, name.getURI(), name.getLocalPart(), getNamePool());
                     int arity = 0;
@@ -126,6 +126,8 @@ public abstract class XSLAcceptExpose extends StyleElement {
                         compileError("Malformed function arity in '" + tok + "'");
                     }
                     explicitComponentTests.add(new ComponentTest(componentTypeCode, test, arity));
+                } else {
+                    compileError("Cannot specify arity for components other than functions", "XTSE3020");
                 }
 
             } else if (tok.equals("*")) {
@@ -155,6 +157,8 @@ public abstract class XSLAcceptExpose extends StyleElement {
                 if (componentTypeCode == -1) {
                     compileError("When component='*' is specified, all names must be wildcards",
                                  this instanceof XSLAccept ? "XTSE3032" : "XTSE3022");
+                } else if (componentTypeCode == StandardNames.XSL_FUNCTION) {
+                    compileError("When the name identifies a function, the arity must be given (XSLT 3.0 erratum E36)", "XTSE3020");
                 } else {
                     StructuredQName name;
                     try {
