@@ -765,12 +765,17 @@ public class TransformFn extends SystemFunction implements Callable {
                 if (sourceNode != null) {
                     sourceNode = validate(sourceNode, targetConfig, schemaValidation);
                 } else if (sourceLocation != null) {
-                    StreamSource ss = new StreamSource(sourceLocation);
-                    ParseOptions parseOptions = new ParseOptions(targetConfig.getParseOptions());
-                    parseOptions.setSchemaValidationMode(schemaValidation);
-                    TreeInfo tree = targetConfig.buildDocumentTree(ss, parseOptions);
-                    sourceNode = tree.getRootNode();
-                    sourceLocation = null;
+                    try {
+                        String base = getStaticBaseUriString();
+                        Source ss = xsltCompiler.getURIResolver().resolve(sourceLocation, base);
+                        ParseOptions parseOptions = new ParseOptions(targetConfig.getParseOptions());
+                        parseOptions.setSchemaValidationMode(schemaValidation);
+                        TreeInfo tree = targetConfig.buildDocumentTree(ss, parseOptions);
+                        sourceNode = tree.getRootNode();
+                        sourceLocation = null;
+                    } catch (TransformerException e) {
+                        throw XPathException.makeXPathException(e);
+                    }
                 }
                 if (globalContextItem instanceof XdmNode) {
                     NodeInfo v = validate(((XdmNode)globalContextItem).getUnderlyingNode(), targetConfig, schemaValidation);
