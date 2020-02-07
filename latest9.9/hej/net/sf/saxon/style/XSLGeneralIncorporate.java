@@ -11,7 +11,6 @@ import net.sf.saxon.Configuration;
 import net.sf.saxon.functions.DocumentFn;
 import net.sf.saxon.om.AttributeCollection;
 import net.sf.saxon.om.DocumentURI;
-import net.sf.saxon.om.TreeInfo;
 import net.sf.saxon.trans.XPathException;
 import net.sf.saxon.tree.linked.DocumentImpl;
 import net.sf.saxon.tree.linked.ElementImpl;
@@ -19,7 +18,6 @@ import net.sf.saxon.value.Whitespace;
 
 import javax.xml.transform.Source;
 import javax.xml.transform.URIResolver;
-import java.util.Map;
 
 
 /**
@@ -30,6 +28,7 @@ import java.util.Map;
 public abstract class XSLGeneralIncorporate extends StyleElement {
 
     private String href;
+    private DocumentImpl targetDoc;
 
     /**
      * Ask whether this node is a declaration, that is, a permitted child of xsl:stylesheet
@@ -79,6 +78,10 @@ public abstract class XSLGeneralIncorporate extends StyleElement {
         checkTopLevel(isImport() ? "XTSE0190" : "XTSE0170", false);
     }
 
+    public void setTargetDoc(DocumentImpl doc) {
+        this.targetDoc = doc;
+    }
+
     /**
      * Get the included or imported stylesheet module
      *
@@ -121,8 +124,10 @@ public abstract class XSLGeneralIncorporate extends StyleElement {
 
             } else {
 
-                Map<DocumentURI, TreeInfo> map = getCompilation().getStylesheetModules();
-                DocumentImpl includedDoc = (DocumentImpl)map.get(key);
+//                Map<DocumentURI, TreeInfo> map = getCompilation().getStylesheetModules();
+//                DocumentImpl includedDoc = (DocumentImpl)map.get(key);
+                DocumentImpl includedDoc = targetDoc;    // Bug 4326
+                assert includedDoc != null;
 
                 ElementImpl outermost = includedDoc.getDocumentElement();
 

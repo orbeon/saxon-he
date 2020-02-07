@@ -26,6 +26,7 @@ import net.sf.saxon.trans.XPathException;
 import net.sf.saxon.trans.packages.UsePack;
 import net.sf.saxon.tree.AttributeLocation;
 import net.sf.saxon.tree.linked.DocumentImpl;
+import net.sf.saxon.tree.linked.LinkedTreeBuilder;
 import net.sf.saxon.tree.util.AttributeCollectionImpl;
 import net.sf.saxon.type.*;
 import net.sf.saxon.value.*;
@@ -64,6 +65,7 @@ public class UseWhenFilter extends ProxyReceiver {
     private NestedIntegerValue precedence;
     private int importCount = 0;
     private boolean dropUnderscoredAttributes;
+    private DocumentImpl includedDoc = null;
 
 
 
@@ -79,6 +81,7 @@ public class UseWhenFilter extends ProxyReceiver {
         super(next);
         this.compilation = compilation;
         this.precedence = precedence;
+        assert(next instanceof LinkedTreeBuilder); //needed to make the fix for bug 4326 work
     }
 
     /**
@@ -125,6 +128,7 @@ public class UseWhenFilter extends ProxyReceiver {
      */
 
     public void startElement(NodeName elemName, SchemaType typeCode, Location location, int properties) throws XPathException {
+        includedDoc = null;
         boolean inXsltNamespace = elemName.hasURI(NamespaceConstant.XSLT);
         String stdAttUri = inXsltNamespace ? "" : NamespaceConstant.XSLT;
         defaultNamespaceStack.push(startTag.getAttribute(stdAttUri, "xpath-default-namespace"));
@@ -216,7 +220,7 @@ public class UseWhenFilter extends ProxyReceiver {
                 if ((isInclude || isImport) && defaultNamespaceStack.size() == 2) {
                     // We need to process the included/imported stylesheet now, because its static variables
                     // can be used later in this module
-                    processIncludeImport(elemName, location, baseUri, isImport);
+                    includedDoc = processIncludeImport(elemName, location, baseUri, isImport);
                 }
 
                 // Handle xsl:import-schema
@@ -252,7 +256,7 @@ public class UseWhenFilter extends ProxyReceiver {
         }
     }
 
-    private void processIncludeImport(NodeName elemName, Location location, URI baseUri, boolean isImport) throws XPathException {
+    private DocumentImpl processIncludeImport(NodeName elemName, Location location, URI baseUri, boolean isImport) throws XPathException {
         String href = Whitespace.trim(startTag.getAttribute("", "href"));
         if (href == null) {
             throw new XPathException("Missing href attribute on " + elemName.getDisplayName(), "XTSE0010");
@@ -263,7 +267,7 @@ public class UseWhenFilter extends ProxyReceiver {
         DocumentURI key = DocumentFn.computeDocumentKey(href, baseUriStr, compilation.getPackageData(), resolver, false);
         Map<DocumentURI, TreeInfo> map = compilation.getStylesheetModules();
         if (map.containsKey(key)) {
-            // No action needed
+            return (DocumentImpl)map.get(key);
         } else {
             Source source;
             try {
@@ -281,6 +285,7 @@ public class UseWhenFilter extends ProxyReceiver {
             try {
                 DocumentImpl includedDoc = StylesheetModule.loadStylesheetModule(source, false, compilation, newPrecedence);
                 map.put(key, includedDoc);
+                return includedDoc;
             } catch (XPathException e) {
                 e.setLocation(location);
                 e.maybeSetErrorCode("XTSE0165");
@@ -531,8 +536,13 @@ public class UseWhenFilter extends ProxyReceiver {
     public void startContent() throws XPathException {
         if (depthOfHole == 0) {
             nextReceiver.startContent();
+            if (includedDoc != null) {
+                XSLGeneralIncorporate declaration = (XSLGeneralIncorporate) ((LinkedTreeBuilder) nextReceiver).getCurrentParentNode();
+                declaration.setTargetDoc(includedDoc);
+            }
         }
         dropUnderscoredAttributes = false;
+        includedDoc = null;
     }
 
     /**
