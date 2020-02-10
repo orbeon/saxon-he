@@ -28,10 +28,6 @@ import java.util.Properties;
 public class XQueryEngine extends SaxonCAPI {
 
     private XQueryExecutable executable = null;
-    private File queryFile = null;
-    //private XQueryCompiler compiler = null;
-
-    private boolean serializerSet = false;
 
     /**
      * Default Constructor to initialise XQueryEngine. s9api Processor is created with license flag as false
@@ -169,7 +165,7 @@ public class XQueryEngine extends SaxonCAPI {
 
 
     public XQueryEvaluator xqueryEvaluator(String cwd, String[] params, Object[] values, Serializer serializer) throws SaxonApiException {
-        //clearExceptions();
+        File queryFile = null;
         XQueryCompiler compiler = processor.newXQueryCompiler();
         Map<QName, XdmValue> parameters = new HashMap<>();
         Properties props = new Properties();

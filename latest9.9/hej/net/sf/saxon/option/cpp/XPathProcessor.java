@@ -126,7 +126,7 @@ public class XPathProcessor extends SaxonCAPI {
         if (selector != null) {
             try {
                 Map<QName, XdmValue> parameters = new HashMap<>();
-                Map<String, Object> map = convertArraysToMap(params, values, null, parameters, null, null, null, false);
+                Map<String, Object> map = setupConfigurationAndBuildMap(params, values, null, parameters, null, null, null, false);
                 applyXPathProperties(this, "", processor, selector, map, parameters);
             } catch (SaxonApiException e) {
                 throw e;
@@ -162,7 +162,7 @@ public class XPathProcessor extends SaxonCAPI {
             }
         }
         Map<QName, XdmValue> parameters = new HashMap<>();
-        Map<String, Object> optionsMap = convertArraysToMap(params, values, null, parameters, null, null, null, false);
+        Map<String, Object> optionsMap = setupConfigurationAndBuildMap(params, values, null, parameters, null, null, null, false);
         setupXPathCompiler(optionsMap);
         compiler.setSchemaAware(schemaAware);
 
@@ -239,7 +239,7 @@ public class XPathProcessor extends SaxonCAPI {
             }
         }
         Map<QName, XdmValue> parameters = new HashMap<>();
-        Map<String, Object> optionsMap = convertArraysToMap(params, values, null, parameters, null, null, null, false);
+        Map<String, Object> optionsMap = setupConfigurationAndBuildMap(params, values, null, parameters, null, null, null, false);
         setupXPathCompiler(optionsMap);
         selector = compiler.compile(xpathStr).load();
         applyXPathProperties(this, cwd, processor, selector, optionsMap, parameters);
@@ -262,7 +262,7 @@ public class XPathProcessor extends SaxonCAPI {
     public boolean effectiveBooleanValue(String cwd, String xpathStr, String[] params, Object[] values) throws SaxonApiException {
 
         Map<QName, XdmValue> parameters = new HashMap<>();
-        Map<String, Object> optionsMap = convertArraysToMap(params, values, null, parameters, null, null, null, false);
+        Map<String, Object> optionsMap = setupConfigurationAndBuildMap(params, values, null, parameters, null, null, null, false);
         setupXPathCompiler(optionsMap);
         selector = compiler.compile(xpathStr).load();
 

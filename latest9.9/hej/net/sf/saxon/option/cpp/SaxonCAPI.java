@@ -194,7 +194,7 @@ public class SaxonCAPI {
     }
 
 
-    public static void applyToConfiguration(Processor processor, String[] names, String[] values) throws SaxonApiException {
+    public static synchronized void applyToConfiguration(Processor processor, String[] names, String[] values) throws SaxonApiException {
 
 
         Configuration config = processor.getUnderlyingConfiguration();
@@ -340,18 +340,18 @@ public class SaxonCAPI {
      * Method to convert arrays received from C++ to Java map object
      * this method also extracts serialization properties and parameters
      *
-     * @param params
-     * @param values
-     * @param props
-     * @param parameters
+     * @param params - Array of Processor option keys
+     * @param values - Array of Processor option values
+     * @param props   - Serialisaztion properties to be setup
+     * @param parameters - Passed Processor parameters as map. Updated within method
      * @param staticParameters   - For XSLT use
-     * @param globals
+     * @param globals    - Map to retrieve global variables to be used in XSLT transformer
      * @param initialTemplateParameters - Initial template parameter for use with XSLT
-     * @param forXslt
+     * @param forXslt   - Indicate XSLT use
      * @return Map of String, Object pairs
      * @throws SaxonApiException
      */
-    Map<String, Object> convertArraysToMap(String[] params, Object[] values, Properties props, Map<QName, XdmValue> parameters, Map<QName, XdmValue> staticParameters, Map<QName, XdmValue> globals, Map<QName, XdmValue> initialTemplateParameters, boolean forXslt) throws SaxonApiException {
+    public static Map<String, Object> setupConfigurationAndBuildMap(String[] params, Object[] values, Properties props, Map<QName, XdmValue> parameters, Map<QName, XdmValue> staticParameters, Map<QName, XdmValue> globals, Map<QName, XdmValue> initialTemplateParameters, boolean forXslt) throws SaxonApiException {
         Map<String, Object> map = new HashMap();
         if (params == null || values == null) {
             return map;
@@ -373,15 +373,7 @@ public class SaxonCAPI {
                         System.err.println("Error Java property option found but Java Property object is null: Probably XPathProcessor in use");
                     }
                 }
-            } else if (params[i].startsWith("--") && values[i] != null) {
-                try {
-                    processor.setConfigurationProperty("http://saxon.sf.net/feature/" + params[i].substring(2), (String) values[i]);
-                } catch (IllegalArgumentException err) {
-                    throw new SaxonCException(err.getMessage());
-                }
-
-
-            } else if (initialTemplateParameters != null && params[i].startsWith("itparam:")) {
+            }  else if (initialTemplateParameters != null && params[i].startsWith("itparam:")) {
                 //initial template parameters
                 String paramName = params[i].substring(8);
                 Object value = values[i];
@@ -439,7 +431,13 @@ public class SaxonCAPI {
 
     }
 
-    public XdmValue convertObjectToXdmValue(Object value) {
+
+    /**
+     * Utility method when XdmValues retrieved as objects from C++ to convert a object to an XmdValue.
+     * @param value - object to be converted
+     * @return XdmValue
+     */
+    public static XdmValue convertObjectToXdmValue(Object value) {
 
         XdmValue valueForCpp = null;
         if (value instanceof XdmValue) {
@@ -447,9 +445,7 @@ public class SaxonCAPI {
             if (debug) {
 
                 System.err.println("DEBUG: XSLTTransformerForCpp: " + valueForCpp.getUnderlyingValue().toString());
-                net.sf.saxon.type.ItemType suppliedItemType = SequenceTool.getItemType(valueForCpp.getUnderlyingValue(), processor.getUnderlyingConfiguration().getTypeHierarchy());
                 System.err.println("DEBUG: XSLTTransformerForCpp: " + valueForCpp.getUnderlyingValue());
-                System.err.println("DEBUG: XSLTTransformerForCpp Type: " + suppliedItemType.toString());
             }
 
         } else if (value instanceof Object[]) {
@@ -486,8 +482,6 @@ public class SaxonCAPI {
             valueForCpp = getXdmValue(value);
             if (debug) {
                 System.err.println("DEBUG: primitive value found");
-                net.sf.saxon.type.ItemType suppliedItemType = SequenceTool.getItemType(valueForCpp.getUnderlyingValue(), processor.getUnderlyingConfiguration().getTypeHierarchy());
-                System.err.println("XSLT30TransformerForCpp Type: " + suppliedItemType.toString());
             }
         }
         return valueForCpp;
@@ -648,6 +642,11 @@ public class SaxonCAPI {
         }
     }
 
+    /**
+     * Utility method
+     * @param typeStr
+     * @return
+     */
     public static String getTypeName(String typeStr) {
 
         int fp = StandardNames.getFingerprint(NamespaceConstant.SCHEMA, typeStr);
@@ -658,11 +657,26 @@ public class SaxonCAPI {
 
     }
 
+
+    /**
+     * Utility method to get the String value from the XdmValue representation
+     * @param value
+     * @return  String object
+     */
     public static String getStringValue(XdmValue value) {
         return value.toString();
     }
 
 
+    /**
+     * Receies file name of XML document and parse to XdmNode object. It is possible to validate with a SchemaValidator
+     * @param processor
+     * @param cwd - The current working directory for parsing the XML file
+     * @param validator - Schema Validator
+     * @param filename
+     * @return  XdmNode object for the XML file
+     * @throws SaxonApiException
+     */
     public static XdmNode parseXmlFile(Processor processor, String cwd, SchemaValidator validator, String filename) throws SaxonApiException {
         try {
             DocumentBuilder builder = processor.newDocumentBuilder();
@@ -804,7 +818,7 @@ public class SaxonCAPI {
             return source;
         } else {
             if (filename == null) {
-                throw new SaxonApiException("The file " + filename + " is null");
+                throw new SaxonApiException("Null string found for the filename");
             }
             file = new File(filename);
             StreamSource stream = new StreamSource(file);
@@ -823,7 +837,7 @@ public class SaxonCAPI {
      * @return Serializer
      * @throws SaxonApiException
      */
-    public Serializer resolveOutputFile(Processor processor, String cwd, String outfile) throws SaxonApiException {
+    public static Serializer resolveOutputFile(Processor processor, String cwd, String outfile) throws SaxonApiException {
         Serializer serializer = null;
         File file = absoluteFile(cwd, outfile);
 
