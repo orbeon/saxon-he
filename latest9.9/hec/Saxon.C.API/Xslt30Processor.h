@@ -46,11 +46,6 @@ public:
 
      ~Xslt30Processor();
 
-	/**
-	 * Clone the Xslt30Processor with the same internal state, which can be used in separate threads.
-	 */
-    Xslt30Processor * clone();
-
 	//! Get the SaxonProcessor object
 	/**
 	* @return SaxonProcessor - Pointer to the object
@@ -66,54 +61,6 @@ public:
      */
    void setcwd(const char* cwd);
 
-
-      //!Set the base output URI.
-          /**
-           * <p>This defaults to the base URI of the {@link Destination} for the principal output
-           * of the transformation if a destination is supplied and its base URI is known.</p>
-           * <p>If a base output URI is supplied using this method then it takes precedence
-           * over any base URI defined in the supplied {@code Destination} object, and
-           * it may cause the base URI of the {@code Destination} object to be modified in situ.</p>
-           * <p> The base output URI is used for resolving relative URIs in the <code>href</code> attribute
-           * of the <code>xsl:result-document</code> instruction; it is accessible to XSLT stylesheet
-           * code using the XPath {@code current-output-uri()} function</p>
-           *
-           * @param baseUri - the base output URI
-           */
-      void setBaseOutputURI(const char * baseURI);
-
-
-
-    //!Set the source document from an XdmNode for the transformation.
-     /**
-	* @param value - The source to the stylesheet as a pointer to the XdmNode object.
-	*/	
-
-    void setGlobalContextItem(XdmItem * value);
-
-    /**
-     * Set the source from file for the transformation.
-    */
-    void setGlobalContextFromFile(const char * filename);
-
-
-    //!The initial value to which templates are to be applied (equivalent to the <code>select</code> attribute of <code>xsl:apply-templates</code>)
-    /**
-    *  @param selection - The value to which the templates are to be applied
-    */
-    void setInitialMatchSelection(XdmValue * selection);
-
-        //!The initial filename to which templates are to be applied (equivalent to the <code>select</code> attribute of <code>xsl:apply-templates</code>).
-        /**
-        * The file is parsed internall
-        *  @param filename - The file name to which the templates are to be applied
-        */
-    void setInitialMatchSelectionAsFile(const char * filename);
-
-    /**
-     * Set the output file of where the transformation result is sent
-    */
-    void setOutputFile(const char* outfile);
 
 
     /**
@@ -134,18 +81,11 @@ public:
     void setJustInTimeCompilation(bool jit);
 
 
-
-
     /**
-    *Set true if the return type of callTemplate, applyTemplates and transform methods is to return XdmValue,
-    *otherwise return XdmNode object with root Document node
-    * @param option true if return raw result, i.e. XdmValue, otherwise return XdmNode
-    *
-    */	
-    void setResultAsRawValue(bool option);
-
-    /**
-     * Set the value of a stylesheet parameter
+     * Set the value of a stylesheet parameter. Static (compile-time) parameters must be provided using
+     * this method on the XsltCompiler object, prior to stylesheet compilation. Non-static parameters
+     * may also be provided using this method if their values will not vary from one transformation
+     * to another.
      *
      * @param name  the name of the stylesheet parameter, as a string. For namespaced parameter use the JAXP solution i.e. "{uri}name"
      * @param value the value of the stylesheet parameter, or null to clear a previously set value
@@ -153,7 +93,7 @@ public:
      * must be set on the XsltCompiler object, prior to stylesheet compilation. The default is false. Non-static parameters
      * may also be provided.
      */
-    void setParameter(const char* name, XdmValue*value, bool _static=false);
+    void setParameter(const char* name, XdmValue*value);
 
 
 
@@ -173,53 +113,6 @@ public:
      */
     bool removeParameter(const char* name);
 
-    /**
-     * Set a property specific to the processor in use. 
-     * XsltProcessor: set serialization properties (names start with '!' i.e. name "!method" -> "xml")
-     * 'o':outfile name, 'it': initial template, 'im': initial mode, 's': source as file name
-     * 'm': switch on message listener for xsl:message instructions (TODO: this feature should be event based), 'item'| 'node' : source supplied as an XdmNode object
-     * @param name of the property
-     * @param value of the property
-     */
-    void setProperty(const char* name, const char* value);
-
-
-    /**
-     * Set parameters to be passed to the initial template. These are used
-     * whether the transformation is invoked by applying templates to an initial source item,
-     * or by invoking a named template. The parameters in question are the xsl:param elements
-     * appearing as children of the xsl:template element.
-     * <p>The parameters are supplied in the form of a map; the key is a QName given as a string which must
-     * match the name of the parameter; the associated value is an XdmValue containing the
-     * value to be used for the parameter. If the initial template defines any required
-     * parameters, the map must include a corresponding value. If the initial template defines
-     * any parameters that are not present in the map, the default value is used. If the map
-     * contains any parameters that are not defined in the initial template, these values
-     * are silently ignored.</p>
-     * <p>The supplied values are converted to the required type using the function conversion
-     * rules. If conversion is not possible, a run-time error occurs (not now, but later, when
-     * the transformation is actually run).</p>
-     * <p>The <code>XsltTransformer</code> retains a reference to the supplied map, so parameters can be added or
-     * changed until the point where the transformation is run.</p>
-     * <p>The XSLT 3.0 specification makes provision for supplying parameters to the initial
-     * template, as well as global stylesheet parameters. Although there is no similar provision
-     * in the XSLT 1.0 or 2.0 specifications, this method works for all stylesheets, regardless whether
-     * XSLT 3.0 is enabled or not.</p>
-     *
-     * @param parameters the parameters to be used for the initial template
-     * @param tunnel     true if these values are to be used for setting tunnel parameters;
-     *                   false if they are to be used for non-tunnel parameters
-     */
-
-    void setInitialTemplateParameters(std::map<std::string,XdmValue*> parameters, bool tunnel);
-
-    /**
-     * Get a property value by name
-     * @param name - Specified paramater name to get
-     * @return string - Get string of the property as char pointer array
-    */
-    const char* getProperty(const char* name);
-
 	//! Get all parameters as a std::map
      /**
       * 
@@ -229,12 +122,6 @@ public:
      */
      std::map<std::string,XdmValue*>& getParameters();
 
-	//! Get all properties as a std::map
-     /**
-      *  
-      * @return std:map with key as string name mapped to string values.
-     */
-     std::map<std::string,std::string>& getProperties();
 
     //!Clear parameter values set
     /**
@@ -244,8 +131,6 @@ public:
      */
     void clearParameters(bool deleteValues=false);
 
-     //! Clear property values set
-    void clearProperties();
 
     /**
     * Utility method for working with Saxon/C on Python
@@ -276,6 +161,7 @@ public:
      *                    filename with location cwd+filename
      */
     void setupXslMessage(bool show, const char* filename=NULL);
+
 
 
       //!Perform a one shot transformation.
@@ -312,16 +198,20 @@ public:
     /**
      * The compiled stylesheet is cached and available for execution later.
      * @param stylesheet  - The file name of the stylesheet document.
+     * @return an XsltExecutable, which represents the compiled stylesheet. The XsltExecutable
+     * is immutable and thread-safe; it may be used to run multiple transformations, in series or concurrently.
      */
-    void compileFromFile(const char* stylesheet);
+    XsltExecutable * compileFromFile(const char* stylesheet);
 
      //!compile a stylesheet received as a string.
     /**
      * 
      * The compiled stylesheet is cached and available for execution later.
      * @param stylesheet as a lexical string representation
+     * @return an XsltExecutable, which represents the compiled stylesheet. The XsltExecutable
+     * is immutable and thread-safe; it may be used to run multiple transformations, in series or concurrently.
      */
-    void compileFromString(const char* stylesheet);
+    XsltExecutable * compileFromString(const char* stylesheet);
 
 
 
@@ -336,8 +226,10 @@ public:
     /**
      * The compiled stylesheet is cached and available for execution later.
      * @param sourceFile  - The file name of the XML document.
+     * @return an XsltExecutable, which represents the compiled stylesheet. The XsltExecutable
+     * is immutable and thread-safe; it may be used to run multiple transformations, in series or concurrently.
      */
-    void compileFromAssociatedFile(const char* sourceFile);
+    XsltExecutable * compileFromAssociatedFile(const char* sourceFile);
 
 
      //!compile a stylesheet received as a string and save to an exported file (SEF).
@@ -372,145 +264,11 @@ public:
     /**
      * The compiled stylesheet is cached and available for execution later.
      * @param stylesheet as a lexical string representation
+     * @return an XsltExecutable, which represents the compiled stylesheet. The XsltExecutable
+     * is immutable and thread-safe; it may be used to run multiple transformations, in series or concurrently.
      */
-    void compileFromXdmNode(XdmNode * node);
+    XsltExecutable * compileFromXdmNode(XdmNode * node);
 
-     //!Invoke the stylesheet by applying templates to a supplied input sequence, Saving the results to file.
-    /**
-     * The initial match selection must be set using one of the two methods setInitialMatchSelection or setInitialMatchSelectionFile.
-     * The result is stored in the supplied output file.
-     *
-     * @param stylesheetFile - The file name of the stylesheet document. If NULL the most recently compiled stylesheet is used. It is possible to set the stylsheet using one of the following methods: compileFromFile, compileFromString or compileFromAssociatedFile
-     * @param outputfile - The file name where results will be stored
-     */
-    void applyTemplatesReturningFile(const char * stylesheetFilename, const char* outfile);
-
-     //!Invoke the stylesheet by applying templates to a supplied input sequence, Saving the results as serialized string.
-    /**
-     * The initial match selection must be set using one of the two methods setInitialMatchSelection or setInitialMatchSelectionFile.
-     *
-     * @param stylesheetFile - The file name of the stylesheet document. If NULL the most recently compiled stylesheet is used. It is possible to set the stylsheet using one of the following methods: compileFromFile, compileFromString or compileFromAssociatedFile
-     */
-    const char* applyTemplatesReturningString(const char * stylesheetFilename=NULL);
-
-     //!Invoke the stylesheet by applying templates to a supplied input sequence, Saving the results as an XdmValue.
-    /**
-     * The initial match selection must be set using one of the two methods setInitialMatchSelection or setInitialMatchSelectionFile.
-     *
-     * @param stylesheetfile - The file name of the stylesheet document. If NULL the most recently compiled stylesheet is used. It is possible to set the stylsheet using one of the following methods: compileFromFile, compileFromString or compileFromAssociatedFile
-     */
-    XdmValue * applyTemplatesReturningValue(const char * stylesheetFilename=NULL);
-
-    //! Invoke a transformation by calling a named template and save result to file.
-    /** The results of calling the template are wrapped in a document node, which is then sent to the specified
-    * file destination. If setInitialTemplateParameters(std::Map, boolean) has been
-    * called, then the parameters supplied are made available to the called template (no error
-    * occurs if parameters are supplied that are not used).
-    * @param stylesheetfile - The file name of the stylesheet document. If NULL the most recently compiled stylesheet is used. It is possible to set the stylsheet using one of the following methods: compileFromFile, compileFromString or compileFromAssociatedFile
-    * @param templateName - The name of the initial template. This must match the name of a public named template in the stylesheet. If the value is null, the clark name for xsl:initial-template is used.
-    * @param outputfile - The file name where results will be stored,
-    */
-    void callTemplateReturningFile(const char * stylesheetFilename, const char* templateName, const char* outfile);
-
-    //! Invoke a transformation by calling a named template and return result as a string.
-    /** The results of calling the template are wrapped in a document node, which is then serialized as a string.
-    * If setInitialTemplateParameters(std::Map, boolean) has been
-    * called, then the parameters supplied are made available to the called template (no error
-    * occurs if parameters are supplied that are not used).
-    * @param stylesheetfile - The file name of the stylesheet document. If NULL the most recently compiled stylesheet is used. It is possible to set the stylsheet using one of the following methods: compileFromFile, compileFromString or compileFromAssociatedFile
-    * @param templateName - the name of the initial template. This must match the name of a public named template in the stylesheet. If the value is null, the clark name for xsl:initial-template is used.
-    * @param outputfile - The file name where results will be stored,
-    */
-    const char* callTemplateReturningString(const char * stylesheetFilename, const char* templateName);
-
-    //! Invoke a transformation by calling a named template and return result as a string.
-    /** The results of calling the template are wrapped in a document node, which is then returned as an XdmValue.
-    * If setInitialTemplateParameters(std::Map, boolean) has been
-    * called, then the parameters supplied are made available to the called template (no error
-    * occurs if parameters are supplied that are not used).
-    * @param stylesheetfile - The file name of the stylesheet document. If NULL the most recently compiled stylesheet is used. It is possible to set the stylsheet using one of the following methods: compileFromFile, compileFromString or compileFromAssociatedFile
-    * @param templateName - the name of the initial template. This must match the name of a public named template in the stylesheet. If the value is null, the clark name for xsl:initial-template is used.
-    * @param outputfile - The file name where results will be stored,
-    */
-    XdmValue* callTemplateReturningValue(const char * stylesheetFilename, const char* templateName);
-
-
-
-    //! Call a public user-defined function in the stylesheet
-    /** Here we wrap the result in an XML document, and sending this document to a specified file
-    * @param stylesheetfile - The file name of the stylesheet document. If NULL the most recently compiled stylesheet is used. It is possible to set the stylsheet using one of the following methods: compileFromFile, compileFromString or compileFromAssociatedFile
-    * @param functionName - The name of the function to be called
-    * @param arguments - Pointer array of XdmValue object - he values of the arguments to be supplied to the function. These
-    *                    will be converted if necessary to the type as defined in the function signature, using
-    *                    the function conversion rules.
-    * @param argument_length - the Coutn of arguments objects in the array
-    * @param outputfile - The file name where results will be stored,
-    */
-    void callFunctionReturningFile(const char * stylesheetFilename, const char* functionName, XdmValue ** arguments, int argument_length, const char* outfile);
-
-
-    //! Call a public user-defined function in the stylesheet
-    /** Here we wrap the result in an XML document, and serialized this document to string value
-    * @param stylesheetfile - The file name of the stylesheet document. If NULL the most recently compiled stylesheet is used. It is possible to set the stylsheet using one of the following methods: compileFromFile, compileFromString or compileFromAssociatedFile
-    * @param functionName - The name of the function to be called
-    * @param arguments - Pointer array of XdmValue object - he values of the arguments to be supplied to the function. These
-    *                    will be converted if necessary to the type as defined in the function signature, using
-    *                    the function conversion rules.
-    * @param argument_length - the Coutn of arguments objects in the array
-    * @param outputfile - The file name where results will be stored,
-    */
-    const char * callFunctionReturningString(const char * stylesheetFilename, const char* functionName, XdmValue ** arguments, int argument_length);
-
-    //! Call a public user-defined function in the stylesheet
-    /** Here we wrap the result in an XML document, and return the document as an XdmValue
-    * @param stylesheetfile - The file name of the stylesheet document. If NULL the most recently compiled stylesheet is used. It is possible to set the stylsheet using one of the following methods: compileFromFile, compileFromString or compileFromAssociatedFile
-    * @param functionName - The name of the function to be called
-    * @param arguments - Pointer array of XdmValue object - he values of the arguments to be supplied to the function. These
-    *                    will be converted if necessary to the type as defined in the function signature, using
-    *                    the function conversion rules.
-    * @param argument_length - the Coutn of arguments objects in the array
-    * @param outputfile - The file name where results will be stored,
-    */
-    XdmValue * callFunctionReturningValue(const char * stylesheetFilename, const char* functionName, XdmValue ** arguments, int argument_length);
-
-
-
-    //! Internal method to release cached stylesheet
-    /**
-     *
-     * @param void
-     */
-    void releaseStylesheet();
-
-
-    //! Execute transformation to string. Properties supplied in advance.
-    /**
-     * Perform the transformation based upon what has been cached.
-     * @param source - source document suppplied as an XdmNode object
-     * @return char*. Pointer to Array of chars. Result returned as a string.
-     *
-     */
-    const char * transformToString(XdmNode * source);
-
-    //! Execute transformation to Xdm Value. Properties supplied in advance.
-    /**
-     * Perform the transformation based upon cached stylesheet and any source document.
-     * @param source - source document suppplied as an XdmNode object
-     * @return as an XdmValue.
-     *
-     */
-    XdmValue * transformToValue(XdmNode * source);
-
-    //! Execute transformation to file. Properties supplied in advance.
-    /**
-     * Perform the transformation based upon cached stylesheet and source document.
-     * Assume the outputfile has been set in advance
-     * @param source - source document suppplied as an XdmNode object
-     * @return as an XdmValue.
-     *
-
-     */
-    void transformToFile(XdmNode * source);
 
     /**
      * Checks for pending exceptions without creating a local reference to the exception object
@@ -555,13 +313,10 @@ public:
 private:
 	SaxonProcessor* proc;/*! */
 	jclass  cppClass;
-	jobject cppXT, stylesheetObject, selection;
-	XdmValue * selectionV;
+	jobject cppXT;
     std::string cwdXT; /*!< current working directory */
 	bool tunnel, jitCompilation;
 	std::map<std::string,XdmValue*> parameters; /*!< map of parameters used for the transformation as (string, value) pairs */
-	
-	std::map<std::string,std::string> properties; /*!< map of properties used for the transformation as (string, string) pairs */
 
 };
 

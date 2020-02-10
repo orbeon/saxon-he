@@ -119,10 +119,10 @@ void XsltProcessor::setBaseOutputURI(const char * baseURI) {
 void XsltProcessor::setParameter(const char* name, XdmValue * value) {
 	if(value != NULL && name != NULL){
 		value->incrementRefCount();
-		int s = parameter.size();
+		int s = parameters.size();
 		std::String skey = "param:"+std::string(name);
 		parameters[skey] = value;
-		if(s == parameter.size()) {
+		if(s == parameters.size()) {
             std::map<std::string, XdmValue*>::iterator it;
             it = parameters.find(skey);
             if (it != parameters.end()) {
@@ -156,14 +156,14 @@ void XsltProcessor::setJustInTimeCompilation(bool jit){
 
 void XsltProcessor::setProperty(const char* name, const char* value) {	
 	if(name != NULL) {
-	    int s = parameter.size();
+	    int s = properties.size();
 		std:string skey = std::string(name);
 		properties.insert(std::pair<std::string, std::string>(skey, std::string((value == NULL ? "" : value))));
 
-		if(s == parameter.size()) {
+		if(s == properties.size()) {
             std::map<std::string, std::string>::iterator it;
-            it = parameters.find(skey);
-            if (it != parameters.end()) {
+            it = properties.find(skey);
+            if (it != properties.end()) {
                 properties.erase(skey);
                 properties[skey] = std::string((value == NULL ? "" : value));
             }

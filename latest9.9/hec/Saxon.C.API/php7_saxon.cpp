@@ -111,7 +111,6 @@ PHP_METHOD(SaxonProcessor, __construct)
     if (ZEND_NUM_ARGS()>1 && zend_parse_parameters(ZEND_NUM_ARGS(), "bs", &license, &cwdi, &len1) == FAILURE) {
         RETURN_NULL();
     }
-std::cerr<<"SaxonProcessorConstructor cp0"<<std::endl;
 
 
     zval *object = getThis();
@@ -5862,7 +5861,7 @@ PHP_MSHUTDOWN_FUNCTION(saxon) {
 }
 
 PHP_RSHUTDOWN_FUNCTION(saxon) {
-    std::cerr<<"RSHUTDOWN called -start"<<std::endl;
+   // std::cerr<<"RSHUTDOWN called -start"<<std::endl;
 //    SaxonProcessor::release();
     return SUCCESS;
 }
@@ -5882,7 +5881,7 @@ zend_module_entry saxon_module_entry = {
     PHP_MINIT(saxon),        /* MINIT */
     PHP_MSHUTDOWN(saxon),        /* MSHUTDOWN */
     NULL,        /* RINIT */
-    PHP_RSHUTDOWN(saxon),        /* RSHUTDOWN */
+    NULL,        /* RSHUTDOWN */
     PHP_MINFO(saxon),        /* MINFO */
 #if ZEND_MODULE_API_NO >= 20010901
     PHP_SAXON_EXTVER,

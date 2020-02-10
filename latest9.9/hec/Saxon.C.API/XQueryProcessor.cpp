@@ -122,10 +122,10 @@ std::map<std::string,std::string>& XQueryProcessor::getProperties(){
     void XQueryProcessor::setParameter(const char * name, XdmValue*value){
 	if(value != NULL){
 		value->incrementRefCount();
-		int s = parameter.size();
+		int s = parameters.size();
 		std::String skey = "param:"+std::string(name);
 		parameters[skey] = value;
-		if(s == parameter.size()) {
+		if(s == parameters.size()) {
             std::map<std::string, XdmValue*>::iterator it;
             it = parameters.find(skey);
             if (it != parameters.end()) {
@@ -358,10 +358,10 @@ std::map<std::string,std::string>& XQueryProcessor::getProperties(){
 				return xdmItem;
 			
 			} else if (SaxonProcessor::sxn_environ->env->IsInstanceOf(result, functionItemClass)           == JNI_TRUE) {
-                xdmItem =  new XdmFunctionItem(result);
+                /*xdmItem =  new XdmFunctionItem(result);
                 xdmItem->setProcessor(proc);
-                SaxonProcessor::sxn_environ->env->DeleteLocalRef(result);
-                return xdmItem;
+                SaxonProcessor::sxn_environ->env->DeleteLocalRef(result);*/
+                return NULL;// xdmItem;
 			} else {
 				value = new XdmValue(result, true);
 				value->setProcessor(proc);

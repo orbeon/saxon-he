@@ -188,24 +188,6 @@ PHP_METHOD(SaxonProcessor, setcwd)
 }
 
 
-PHP_METHOD(SaxonProcessor, init)
-{
-    SaxonProcessor *saxonProcessor;
-    char * cwdStr;
-    int len;
-    
-    
-    saxonProcessor_object *obj = (saxonProcessor_object *)zend_object_store_get_object(getThis() TSRMLS_CC);
-    saxonProcessor = obj->saxonProcessor;
-    if (saxonProcessor != NULL) {
-        
-        SaxonProcessor::jvmCreatedCPP = 1;
-    SaxonProcessor::sxn_environ = saxonProcessor->sxn_environ;
-        
-    }
-}
-
-
 PHP_METHOD(SaxonProcessor, parseXmlFromString)
 {
     SaxonProcessor * saxonProcessor;
@@ -3421,7 +3403,6 @@ zend_function_entry SaxonProcessor_methods[] = {
     PHP_ME(SaxonProcessor,  parseXmlFromString,      NULL, ZEND_ACC_PUBLIC)
     PHP_ME(SaxonProcessor,  parseXmlFromFile,      NULL, ZEND_ACC_PUBLIC)
     PHP_ME(SaxonProcessor,  setcwd,     NULL, ZEND_ACC_PUBLIC)
-    PHP_ME(SaxonProcessor,  init,     NULL, ZEND_ACC_PUBLIC)
     PHP_ME(SaxonProcessor,  newXPathProcessor,     NULL, ZEND_ACC_PUBLIC)
     PHP_ME(SaxonProcessor,  newXsltProcessor,     NULL, ZEND_ACC_PUBLIC)
     PHP_ME(SaxonProcessor,  newXQueryProcessor,     NULL, ZEND_ACC_PUBLIC)
