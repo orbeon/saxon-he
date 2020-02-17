@@ -226,7 +226,7 @@ public class HTMLIndenter extends ProxyReceiver {
 
     @Override
     public void processingInstruction(String target, CharSequence data, Location locationId, int properties) throws XPathException {
-        boolean thisInline = (propertyStack[level] & IS_INLINE) != 0;
+        boolean thisInline = (propertyStack[level-1] & IS_INLINE) != 0;
         if (afterEndElement && !thisInline) {
             indent();
         }
@@ -239,7 +239,7 @@ public class HTMLIndenter extends ProxyReceiver {
      */
 
     public void comment(CharSequence chars, Location locationId, int properties) throws XPathException {
-        boolean thisInline = (propertyStack[level] & IS_INLINE) != 0;
+        boolean thisInline = (propertyStack[level-1] & IS_INLINE) != 0;
         if (afterEndElement && !thisInline) {
             indent();
         }
