@@ -211,7 +211,7 @@ public class KeyDefinition extends Actor implements ContextOriginator {
      */
 
     public void setStackFrameMap(SlotManager map) {
-        if (map != null && map.getNumberOfVariables() > 0) {
+        if (map != null /* && map.getNumberOfVariables() > 0 */) {   // bug 4448
             super.setStackFrameMap(map);
         }
     }

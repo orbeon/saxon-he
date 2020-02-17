@@ -47,6 +47,8 @@ public class XSLKey extends StyleElement implements StylesheetComponent {
     SlotManager stackFrameMap;
     private boolean rangeKey;
     private boolean composite = false;
+    private KeyDefinition keyDefinition;
+
 
 
     /**
@@ -337,6 +339,7 @@ public class XSLKey extends StyleElement implements StylesheetComponent {
         } catch (XPathException err) {
             compileError(err);
         }
+        keyDefinition = keydef;
     }
 
     /**
@@ -350,6 +353,7 @@ public class XSLKey extends StyleElement implements StylesheetComponent {
         ContextItemStaticInfo contextItemType = getConfiguration().makeContextItemStaticInfo(match.getItemType(), false);
         use = use.optimize(visitor, contextItemType);
         allocateLocalSlots(use);
+        keyDefinition.setBody(use);
     }
 
 
