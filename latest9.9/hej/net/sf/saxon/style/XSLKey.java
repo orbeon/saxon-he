@@ -351,9 +351,10 @@ public class XSLKey extends StyleElement implements StylesheetComponent {
     public void optimize(ComponentDeclaration declaration) throws XPathException {
         ExpressionVisitor visitor = makeExpressionVisitor();
         ContextItemStaticInfo contextItemType = getConfiguration().makeContextItemStaticInfo(match.getItemType(), false);
-        use = use.optimize(visitor, contextItemType);
-        allocateLocalSlots(use);
-        keyDefinition.setBody(use);
+        Expression useExp = keyDefinition.getUse();
+        useExp = useExp.optimize(visitor, contextItemType);
+        allocateLocalSlots(useExp);
+        keyDefinition.setBody(useExp);
     }
 
 
