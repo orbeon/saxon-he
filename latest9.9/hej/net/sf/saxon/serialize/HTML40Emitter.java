@@ -89,5 +89,13 @@ public class HTML40Emitter extends HTMLEmitter {
         }
     }
 
-
+    /**
+     * Ask whether control characters should be rejected: true for HTML4, false for HTML5
+     *
+     * @return true if control characters should be rejected
+     */
+    @Override
+    protected boolean rejectControlCharacters() {
+        return true;
+    }
 }

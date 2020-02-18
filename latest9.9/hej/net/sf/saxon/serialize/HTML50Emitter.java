@@ -101,4 +101,15 @@ public class HTML50Emitter extends HTMLEmitter {
     protected boolean writeDocTypeWithNullSystemId() {
         return true;
     }
+
+
+    /**
+     * Ask whether control characters should be rejected: true for HTML4, false for HTML5
+     *
+     * @return true if control characters should be rejected
+     */
+    @Override
+    protected boolean rejectControlCharacters() {
+        return false;
+    }
 }

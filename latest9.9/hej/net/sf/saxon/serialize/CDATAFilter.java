@@ -141,6 +141,14 @@ public class CDATAFilter extends ProxyReceiver {
 
         if (cdata) {
 
+            // If we're doing Unicode normalization, we need to do this before CDATA processing.
+            // In this situation the normalizer will be the next thing in the serialization pipeline.
+
+            if (getNextReceiver() instanceof UnicodeNormalizer) {
+                buffer = new FastStringBuffer(((UnicodeNormalizer) getNextReceiver()).normalize(buffer, true));
+                end = buffer.length();
+            }
+
             // Check that the buffer doesn't include a character not available in the current
             // encoding
 

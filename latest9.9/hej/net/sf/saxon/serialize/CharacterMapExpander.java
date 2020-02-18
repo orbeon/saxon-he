@@ -89,7 +89,7 @@ public class CharacterMapExpander extends ProxyReceiver {
 
     public void characters(/*@NotNull*/ CharSequence chars, Location locationId, int properties) throws XPathException {
 
-        if ((properties & ReceiverOptions.DISABLE_ESCAPING) == 0) {
+        if ((properties & ReceiverOptions.DISABLE_CHARACTER_MAPS) == 0) {
             CharSequence mapped = charMap.map(chars, useNullMarkers);
             if (mapped != chars) {
                 properties = (properties | ReceiverOptions.USE_NULL_MARKERS) & ~ReceiverOptions.NO_SPECIAL_CHARS;

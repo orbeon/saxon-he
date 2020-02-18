@@ -83,7 +83,7 @@ public class UnicodeNormalizer extends ProxyReceiver {
         }
     }
 
-    private CharSequence normalize(CharSequence in, boolean containsNullMarkers) {
+    public CharSequence normalize(CharSequence in, boolean containsNullMarkers) {
         if (containsNullMarkers) {
             FastStringBuffer out = new FastStringBuffer(in.length());
             String s = in.toString();

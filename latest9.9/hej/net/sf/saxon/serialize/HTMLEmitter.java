@@ -375,10 +375,14 @@ public abstract class HTMLEmitter extends XMLEmitter {
                 }
 
             } else if (c < 160) {
-                // these control characters are illegal in HTML
-                XPathException err = new XPathException("Illegal HTML character: decimal " + (int) c);
-                err.setErrorCode("SERE0014");
-                throw err;
+                if (rejectControlCharacters()) {
+                    // these control characters are illegal in HTML
+                    XPathException err = new XPathException("Illegal HTML character: decimal " + (int) c);
+                    err.setErrorCode("SERE0014");
+                    throw err;
+                } else {
+                    characterReferenceGenerator.outputCharacterReference(c, writer);
+                }
 
             } else if (c == 160) {
                 // always output NBSP as an entity reference
@@ -467,6 +471,15 @@ public abstract class HTMLEmitter extends XMLEmitter {
             throw new XPathException(err);
         }
     }
+
+
+    /**
+     * Ask whether control characters should be rejected: true for HTML4, false for HTML5
+     *
+     * @return true if control characters should be rejected
+     */
+
+    protected abstract boolean rejectControlCharacters();
 
 
 }
