@@ -21,6 +21,7 @@ import net.sf.saxon.om.NodeName;
 import net.sf.saxon.pattern.NodeKindTest;
 import net.sf.saxon.pattern.NodeTest;
 import net.sf.saxon.trace.ExpressionPresenter;
+import net.sf.saxon.trans.NoDynamicContextException;
 import net.sf.saxon.trans.XPathException;
 import net.sf.saxon.type.*;
 import net.sf.saxon.value.Cardinality;
@@ -387,6 +388,9 @@ public abstract class ElementCreator extends ParentNodeConstructor {
     private NodeInfo constructElement(XPathContext context, /*@Nullable*/ NodeInfo copiedNode) throws XPathException {
         try {
             Controller controller = context.getController();
+            if (controller == null) {
+                throw new NoDynamicContextException("No controller available");
+            }
             Receiver saved = context.getReceiver();
             SequenceOutputter seq = controller.allocateSequenceOutputter(1);
             seq.getPipelineConfiguration().setHostLanguage(getPackageData().getHostLanguage());

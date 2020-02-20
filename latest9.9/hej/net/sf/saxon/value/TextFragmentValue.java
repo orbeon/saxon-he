@@ -14,6 +14,7 @@ import net.sf.saxon.om.*;
 import net.sf.saxon.pattern.NodeTest;
 import net.sf.saxon.trans.XPathException;
 import net.sf.saxon.tree.iter.*;
+import net.sf.saxon.tree.linked.DocumentImpl;
 import net.sf.saxon.tree.util.FastStringBuffer;
 import net.sf.saxon.tree.util.Navigator;
 import net.sf.saxon.type.SchemaType;
@@ -49,6 +50,28 @@ public final class TextFragmentValue implements NodeInfo, SourceLocator {
         this.baseURI = baseURI;
         this.treeInfo = new GenericTreeInfo(config);
         this.treeInfo.setRootNode(this);
+    }
+
+    /**
+     * Static factory method: create a result tree fragment containing a single text node,
+     * unless the text is zero length, in which case an empty document node is returned
+     *
+     * @param config  the Saxon Configuration
+     * @param value   a String containing the value
+     * @param baseURI the base URI of the document node
+     */
+
+    public static NodeInfo makeTextFragment(Configuration config, CharSequence value, String baseURI) {
+        if (value.length() == 0) {
+            // Create a childless document node: bug 4246
+            DocumentImpl doc = new DocumentImpl();
+            doc.setSystemId(baseURI);
+            doc.setBaseURI(baseURI);
+            doc.setConfiguration(config);
+            return doc;
+        } else {
+            return new TextFragmentValue(config, value, baseURI);
+        }
     }
 
     /**

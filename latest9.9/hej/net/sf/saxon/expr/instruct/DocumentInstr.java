@@ -24,7 +24,6 @@ import net.sf.saxon.pattern.NodeKindTest;
 import net.sf.saxon.pattern.NodeTest;
 import net.sf.saxon.trace.ExpressionPresenter;
 import net.sf.saxon.trans.XPathException;
-import net.sf.saxon.tree.linked.DocumentImpl;
 import net.sf.saxon.tree.tiny.TinyBuilder;
 import net.sf.saxon.tree.util.FastStringBuffer;
 import net.sf.saxon.type.*;
@@ -272,16 +271,7 @@ public class DocumentInstr extends ParentNodeConstructor {
                 }
                 textValue = sb.condense();
             }
-            if (textValue.length() == 0) {
-                // Create a childless document node: bug 4246
-                DocumentImpl doc = new DocumentImpl();
-                doc.setSystemId(getStaticBaseURIString());
-                doc.setBaseURI(getStaticBaseURIString());
-                doc.setConfiguration(config);
-                root = doc;
-            } else {
-                root = new TextFragmentValue(config, textValue, getStaticBaseURIString());
-            }
+            root = TextFragmentValue.makeTextFragment(config, textValue, getStaticBaseURIString());
         } else {
             try {
                 Receiver saved = context.getReceiver();
