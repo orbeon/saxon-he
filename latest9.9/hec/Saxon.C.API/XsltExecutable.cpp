@@ -83,7 +83,6 @@ XsltExecutable::XsltExecutable(const XsltExecutable &other) {
         properties[propIter->first] = propIter->second;
         propIter++;
     }
-	jitCompilation = other.jitCompilation;
 
 }
 
@@ -93,8 +92,8 @@ bool XsltExecutable::exceptionOccurred() {
 }
 
 const char * XsltExecutable::getErrorCode(int i) {
- if(proc->exception == NULL) {return NULL;}
- return proc->exception->getErrorCode(i);
+ if(exception == NULL) {return NULL;}
+ return exception->getErrorCode(i);
  }
 
 
@@ -187,9 +186,6 @@ bool XsltExecutable::removeParameter(const char* name) {
 	return (bool)(parameters.erase("param:"+std::string(name)));
 }
 
-void XsltExecutable::setJustInTimeCompilation(bool jit){
-    jitCompilation = jit;
-}
 
 void XsltExecutable::setResultAsRawValue(bool option) {
 	if(option) {
@@ -271,9 +267,9 @@ std::map<std::string,std::string>& XsltExecutable::getProperties(){
 }
 
 void XsltExecutable::exceptionClear(){
- if(proc->exception != NULL) {
- 	delete proc->exception;
- 	proc->exception = NULL;
+ if(exception != NULL) {
+ 	delete exception;
+ 	exception = NULL;
 	SaxonProcessor::sxn_environ->env->ExceptionClear();
  }
 
@@ -290,20 +286,19 @@ const char* XsltExecutable::checkException() {
 	 proc->exception = proc->checkForException(environi, cpp);
 	 }
 	 return proc->exception;*/
-	return proc->checkException(cppXT);
+	return SaxonProcessor::checkException(NULL);
 }
 
-int XsltExecutable::exceptionCount(){
- if(proc->exception != NULL){
- return proc->exception->count();
+/*int XsltExecutable::exceptionCount(){
+ if(exception != NULL){
+ return exception->count();
  }
  return 0;
- }
+ }      */
 
 
     void XsltExecutable::export(const char * filename) {
-        jclass cppClass = lookForClass(SaxonProcessor::sxn_environ->env,
-        			"net/sf/saxon/option/cpp/Xslt30Processor");
+
 
         static jmethodID exportmID == NULL;
 
@@ -333,7 +328,7 @@ int XsltExecutable::exceptionCount(){
 	static jmethodID atmID = NULL;
 
 	if(atmID == NULL) {
-			(jmethodID) SaxonProcessor::sxn_environ->env->GetMethodID(cppClass,
+			(jmethodID) SaxonProcessor::sxn_environ->env->GetStaticMethodID(cppClass,
 					"applyTemplatesReturningFile",
 					"(Ljava/lang/String;Lnet/sf/saxon/s9api/XsltExecutable;Ljava/lang/Object;Ljava/lang/String;[Ljava/lang/String;[Ljava/lang/Object;)V");
 
@@ -346,7 +341,7 @@ int XsltExecutable::exceptionCount(){
 	} else {
         JParameters comboArrays;
 		comboArrays = SaxonProcessor::createParameterJArray(parameters, properties);
-		SaxonProcessor::sxn_environ->env->CallObjectMethod(cppXT, atmID,
+		SaxonProcessor::sxn_environ->env->CallStaticObjectMethod(cppClass, atmID,
 						SaxonProcessor::sxn_environ->env->NewStringUTF(cwdXE.c_str()), executableObject ,selection,
 						(output_filename != NULL ? SaxonProcessor::sxn_environ->env->NewStringUTF(
                                        						output_filename) : NULL),
@@ -371,7 +366,7 @@ const char* XsltExecutable::applyTemplatesReturningString(){
 
 	setProperty("resources", proc->getResourcesDirectory());
 	jmethodID atsmID =
-			(jmethodID) SaxonProcessor::sxn_environ->env->GetMethodID(cppClass,
+			(jmethodID) SaxonProcessor::sxn_environ->env->GetStaticMethodID(cppClass,
 					"applyTemplatesReturningString",
 					"(Ljava/lang/String;Lnet/sf/saxon/s9api/XsltExecutable;Ljava/lang/Object;[Ljava/lang/String;[Ljava/lang/Object;)Ljava/lang/String;");
 	if (!atsmID) {
@@ -383,7 +378,7 @@ const char* XsltExecutable::applyTemplatesReturningString(){
 		comboArrays = SaxonProcessor::createParameterJArray(parameters, properties);
 
 	jstring result = NULL;
-	jobject obj = (SaxonProcessor::sxn_environ->env->CallObjectMethod(cppXT, atsmID,
+	jobject obj = (SaxonProcessor::sxn_environ->env->CallStaticObjectMethod(cppClass, atsmID,
 								SaxonProcessor::sxn_environ->env->NewStringUTF(cwdXE.c_str()), executableObject
 								selection,
 								comboArrays.stringArray, comboArrays.objectArray));
@@ -420,7 +415,7 @@ XdmValue * XsltExecutable::applyTemplatesReturningValue(){
 	setProperty("resources", proc->getResourcesDirectory());
 	static jmethodID atsmID = NULL;
 	if (atsmID == NULL) {
-	    atsmID = (jmethodID) SaxonProcessor::sxn_environ->env->GetMethodID(cppClass,
+	    atsmID = (jmethodID) SaxonProcessor::sxn_environ->env->GetStaticMethodID(cppClass,
 					"applyTemplatesReturningValue",
 					"(Ljava/lang/String;Lnet/sf/saxon/s9api/XsltExecutable;Ljava/lang/Object;[Ljava/lang/String;[Ljava/lang/Object;)Lnet/sf/saxon/s9api/XdmValue;");
 	}
@@ -434,7 +429,7 @@ XdmValue * XsltExecutable::applyTemplatesReturningValue(){
 
 
 	   // jstring result = NULL;
-	    jobject result = (jobject)(SaxonProcessor::sxn_environ->env->CallObjectMethod(cppXT, atsmID,
+	    jobject result = (jobject)(SaxonProcessor::sxn_environ->env->CallStaticObjectMethod(cppClass, atsmID,
 								SaxonProcessor::sxn_environ->env->NewStringUTF(cwdXE.c_str()),
 								executableObject, selection,
 								comboArrays.stringArray, comboArrays.objectArray));
@@ -495,7 +490,7 @@ XdmValue * XsltExecutable::applyTemplatesReturningValue(){
         	static jmethodID afmID = NULL;
 
         	if(afmID == NULL) {
-        			afmID = (jmethodID) SaxonProcessor::sxn_environ->env->GetMethodID(cppClass,
+        			afmID = (jmethodID) SaxonProcessor::sxn_environ->env->GetStaticMethodID(cppClass,
         					"callFunctionReturningFile",
         					"(Ljava/lang/String;Lnet/sf/saxon/s9api/XsltExecutable;Ljava/lang/String;Ljava/lang/String;[Ljava/lang/Object;[Ljava/lang/String;[Ljava/lang/Object;)V");
         	}
@@ -510,7 +505,7 @@ XdmValue * XsltExecutable::applyTemplatesReturningValue(){
 
         		jobjectArray argumentJArray = SaxonProcessor::createJArray(arguments, argument_length);
 
-        		SaxonProcessor::sxn_environ->env->CallObjectMethod(cppXT, afmID,
+        		SaxonProcessor::sxn_environ->env->CallStaticObjectMethod(cppClass, afmID,
         						SaxonProcessor::sxn_environ->env->NewStringUTF(cwdXE.c_str()),
         						executableObject,
         						(functionName != NULL ?
@@ -541,7 +536,7 @@ XdmValue * XsltExecutable::applyTemplatesReturningValue(){
 
     	setProperty("resources", proc->getResourcesDirectory());
     	static jmethodID afsmID =
-    			(jmethodID) SaxonProcessor::sxn_environ->env->GetMethodID(cppClass,
+    			(jmethodID) SaxonProcessor::sxn_environ->env->GetStaticMethodID(cppClass,
     					"callFunctionReturningString",
     					"(Ljava/lang/String;Lnet/sf/saxon/s9api/XsltExecutable;Ljava/lang/String;[Ljava/lang/Object;[Ljava/lang/String;[Ljava/lang/Object;)Ljava/lang/String;");
     	if (!afsmID) {
@@ -554,7 +549,7 @@ XdmValue * XsltExecutable::applyTemplatesReturningValue(){
             jobjectArray argumentJArray = SaxonProcessor::createJArray(arguments, argument_length);
 
     	jstring result = NULL;
-    	jobject obj = (SaxonProcessor::sxn_environ->env->CallObjectMethod(cppXT, afsmID,
+    	jobject obj = (SaxonProcessor::sxn_environ->env->CallStaticObjectMethod(cppClass, afsmID,
     								SaxonProcessor::sxn_environ->env->NewStringUTF(cwdXE.c_str()),  executableObject
     								(functionName != NULL ? SaxonProcessor::sxn_environ->env->NewStringUTF(functionName) : NULL),
     								argumentJArray, comboArrays.stringArray, comboArrays.objectArray));
@@ -585,7 +580,7 @@ XdmValue * XsltExecutable::applyTemplatesReturningValue(){
           	setProperty("resources", proc->getResourcesDirectory());
           	static jmethodID cfvmID = NULL;
           	if(cfvmID == NULL) {
-          	    cfvmId = (jmethodID) SaxonProcessor::sxn_environ->env->GetMethodID(cppClass,
+          	    cfvmId = (jmethodID) SaxonProcessor::sxn_environ->env->GetStaticMethodID(cppClass,
           					"callFunctionReturningValue",
           					"(Ljava/lang/String;Lnet/sf/saxon/s9api/XsltExecutable;Ljava/lang/String;[Ljava/lang/Object;[Ljava/lang/String;[Ljava/lang/Object;)Lnet/sf/saxon/s9api/XdmValue;");
           	}
@@ -598,7 +593,7 @@ XdmValue * XsltExecutable::applyTemplatesReturningValue(){
           		comboArrays = SaxonProcessor::createParameterJArray(parameters, properties);
                 jobjectArray argumentJArray = SaxonProcessor::createJArray(arguments, argument_length);
 
-          	    jobject result = (jobject)(SaxonProcessor::sxn_environ->env->CallObjectMethod(cppXT, cfvmID,
+          	    jobject result = (jobject)(SaxonProcessor::sxn_environ->env->CallStaticObjectMethod(cppClass, cfvmID,
           								SaxonProcessor::sxn_environ->env->NewStringUTF(cwdXE.c_str()),executableObject,
                                         (functionName != NULL ? SaxonProcessor::sxn_environ->env->NewStringUTF(functionName) : NULL),
           								argumentJArray, comboArrays.stringArray, comboArrays.objectArray));
@@ -667,9 +662,9 @@ XdmValue * XsltExecutable::applyTemplatesReturningValue(){
 
 	setProperty("resources", proc->getResourcesDirectory());
 	static jmethodID ctmID =
-			(jmethodID) SaxonProcessor::sxn_environ->env->GetMethodID(cppClass,
+			(jmethodID) SaxonProcessor::sxn_environ->env->GetStaticMethodID(cppClass,
 					"callTemplateReturningFile",
-					"(Ljava/lang/String;Ljava/lang/String;Ljava/lang/String;Ljava/lang/String;[Ljava/lang/String;[Ljava/lang/Object;)V");
+					"(Ljava/lang/String;Lnet/sf/saxon/s9api/XsltExecutable;Ljava/lang/String;Ljava/lang/String;Ljava/lang/String;[Ljava/lang/String;[Ljava/lang/Object;)V");
 	if (!ctmID) {
 		std::cerr << "Error: "<< getDllname() << "callTemplateReturningFile" << " not found\n"
 				<< std::endl;
@@ -677,18 +672,11 @@ XdmValue * XsltExecutable::applyTemplatesReturningValue(){
 	} else {
         JParameters comboArrays;
 		comboArrays = SaxonProcessor::createParameterJArray(parameters, properties);
-		SaxonProcessor::sxn_environ->env->CallObjectMethod(cppXT, ctmID,
+		SaxonProcessor::sxn_environ->env->CallStaticObjectMethod(cppclass, ctmID,
 						SaxonProcessor::sxn_environ->env->NewStringUTF(cwdXE.c_str()),
-						(stylesheetfile != NULL ?
-								SaxonProcessor::sxn_environ->env->NewStringUTF(
-										stylesheetfile) :
-								NULL),
-						(templateName != NULL ?
-								SaxonProcessor::sxn_environ->env->NewStringUTF(templateName) :
-								NULL),
-								(outfile != NULL ?
-                                			SaxonProcessor::sxn_environ->env->NewStringUTF(outfile) :
-                     					NULL),
+						(stylesheetfile != NULL ? SaxonProcessor::sxn_environ->env->NewStringUTF(stylesheetfile) : NULL), executableObject,
+						(templateName != NULL ? SaxonProcessor::sxn_environ->env->NewStringUTF(templateName) : NULL),
+								(outfile != NULL ? SaxonProcessor::sxn_environ->env->NewStringUTF(outfile) : NULL),
 								comboArrays.stringArray, comboArrays.objectArray);
 		if (comboArrays.stringArray != NULL) {
 			SaxonProcessor::sxn_environ->env->DeleteLocalRef(comboArrays.stringArray);
@@ -709,7 +697,7 @@ XdmValue * XsltExecutable::applyTemplatesReturningValue(){
 
 	setProperty("resources", proc->getResourcesDirectory());
 	jmethodID ctsmID =
-			(jmethodID) SaxonProcessor::sxn_environ->env->GetMethodID(cppClass,
+			(jmethodID) SaxonProcessor::sxn_environ->env->GetStaticMethodID(cppClass,
 					"callTemplateReturningString",
 					"(Ljava/lang/String;Lnet/sf/saxon/s9api/XsltExecutable;Ljava/lang/String;[Ljava/lang/String;[Ljava/lang/Object;)Ljava/lang/String;");
 	if (!ctsmID) {
@@ -722,7 +710,7 @@ XdmValue * XsltExecutable::applyTemplatesReturningValue(){
 
 
 	jstring result = NULL;
-	jobject obj =(jobject)(SaxonProcessor::sxn_environ->env->CallObjectMethod(cppXT, ctsmID,
+	jobject obj =(jobject)(SaxonProcessor::sxn_environ->env->CallStaticObjectMethod(cppClass, ctsmID,
 								SaxonProcessor::sxn_environ->env->NewStringUTF(cwdXE.c_str()), executableObject,
 								(templateName != NULL ? SaxonProcessor::sxn_environ->env->NewStringUTF(templateName) : NULL),
 								comboArrays.stringArray, comboArrays.objectArray));
@@ -753,7 +741,7 @@ XdmValue * XsltExecutable::applyTemplatesReturningValue(){
           	setProperty("resources", proc->getResourcesDirectory());
           	static jmethodID ctsmID = NULL;
           	if (ctsmID == NULL) {
-          	    ctsmID = (jmethodID) SaxonProcessor::sxn_environ->env->GetMethodID(cppClass,
+          	    ctsmID = (jmethodID) SaxonProcessor::sxn_environ->env->GetStaticMethodID(cppClass,
           					"callTemplateReturningValue",
           					"(Ljava/lang/String;Lnet/sf/saxon/s9api/XsltExecutable;Ljava/lang/String;[Ljava/lang/String;[Ljava/lang/Object;)Lnet/sf/saxon/s9api/XdmValue;");
           	}
@@ -767,7 +755,7 @@ XdmValue * XsltExecutable::applyTemplatesReturningValue(){
 
 
           	    jstring result = NULL;
-          	    jobject obj = (jobject)(SaxonProcessor::sxn_environ->env->CallObjectMethod(cppXT, ctsmID,
+          	    jobject obj = (jobject)(SaxonProcessor::sxn_environ->env->CallStaticObjectMethod(cppClass, ctsmID,
           								SaxonProcessor::sxn_environ->env->NewStringUTF(cwdXE.c_str()), executableObject,
                                         (templateName != NULL ? SaxonProcessor::sxn_environ->env->NewStringUTF(templateName) : NULL),
           								comboArrays.stringArray, comboArrays.objectArray));
@@ -796,12 +784,13 @@ XdmValue * XsltExecutable::applyTemplatesReturningValue(){
 					    xdmItem->setProcessor(proc);
 					    SaxonProcessor::sxn_environ->env->DeleteLocalRef(result);
 					    return xdmItem;
-
+#if CVERSION_API_NO >= 123
           			} else if (SaxonProcessor::sxn_environ->env->IsInstanceOf(result, functionItemClass)           == JNI_TRUE) {
                         xdmItem =  new XdmFunctionItem(result);
                         xdmItem->setProcessor(proc);
                         SaxonProcessor::sxn_environ->env->DeleteLocalRef(result);
                         return xdmItem;
+#endif
           			} else {
 					value = new XdmValue(result, true);
 					value->setProcessor(proc);
@@ -817,7 +806,7 @@ XdmValue * XsltExecutable::applyTemplatesReturningValue(){
           		SaxonProcessor::sxn_environ->env->DeleteLocalRef(result);
           		return value;
          	} else  {
-          		proc->checkAndCreateException(cppClass);
+          		exception = proc->checkAndCreateException(cppClass);
                	}
           }
         return NULL;
@@ -899,7 +888,7 @@ XdmValue * XsltExecutable::transformFileToValue(const char* sourcefile) {
           		return value;
 		}else {
 
-			proc->checkAndCreateException(cppClass);
+			exception = proc->checkAndCreateException(cppClass);
 
      		}
 	}
@@ -936,7 +925,7 @@ void XsltExecutable::transformFileToFile(const char* source, const char* outputf
 			SaxonProcessor::sxn_environ->env->DeleteLocalRef(comboArrays.objectArray);
 		}
 		}
-		proc->checkAndCreateException(cppClass);
+		exception = proc->checkAndCreateException(cppClass);
 	}
 
 
@@ -991,7 +980,7 @@ const char * XsltExecutable::transformFileToString(const char* source) {
 			SaxonProcessor::sxn_environ->env->DeleteLocalRef(obj);
 			return str;
 		} else  {
-			proc->checkAndCreateException(cppClass);
+			exception = proc->checkAndCreateException(cppClass);
 
      		}
 	}
@@ -1028,6 +1017,6 @@ const char * XsltExecutable::transformFileToString(const char* source) {
    }
 
 const char * XsltExecutable::getErrorMessage(int i ){
- 	if(proc->exception == NULL) {return NULL;}
- 	return proc->exception->getErrorMessage(i);
+ 	if(exception == NULL) {return NULL;}
+ 	return exception->getErrorMessage(i);
  }

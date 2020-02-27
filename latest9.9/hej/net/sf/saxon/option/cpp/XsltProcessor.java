@@ -22,6 +22,7 @@ import javax.xml.transform.Source;
 import javax.xml.transform.SourceLocator;
 import javax.xml.transform.stream.StreamSource;
 import java.io.*;
+import java.nio.charset.StandardCharsets;
 import java.util.*;
 
 
@@ -671,7 +672,7 @@ public class XsltProcessor extends SaxonCAPI {
      * @param values     - the values of the paramaters and properties. given as a array of Java objects
      * @return result as a string representation
      */
-    public String transformToString(String cwd, String sourceFile, String stylesheet, String[] params, Object[] values) throws SaxonApiException {
+    public byte[] transformToString(String cwd, String sourceFile, String stylesheet, String[] params, Object[] values) throws SaxonApiException {
         if (debug) {
             System.err.println("xsltApplyStylesheet, Processor: " + System.identityHashCode(processor));
         }
@@ -698,8 +699,9 @@ public class XsltProcessor extends SaxonCAPI {
                 transformer = tempExecutable.load();
 
             }
-            StringWriter sw = new StringWriter();
-            Serializer serializer = processor.newSerializer(sw);
+            StringWriter sw = new StringWriter();   //TODO byteArrayOutputStream
+        ByteArrayOutputStream bStream = new ByteArrayOutputStream();
+        Serializer serializer = processor.newSerializer(bStream);
             transformer.setDestination(serializer);
 
             applyXsltTransformerProperties(this, cwd, processor, transformer, serializer, params, values);
@@ -711,7 +713,7 @@ public class XsltProcessor extends SaxonCAPI {
             //transformer.setErrorListener(errorListener);
             transformer.transform();
             serializer = null;
-            return sw.toString();
+            return bStream.toByteArray();
 
     }
 
@@ -765,50 +767,7 @@ public class XsltProcessor extends SaxonCAPI {
 
 
 
-    /**
-     * One-shot method to do transformation to a Xdm node in memory
-     * The method goes through the stages of compilation, loading any source documents and execution.
-     * Here we supply parameters and properties required to do the transformation.
-     * The parameter names and values are supplied as a two arrays in the form of a key and value.
-     *
-     * @param cwd        - current working directory
-     * @param sourceFile - source supplied as a file name
-     * @param stylesheet - File name of the stylesheet
-     * @param params     - parameters and property names given as an array of stings
-     * @param values     - the values of the paramaters and properties. given as a array of Java objects
-     * @return result as an XdmNode
-     */
-    public String xsltApplyStylesheet(String cwd, Processor processor, String sourceFile, String stylesheet, String[] params, Object[] values) throws SaxonApiException {
 
-        XsltCompiler compiler = processor.newXsltCompiler();
-            Source source = resolveFileToSource(cwd, stylesheet);
-            //compiler.setErrorListener(errorListener);
-            XsltTransformer transformer = null;
-            //try {
-            transformer = compiler.compile(source).load();
-            /*} catch (SaxonApiException ex) {
-                if (ex.getErrorCode() == null) {
-                    throw new SaxonApiException(new XPathException(ex.getMessage(), saxonExceptions.get(0).getErrorCode()));
-                }
-            }   */
-
-
-            StringWriter sw = new StringWriter();
-            Serializer serializer = processor.newSerializer(sw);
-
-            transformer.setDestination(serializer);
-
-            this.applyXsltTransformerProperties(this, null, processor, transformer, serializer, params, values);
-            if (sourceFile != null) {
-                source = resolveFileToSource(cwd, sourceFile);
-                DocumentBuilder builder = processor.newDocumentBuilder();
-                transformer.setSource(builder.build(source).asSource());
-            }
-
-            transformer.transform();
-            return sw.toString();
-
-    }
 
     public static void main(String[] args) throws Exception {
         String cwd2 = "/Users/ond1/work/development/svn/archive/opensource/latest9.8/hec/samples/php/trax";
@@ -826,26 +785,26 @@ public class XsltProcessor extends SaxonCAPI {
         XsltProcessor cpp = new XsltProcessor(processor);
         //cpp.createStylesheetFromFile(cwd2, "xsl/foo.xsl");
         cpp.compileFromFileAndSave(cwd2, "xsl/foo.xsl", "xsl/foo.xslp");
-        String resultStr = cpp.transformToString(cwd2, "xml/foo.xml", "xsl/foo.xslp", null, null);
+        String resultStr = new String(cpp.transformToString(cwd2, "xml/foo.xml", "xsl/foo.xslp", null, null));
         System.out.println(resultStr);
 
-         String resultStr4 = cpp.transformToString(cwd2, "xml/foo.xml", "xsl/fooExFunc.xsl", null, null);
+         String resultStr4 = new String(cpp.transformToString(cwd2, "xml/foo.xml", "xsl/fooExFunc.xsl", null, null));
                System.out.println(resultStr4);
 
         String [] params0 = {"it"};
         Object [] values0 = {null};
-        String resultStr3 = cpp.transformToString(cwd2, null, "xsl/foo4.xsl",params0, values0);
+        String resultStr3 = new String(cpp.transformToString(cwd2, null, "xsl/foo4.xsl",params0, values0));
                 System.out.println("Using initial-template: " + resultStr3);
 
         XdmNode node2 = cpp.parseXmlFile("/Users/ond1/work/development/campos", "ORP0301177AA__EE__30954_sinsello.xml");
         String[] paramsx = {"node"};
         Object[] valuesx = {node2};
-        String result2 = cpp.transformToString("/Users/ond1/work/development/campos", "ORP0301177AA__EE__30954_sinsello.xml", "campos.xsl", paramsx, valuesx);
+        String result2 = new String(cpp.transformToString("/Users/ond1/work/development/campos", "ORP0301177AA__EE__30954_sinsello.xml", "campos.xsl", paramsx, valuesx));
         Object[] arrValues = {2, "test"};
 
         String[] params1 = {"resources", "param:test1", "node", "m", "xmlversion"};
         Object[] values1 = {"/Users/ond1/work/development/tests/jeroen/data", arrValues, node2, "m", "1.1"};
-        String outputdoc = cpp.transformToString(cwd, null, stylesheet12, params1, values1);
+        String outputdoc = new String(cpp.transformToString(cwd, null, stylesheet12, params1, values1));
         // System.out.println(outputdoc);
         // System.exit(0);
         // Processor processor = cpp.getProcessor();
@@ -905,7 +864,7 @@ public class XsltProcessor extends SaxonCAPI {
                     "\n" +
                     "</xsl:stylesheet>");
 
-            String valueStr = cpp.transformToString(cwd, "categories.xml", null, null, null);
+            String valueStr = new String(cpp.transformToString(cwd, "categories.xml", null, null, null));
             if (valueStr != null) {
                 System.out.println("Output = " + valueStr);
             } else {
@@ -916,7 +875,7 @@ public class XsltProcessor extends SaxonCAPI {
 
         try {
 
-            String resultStr2 = cpp.transformToString(cwd2, null, null, param4, values4);
+            String resultStr2 = new String(cpp.transformToString(cwd2, null, null, param4, values4), StandardCharsets.UTF_8);
 
            /* cpp.transformToFile(cwd, "categories.xml", stylesheet12, "outputTest.txt", null, null);
             long startTime = System.currentTimeMillis();

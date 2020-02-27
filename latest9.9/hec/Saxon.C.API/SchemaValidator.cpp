@@ -35,7 +35,7 @@ SchemaValidator::SchemaValidator(SaxonProcessor* p, std::string curr){
 	} else {
 		cwdV = curr;
 	}
-	proc->checkAndCreateException(cppClass);
+	exception = proc->checkAndCreateException(cppClass);
 
 }
 
@@ -64,7 +64,7 @@ SchemaValidator::SchemaValidator(SaxonProcessor* p, std::string curr){
 			node->setProcessor(proc);
 			return node;
 		}
-		proc->checkAndCreateException(cppClass);
+		exception = proc->checkAndCreateException(cppClass);
 	}
 	return NULL;
 }
@@ -139,7 +139,7 @@ SchemaValidator::SchemaValidator(SaxonProcessor* p, std::string curr){
 	}
 
 }
-	proc->checkAndCreateException(cppClass);				
+	exception = proc->checkAndCreateException(cppClass);
      		
 	
  }
@@ -166,7 +166,7 @@ SchemaValidator::SchemaValidator(SaxonProcessor* p, std::string curr){
 
 
       }
-      	proc->checkAndCreateException(cppClass);
+      exception = proc->checkAndCreateException(cppClass);
 
  }
 
@@ -243,8 +243,8 @@ SchemaValidator::SchemaValidator(SaxonProcessor* p, std::string curr){
 		SaxonProcessor::sxn_environ->env->DeleteLocalRef(objectArray);
 	}
 
-}
-	proc->checkAndCreateException(cppClass);				
+    }
+	exception = proc->checkAndCreateException(cppClass);
     
 }
 
@@ -329,7 +329,7 @@ if (!mID) {
 		SaxonProcessor::sxn_environ->env->DeleteLocalRef(stringArray);
 		SaxonProcessor::sxn_environ->env->DeleteLocalRef(objectArray);
 	}
-	proc->checkAndCreateException(cppClass);
+	exception = proc->checkAndCreateException(cppClass);
 				
 	}	
 }
@@ -408,21 +408,21 @@ if (!mID) {
 		return node;
 	}
 
-	proc->checkAndCreateException(cppClass);
+	exception = proc->checkAndCreateException(cppClass);
 
 }
 	return NULL;
 }
 
 void SchemaValidator::exceptionClear(){
- if(proc->exception != NULL) {
- 	delete proc->exception;
- 	proc->exception = NULL;
+ if(exception != NULL) {
+ 	delete exception;
+ 	exception = NULL;
  }
    SaxonProcessor::sxn_environ->env->ExceptionClear();
  }
 
-const char * SchemaValidator::getErrorCode(int i) {
+/*const char * SchemaValidator::getErrorCode(int i) {
 	if(proc->exception == NULL) {return NULL;}
 	return proc->exception->getErrorCode(i);
 }
@@ -430,22 +430,22 @@ const char * SchemaValidator::getErrorCode(int i) {
 const char * SchemaValidator::getErrorMessage(int i ){
  if(proc->exception == NULL) {return NULL;}
  return proc->exception->getErrorMessage(i);
- }
+ } */
 
 bool SchemaValidator::exceptionOccurred() {
-	return proc->exceptionOccurred() || proc->exception != NULL;
+	return proc->exceptionOccurred() || exception != NULL;
 }
 
 const char* SchemaValidator::checkException() {
 	return proc->checkException(cppV);
 }
 
-int SchemaValidator::exceptionCount(){
+/*int SchemaValidator::exceptionCount(){
  if(proc->exception != NULL){
  return proc->exception->count();
  }
  return 0;
- }
+ }   */
 
 void SchemaValidator::setSourceNode(XdmNode * value) {
     if(value != NULL){

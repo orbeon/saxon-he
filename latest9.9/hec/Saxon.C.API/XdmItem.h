@@ -28,7 +28,7 @@ public:
 	//std::cerr<<std::endl<<"XdmItem destructor called, refCount"<<getRefCount()<<std::endl;
 	if(getRefCount()<1){
 	  if(value !=NULL && proc != NULL && SaxonProcessor::jvmCreatedCPP>0) {
-			SaxonProcessor::sxn_environ->env->DeleteLocalRef(value->xdmvalue);
+			SaxonProcessor::sxn_environ->env->DeleteGlobalRef(value->xdmvalue);
 	  }
 	  free(value);
 	  if(stringValue.empty()) {

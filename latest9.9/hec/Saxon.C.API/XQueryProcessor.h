@@ -17,6 +17,7 @@
 
 
 class SaxonProcessor;
+class SaxonApiException;
 class XdmValue;
 class XdmItem;
 
@@ -243,28 +244,21 @@ public:
     //! Clear any exception thrown
     void exceptionClear();
 
-     //!Get number of errors reported during execution of the query
-    /**
-     * A transformation may have a number of errors reported against it.
-     * @return int - Count of the exceptions recorded against the transformation
-    */
-    int exceptionCount();
-
 
      //! Get the ith error message if there are any error
     /**
      * A transformation may have a number of errors reported against it.
-     * @return char* - The message of the i'th exception 
+     * @return char* - The message of the exception
     */
-    const char * getErrorMessage(int i);
+    const char * getErrorMessage();
 
 
      //! Get the i'th error code if there are any error
     /**
      * After the execution of the query there may be a number of errors reported against it.
-     * @return char* - The error code of the i'th exception.
+     * @return char* - The error code of the exception.
     */
-    const char * getErrorCode(int i);
+    const char * getErrorCode();
     
 
 private:
@@ -274,6 +268,7 @@ private:
 	jobject cppXQ;
 	std::map<std::string,XdmValue*> parameters; /*!< map of parameters used for the transformation as (string, value) pairs */
 	std::map<std::string,std::string> properties; /*!< map of properties used for the transformation as (string, string) pairs */
+	SaxonApiException * exception;
 };
 
 #endif /* SAXON_XQUERY_H */

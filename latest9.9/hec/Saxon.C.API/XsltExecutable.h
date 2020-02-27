@@ -14,7 +14,8 @@
 #include <string>
 
 class SaxonProcessor;
-class XsltProcessor;
+class SaxonApiException;
+class Xslt30Processor;
 class XdmValue;
 class XdmItem;
 class XdmNode;
@@ -419,7 +420,7 @@ public:
      * A transformation may have a number of errors reported against it.
      * @return int - Count of the exceptions recorded against the transformation
     */
-    int exceptionCount();
+    //int exceptionCount();
 
      //! Get the ith error message if there are any error
     /**
@@ -466,7 +467,7 @@ private:
 	std::map<std::string,XdmValue*> parameters; /*!< map of parameters used for the transformation as (string, value) pairs */
 
 	std::map<std::string,std::string> properties; /*!< map of properties used for the transformation as (string, string) pairs */
-
+    SaxonApiException * exception;
 };
 
 

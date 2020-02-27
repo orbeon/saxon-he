@@ -14,6 +14,7 @@
 
 #include <stdlib.h>
 #include <string.h>
+#include <set>
 
 class XdmArray : public XdmFunctionItem {
 
@@ -41,7 +42,7 @@ public:
 
     XdmArray* concat(XdmArray * value);
 
-    std::List asList();
+    std::list<XdmValue *> asList();
 
     int getArity(){return 1;}
 

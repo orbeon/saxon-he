@@ -102,8 +102,21 @@ public class XdmUtils {
         }
         return map;
 
-        
+    }
 
+
+    public static XdmValue [] getXdmMapValues(XdmMap map) {
+
+        XdmValue [] arr = map.values().toArray(new XdmValue[0]);
+        return arr;
+
+    }
+
+
+    public static XdmAtomicValue [] getXdmMapKeys(XdmMap map) {
+
+        XdmAtomicValue [] arr = map.keySet().toArray(new XdmAtomicValue[0]);
+        return arr;
 
     }
 

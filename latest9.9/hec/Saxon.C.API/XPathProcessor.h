@@ -17,6 +17,7 @@
 #include <string>
 
 class SaxonProcessor;
+class SaxonApiException;
 class XdmValue;
 class XdmItem;
 
@@ -210,27 +211,20 @@ public:
     //! Clear any exception thrown
     void exceptionClear();
 
-     //!Get number of errors reported during evaluation of the XPath
-    /**
-     * After the evalution of the XPAth expression there may be a number of errors reported against it.
-     * @return int - Count of the exceptions recorded against the transformation
-    */
-    int exceptionCount();
-
      //! Get the ith error message if there are any error
     /**
      * A transformation may have a number of errors reported against it.
-     * @return char* - The message of the i'th exception 
+     * @return char* - The message of the exception
     */
-    const char * getErrorMessage(int i);
+    const char * getErrorMessage();
 
 
      //! Get the ith error code if there are any error
     /**
      * After the execution of the XPath expression there may be  a number of errors reported against it.
-     * @return char* - The error code of the i'th exception. 
+     * @return char* - The error code of the exception.
     */
-    const char * getErrorCode(int i);
+    const char * getErrorCode();
 
      //! Check for exception thrown.
 	/**
@@ -247,7 +241,7 @@ private:
 	jobject cppXP;
 	std::map<std::string,XdmValue*> parameters; /*!< map of parameters used for the transformation as (string, value) pairs */
 	std::map<std::string,std::string> properties; /*!< map of properties used for the transformation as (string, string) pairs */
-
+    SaxonApiException * exception;
 };
 
 

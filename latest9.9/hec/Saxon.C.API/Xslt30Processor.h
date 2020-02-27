@@ -1,5 +1,5 @@
 ////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
-// Copyright (c) 2015 Saxonica Limited.
+// Copyright (c) 2020 Saxonica Limited.
 // This Source Code Form is subject to the terms of the Mozilla Public License, v. 2.0.
 // If a copy of the MPL was not distributed with this file, You can obtain one at http://mozilla.org/MPL/2.0/.
 // This Source Code Form is "Incompatible With Secondary Licenses", as defined by the Mozilla Public License, v. 2.0.
@@ -14,6 +14,8 @@
 #include <string>
 
 class SaxonProcessor;
+class SaxonApiException;
+class XsltExecutable;
 class XdmValue;
 class XdmItem;
 class XdmNode;
@@ -287,26 +289,20 @@ public:
      //! Clear any exception thrown
     void exceptionClear();
 
-     //!Get number of errors reported during execution or evaluate of stylesheet
-    /**
-     * A transformation may have a number of errors reported against it.
-     * @return int - Count of the exceptions recorded against the transformation
-    */
-    int exceptionCount();
 
      //! Get the ith error message if there are any error
     /**
      * A transformation may have a number of errors reported against it.
-     * @return char* - The message of the i'th exception 
+     * @return char* - The message of the exception
     */
-    const char * getErrorMessage(int i);
+    const char * getErrorMessage();
 
      //! Get the ith error code if there are any error
     /**
      * A transformation may have a number of errors reported against it.
-     * @return char* - The error code of the i'th exception. The error code are related to the specific specification 
+     * @return char* - The error code of the exception. The error code are related to the specific specification
     */
-    const char * getErrorCode(int i);
+    const char * getErrorCode();
 
 
 
@@ -317,7 +313,7 @@ private:
     std::string cwdXT; /*!< current working directory */
 	bool tunnel, jitCompilation;
 	std::map<std::string,XdmValue*> parameters; /*!< map of parameters used for the transformation as (string, value) pairs */
-
+    SaxonApiException * exception;
 };
 
 

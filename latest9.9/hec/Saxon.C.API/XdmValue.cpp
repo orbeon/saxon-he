@@ -2,6 +2,9 @@
 #include "XdmItem.h"
 #include "XdmAtomicValue.h"
 #include "XdmNode.h"
+#include "XdmFunctionItem.h"
+#include "XdmMap.h"
+#include "XdmArray.h"
 
 XdmValue::XdmValue(const XdmValue &other) {
 	//SaxonProcessor *proc = other.proc; //TODO
@@ -103,21 +106,22 @@ XdmValue::XdmValue(jobject val, bool arr){
 			//value->addUnderlyingValue(resulti);
 
 			if(SaxonProcessor::sxn_environ->env->IsInstanceOf(resulti, atomicValueClass)           == JNI_TRUE) {
-				xdmItem = new XdmAtomicValue(resulti);
+				xdmItem = new XdmAtomicValue(SaxonProcessor::sxn_environ->env->NewGlobalRef(resulti));
 				
 
 			} else if(SaxonProcessor::sxn_environ->env->IsInstanceOf(resulti, nodeClass)           == JNI_TRUE) {
-				xdmItem = new XdmNode(resulti);
+				xdmItem = new XdmNode(SaxonProcessor::sxn_environ->env->NewGlobalRef(resulti));
 
 
 			} else if (SaxonProcessor::sxn_environ->env->IsInstanceOf(resulti, functionItemClass)           == JNI_TRUE) {
 			      //Not Supported yet
 #if CVERSION_API_NO >= 123
-				xdmItem = new XdmFunctionItem(resulti);
+				xdmItem = new XdmFunctionItem(SaxonProcessor::sxn_environ->env->NewGlobalRef(resulti));
 #endif
 			}
 			//xdmItem->setProcessor(proc);
 			addXdmItem(xdmItem);
+			SaxonProcessor::sxn_environ->env->DeleteLocalRef(resulti);
 		}
 	}
 		SaxonProcessor::sxn_environ->env->DeleteLocalRef(results);
@@ -142,7 +146,7 @@ XdmValue::~XdmValue() {
 	}
 	if (valueType != NULL) { delete valueType; }
 	if (jValues && proc != NULL) {
-		SaxonProcessor::sxn_environ->env->DeleteLocalRef(jValues);
+		SaxonProcessor::sxn_environ->env->DeleteLocalRef(jValues);  //TODO check - this maybe should be DeleteGlobalRef  - check where it is created
 	}
 	xdmSize = 0;
 	if(!toStringValue.empty()) {

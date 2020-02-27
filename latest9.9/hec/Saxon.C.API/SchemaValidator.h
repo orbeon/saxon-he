@@ -166,7 +166,7 @@ public:
     /**
      * @return int - Count of the exceptions reported during validation
     */
-    int exceptionCount();
+    //int exceptionCount();
 
      //! Get the ith error message if there are any validation errors
     /**
@@ -205,7 +205,7 @@ private:
 	std::string outputFile;
 	std::map<std::string,XdmValue*> parameters; /*!< map of parameters used for the transformation as (string, value) pairs */
 	std::map<std::string,std::string> properties; /*!< map of properties used for the transformation as (string, string) pairs */
-
+    SaxonApiException * exception;
 };
 
 

@@ -31,7 +31,7 @@ XPathProcessor::XPathProcessor(SaxonProcessor* p, std::string curr) {
 	SaxonProcessor::sxn_environ->env->CallStaticVoidMethod(cppClass, debugMID, (jboolean)true);
 #endif    
 
-	proc->exception = NULL;
+	exception = NULL;
 	if(!(proc->cwd.empty()) && curr.empty()){
 		cwdXP = proc->cwd;
 	} else {
@@ -87,7 +87,7 @@ if (!mID) {
 					SaxonProcessor::sxn_environ->env->NewStringUTF(cwdXP.c_str()),
 					SaxonProcessor::sxn_environ->env->NewStringUTF(xpathStr), stringArray, objectArray));
 	if(!results) {
-		proc->checkAndCreateException(cppClass);
+		exception = proc->checkAndCreateException(cppClass);
 		return NULL;
 	}
 	
@@ -223,7 +223,7 @@ if (!mID) {
 		//SaxonProcessor::sxn_environ->env->DeleteLocalRef(result);
 		return xdmItem;
 	} else  {
-		proc->checkAndCreateException(cppClass);
+			exception = proc->checkAndCreateException(cppClass);
 	   		
      		}
 }
@@ -365,7 +365,7 @@ if (!mID) {
 		SaxonProcessor::sxn_environ->env->DeleteLocalRef(stringArray);
 		SaxonProcessor::sxn_environ->env->DeleteLocalRef(objectArray);
 	}
-	proc->checkAndCreateException(cppClass);
+	exception = proc->checkAndCreateException(cppClass);
 	return result;
 }
 return false;
@@ -450,30 +450,23 @@ std::map<std::string,std::string>& XPathProcessor::getProperties(){
 }
 
 void XPathProcessor::exceptionClear(){
-	if(proc->exception != NULL) {
+	if(exception != NULL) {
 		delete proc->exception;
-		proc->exception = NULL;	
+		exception = NULL;
 	}
 
    SaxonProcessor::sxn_environ->env->ExceptionClear();
  
 }
 
-int XPathProcessor::exceptionCount(){
- if(proc->exception != NULL){
- return proc->exception->count();
- }
- return 0;
- }
-
-const char * XPathProcessor::getErrorCode(int i) {
-	if(proc->exception == NULL) {return NULL;}
-	return proc->exception->getErrorCode(i);
+const char * XPathProcessor::getErrorCode() {
+	if(exception == NULL) {return NULL;}
+	return exception->getErrorCode();
 }
 
-const char * XPathProcessor::getErrorMessage(int i ){
-	if(proc->exception == NULL) {return NULL;}
-	return proc->exception->getErrorMessage(i);
+const char * XPathProcessor::getErrorMessage(){
+	if(exception == NULL) {return NULL;}
+	return exception->getErrorMessage();
 }
 
     bool XPathProcessor::exceptionOccurred(){

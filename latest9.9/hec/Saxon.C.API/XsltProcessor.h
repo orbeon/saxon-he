@@ -14,6 +14,7 @@
 #include <string>
 
 class SaxonProcessor;
+class SaxonApiException;
 class XdmValue;
 class XdmItem;
 class XdmNode;
@@ -330,26 +331,20 @@ public:
      //! Clear any exception thrown
     void exceptionClear();
 
-     //!Get number of errors reported during execution or evaluate of stylesheet
-    /**
-     * A transformation may have a number of errors reported against it.
-     * @return int - Count of the exceptions recorded against the transformation
-    */
-    int exceptionCount();
 
      //! Get the ith error message if there are any error
     /**
      * A transformation may have a number of errors reported against it.
-     * @return char* - The message of the i'th exception 
+     * @return char* - The message of the exception
     */
-    const char * getErrorMessage(int i);
+    const char * getErrorMessage();
 
      //! Get the ith error code if there are any error
     /**
      * A transformation may have a number of errors reported against it.
-     * @return char* - The error code of the i'th exception. The error code are related to the specific specification 
+     * @return char* - The error code of the exception. The error code are related to the specific specification
     */
-    const char * getErrorCode(int i);
+    const char * getErrorCode();
 
 
 
@@ -362,6 +357,7 @@ private:
 	std::map<std::string,XdmValue*> parameters; /*!< map of parameters used for the transformation as (string, value) pairs */
 	std::map<std::string,std::string> properties; /*!< map of properties used for the transformation as (string, string) pairs */
     bool jitCompilation;
+    SaxonApiException * exception;
 };
 
 

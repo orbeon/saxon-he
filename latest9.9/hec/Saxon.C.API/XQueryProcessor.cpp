@@ -23,7 +23,7 @@
 	SaxonProcessor::sxn_environ->env->CallStaticVoidMethod(cppClass, debugMID, (jboolean)true);
 #endif
 
-    proc->exception = NULL;
+    exception = NULL;
    // outputfile1 = "";
 	if(!(proc->cwd.empty()) && curr.empty()){
 		cwdXQ = proc->cwd;
@@ -286,7 +286,7 @@ std::map<std::string,std::string>& XQueryProcessor::getProperties(){
 	  SaxonProcessor::sxn_environ->env->DeleteLocalRef(objectArray);
 	  SaxonProcessor::sxn_environ->env->DeleteLocalRef(stringArray);
 
-	proc->checkAndCreateException(cppClass);
+	exception = proc->checkAndCreateException(cppClass);
 	 
   }
 
@@ -377,7 +377,7 @@ std::map<std::string,std::string>& XQueryProcessor::getProperties(){
 			return value;
      } else {
 	   
-	proc->checkAndCreateException(cppClass);		
+	    exception = proc->checkAndCreateException(cppClass);
      	} 
   }
   return NULL;
@@ -433,7 +433,7 @@ std::map<std::string,std::string>& XQueryProcessor::getProperties(){
             //return "result should be ok";            
 	    return str;
 	   } else {
-		proc->checkAndCreateException(cppClass);
+		    exception = proc->checkAndCreateException(cppClass);
 	   		
      		}
   }
@@ -470,9 +470,9 @@ std::map<std::string,std::string>& XQueryProcessor::getProperties(){
 
 
 void XQueryProcessor::exceptionClear(){
-	if(proc->exception != NULL) {
-		delete proc->exception;
-		proc->exception = NULL;	
+	if(exception != NULL) {
+		delete exception;
+		exception = NULL;
 		SaxonProcessor::sxn_environ->env->ExceptionClear();
 	}
 
@@ -486,14 +486,14 @@ bool XQueryProcessor::exceptionOccurred(){
 }
 
 
-const char * XQueryProcessor::getErrorCode(int i) {
-	if(proc->exception == NULL) {return NULL;}
-	return proc->exception->getErrorCode(i);
+const char * XQueryProcessor::getErrorCode() {
+	if(exception == NULL) {return NULL;}
+	return exception->getErrorCode();
 }
 
-const char * XQueryProcessor::getErrorMessage(int i ){
-	if(proc->exception == NULL) {return NULL;}
-	return proc->exception->getErrorMessage(i);
+const char * XQueryProcessor::getErrorMessage(){
+	if(exception == NULL) {return NULL;}
+	return exception->getErrorMessage();
 }
 
 const char* XQueryProcessor::checkException(){
@@ -506,9 +506,9 @@ const char* XQueryProcessor::checkException(){
 
 
 
-int XQueryProcessor::exceptionCount(){
+/*int XQueryProcessor::exceptionCount(){
 	if(proc->exception != NULL){
 		return proc->exception->count();
 	}
 	return 0;
-}
+}   */

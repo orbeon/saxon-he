@@ -1,5 +1,9 @@
 #include <sstream>
-
+#include <stdio.h>
+#include <cstdlib>
+#include <pthread.h>
+#include <unistd.h>
+#include <thread>
 #include "../../Saxon.C.API/SaxonProcessor.h"
 #include "../../Saxon.C.API/XdmValue.h"
 #include "../../Saxon.C.API/XdmItem.h"
@@ -703,6 +707,51 @@ trans->setInitialMatchSelectionAsFile("/home/ond1/work/svn/latest9.9-saxonc/samp
 if(result != NULL)
 std::cerr<<"testCatalog result= "<<result<<std::endl;
 
+}
+
+
+void *RunThread(void *args) {
+
+    struct arg_struct *argsi = (struct arg_struct *)args;
+    int threadid = argsi->id;
+    Xslt30Processor * trans = argsi->trans;
+    long tid;
+    tid = (long)threadid;
+
+    trans->attachThread();
+
+   trans->setInitialMatchSelectionAsFile("../php/xml/foo.xml");
+
+    const char *result = trans->applyTemplatesReturningString();
+    cout<<" Result from THREAD ID: "<< tid << ", " << result<<endl;
+    delete result;
+    //pthread_exit(NULL);
+    trans->detachThread();
+}
+
+void testThreads (SaxonProcessor * processor) {
+    pthread_t threads[NUM_THREADS];
+    int rc;
+    int i;
+
+    Xslt30Processor *  trans = processor->newXslt30Processor();
+
+    trans->compileFromFile("../php/xsl/foo.xsl");
+    struct arg_struct args;
+    args.trans = trans;
+
+    for( i = 0; i < NUM_THREADS; i++ ) {
+        cout << "main() : creating thread, " << i << endl;
+        args.id = i;
+        rc = pthread_create(&threads[i], NULL, RunThread, (void *)&args);
+
+        if (rc) {
+            cout << "Error:unable to create thread," << rc << endl;
+            exit(-1);
+        }
+	(void) pthread_join(threads[i], NULL);
+    }
+  //  pthread_exit(NULL);
 }
 
 

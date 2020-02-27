@@ -39,7 +39,7 @@ XsltProcessor::XsltProcessor(SaxonProcessor * p, std::string curr) {
 #endif
 	nodeCreated = false;
     jitCompilation = false;
-	proc->exception = NULL;
+	exception = NULL;
 	if(!(proc->cwd.empty()) && curr.empty()){
 		cwdXT = proc->cwd;
 	} else {
@@ -61,7 +61,7 @@ XsltProcessor::XsltProcessor(const XsltProcessor &other) {
 
        XdmValue * valuei = paramIter->second;
        if(valuei == NULL) {
-    	 	cerr<<"Error in XsltProcessor copy constructor"<<endl;
+    	 	//std::cerr<<"Error in XsltProcessor copy constructor"<<std::endl;
        } else {
             parameters[paramIter->first] = new XdmValue(*(valuei));
        }
@@ -88,10 +88,12 @@ bool XsltProcessor::exceptionOccurred() {
 	return proc->exceptionOccurred();
 }
 
-const char * XsltProcessor::getErrorCode(int i) {
- if(proc->exception == NULL) {return NULL;}
- return proc->exception->getErrorCode(i);
+const char * XsltProcessor::getErrorCode() {
+ if(exception == NULL) {
+    return NULL;
  }
+ return exception->getErrorCode();
+}
 
 void XsltProcessor::setSourceFromXdmNode(XdmNode * value) {
     if(value != NULL){
@@ -120,7 +122,7 @@ void XsltProcessor::setParameter(const char* name, XdmValue * value) {
 	if(value != NULL && name != NULL){
 		value->incrementRefCount();
 		int s = parameters.size();
-		std::String skey = "param:"+std::string(name);
+		std::string skey = "param:"+std::string(name);
 		parameters[skey] = value;
 		if(s == parameters.size()) {
             std::map<std::string, XdmValue*>::iterator it;
@@ -157,7 +159,7 @@ void XsltProcessor::setJustInTimeCompilation(bool jit){
 void XsltProcessor::setProperty(const char* name, const char* value) {	
 	if(name != NULL) {
 	    int s = properties.size();
-		std:string skey = std::string(name);
+		std::string skey = std::string(name);
 		properties.insert(std::pair<std::string, std::string>(skey, std::string((value == NULL ? "" : value))));
 
 		if(s == properties.size()) {
@@ -222,9 +224,9 @@ std::map<std::string,std::string>& XsltProcessor::getProperties(){
 }
 
 void XsltProcessor::exceptionClear(){
- if(proc->exception != NULL) {
- 	delete proc->exception;
- 	proc->exception = NULL;
+ if(exception != NULL) {
+ 	delete exception;
+ 	exception = NULL;
 	SaxonProcessor::sxn_environ->env->ExceptionClear();
  }
   
@@ -244,13 +246,6 @@ const char* XsltProcessor::checkException() {
 	return proc->checkException(cppXT);
 }
 
-int XsltProcessor::exceptionCount(){
- if(proc->exception != NULL){
- return proc->exception->count();
- }
- return 0;
- }
-
 
     void XsltProcessor::compileFromXdmNodeAndSave(XdmNode * node, const char* filename) {
 	static jmethodID cAndSNodemID =
@@ -268,7 +263,7 @@ int XsltProcessor::exceptionCount(){
 						SaxonProcessor::sxn_environ->env->NewStringUTF(cwdXT.c_str()),
 						node->getUnderlyingValue(), 							SaxonProcessor::sxn_environ->env->NewStringUTF(filename));
 		
-		proc->checkAndCreateException(cppClass);		
+		exception = proc->checkAndCreateException(cppClass);
 
     }
 
@@ -292,7 +287,7 @@ int XsltProcessor::exceptionCount(){
 						SaxonProcessor::sxn_environ->env->NewStringUTF(cwdXT.c_str()),
 						SaxonProcessor::sxn_environ->env->NewStringUTF(stylesheetStr), 							SaxonProcessor::sxn_environ->env->NewStringUTF(filename));
 		
-		proc->checkAndCreateException(cppClass);		
+		exception = proc->checkAndCreateException(cppClass);
 
     }
 }
@@ -315,7 +310,7 @@ int XsltProcessor::exceptionCount(){
 						SaxonProcessor::sxn_environ->env->NewStringUTF(cwdXT.c_str()),
 						SaxonProcessor::sxn_environ->env->NewStringUTF(xslFilename),SaxonProcessor::sxn_environ->env->NewStringUTF(filename));
 		
-		proc->checkAndCreateException(cppClass);
+		exception = proc->checkAndCreateException(cppClass);
 
 
      }
@@ -342,7 +337,7 @@ void XsltProcessor::compileFromString(const char* stylesheetStr) {
 						SaxonProcessor::sxn_environ->env->NewStringUTF(cwdXT.c_str()),
 						SaxonProcessor::sxn_environ->env->NewStringUTF(stylesheetStr)));
 		if (!stylesheetObject) {
-			proc->checkAndCreateException(cppClass);
+			exception = proc->checkAndCreateException(cppClass);
 		}
 	}
 
@@ -369,7 +364,7 @@ void XsltProcessor::compileFromXdmNode(XdmNode * node) {
 						SaxonProcessor::sxn_environ->env->NewStringUTF(cwdXT.c_str()),
 						node->getUnderlyingValue()));
 		if (!stylesheetObject) {
-			proc->checkAndCreateException(cppClass);
+			exception = proc->checkAndCreateException(cppClass);
 			//cout << "Error in compileFromXdmNode" << endl;
 		}
 	}
@@ -393,7 +388,7 @@ void XsltProcessor::compileFromFile(const char* stylesheet) {
 						SaxonProcessor::sxn_environ->env->NewStringUTF(cwdXT.c_str()),
 						SaxonProcessor::sxn_environ->env->NewStringUTF(stylesheet)));
 		if (!stylesheetObject) {
-			proc->checkAndCreateException(cppClass);
+			exception = proc->checkAndCreateException(cppClass);
      		
 		}
 		//SaxonProcessor::sxn_environ->env->NewGlobalRef(stylesheetObject);
@@ -487,7 +482,7 @@ XdmValue * XsltProcessor::transformFileToValue(const char* sourcefile,
 			return value;
 		}else {
 	
-			proc->checkAndCreateException(cppClass);
+			exception = proc->checkAndCreateException(cppClass);
 	   		
      		}
 	}
@@ -595,12 +590,12 @@ void XsltProcessor::transformFileToFile(const char* source,
 	proc->checkAndCreateException(cppClass);
 }
 
-void XsltProcessor::setupXslMessage(bool show, const char* filename=NULL) {
+void XsltProcessor::setupXslMessage(bool show, const char* filename) {
     if(show) {
         if(filename == NULL) {
             setProperty("m", "on");
         } else {
-            setProperty("m", std::string(filename));
+            setProperty("m", filename);
         }
     } else {
         setProperty("m", "off");
@@ -716,7 +711,7 @@ const char * XsltProcessor::transformFileToString(const char* source,
 			SaxonProcessor::sxn_environ->env->DeleteLocalRef(obj);
 			return str;
 		} else  {
-			proc->checkAndCreateException(cppClass);  
+			exception = proc->checkAndCreateException(cppClass);
 	   		
      		}
 	}
@@ -749,8 +744,10 @@ const char * XsltProcessor::transformFileToString(const char* source,
 	transformFileToFile(NULL, NULL, NULL);
    }
 
-const char * XsltProcessor::getErrorMessage(int i ){
- 	if(proc->exception == NULL) {return NULL;}
- 		return proc->exception->getErrorMessage(i);
+const char * XsltProcessor::getErrorMessage(){
+ 	if(exception == NULL) {
+ 	    return NULL;
+ 	}
+ 	return exception->getErrorMessage();
  }
 

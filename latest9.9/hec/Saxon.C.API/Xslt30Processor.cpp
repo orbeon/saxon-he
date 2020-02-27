@@ -6,6 +6,7 @@
 #include "XdmItem.h"
 #include "XdmNode.h"
 #include "XdmAtomicValue.h"
+#include "XdmFunctionItem.h"
 #ifdef DEBUG
 #include <typeinfo> //used for testing only
 #endif
@@ -37,9 +38,7 @@ Xslt30Processor::Xslt30Processor(SaxonProcessor * p, std::string curr) {
 #endif
 	tunnel = false;
 	jitCompilation = false;
-	proc->exception = NULL;
-	selection = NULL;
-	selectionV=NULL;
+	exception = NULL;
 
 	if(!(proc->cwd.empty()) && curr.empty()){
 		cwdXT = proc->cwd;
@@ -48,30 +47,17 @@ Xslt30Processor::Xslt30Processor(SaxonProcessor * p, std::string curr) {
 	}
 }
 
-     Xslt30Processor::~Xslt30Processor(){
-	clearProperties();
-	clearParameters();
-	if(selectionV != NULL) {
-	  selectionV->decrementRefCount();
-	  if(selectionV->getRefCount() == 0) {
-		delete selectionV;
-	  }
-	}
-	
-     }
+    Xslt30Processor::~Xslt30Processor(){
+	    clearParameters();
+	    SaxonProcessor::sxn_environ->env->DeleteLocalRef(cppXT);
+	    cwdXT.erase();
+    }
 
 
 Xslt30Processor::Xslt30Processor(const Xslt30Processor &other) {
 	proc = other.proc;
 	cppClass = other.cppClass;
 	cppXT = other.cppXT;
-	stylesheetObject = other.stylesheetObject;
-	selectionV = other.selectionV;
-	if(selectionV != NULL) {
-	    setInitialMatchSelection(other.selectionV);
-	} else {
-	    selection = other.selection;
-	}
     cwdXT = other.cwdXT;
 	tunnel = other.tunnel;
 
@@ -81,7 +67,7 @@ Xslt30Processor::Xslt30Processor(const Xslt30Processor &other) {
 
        XdmValue * valuei = paramIter->second;
        if(valuei == NULL) {
-    	 	cerr<<"Error in Xslt30Processor copy constructor"<<endl;
+    	 	//std::cerr<<"Error in Xslt30Processor copy constructor"<<std::endl;
        } else {
             parameters[paramIter->first] = new XdmValue(*(valuei));
        }
@@ -109,9 +95,9 @@ bool Xslt30Processor::exceptionOccurred() {
 	return proc->exceptionOccurred();
 }
 
-const char * Xslt30Processor::getErrorCode(int i) {
- if(proc->exception == NULL) {return NULL;}
- return proc->exception->getErrorCode(i);
+const char * Xslt30Processor::getErrorCode() {
+ if(exception == NULL) {return NULL;}
+ return exception->getErrorCode();
  }
 
 
@@ -119,7 +105,7 @@ void Xslt30Processor::setParameter(const char* name, XdmValue * value) {
 	if(value != NULL && name != NULL){
 		value->incrementRefCount();
 		int s = parameters.size();
-		std::String skey = ("sparam:"+std::string(name));
+		std::string skey = ("sparam:"+std::string(name));
 		parameters[skey] = value;
 		if(s == parameters.size()) {
             std::map<std::string, XdmValue*>::iterator it;
@@ -167,9 +153,7 @@ void Xslt30Processor::clearParameters(bool delValues) {
 	        		delete value;
 			}
         	}
-				
-		SaxonProcessor::sxn_environ->env->DeleteLocalRef(selection);
-		selection = NULL;
+
 	} else {
 for(std::map<std::string, XdmValue*>::iterator itr = parameters.begin(); itr != parameters.end(); itr++){
 		
@@ -178,7 +162,6 @@ for(std::map<std::string, XdmValue*>::iterator itr = parameters.begin(); itr != 
 		
         	}
 
-	selection = NULL;
 	}
 	parameters.clear();
 
@@ -194,9 +177,9 @@ std::map<std::string,XdmValue*>& Xslt30Processor::getParameters(){
 
 
 void Xslt30Processor::exceptionClear(){
- if(proc->exception != NULL) {
- 	delete proc->exception;
- 	proc->exception = NULL;
+ if(exception != NULL) {
+ 	delete exception;
+ 	exception = NULL;
 	SaxonProcessor::sxn_environ->env->ExceptionClear();
  }
   
@@ -216,15 +199,9 @@ const char* Xslt30Processor::checkException() {
 	return proc->checkException(cppXT);
 }
 
-int Xslt30Processor::exceptionCount(){
- if(proc->exception != NULL){
- return proc->exception->count();
- }
- return 0;
- }
 
 
-    void Xslt30Processor::compileFromXdmNodeAndSave(XdmNode * node, const char* filename) {
+void Xslt30Processor::compileFromXdmNodeAndSave(XdmNode * node, const char* filename) {
 	static jmethodID cAndSNodemID = NULL;
 
 	if(cAndSNodemID == NULL) {
@@ -243,7 +220,7 @@ int Xslt30Processor::exceptionCount(){
 						SaxonProcessor::sxn_environ->env->NewStringUTF(cwdXT.c_str()),
 						node->getUnderlyingValue(), SaxonProcessor::sxn_environ->env->NewStringUTF(filename));
 		
-		proc->checkAndCreateException(cppClass);		
+		exception = proc->checkAndCreateException(cppClass);
 
     }
 
@@ -270,7 +247,7 @@ int Xslt30Processor::exceptionCount(){
 						SaxonProcessor::sxn_environ->env->NewStringUTF(stylesheetStr),
 						SaxonProcessor::sxn_environ->env->NewStringUTF(filename));
 		
-		proc->checkAndCreateException(cppClass);		
+		exception = proc->checkAndCreateException(cppClass);
 
     }
 }
@@ -295,14 +272,14 @@ int Xslt30Processor::exceptionCount(){
 		SaxonProcessor::sxn_environ->env->CallObjectMethod(cppXT, cAndFStringmID,
 						SaxonProcessor::sxn_environ->env->NewStringUTF(cwdXT.c_str()),
 						SaxonProcessor::sxn_environ->env->NewStringUTF(xslFilename),SaxonProcessor::sxn_environ->env->NewStringUTF(filename));
-		
-		proc->checkAndCreateException(cppClass);
+
+		exception = proc->checkAndCreateException(cppClass);
 
 
      }
 }
 
-void Xslt30Processor::compileFromString(const char* stylesheetStr) {
+XsltExecutable * Xslt30Processor::compileFromString(const char* stylesheetStr) {
 	static jmethodID cStringmID = NULL;
 	if (cStringmID == NULL) {
 			cStringmID = (jmethodID) SaxonProcessor::sxn_environ->env->GetMethodID(cppClass,
@@ -316,30 +293,30 @@ void Xslt30Processor::compileFromString(const char* stylesheetStr) {
 		return NULL;
 
 	} else {
-		
-		std::map<std::string,std::string> properties;
 
 		JParameters comboArrays;
-		comboArrays = SaxonProcessor::createParameterJArray(parameters, properties);
+		comboArrays = SaxonProcessor::createParameterJArray2(parameters);
 		jobject executableObject = (jobject)(
 				SaxonProcessor::sxn_environ->env->CallObjectMethod(cppXT, cStringmID,
 						SaxonProcessor::sxn_environ->env->NewStringUTF(cwdXT.c_str()),
 						SaxonProcessor::sxn_environ->env->NewStringUTF(stylesheetStr), jitCompilation, comboArrays.stringArray, comboArrays.objectArray));
 		if (!executableObject) {
-			proc->checkAndCreateException(cppClass);
+			exception = proc->checkAndCreateException(cppClass);
 			return NULL;
 		}
 		if (comboArrays.stringArray != NULL) {
 			SaxonProcessor::sxn_environ->env->DeleteLocalRef(comboArrays.stringArray);
 			SaxonProcessor::sxn_environ->env->DeleteLocalRef(comboArrays.objectArray);
 		}
-		SaxonProcessor::sxn_environ->env->NewGlobalRef(executableObject);
-		return new XsltExecutable(executableObject);
+
+        XsltExecutable * executable = new XsltExecutable(SaxonProcessor::sxn_environ->env->NewGlobalRef(executableObject));
+        SaxonProcessor::sxn_environ->env->DeleteLocalRef(executableObject);
+		return executable;
 	}
 
 }
 
-void Xslt30Processor::compileFromXdmNode(XdmNode * node) {
+XsltExecutable * Xslt30Processor::compileFromXdmNode(XdmNode * node) {
 	static jmethodID cNodemID = NULL;
     if(cNodemID == NULL) {			
 			cNodemID = (jmethodID) SaxonProcessor::sxn_environ->env->GetMethodID(cppClass,"compileFromXdmNode",
@@ -352,7 +329,7 @@ void Xslt30Processor::compileFromXdmNode(XdmNode * node) {
 
 	} else {
 		JParameters comboArrays;
-		comboArrays = SaxonProcessor::createParameterJArray(parameters, properties);
+		comboArrays = SaxonProcessor::createParameterJArray2(parameters);
 		jobject executableObject = (jobject)(
 				SaxonProcessor::sxn_environ->env->CallObjectMethod(cppXT, cNodemID,
 						SaxonProcessor::sxn_environ->env->NewStringUTF(cwdXT.c_str()),
@@ -365,13 +342,15 @@ void Xslt30Processor::compileFromXdmNode(XdmNode * node) {
 			SaxonProcessor::sxn_environ->env->DeleteLocalRef(comboArrays.stringArray);
 			SaxonProcessor::sxn_environ->env->DeleteLocalRef(comboArrays.objectArray);
 		}
-		SaxonProcessor::sxn_environ->env->NewGlobalRef(executableObject);
-        return new XsltExecutable(executableObject);
+
+        XsltExecutable * executable = new XsltExecutable(SaxonProcessor::sxn_environ->env->NewGlobalRef(executableObject));
+        SaxonProcessor::sxn_environ->env->DeleteLocalRef(executableObject);
+		return executable;
 	}
 
 }
 
-void Xslt30Processor::compileFromAssociatedFile(const char* source) {
+XsltExecutable * Xslt30Processor::compileFromAssociatedFile(const char* source) {
 	static jmethodID cFilemID = NULL;
     if(cFilemID == NULL) {	
 	    cFilemID = (jmethodID) SaxonProcessor::sxn_environ->env->GetMethodID(cppClass,
@@ -390,7 +369,7 @@ void Xslt30Processor::compileFromAssociatedFile(const char* source) {
 			return;
 		}
 		JParameters comboArrays;
-		comboArrays = SaxonProcessor::createParameterJArray(parameters, properties);
+		comboArrays = SaxonProcessor::createParameterJArray2(parameters);
 		jobject executableObject = (jobject)(
 				SaxonProcessor::sxn_environ->env->CallObjectMethod(cppXT, cFilemID,
 						SaxonProcessor::sxn_environ->env->NewStringUTF(cwdXT.c_str()),
@@ -403,14 +382,16 @@ void Xslt30Processor::compileFromAssociatedFile(const char* source) {
 			SaxonProcessor::sxn_environ->env->DeleteLocalRef(comboArrays.stringArray);
 			SaxonProcessor::sxn_environ->env->DeleteLocalRef(comboArrays.objectArray);
 		}
-		SaxonProcessor::sxn_environ->env->NewGlobalRef(executableObject);
-		return new XsltExecutable(executableObject);
+
+        XsltExecutable * executable = new XsltExecutable(SaxonProcessor::sxn_environ->env->NewGlobalRef(executableObject));
+        SaxonProcessor::sxn_environ->env->DeleteLocalRef(executableObject);
+		return executable;
 	}
 
 }
 
 
-void Xslt30Processor::compileFromFile(const char* stylesheet) {
+XsltExecutable * Xslt30Processor::compileFromFile(const char* stylesheet) {
 	static jmethodID cFilemID = NULL;
 	if(cFilemID == NULL) {
 	    cFilemID = (jmethodID) SaxonProcessor::sxn_environ->env->GetMethodID(cppClass,
@@ -429,8 +410,8 @@ void Xslt30Processor::compileFromFile(const char* stylesheet) {
 			return;
 		}
 		JParameters comboArrays;
-		comboArrays = SaxonProcessor::createParameterJArray(parameters, properties);
-		jobject excutableObject = (jobject)(
+		comboArrays = SaxonProcessor::createParameterJArray2(parameters);
+		jobject executableObject = (jobject)(
 				SaxonProcessor::sxn_environ->env->CallObjectMethod(cppXT, cFilemID,
 						SaxonProcessor::sxn_environ->env->NewStringUTF(cwdXT.c_str()),
 						SaxonProcessor::sxn_environ->env->NewStringUTF(stylesheet), jitCompilation, comboArrays.stringArray, comboArrays.objectArray));
@@ -443,8 +424,10 @@ void Xslt30Processor::compileFromFile(const char* stylesheet) {
 			SaxonProcessor::sxn_environ->env->DeleteLocalRef(comboArrays.stringArray);
 			SaxonProcessor::sxn_environ->env->DeleteLocalRef(comboArrays.objectArray);
 		}
-		SaxonProcessor::sxn_environ->env->NewGlobalRef(executableObject);
-		return new XsltExecutable(executableObject);
+
+        XsltExecutable * executable = new XsltExecutable(SaxonProcessor::sxn_environ->env->NewGlobalRef(executableObject));
+        SaxonProcessor::sxn_environ->env->DeleteLocalRef(executableObject);
+		return executable;
 	}
 
 }
@@ -461,7 +444,7 @@ XdmValue * Xslt30Processor::transformFileToValue(const char* sourcefile,
 		return NULL;	
 	}
 
-	if(sourcefile == NULL && stylesheetfile == NULL && !stylesheetObject){
+	if(sourcefile == NULL && stylesheetfile == NULL){
 	
 		return NULL;
 	}
@@ -480,7 +463,7 @@ XdmValue * Xslt30Processor::transformFileToValue(const char* sourcefile,
 
 	} else {
 	    JParameters comboArrays;
-		comboArrays = SaxonProcessor::createParameterJArray(parameters, properties);
+		comboArrays = SaxonProcessor::createParameterJArray2(parameters);
 
 		jobject result = (jobject)(
 				SaxonProcessor::sxn_environ->env->CallStaticObjectMethod(cppClass, mtvID,
@@ -503,28 +486,30 @@ XdmValue * Xslt30Processor::transformFileToValue(const char* sourcefile,
 
 
           			if(SaxonProcessor::sxn_environ->env->IsInstanceOf(result, atomicValueClass)           == JNI_TRUE) {
-          				xdmItem = new XdmAtomicValue(result);
+          				xdmItem = new XdmAtomicValue(SaxonProcessor::sxn_environ->env->NewGlobalRef(result));
                         xdmItem->setProcessor(proc);
                         SaxonProcessor::sxn_environ->env->DeleteLocalRef(result);
                         return xdmItem;
 
           			} else if(SaxonProcessor::sxn_environ->env->IsInstanceOf(result, nodeClass)           == JNI_TRUE) {
-          				xdmItem = new XdmNode(result);
+          				xdmItem = new XdmNode(SaxonProcessor::sxn_environ->env->NewGlobalRef(result));
                         xdmItem->setProcessor(proc);
                         SaxonProcessor::sxn_environ->env->DeleteLocalRef(result);
                         return xdmItem;
-
+#if CVERSION_API_NO >= 123
           			} else if (SaxonProcessor::sxn_environ->env->IsInstanceOf(result, functionItemClass)           == JNI_TRUE) {
-                        xdmItem =  new XdmFunctionItem(result);
+                        xdmItem =  new XdmFunctionItem(SaxonProcessor::sxn_environ->env->NewGlobalRef(result));
                         xdmItem->setProcessor(proc);
                         SaxonProcessor::sxn_environ->env->DeleteLocalRef(result);
                         return xdmItem;
+#endif
           			} else {
 					value = new XdmValue(result, true);
 					value->setProcessor(proc);
 					for(int z=0;z<value->size();z++) {
 						value->itemAt(z)->setProcessor(proc);
 					}
+					SaxonProcessor::sxn_environ->env->DeleteLocalRef(result);
 					return value;
 				}
 				value = new XdmValue();
@@ -535,7 +520,7 @@ XdmValue * Xslt30Processor::transformFileToValue(const char* sourcefile,
           		return value;
 		}else {
 	
-			proc->checkAndCreateException(cppClass);
+			exception = proc->checkAndCreateException(cppClass);
 	   		
      		}
 	}
@@ -552,11 +537,11 @@ void Xslt30Processor::transformFileToFile(const char* source,
 		//Require clearing exception.
 		return;	
 	}
-	if(!stylesheetObject && stylesheet==NULL){
-		std::cerr<< "Error: stylesheet has not been set or created using the compile methods."<<std::endl;
+	if(stylesheet==NULL){
+		std::cerr<< "Error: stylesheet has not been set."<<std::endl;
 		return;
 	}
-	setProperty("resources", proc->getResourcesDirectory());
+	//setProperty("resources", proc->getResourcesDirectory());
 	static jmethodID mtfID = NULL;
 
 	if(mtfID == NULL) {
@@ -570,7 +555,7 @@ void Xslt30Processor::transformFileToFile(const char* source,
 
 	} else {
 	    JParameters comboArrays;
-        comboArrays = SaxonProcessor::createParameterJArray(parameters, properties);
+        comboArrays = SaxonProcessor::createParameterJArray2(parameters);
 
 		SaxonProcessor::sxn_environ->env->CallStaticObjectMethod(cppClass, mtfID,
 								SaxonProcessor::sxn_environ->env->NewStringUTF(cwdXT.c_str()), cppXT, NULL,
@@ -582,7 +567,7 @@ void Xslt30Processor::transformFileToFile(const char* source,
 			SaxonProcessor::sxn_environ->env->DeleteLocalRef(comboArrays.objectArray);
 		}
 		}
-		proc->checkAndCreateException(cppClass);
+		exception = proc->checkAndCreateException(cppClass);
 	}
 
 
@@ -594,8 +579,8 @@ const char * Xslt30Processor::transformFileToString(const char* source,
 		//Require clearing exception.
 		return NULL;	
 	}
-	if(source == NULL && stylesheet == NULL && !stylesheetObject){
-		std::cerr<< "Error: No stylesheet found. Please compile stylesheet before calling transformFileToString or check exceptions"<<std::endl;
+	if(source == NULL && stylesheet == NULL){
+		std::cerr<< "Error: NULL file name found in transformFiletoString."<<std::endl;
 		return NULL;
 	}
 	setProperty("resources", proc->getResourcesDirectory());
@@ -612,7 +597,7 @@ const char * Xslt30Processor::transformFileToString(const char* source,
 
 	} else {
     JParameters comboArrays;
-    comboArrays = SaxonProcessor::createParameterJArray(parameters, properties);
+    comboArrays = SaxonProcessor::createParameterJArray2(parameters);
 
 	jstring result = NULL;
 	jobject obj = SaxonProcessor::sxn_environ->env->CallStaticObjectMethod(cppClass, mtsID,
@@ -635,7 +620,7 @@ const char * Xslt30Processor::transformFileToString(const char* source,
 			SaxonProcessor::sxn_environ->env->DeleteLocalRef(obj);
 			return str;
 		} else  {
-			proc->checkAndCreateException(cppClass);  
+			exception =proc->checkAndCreateException(cppClass);
 	   		
      		}
 	}
@@ -644,8 +629,8 @@ const char * Xslt30Processor::transformFileToString(const char* source,
 
 
 
-const char * Xslt30Processor::getErrorMessage(int i ){
- 	if(proc->exception == NULL) {return NULL;}
- 	return proc->exception->getErrorMessage(i);
+const char * Xslt30Processor::getErrorMessage(){
+ 	if(exception == NULL) {return NULL;}
+ 	return exception->getErrorMessage();
  }
 

@@ -7,10 +7,10 @@ XdmItem::XdmItem(): XdmValue(){
 }
 
     XdmItem::XdmItem(const XdmItem &other): XdmValue(other){
-	value = (sxnc_value *)malloc(sizeof(sxnc_value));
+	    value = (sxnc_value *)malloc(sizeof(sxnc_value));
         value->xdmvalue = other.value->xdmvalue;
-	xdmSize =1;
-	refCount = other.refCount;
+	    xdmSize =1;
+	    refCount = other.refCount;
     }
 
 
