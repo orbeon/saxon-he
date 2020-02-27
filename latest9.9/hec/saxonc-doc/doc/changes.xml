@@ -9,6 +9,19 @@
          project</a> at the Saxonica community site.</p>
 
 
+   <h2 class="subtitle">Changes between releases 1.2.1 and 1.2.2</h2>
+
+   <ul>
+      <li>Updated the core XSLT processor to the Java Saxon 9.9.1.6 version.</li>
+      <li>Replaced the method getXslMessages() method from the XsltProcessor and Xslt30Processor with the method
+         setupXslMessages(boolean show, const char filename=NULL). This new methods gives users the option to show xsl:message output
+      print to the standard error listener (by default). Alternatively the xsl:message output can be sent to the given file name.</li>
+      <li>Multi threading feature added to the processors XsltProcessor, Xslt30Processor and XQueryProcessor
+         (see: bug issue <a href="https://saxonica.plan.io/issues/4428" target="_blank">#4428</a>)</li>
+   </ul>
+
+
+
    <h2 class="subtitle">Changes between releases 1.1 and 1.2</h2>
 
    <ul>

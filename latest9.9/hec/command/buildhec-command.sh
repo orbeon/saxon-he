@@ -18,3 +18,4 @@ gcc  Transform.c -o transform -ldl -lc -DHEC -I../Saxon.C.API/jni $1 $2
 
 gcc  Query.c -o query -ldl -lc -DHEC -I../Saxon.C.API/jni $1 $2
 
+gcc  TransformG.c -o transformG -ldl -lc -DHEC -I../Saxon.C.API/jni $1 $2
