@@ -268,6 +268,12 @@ public class Message extends Instruction {
         if (abort) {
             builder.close();
             NodeInfo content = builder.getCurrentRoot();
+            emitter = new ProxyReceiver(emitter) {
+                @Override
+                public void startDocument(int properties) throws XPathException {
+                    super.startDocument(ReceiverOptions.TERMINATE);
+                }
+            };
             content.copy(emitter, CopyOptions.ALL_NAMESPACES, getLocation());
             TerminationException te = new TerminationException(
                     "Processing terminated by " + StandardErrorListener.getInstructionName(this) +
