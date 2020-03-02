@@ -75,7 +75,7 @@ public class SerializationProperties {
      */
 
     public String getProperty(String name) {
-        return (String)getProperties().get(name);
+        return (String)getProperties().getProperty(name);
     }
 
     /**

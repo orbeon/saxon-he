@@ -1206,9 +1206,9 @@ public class Transform {
             Serializer serializer;
             if (outputFile == null) {
                 transformer.setBaseOutputURI(new File(System.getProperty("user.dir")).toURI().toASCIIString());
-                serializer = transformer.newSerializer(System.out);
+                serializer = processor.newSerializer(System.out);
             }else {
-                serializer = transformer.newSerializer(outputFile);
+                serializer = processor.newSerializer(outputFile);
             }
             try {
                 options.setSerializationProperties(serializer);
