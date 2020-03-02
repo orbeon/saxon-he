@@ -117,6 +117,7 @@ public class ConfigurationReader implements ContentHandler, NamespaceResolver {
             proxy.setUnderlyingContentHandler(this);
             proxy.setPipelineConfiguration(((NodeInfo) source).getConfiguration().makePipelineConfiguration());
             proxy.open();
+            setDocumentLocator(new ExplicitLocation(source.getSystemId(), -1, -1));   //Must be after the open() call
             proxy.startDocument(0);
             ((NodeInfo) source).copy(proxy, CopyOptions.ALL_NAMESPACES, ExplicitLocation.UNKNOWN_LOCATION);
             proxy.endDocument();
