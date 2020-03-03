@@ -768,6 +768,12 @@ public class TransformFn extends SystemFunction implements Callable {
                     try {
                         String base = getStaticBaseUriString();
                         Source ss = xsltCompiler.getURIResolver().resolve(sourceLocation, base);
+                        if (ss == null) {
+                            ss = targetConfig.getURIResolver().resolve(sourceLocation, base);
+                            if (ss == null) {
+                                throw new XPathException("Cannot locate document at sourceLocation " + sourceLocation, "FOXT0003");
+                            }
+                        }
                         ParseOptions parseOptions = new ParseOptions(targetConfig.getParseOptions());
                         parseOptions.setSchemaValidationMode(schemaValidation);
                         TreeInfo tree = targetConfig.buildDocumentTree(ss, parseOptions);
