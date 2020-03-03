@@ -670,7 +670,7 @@ public class XsltProcessor extends SaxonCAPI {
      * @param stylesheet - File name of the stylesheet
      * @param params     - parameters and property names given as an array of stings
      * @param values     - the values of the paramaters and properties. given as a array of Java objects
-     * @return result as a string representation
+     * @return result as a string representation as byte array
      */
     public byte[] transformToString(String cwd, String sourceFile, String stylesheet, String[] params, Object[] values) throws SaxonApiException {
         if (debug) {

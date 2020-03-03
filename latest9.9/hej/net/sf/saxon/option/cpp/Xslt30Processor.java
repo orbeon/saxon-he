@@ -658,7 +658,7 @@ public class Xslt30Processor extends SaxonCAPI {
     }
 
 
-    public void callTemplateReturningFile(String cwd, XsltExecutable executable, String templateName, String outFilename, String[] params, Object[] values) throws SaxonApiException {
+    public static void callTemplateReturningFile(String cwd, XsltExecutable executable, String templateName, String outFilename, String[] params, Object[] values) throws SaxonApiException {
         Map<QName, XdmValue> staticParameters = (executable != null ?  null : new HashMap<>());
         Map<QName, XdmValue> globalParameters = new HashMap<>();
         Map<QName, XdmValue> initialTemplateParameters = new HashMap<>();
@@ -668,7 +668,8 @@ public class Xslt30Processor extends SaxonCAPI {
             qname = QName.fromClarkName(templateName);
         }
         Map<String, Object> paramsMap = setupConfigurationAndBuildMap(params, values, props, null, staticParameters, globalParameters, initialTemplateParameters, true);
-        Xslt30Transformer transformer = getXslt30Transformer(cwd, executable, null, staticParameters);
+        Xslt30Transformer transformer = executable.load30();
+        Processor processor = executable.getProcessor();
         Serializer serializer = null;
         if (outFilename != null) {
             serializer = resolveOutputFile(processor, cwd, outFilename);
@@ -684,7 +685,7 @@ public class Xslt30Processor extends SaxonCAPI {
         transformer.callTemplate(qname, serializer);
     }
 
-    public XdmValue callTemplateReturningValue(String cwd, XsltExecutable executable, String clarkName, String[] params, Object[] values) throws SaxonApiException {
+    public static XdmValue callTemplateReturningValue(String cwd, XsltExecutable executable, String clarkName, String[] params, Object[] values) throws SaxonApiException {
         Map<QName, XdmValue> staticParameters = (executable != null ?  null : new HashMap<>());
         Map<QName, XdmValue> globalParameters = new HashMap<>();
         Map<QName, XdmValue> initialTemplateParameters = new HashMap<>();
@@ -694,7 +695,8 @@ public class Xslt30Processor extends SaxonCAPI {
             qname = QName.fromClarkName(clarkName);
         }
         Map<String, Object> paramsMap = setupConfigurationAndBuildMap(params, values, props, null, staticParameters, globalParameters, initialTemplateParameters, true);
-        Xslt30Transformer transformer = getXslt30Transformer(cwd, executable, null, staticParameters);
+        Xslt30Transformer transformer = executable.load30();
+        Processor processor = executable.getProcessor();
 
         //setsource(cwd, transformer, sourceObj, paramsMap);
         applyXsltTransformerProperties(cwd, processor, transformer, null, props, paramsMap, globalParameters, initialTemplateParameters);
@@ -746,7 +748,7 @@ public class Xslt30Processor extends SaxonCAPI {
 
     }
 
-    public String callTemplateReturningString(String cwd, XsltExecutable executable, String clarkName, String[] params, Object[] values) throws SaxonApiException {
+    public static String callTemplateReturningString(String cwd, XsltExecutable executable, String clarkName, String[] params, Object[] values) throws SaxonApiException {
         QName qname = null;
         if (clarkName != null) {
             qname = QName.fromClarkName(clarkName);
@@ -756,7 +758,8 @@ public class Xslt30Processor extends SaxonCAPI {
         Map<QName, XdmValue> initialTemplateParameters = new HashMap<>();
         Properties props = new Properties();
         Map<String, Object> paramsMap = setupConfigurationAndBuildMap(params, values, props, null, staticParameters, globalParameters, initialTemplateParameters, true);
-        Xslt30Transformer transformer = getXslt30Transformer(cwd, executable, null, staticParameters);
+        Xslt30Transformer transformer = executable.load30();
+        Processor processor = executable.getProcessor();
 
         StringWriter sw = new StringWriter();
         Serializer serializer = processor.newSerializer(sw);
