@@ -100,7 +100,7 @@ namespace Saxon.Api
 		/// <param name="licensedEdition">Set to true if the <c>Processor</c> is to use a licensed edition of Saxon
 		/// (that is, Saxon-PE or Saxon-EE). If true, the <c>Processor</c> will attempt to enable the capabilities
         /// of the licensed edition of Saxon, according to the version of the software that is loaded, and will
-		/// verify the license key. If false, the <c>Processor</c> will load a default <c>Configuration</c> that gives restricted
+		/// verify the license key. If fals(that is, Saxon-PE or Saxon-EE)e, the <c>Processor</c> will load a default <c>Configuration</c> that gives restricted
         /// capability and does not require a license, regardless of which version of the software is actually being run.</param>
         /// <param name="loadLocally">This option has no effect at this release.</param>
 
@@ -111,12 +111,24 @@ namespace Saxon.Api
         }
 
         /// <summary>
+        /// Declare a mapping from a specific namespace URI to a .NET class. 
+        /// This will get applied to Saxon-PEN or Saxon-EEN product
+        /// </summary>
+        /// <param name="uri">the namespace URI of the function name</param>
+        /// <param name="type">the .NET class that implements the functions in thid namespace</param>
+        public void BindExtensions(string uri, System.Type type)
+        {
+            JConfiguration config = processor.getUnderlyingConfiguration();
+            config.BindExtensions(uri, type);
+        }
+
+        /// <summary>
         /// Create a <c>Processor</c>, based on configuration information supplied in a configuration file.
         /// </summary>
         /// <param name="configurationFile">A stream holding the text of the XML configuration file. Details of the file format
         /// can be found in the Saxon documentation.</param>
 
-		[Obsolete("Use the Processor(Stream, Uri) constructor instead.")]
+        [Obsolete("Use the Processor(Stream, Uri) constructor instead.")]
         public Processor(Stream configurationFile)
         {
             JStreamSource ss = new JStreamSource(new JDotNetInputStream(configurationFile));
