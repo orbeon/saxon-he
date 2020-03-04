@@ -1066,7 +1066,7 @@ public class Xslt30Processor extends SaxonCAPI {
             }
             XdmNode doc = null;
 
-            if(sourceFile == null && paramsMap.containsKey("s")) {
+            if(sourceFile == null && paramsMap.containsKey("node")) {
                 Object valuei = paramsMap.get("node");
                 if (valuei == null) {
                     valuei = paramsMap.get("param:node");
@@ -1118,9 +1118,9 @@ public class Xslt30Processor extends SaxonCAPI {
      * @param stylesheet - File name of the stylesheet
      * @param params     - parameters and property names given as an array of stings
      * @param values     - the values of the paramaters and properties. given as a array of Java objects
-     * @return result as a string representation
+     * @return result as a string representation in a byte array
      */
-    public static String transformToString(String cwd, Xslt30Processor xslt30Processor, XsltExecutable executable, String sourceFile, String stylesheet, String[] params, Object[] values) throws SaxonApiException {
+    public static byte[] transformToString(String cwd, Xslt30Processor xslt30Processor, XsltExecutable executable, String sourceFile, String stylesheet, String[] params, Object[] values) throws SaxonApiException {
 
         Map<QName, XdmValue> staticParameters = (executable != null ?  null : new HashMap<>());
         Map<QName, XdmValue> globalParameters = new HashMap<>();
@@ -1146,8 +1146,8 @@ public class Xslt30Processor extends SaxonCAPI {
                 System.err.println("transformToString, Processor: " + System.identityHashCode(processor));
             }
 
-            StringWriter sw = new StringWriter();
-            Serializer serializer = processor.newSerializer(sw);
+            ByteArrayOutputStream bStream = new ByteArrayOutputStream();
+            Serializer serializer = processor.newSerializer(bStream);
 
 
             applyXsltTransformerProperties(cwd, processor, transformer, serializer, props, paramsMap, globalParameters, initialTemplateParameters);
@@ -1182,7 +1182,7 @@ public class Xslt30Processor extends SaxonCAPI {
             //transformer.setErrorListener(errorListener);
             transformer.transform(source, serializer);
             serializer = null;
-            return sw.toString();
+            return bStream.toByteArray();
         } catch (Exception e) {
             SaxonApiException ex = new SaxonApiException(e);
             throw ex;
@@ -1226,11 +1226,11 @@ public class Xslt30Processor extends SaxonCAPI {
         Xslt30Processor cpp = new Xslt30Processor(processor);
         //cpp.compileFromFile(cwd2, "xsl/foo.xsl");
         cpp.compileFromFileAndSave(cwd2, "xsl/foo.xsl", "xsl/foo.xslp");
-        String resultStr = cpp.transformToString(cwd2, cpp, null,"xml/foo.xml", "xsl/foo.xslp", null, null);
+        String resultStr = new String(cpp.transformToString(cwd2, cpp, null,"xml/foo.xml", "xsl/foo.xslp", null, null));
         System.out.println(resultStr);
 
         try {
-            String resultStr4 = cpp.transformToString(cwd2, cpp,null,"xml/foo.xml", "xsl/fooExFunc.xsl", null, null);
+            String resultStr4 = new String(cpp.transformToString(cwd2, cpp,null,"xml/foo.xml", "xsl/fooExFunc.xsl", null, null));
             System.out.println("Result String 4 = " + resultStr4);
         } catch (SaxonApiException ex) {
             System.out.println("Error in transformation Message: " + ex.getMessage());
@@ -1244,19 +1244,19 @@ public class Xslt30Processor extends SaxonCAPI {
         System.out.println("Running callFunction is-licensed-EE= " + resultV.toString());
         System.out.println("Running callFunction is-licensed-EE= " + resultCF);
 
-        String resultStr3 = cpp.transformToString(cwd2, cpp,null,"xml/foo.xml", "xsl/foo4.xsl", null, null);
+        String resultStr3 = new String(cpp.transformToString(cwd2, cpp,null,"xml/foo.xml", "xsl/foo4.xsl", null, null));
         System.out.println("Using initial-template: " + resultStr3);
 
         XdmNode node2 = cpp.parseXmlFile("/Users/ond1/work/development/campos", "ORP0301177AA__EE__30954_sinsello.xml");
         String[] paramsx = {"node"};
         Object[] valuesx = {node2};
-        String result2 = cpp.transformToString("/Users/ond1/work/development/campos", cpp,null, "ORP0301177AA__EE__30954_sinsello.xml", "campos.xsl", paramsx, valuesx);
+        String result2 = new String(cpp.transformToString("/Users/ond1/work/development/campos", cpp,null, "ORP0301177AA__EE__30954_sinsello.xml", "campos.xsl", paramsx, valuesx));
         Object[] arrValues = {2, "test"};
 
         String[] params1 = {"resources", "param:test1", "node", "m", "xmlversion"};
         Object[] values1 = {"/Users/ond1/work/development/tests/jeroen/data", arrValues, node2, "m", "1.1"};
         XsltExecutable executable2 = cpp.compileFromFile(cwd, stylesheet12, false, null, null);
-        String outputdoc = cpp.transformToString(cwd, cpp, executable2, null, null, params1, values1);
+        String outputdoc = new String(cpp.transformToString(cwd, cpp, executable2, null, null, params1, values1));
         // System.out.println(outputdoc);
         // System.exit(0);
         // Processor processor = cpp.getProcessor();
@@ -1297,7 +1297,7 @@ public class Xslt30Processor extends SaxonCAPI {
                     "</xsl:stylesheet>", false, null, null);
 
 
-            String valueStr = cpp.transformToString(cwd, cpp, executable3, "categories.xml", null, null, null);
+            String valueStr = new String(cpp.transformToString(cwd, cpp, executable3, "categories.xml", null, null, null));
             if (valueStr != null) {
                 System.out.println("Output = " + valueStr);
             } else {
@@ -1305,7 +1305,7 @@ public class Xslt30Processor extends SaxonCAPI {
             }
 
 
-            String resultStr2 = cpp.transformToString(cwd2, cpp, executable3, null, null, param4, values4);
+            String resultStr2 = new String(cpp.transformToString(cwd2, cpp, executable3, null, null, param4, values4));
 
            /* cpp.transformToFile(cwd, "categories.xml", stylesheet12, "outputTest.txt", null, null);
             long startTime = System.currentTimeMillis();

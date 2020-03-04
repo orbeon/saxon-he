@@ -481,6 +481,9 @@ public class Configuration implements SourceResolver, NotationSet {
         return assertsEnabled;
     }
 
+//#if DOTNET==true
+    public void BindExtensions(String uri , cli.System.Type type) { }
+//#endif
 
     /**
      * Read the configuration file an construct a new Configuration (the real one)
