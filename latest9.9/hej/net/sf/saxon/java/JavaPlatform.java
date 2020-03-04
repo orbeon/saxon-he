@@ -37,6 +37,7 @@ import javax.xml.parsers.SAXParserFactory;
 import javax.xml.transform.Source;
 import javax.xml.transform.TransformerFactoryConfigurationError;
 import javax.xml.transform.stream.StreamSource;
+import java.lang.reflect.Method;
 import java.text.CollationKey;
 import java.text.Collator;
 import java.util.*;
@@ -46,6 +47,8 @@ import java.util.*;
  * (as distinct from .NET). This is a singleton class with no instance data.
  */
 public class JavaPlatform implements Platform {
+
+    private static boolean tryJdk9 = true;
 
     /**
      * The constructor is called during the static initialization of the Configuration
@@ -213,13 +216,36 @@ public class JavaPlatform implements Platform {
      * @return the parser (XMLReader)
      */
     public XMLReader loadParserForXmlFragments() {
-        try {
-            Class<?> factoryClass = Class.forName("com.sun.org.apache.xerces.internal.jaxp.SAXParserFactoryImpl");
-            SAXParserFactory factory = (SAXParserFactory) factoryClass.newInstance();
-            return factory.newSAXParser().getXMLReader();
-        } catch (Exception e) {
-            // no action; try the JAXP loading mechanism
+        SAXParserFactory factory = null;
+        if (tryJdk9) {
+            try {
+                // Try the JDK 9 approach (unless we know it ain't gonna work)
+                @SuppressWarnings("JavaReflectionMemberAccess")
+                Method method = SAXParserFactory.class.getMethod("newDefaultInstance");
+                Object result = method.invoke(null);
+                factory = (SAXParserFactory) result;
+            } catch (Exception e) {
+                tryJdk9 = false;
+                // keep trying
+            }
         }
+        if (factory == null) {
+            // Try the JDK 8 approach (causes problems in JDK 9 with illegal access warnings)
+            try {
+                Class<?> factoryClass = Class.forName("com.sun.org.apache.xerces.internal.jaxp.SAXParserFactoryImpl");
+                factory = (SAXParserFactory) factoryClass.newInstance();
+            } catch (Exception e2) {
+                // keep trying
+            }
+        }
+        if (factory != null) {
+            try {
+                return factory.newSAXParser().getXMLReader();
+            } catch (Exception e) {
+                // keep trying
+            }
+        }
+        // Fallback - use whatever parser we can find
         return loadParser();
     }
 
