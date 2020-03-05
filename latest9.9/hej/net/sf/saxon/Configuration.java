@@ -482,7 +482,7 @@ public class Configuration implements SourceResolver, NotationSet {
     }
 
 //#if DOTNET==true
-    public void BindExtensions(String uri , cli.System.Type type) { }
+    //public void bindExtensions(String uri , cli.System.Type type) { }
 //#endif
 
     /**
