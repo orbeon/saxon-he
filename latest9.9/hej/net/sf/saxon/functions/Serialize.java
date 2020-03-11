@@ -81,7 +81,7 @@ public class Serialize extends SystemFunction implements Callable {
         //use-character-maps-param-type
         op.addAllowedOption("version", SequenceType.SINGLE_STRING);
 
-        op.addAllowedOption(sx("attribute-order"), listOfQNames);
+        op.addAllowedOption(sx("attribute-order"), SequenceType.ATOMIC_SEQUENCE);
         //eqnames
         op.addAllowedOption(sx("character-representation"), SequenceType.SINGLE_STRING); //string
         op.addAllowedOption(sx("double-space"), listOfQNames);
@@ -256,19 +256,30 @@ public class Serialize extends SystemFunction implements Callable {
 
     // Convert a sequence of QNames to a qnames-type string (containing a space-separated list of the QNames).
 
-    private String toQNamesTypeString(Sequence<?> seqVal) throws XPathException {
-        SequenceIterator<?> iterator = seqVal.iterate();
+    // Convert a sequence of QNames to a qnames-type string (containing a space-separated list of the QNames).
+
+    private String toQNamesTypeString(Sequence seqVal, boolean allowStar) throws XPathException {
+        SequenceIterator iterator = seqVal.iterate();
         Item item;
         StringBuilder stringVal = new StringBuilder();
         while ((item = iterator.next()) != null) {
-            QNameValue qNameValue = (QNameValue) item;
-            stringVal.append(" {")
-                    .append(qNameValue.getComponent(AccessorFn.Component.NAMESPACE).getStringValue())
-                    .append('}')
-                    .append(qNameValue.getComponent(AccessorFn.Component.LOCALNAME).getStringValue());
+            if (item instanceof QNameValue) {
+                QNameValue qNameValue = (QNameValue) item;
+                stringVal.append(" Q{")
+                        .append(qNameValue.getComponent(AccessorFn.Component.NAMESPACE).getStringValue())
+                        .append('}')
+                        .append(qNameValue.getComponent(AccessorFn.Component.LOCALNAME).getStringValue());
+            } else if (allowStar && item instanceof StringValue && item.getStringValue().equals("*")) {
+                stringVal.append(" *");
+            } else {
+                throw new XPathException("Invalid serialization parameter value: expected sequence of QNames "
+                                                 + (allowStar ? "(or *) " : ""), "SEPM0017");
+            }
+
         }
         return stringVal.toString();
     }
+
 
     // Convert a sequence of strings to a single space-separated string.
 
@@ -362,7 +373,7 @@ public class Serialize extends SystemFunction implements Callable {
             props.setProperty("byte-order-mark", toYesNoTypeString(seqVal));
         }
         if ((seqVal = map.get("cdata-section-elements")) != null) {
-            props.setProperty("cdata-section-elements", toQNamesTypeString(seqVal));
+            props.setProperty("cdata-section-elements", toQNamesTypeString(seqVal, false));
         }
         if ((seqVal = map.get("doctype-public")) != null) {
             props.setProperty("doctype-public", seqVal.head().getStringValue());
@@ -407,7 +418,7 @@ public class Serialize extends SystemFunction implements Callable {
             props.setProperty("standalone", toYesNoOmitTypeString(seqVal));
         }
         if ((seqVal = map.get("suppress-indentation")) != null) {
-            props.setProperty("suppress-indentation", toQNamesTypeString(seqVal));
+            props.setProperty("suppress-indentation", toQNamesTypeString(seqVal, false));
         }
         if ((seqVal = map.get("undeclare-prefixes")) != null) {
             props.setProperty("undeclare-prefixes", toYesNoTypeString(seqVal));
@@ -422,7 +433,7 @@ public class Serialize extends SystemFunction implements Callable {
         }
         // Saxon extension serialization parameters
         if ((seqVal = map.get(sx("attribute-order"))) != null) {
-            props.setProperty(SaxonOutputKeys.ATTRIBUTE_ORDER, toQNamesTypeString(seqVal));
+            props.setProperty(SaxonOutputKeys.ATTRIBUTE_ORDER, toQNamesTypeString(seqVal, true));
         }
         if ((seqVal = map.get(sx("canonical"))) != null) {
             props.setProperty(SaxonOutputKeys.CANONICAL, toYesNoTypeString(seqVal));
@@ -431,7 +442,7 @@ public class Serialize extends SystemFunction implements Callable {
             props.setProperty(SaxonOutputKeys.CHARACTER_REPRESENTATION, seqVal.head().getStringValue());
         }
         if ((seqVal = map.get(sx("double-space"))) != null) {
-            props.setProperty(SaxonOutputKeys.DOUBLE_SPACE, toQNamesTypeString(seqVal));
+            props.setProperty(SaxonOutputKeys.DOUBLE_SPACE, toQNamesTypeString(seqVal, false));
         }
         if ((seqVal = map.get(sx("indent-spaces"))) != null) {
             props.setProperty(SaxonOutputKeys.INDENT_SPACES, seqVal.head().getStringValue());
