@@ -98,22 +98,29 @@ public class BinaryResource implements Resource {
 
             int contentLength = connection.getContentLength();
             InputStream in = new BufferedInputStream(raw);
-            byte[] data = new byte[contentLength];
-            int bytesRead = 0;
-            int offset = 0;
-            while (offset < contentLength) {
-                bytesRead = in.read(data, offset, data.length - offset);
-                if (bytesRead == -1) {
-                    break;
+            if (contentLength < 0) {
+                // bug 4475
+                byte[] result = readBinaryFromStream(in, connection.getURL().getPath());
+                in.close();
+                return result;
+            } else {
+                byte[] data = new byte[contentLength];
+                int bytesRead = 0;
+                int offset = 0;
+                while (offset < contentLength) {
+                    bytesRead = in.read(data, offset, data.length - offset);
+                    if (bytesRead == -1) {
+                        break;
+                    }
+                    offset += bytesRead;
                 }
-                offset += bytesRead;
-            }
-            in.close();
+                in.close();
 
-            if (offset != contentLength) {
-                throw new XPathException("Only read " + offset + " bytes; Expected " + contentLength + " bytes");
+                if (offset != contentLength) {
+                    throw new XPathException("Only read " + offset + " bytes; Expected " + contentLength + " bytes");
+                }
+                return data;
             }
-            return data;
         } catch (IOException e) {
             throw new XPathException(e);
         }
