@@ -530,7 +530,7 @@ public class Configuration implements SourceResolver, NotationSet {
         registerFileExtension("MF", "text/plain");
         registerFileExtension("class", "application/java");
         registerFileExtension("json", "application/json");
-        registerFileExtension("", "application/binary");
+        registerFileExtension("", "application/unknown");
 
         registerMediaType("application/xml", XmlResource.FACTORY);
         registerMediaType("text/xml", XmlResource.FACTORY);
@@ -544,6 +544,7 @@ public class Configuration implements SourceResolver, NotationSet {
         registerMediaType("application/java", BinaryResource.FACTORY);
         registerMediaType("application/binary", BinaryResource.FACTORY);
         registerMediaType("application/json", JSONResource.FACTORY);
+        registerMediaType("application/unknown", UnknownResource.FACTORY);
 
         registerFunctionAnnotationHandler(new XQueryFunctionAnnotationHandler());
     }

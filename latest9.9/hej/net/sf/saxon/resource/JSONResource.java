@@ -43,6 +43,9 @@ public class JSONResource implements Resource {
 
     public JSONResource(AbstractResourceCollection.InputDetails details) {
         this.href = details.resourceUri;
+        if (details.encoding == null) {
+            details.encoding = "UTF-8";
+        }
         this.details = details;
     }
 

@@ -6571,6 +6571,7 @@ latest9.9/hej/net/sf/saxon/resource/JSONResource.java svn_eol_002dstyle=native
 latest9.9/hej/net/sf/saxon/resource/JarCollection.java svn_eol_002dstyle=native
 latest9.9/hej/net/sf/saxon/resource/MetadataResource.java svn_eol_002dstyle=native
 latest9.9/hej/net/sf/saxon/resource/StandardCollectionFinder.java svn_eol_002dstyle=native
+latest9.9/hej/net/sf/saxon/resource/UnknownResource.java svn_eol_002dstyle=native
 latest9.9/hej/net/sf/saxon/resource/UnparsedTextResource.java svn_eol_002dstyle=native
 latest9.9/hej/net/sf/saxon/resource/XmlResource.java svn_eol_002dstyle=native
 latest9.9/hej/net/sf/saxon/resource/package.html svn_eol_002dstyle=native
