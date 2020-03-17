@@ -14,13 +14,22 @@
 
   <xs:import namespace="http://saxon.sf.net/ns/configuration" schemaLocation="config.xsd"/>
   
-  <xs:attribute name="attribute-order" type="c:listOfQNameType">
+  <xs:attribute name="attribute-order" type="c:listOfQNameOrStarType">
     <xs:annotation>
       <xs:documentation>
         Controls the order in which attributes appear within an element start tag
       </xs:documentation>
     </xs:annotation>
   </xs:attribute>
+  
+  <xs:attribute name="canonical" type="c:yesOrNoType">
+    <xs:annotation>
+      <xs:documentation>
+        If true, the serialization follows (as far as possible) the rules of Canonical XML
+      </xs:documentation>
+    </xs:annotation>
+  </xs:attribute>
+  
   <xs:attribute name="character-representation" type="xs:string">
     <xs:annotation>
       <xs:documentation>
@@ -34,6 +43,7 @@
       </xs:documentation>
     </xs:annotation>
   </xs:attribute>
+  
   <xs:attribute name="double-space" type="c:listOfQNameType">
     <xs:annotation>
       <xs:documentation>
@@ -41,13 +51,15 @@
       </xs:documentation>
     </xs:annotation>
   </xs:attribute>
+  
   <xs:attribute name="indent-spaces" type="xs:integer">
     <xs:annotation>
       <xs:documentation>
         The number of spaces to be used for each level of indentation when indenting output
       </xs:documentation>
     </xs:annotation>
-  </xs:attribute> 
+  </xs:attribute>
+  
   <xs:attribute name="line-length" type="xs:integer">
     <xs:annotation>
       <xs:documentation>
@@ -56,15 +68,17 @@
         splitting text lines when possible (with HTML output method).
       </xs:documentation>
     </xs:annotation>
-  </xs:attribute> 
+  </xs:attribute>
+  
   <xs:attribute name="newline" type="xs:string">
     <xs:annotation>
       <xs:documentation>
         Defines the string that is used by the text output method to represent a newline. Default
         value x10.
       </xs:documentation>
-    </xs:annotation>
-  </xs:attribute> 
+    </xs:annotation>   
+  </xs:attribute>
+  
   <xs:attribute name="next-in-chain" type="xs:anyURI">
     <xs:annotation>
       <xs:documentation>
@@ -72,6 +86,18 @@
       </xs:documentation>
     </xs:annotation>
   </xs:attribute>
+  
+  <xs:attribute name="property-order" type="c:listOfPropertyNameType">
+    <xs:annotation>
+      <xs:documentation>
+        The order in which properties of an object are to be serialized by the JSON output method.
+        If the value is given as "a b c * x y z", then properties "a", "b", and "c" (if present) are serialized first,
+        in that order, followed by any other properties in alphabetical order, followed by the properties
+        "x", "y", and "z".
+      </xs:documentation>
+    </xs:annotation>
+  </xs:attribute>
+  
   <xs:attribute name="recognize-binary" type="c:yesOrNoType">
     <xs:annotation>
       <xs:documentation>
@@ -81,6 +107,7 @@
       </xs:documentation>
     </xs:annotation>
   </xs:attribute>
+  
   <xs:attribute name="require-well-formed" type="c:yesOrNoType">
     <xs:annotation>
       <xs:documentation>
@@ -89,6 +116,16 @@
       </xs:documentation>
     </xs:annotation>
   </xs:attribute>
+  
+  <xs:attribute name="single-quotes" type="c:yesOrNoType">
+    <xs:annotation>
+      <xs:documentation>
+        If true, requests that attributes should be delimited by apostrophes rather than
+        quotation marks
+      </xs:documentation>
+    </xs:annotation>
+  </xs:attribute>
+  
   <xs:attribute name="supply-source-locator" type="c:yesOrNoType">
     <xs:annotation>
       <xs:documentation>
@@ -98,6 +135,7 @@
       </xs:documentation>
     </xs:annotation>
   </xs:attribute>
+  
   <xs:attribute name="suppress-indentation" type="c:listOfQNameType">
     <xs:annotation>
       <xs:documentation> Defines a list of element names whose content should not be indented

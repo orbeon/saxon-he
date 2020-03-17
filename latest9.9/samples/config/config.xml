@@ -78,7 +78,7 @@
           emptyLeast="true"/>
   <xsd version="1.1"
        useXsiSchemaLocation="false"
-       schemaUriResolver="com.saxonica.config.ee.StandardSchemaResolver"
+       schemaUriResolver="com.saxonica.ee.config.StandardSchemaResolver"
        occurrenceLimits="100,250"/>
   <resources>
     <externalObjectModel>net.sf.saxon.option.xom.XOMObjectModel</externalObjectModel>
