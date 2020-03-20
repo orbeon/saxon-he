@@ -281,6 +281,9 @@ public abstract class AbstractResourceCollection implements ResourceCollection {
 
     protected String guessContentTypeFromContent(InputStream stream) {
         try {
+            if (!stream.markSupported()) {
+                stream = new BufferedInputStream(stream);
+            }
             return URLConnection.guessContentTypeFromStream(stream);
         } catch (IOException err) {
             return null;

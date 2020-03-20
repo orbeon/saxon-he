@@ -14,6 +14,7 @@ import net.sf.saxon.lib.ResourceFactory;
 import net.sf.saxon.om.Item;
 import net.sf.saxon.trans.XPathException;
 
+import java.io.BufferedInputStream;
 import java.io.ByteArrayInputStream;
 import java.io.IOException;
 import java.io.InputStream;
@@ -65,6 +66,9 @@ public class UnknownResource implements Resource {
         }
         String mediaType;
         try {
+            if (!stream.markSupported()) {
+                stream = new BufferedInputStream(stream);
+            }
             mediaType = URLConnection.guessContentTypeFromStream(stream);
         } catch (IOException e) {
             mediaType = null;
