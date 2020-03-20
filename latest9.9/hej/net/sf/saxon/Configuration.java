@@ -4066,6 +4066,10 @@ public class Configuration implements SourceResolver, NotationSet {
         return pipe;
     }
 
+    public SchemaURIResolver makeSchemaURIResolver(URIResolver resolver) {
+        return null;
+    }
+
     /**
      * Get the configuration, given the context. This is provided as a static method to make it accessible
      * as an extension function.
