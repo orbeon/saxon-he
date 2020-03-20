@@ -53,6 +53,7 @@ public class XSLFunction extends StyleElement implements StylesheetComponent {
     private Visibility visibility;
     private FunctionStreamability streamability;
     private UserFunction.Determinism determinism = UserFunction.Determinism.PROACTIVE;
+    private boolean explaining;
 
     /**
      * Get the corresponding Procedure object that results from the compilation of this
@@ -160,6 +161,8 @@ public class XSLFunction extends StyleElement implements StylesheetComponent {
                     memoFunction = processBooleanAttribute("saxon:memo-function", atts.getValue(a));
                 } else if (local.equals("as")) {
                     extraAsAtt = atts.getValue(a);
+                } else if (local.equals("explain")) {
+                    explaining = isYes(Whitespace.trim(atts.getValue(a)));
                 }
             } else {
                 checkUnknownAttribute(atts.getNodeName(a));
@@ -470,7 +473,7 @@ public class XSLFunction extends StyleElement implements StylesheetComponent {
                     compiledFunction, compiledFunction.getBody(), nameAtt, evaluationModes));
         }
 
-        if (isExplaining()) {
+        if (explaining) {
             exp2.explain(getConfiguration().getLogger());
         }
     }

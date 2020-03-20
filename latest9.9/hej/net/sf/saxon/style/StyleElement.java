@@ -63,7 +63,6 @@ public abstract class StyleElement extends ElementImpl {
     protected String defaultCollationName = null;
     protected StructuredQName defaultMode;
     protected boolean expandText = false;
-    private boolean explaining = false;  // true if saxon:explain="yes"
     private StructuredQName objectName;  // for instructions that define an XSLT named object, the name of that object
     private String baseURI;
     private Compilation compilation;
@@ -161,17 +160,7 @@ public abstract class StyleElement extends ElementImpl {
     public boolean isSchemaAware() {
         return getCompilation().isSchemaAware();
     }
-
-    /**
-     * Determine whether saxon:explain has been set to "yes"
-     *
-     * @return true if saxon:explain has been set to "yes" on this element
-     */
-
-    protected boolean isExplaining() {
-        return explaining;
-    }
-
+    
     /**
      * Make this node a substitute for a temporary one previously added to the tree. See
      * StyleNodeFactory for details. "A node like the other one in all things but its class".
@@ -552,11 +541,6 @@ public abstract class StyleElement extends ElementImpl {
         iterateAxis(AxisInfo.CHILD).forEachOrFail(child -> {
             if (child instanceof StyleElement) {
                 ((StyleElement) child).processAllAttributes();
-                if (((StyleElement) child).explaining) {
-                    // saxon:explain on any element in a template/function now causes an explanation at the
-                    // level of the template/function
-                    explaining = true;
-                }
             }
         });
     }
@@ -632,11 +616,6 @@ public abstract class StyleElement extends ElementImpl {
         String attributeURI = nc.getURI();
         String elementURI = getURI();
         String clarkName = nc.getStructuredQName().getClarkName();
-
-        if (clarkName.equals(StandardNames.SAXON_EXPLAIN)) {
-            String value = getAttributeValue(clarkName);
-            explaining = processBooleanAttribute("saxon:explain", value);
-        }
 
         if (forwardsCompatibleModeIsEnabled()) {
             // then unknown attributes are permitted and ignored
