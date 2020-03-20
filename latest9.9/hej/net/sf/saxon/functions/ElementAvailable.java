@@ -284,6 +284,8 @@ public class ElementAvailable extends SystemFunction {
                 known = known && !context.getConfiguration().getBooleanProperty(Feature.DISABLE_XSL_EVALUATE);
             }
             return known;
+        } else if (qName.hasURI(NamespaceConstant.IXSL) && !edition.equals("JS")) {
+            return false;
         } else {
             return context.getConfiguration().isExtensionElementAvailable(qName);
         }
