@@ -208,11 +208,14 @@ public abstract class Type {
                     throw new IllegalArgumentException("Unknown node kind " + node.getNodeKind());
             }
         } else if (item instanceof ExternalObject) {
-            return ((ExternalObject) item).getItemType(th);
+            if (th == null) {
+                throw new IllegalArgumentException("typeHierarchy is required for an external object");
+            }
+            return ((ExternalObject<?>) item).getItemType(th);
         } else if (item instanceof MapItem) {
-            return ((MapItem)item).getItemType(th);
+            return th == null ? MapType.ANY_MAP_TYPE : ((MapItem) item).getItemType(th);
         } else if (item instanceof ArrayItem) {
-            return new ArrayItemType(((ArrayItem) item).getMemberType(th));
+            return th == null ? ArrayItemType.ANY_ARRAY_TYPE : new ArrayItemType(((ArrayItem) item).getMemberType(th));
         } else { //if (item instanceof FunctionItem) {
             return ((Function) item).getFunctionItemType();
         }
