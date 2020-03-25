@@ -111,7 +111,7 @@ public class ImmList2<E> extends ImmList<E> {
         } else if (start >= left.size() && end >= left.size()) {
             return right.subList(start - left.size(), end - left.size());
         } else {
-            return new ImmList2<>(left.subList(start, left.size()), right.subList(0, end - start)).rebalance();
+            return new ImmList2<>(left.subList(start, left.size()), right.subList(0, end - left.size())).rebalance();
         }
     }
 
