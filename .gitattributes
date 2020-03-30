@@ -1929,6 +1929,7 @@ latest10/hej/net/sf/saxon/z/IntValuePredicate.java svn_eol_002dstyle=native
 latest10/hej/net/sf/saxon/z/MonotonicIntSet.java svn_eol_002dstyle=native
 latest10/hej/net/sf/saxon/z/package.html svn_eol_002dstyle=native
 latest10/samples/config/config-HE.xml svn_eol_002dstyle=native
+latest10/samples/config/config-raw.xsd svn_eol_002dstyle=native
 latest10/samples/config/config.xml svn_eol_002dstyle=native
 latest10/samples/config/config.xsd svn_eol_002dstyle=native
 latest10/samples/config/saxon-attributes.xsd svn_eol_002dstyle=native
