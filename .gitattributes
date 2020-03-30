@@ -1,4 +1,9 @@
 /Desktop.ini svn_mime_002dtype=application%2Foctet-stream
+latest10/build/build-constants.xml svn_eol_002dstyle=native
+latest10/build/build-j.xml svn_eol_002dstyle=native
+latest10/build/build-locations.xml svn_eol_002dstyle=native
+latest10/build/build.xml svn_eol_002dstyle=native
+latest10/build/testing-j.xml svn_eol_002dstyle=native
 latest10/hej/javax/xml/xquery/ConnectionPoolXQDataSource.java svn_eol_002dstyle=native
 latest10/hej/javax/xml/xquery/PooledXQConnection.java svn_eol_002dstyle=native
 latest10/hej/javax/xml/xquery/XQCancelledException.java svn_eol_002dstyle=native
