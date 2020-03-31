@@ -292,25 +292,13 @@ public class SequenceExtent<T extends Item<?>> implements GroundedValue<T> {
 
     /*@NotNull*/
     public GroundedValue<T> subsequence(int start, int length) {
-        int end = value.size();
         if (start < 0) {
             start = 0;
-        } else if (start >= end) {
+        }
+        if (start > value.size()) {
             return EmptySequence.getInstance();
         }
-        int newStart = start;
-        int newEnd;
-        if (length > end) {
-            newEnd = end;
-        } else if (length < 0) {
-            return EmptySequence.getInstance();
-        } else {
-            newEnd = newStart + length;
-            if (newEnd > end) {
-                newEnd = end;
-            }
-        }
-        return new SequenceExtent<>(value.subList(newStart, newEnd));
+        return new SequenceSlice<>(value, start, length).reduce();
     }
 
     /*@NotNull*/

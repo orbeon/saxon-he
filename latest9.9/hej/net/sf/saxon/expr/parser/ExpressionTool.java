@@ -376,15 +376,16 @@ public class ExpressionTool {
                         return new IntegerRange(start, end);
                     }
                 }
-                if (base instanceof SequenceExtent) {
-                    if (tail.getStart() > ((SequenceExtent) base).getLength()) {
-                        return EmptySequence.getInstance();
-                    } else {
-                        return new SequenceExtent(
-                                (SequenceExtent) base,
-                                tail.getStart() - 1,
-                                ((SequenceExtent) base).getLength() - tail.getStart() + 1).reduce();
-                    }
+                if (base instanceof GroundedValue) {
+                    return ((GroundedValue)base).subsequence(tail.getStart() - 1, ((GroundedValue)base).getLength() - tail.getStart() + 1);
+//                    if (tail.getStart() > ((SequenceExtent<?>) base).getLength()) {
+//                        return EmptySequence.getInstance();
+//                    } else {
+//                        return new SequenceExtent<>(
+//                                (SequenceExtent) base,
+//                                tail.getStart() - 1,
+//                                ((SequenceExtent) base).getLength() - tail.getStart() + 1).reduce();
+//                    }
                 }
 
                 return Closure.make(tail, context, ref);

@@ -486,15 +486,12 @@ public abstract class Evaluator {
                     return new IntegerRange(start, end);
                 }
             }
-            if (base instanceof SequenceExtent) {
-                SequenceExtent<?> baseSeq = (SequenceExtent<?>)base;
-                if (tail.getStart() > ((SequenceExtent) base).getLength()) {
+            if (base instanceof GroundedValue) {
+                GroundedValue<?> baseSeq = (GroundedValue<?>)base;
+                if (tail.getStart() > ((GroundedValue<?>) base).getLength()) {
                     return EmptySequence.getInstance();
                 } else {
-                    return new SequenceExtent<>(
-                            baseSeq,
-                            tail.getStart() - 1,
-                            baseSeq.getLength() - tail.getStart() + 1).reduce();
+                    return baseSeq.subsequence(tail.getStart() - 1, baseSeq.getLength() - tail.getStart() + 1);
                 }
             }
 

@@ -9076,6 +9076,7 @@ latest9.9/hej/net/sf/saxon/value/QualifiedNameValue.java svn_eol_002dstyle=nativ
 latest9.9/hej/net/sf/saxon/value/SaxonDuration.java svn_eol_002dstyle=native
 latest9.9/hej/net/sf/saxon/value/SaxonXMLGregorianCalendar.java svn_eol_002dstyle=native
 latest9.9/hej/net/sf/saxon/value/SequenceExtent.java svn_eol_002dstyle=native
+latest9.9/hej/net/sf/saxon/value/SequenceSlice.java svn_eol_002dstyle=native
 latest9.9/hej/net/sf/saxon/value/SequenceType.java svn_eol_002dstyle=native
 latest9.9/hej/net/sf/saxon/value/SingletonClosure.java svn_eol_002dstyle=native
 latest9.9/hej/net/sf/saxon/value/StringToDouble11.java svn_eol_002dstyle=native
