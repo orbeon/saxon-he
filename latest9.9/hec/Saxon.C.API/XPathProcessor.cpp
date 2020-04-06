@@ -252,7 +252,7 @@ void XPathProcessor::declareNamespace(const char *prefix, const char * uri){
         }
 	jmethodID mID =
 		(jmethodID) SaxonProcessor::sxn_environ->env->GetMethodID(cppClass, "declareNamespace",
-				"(Ljava/lang/String;Ljava/lang/String;Ljava/lang/String;)V");
+				"(Ljava/lang/String;Ljava/lang/String;)V");
 	if (!mID) {
 	std::cerr << "Error: "<<getDllname() << ".declareNameSpace" << " not found\n"
 			<< std::endl;
