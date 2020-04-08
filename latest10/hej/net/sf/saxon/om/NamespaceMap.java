@@ -469,9 +469,17 @@ public class NamespaceMap implements NamespaceBindingSet, NamespaceResolver {
     /**
      * Get the differences between this NamespaceMap and another NamespaceMap, as an array
      * of namespace declarations and undeclarations
+     * @param other typically the namespaces on the parent element, in which case the method
+     *              returns the namespace declarations and undeclarations corresponding to the
+     *              difference between this child element and its parent.
+     * @param addUndeclarations if true, then when a namespace is declared in the {@code other}
+     *                          map but not in {@code this} map, a namespace undeclaration
+     *                          (binding the prefix to the dummy URI "") will be included
+     *                          in the result. If false, namespace undeclarations are included
+     *                          in the result only for the default namespace (prefix = "").
      */
 
-    public NamespaceBinding[] getDifferences(NamespaceMap other) {
+    public NamespaceBinding[] getDifferences(NamespaceMap other, boolean addUndeclarations) {
         List<NamespaceBinding> result = new ArrayList<>();
         int i = 0, j = 0;
         while (true) {
@@ -483,13 +491,20 @@ public class NamespaceMap implements NamespaceBindingSet, NamespaceResolver {
                     result.add(new NamespaceBinding(prefixes[i], uris[i]));
                     i++;
                 } else if (c == 0) {
-                    // prefix present in both maps; use the URI in this one
-                    result.add(new NamespaceBinding(prefixes[i], uris[i]));
+                    // prefix present in both maps
+                    if (uris[i].equals(other.uris[j])) {
+                        // URI is the same; this declaration is redundant, so omit it from the result
+                    } else {
+                        // URI is different; use the URI appearing in this map in preference
+                        result.add(new NamespaceBinding(prefixes[i], uris[i]));
+                    }
                     i++;
                     j++;
                 } else {
-                    // prefix present in other map, absent from this: add an undeclaration
-                    result.add(new NamespaceBinding(other.prefixes[j], ""));
+                    // prefix present in other map, absent from this: maybe add an undeclaration
+                    if (addUndeclarations || prefixes[i].isEmpty()) {
+                        result.add(new NamespaceBinding(other.prefixes[j], ""));
+                    }
                     j++;
                 }
             } else if (i < prefixes.length) {

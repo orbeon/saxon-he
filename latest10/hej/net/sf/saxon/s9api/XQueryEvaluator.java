@@ -20,6 +20,7 @@ import net.sf.saxon.lib.TraceListener;
 import net.sf.saxon.om.*;
 import net.sf.saxon.query.DynamicQueryContext;
 import net.sf.saxon.query.XQueryExpression;
+import net.sf.saxon.s9api.streams.XdmStream;
 import net.sf.saxon.serialize.SerializationProperties;
 import net.sf.saxon.trans.UncheckedXPathException;
 import net.sf.saxon.trans.XPathException;
@@ -479,10 +480,26 @@ public class XQueryEvaluator extends AbstractDestination implements Iterable<Xdm
             throw new IllegalStateException("Query is updating");
         }
         try {
-            return new XdmSequenceIterator(expression.iterator(context));
+            return new XdmSequenceIterator<>(expression.iterator(context));
         } catch (XPathException e) {
             throw new SaxonApiUncheckedException(e);
         }
+    }
+
+    /**
+     * Evaluate the query, returning the result as an <code>Stream</code>.
+     *
+     * @return A stream delivering the results of the query.
+     * Each object in this stream will be an instance of <code>XdmItem</code>. Note
+     * that the expression may be evaluated lazily, which means that a successful response
+     * from this method does not imply that the expression has executed successfully: failures
+     * may be reported later while retrieving items from the iterator.
+     * @throws SaxonApiUncheckedException if a dynamic error occurs during XPath evaluation that
+     *                                    can be detected at this point.
+     */
+
+    public XdmStream<XdmItem> stream() throws SaxonApiUncheckedException {
+        return iterator().stream();
     }
 
     private Receiver getDestinationReceiver(Destination destination) throws SaxonApiException {

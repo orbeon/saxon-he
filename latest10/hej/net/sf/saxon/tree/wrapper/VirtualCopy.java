@@ -23,6 +23,7 @@ import net.sf.saxon.type.Type;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.function.Predicate;
+import java.util.function.Supplier;
 
 /**
  * This class represents a node that is a virtual copy of another node: that is, it behaves as a node that's the
@@ -36,7 +37,7 @@ import java.util.function.Predicate;
 
 public class VirtualCopy implements NodeInfo {
 
-    protected String systemId;
+    protected Supplier<String> systemIdSupplier;
     protected NodeInfo original;
     protected VirtualCopy parent;
     protected NodeInfo root;        // the node forming the root of the subtree that was copied
@@ -53,7 +54,7 @@ public class VirtualCopy implements NodeInfo {
 
     protected VirtualCopy(NodeInfo base, NodeInfo root) {
         original = base;
-        systemId = base.getBaseURI();
+        systemIdSupplier = base::getBaseURI; // computing the base URI can be expensive, so do it lazily
         this.root = root;
     }
 
@@ -95,7 +96,7 @@ public class VirtualCopy implements NodeInfo {
     protected VirtualCopy wrap(NodeInfo node) {
         VirtualCopy vc = new VirtualCopy(node, root);
         vc.tree = tree;
-        vc.systemId = systemId;
+        vc.systemIdSupplier = systemIdSupplier;
         vc.dropNamespaces = dropNamespaces;
         return vc;
     }
@@ -239,7 +240,7 @@ public class VirtualCopy implements NodeInfo {
      */
 
     public String getSystemId() {
-        return systemId;
+        return systemIdSupplier.get();
     }
 
     /**
@@ -613,7 +614,7 @@ public class VirtualCopy implements NodeInfo {
      * @param systemId The system identifier as a URL string.
      */
     public void setSystemId(String systemId) {
-        this.systemId = systemId;
+        this.systemIdSupplier = () -> systemId;
     }
 
     /**
@@ -737,7 +738,7 @@ public class VirtualCopy implements NodeInfo {
                 }
                 VirtualCopy vc = wrap(next);
                 vc.parent = parent;
-                vc.systemId = systemId;
+                vc.systemIdSupplier = systemIdSupplier;
                 next = vc;
             }
             return next;

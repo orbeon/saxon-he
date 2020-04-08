@@ -16,6 +16,8 @@ import java.util.List;
  * The <b>StaticError</b> interface is retained in Saxon 10.0 as a marker interface so that
  * the methods {@link XsltCompiler#setErrorList(List)} and {@link XQueryCompiler#setErrorList(List)}
  * continue to function.
+ *
+ * <p>The name is misleading, because all errors including dynamic errors implement this interface.</p>
  */
 
 public interface StaticError {

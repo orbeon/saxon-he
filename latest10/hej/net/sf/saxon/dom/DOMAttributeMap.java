@@ -9,11 +9,10 @@ package net.sf.saxon.dom;
 
 import net.sf.saxon.Configuration;
 import net.sf.saxon.lib.NamespaceConstant;
-import net.sf.saxon.om.AxisInfo;
-import net.sf.saxon.om.NamespaceBinding;
-import net.sf.saxon.om.NodeInfo;
+import net.sf.saxon.om.*;
 import net.sf.saxon.tree.NamespaceNode;
 import net.sf.saxon.tree.iter.AxisIterator;
+import net.sf.saxon.type.Type;
 import org.w3c.dom.DOMException;
 import org.w3c.dom.NamedNodeMap;
 import org.w3c.dom.Node;
@@ -26,46 +25,38 @@ import org.w3c.dom.Node;
 
 class DOMAttributeMap implements NamedNodeMap {
 
-    private NodeInfo parent;
-    private NamespaceBinding[] namespaceBindings;
+    private NodeInfo element;
+    private NamespaceBinding[] namespaceDeltas;
     private boolean excludeNamespaceUndeclarations;
 
     /**
      * Construct an AttributeMap for a given element node
      *
-     * @param parent the element node owning the attributes
+     * @param element the element node owning the attributes
      */
 
-    public DOMAttributeMap(NodeInfo parent) {
-        this.parent = parent;
-        if (parent.getConfiguration().getXMLVersion() == Configuration.XML10) {
+    public DOMAttributeMap(NodeInfo element) {
+        this.element = element;
+        if (element.getConfiguration().getXMLVersion() == Configuration.XML10) {
             excludeNamespaceUndeclarations = true;
         }
     }
 
     /**
-     * Filter out namespace undeclarations (other than the undeclaration of the default namespace)
+     * Filter out redundant namespace declarations, and namespace undeclarations
+     * (other than the undeclaration of the default namespace)
      */
 
-    private NamespaceBinding[] removeUndeclarations(NamespaceBinding[] bindings) {
-        if (excludeNamespaceUndeclarations) {
-            int keep = 0;
-            for (NamespaceBinding b : bindings) {
-                if (b != null && (b.getPrefix().isEmpty() || !b.getURI().isEmpty())) {
-                    keep++;
-                }
-            }
-            NamespaceBinding[] b2 = new NamespaceBinding[keep];
-            keep = 0;
-            for (NamespaceBinding b : bindings) {
-                if (b != null && (b.getPrefix().isEmpty() || !b.getURI().isEmpty())) {
-                    b2[keep++] = b;
-                }
-            }
-            return b2;
+    private NamespaceBinding[] getNamespaceDeltas() {
+        NamespaceMap allNamespaces = element.getAllNamespaces();
+        NamespaceBinding[] bindings;
+        NodeInfo parent = element.getParent();
+        if (parent != null && parent.getNodeKind() == Type.ELEMENT) {
+            bindings = allNamespaces.getDifferences(parent.getAllNamespaces(), !excludeNamespaceUndeclarations);
         } else {
-            return bindings;
+            bindings = allNamespaces.getNamespaceBindings();
         }
+        return bindings;
     }
 
     /**
@@ -79,7 +70,7 @@ class DOMAttributeMap implements NamedNodeMap {
                 if (nsarray[i] == null) {
                     return null;
                 } else if (nsarray[i].getPrefix().isEmpty()) {
-                    NamespaceNode nn = new NamespaceNode(parent, nsarray[i], i + 1);
+                    NamespaceNode nn = new NamespaceNode(element, nsarray[i], i + 1);
                     return NodeOverNodeInfo.wrap(nn);
                 }
             }
@@ -91,13 +82,13 @@ class DOMAttributeMap implements NamedNodeMap {
                 if (nsarray[i] == null) {
                     return null;
                 } else if (prefix.equals(nsarray[i].getPrefix())) {
-                    NamespaceNode nn = new NamespaceNode(parent, nsarray[i], i + 1);
+                    NamespaceNode nn = new NamespaceNode(element, nsarray[i], i + 1);
                     return NodeOverNodeInfo.wrap(nn);
                 }
             }
             return null;
         } else {
-            AxisIterator atts = parent.iterateAxis(AxisInfo.ATTRIBUTE, att -> att.getDisplayName().equals(name));
+            AxisIterator atts = element.iterateAxis(AxisInfo.ATTRIBUTE, att -> att.getDisplayName().equals(name));
             NodeInfo att = atts.next();
             return att == null ? null : NodeOverNodeInfo.wrap(att);
         }
@@ -118,12 +109,12 @@ class DOMAttributeMap implements NamedNodeMap {
 
         if (index < namespaces.length) {
             NamespaceBinding ns = namespaces[index];
-            NamespaceNode nn = new NamespaceNode(parent, ns, index);
+            NamespaceNode nn = new NamespaceNode(element, ns, index);
             return NodeOverNodeInfo.wrap(nn);
         }
         int pos = 0;
         int attNr = index - namespaces.length;
-        AxisIterator atts = parent.iterateAxis(AxisInfo.ATTRIBUTE);
+        AxisIterator atts = element.iterateAxis(AxisInfo.ATTRIBUTE);
         NodeInfo att;
         while ((att = atts.next()) != null) {
             if (pos == attNr) {
@@ -161,10 +152,10 @@ class DOMAttributeMap implements NamedNodeMap {
     }
 
     private NamespaceBinding[] getNamespaceBindings() {
-        if (namespaceBindings == null) {
-            namespaceBindings = removeUndeclarations(parent.getDeclaredNamespaces(null));
+        if (namespaceDeltas == null) {
+            namespaceDeltas = getNamespaceDeltas();
         }
-        return namespaceBindings;
+        return namespaceDeltas;
     }
 
     /**
@@ -173,7 +164,7 @@ class DOMAttributeMap implements NamedNodeMap {
 
     public int getLength() {
         int length = 0;
-        AxisIterator atts = parent.iterateAxis(AxisInfo.ATTRIBUTE);
+        AxisIterator atts = element.iterateAxis(AxisInfo.ATTRIBUTE);
         while (atts.next() != null) {
             length++;
         }
@@ -194,7 +185,7 @@ class DOMAttributeMap implements NamedNodeMap {
         if (uri.equals("") && localName.equals("xmlns")) {
             return getNamedItem("xmlns");
         }
-        AxisIterator atts = parent.iterateAxis(AxisInfo.ATTRIBUTE);
+        AxisIterator atts = element.iterateAxis(AxisInfo.ATTRIBUTE);
         while (true) {
             NodeInfo att = atts.next();
             if (att == null) {

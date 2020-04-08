@@ -58,10 +58,10 @@ public class FunctionAvailable extends SystemFunction {
             StaticContext env = visitor.getStaticContext();
             boolean b = false;
 
-            QNameParser qp = new QNameParser(getRetainedStaticContext());
-            qp.setAcceptEQName(true);
-            qp.setErrorOnBadSyntax("XTDE1400");
-            qp.setErrorOnUnresolvedPrefix("XTDE1400");
+            QNameParser qp = new QNameParser(getRetainedStaticContext())
+                    .withAcceptEQName(true)
+                    .withErrorOnBadSyntax("XTDE1400")
+                    .withErrorOnUnresolvedPrefix("XTDE1400");
 
             StructuredQName functionName = qp.parse(lexicalQName, env.getDefaultFunctionNamespace());
 

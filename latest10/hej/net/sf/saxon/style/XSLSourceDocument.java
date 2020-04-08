@@ -88,6 +88,7 @@ public class XSLSourceDocument extends StyleElement {
             } else if (f.equals("streamable")) {
                 streaming = processStreamableAtt(value);
             } else if (attName.hasURI(NamespaceConstant.SAXON)) {
+                isExtensionAttributeAllowed(attName.getDisplayName());
                 String local = attName.getLocalPart();
                 switch (local) {
                     case "dtd-validation":

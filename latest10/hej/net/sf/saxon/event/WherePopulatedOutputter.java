@@ -8,6 +8,7 @@
 package net.sf.saxon.event;
 
 import net.sf.saxon.expr.instruct.WherePopulated;
+import net.sf.saxon.expr.parser.Loc;
 import net.sf.saxon.om.*;
 import net.sf.saxon.s9api.Location;
 import net.sf.saxon.trans.XPathException;
@@ -255,14 +256,31 @@ public class WherePopulatedOutputter extends ProxyOutputter {
         } else if (level == 1 && pendingStartTag) {
             if (item instanceof NodeInfo) {
                 NodeInfo node = (NodeInfo) item;
-                // ignore empty text nodes
-                if (node.getNodeKind() == Type.TEXT && node.getStringValueCS().length() == 0) {
-                    return;
+                switch (node.getNodeKind()) {
+                    case Type.TEXT:
+                        // ignore empty text nodes
+                        if (node.getNodeKind() == Type.TEXT && node.getStringValueCS().length() == 0) {
+                            return;
+                        }
+                        break;
+                    case Type.DOCUMENT:
+                        // ignore empty document nodes
+                        if (node.getNodeKind() == Type.DOCUMENT && !node.hasChildNodes()) {
+                            return;
+                        }
+                        break;
+                    case Type.ATTRIBUTE:
+                        attribute(NameOfNode.makeName(node), (SimpleType) node.getSchemaType(), node.getStringValue(), Loc.NONE, 0);
+                        return;
+
+                    case Type.NAMESPACE:
+                        namespace(node.getLocalPart(), node.getStringValue(), 0);
+                        return;
+
+                    default:
+                        break;
                 }
-                // ignore empty document nodes
-                if (node.getNodeKind() == Type.DOCUMENT && !node.hasChildNodes()) {
-                    return;
-                }
+
             }
             releaseStartTag();
             getNextOutputter().append(item);
@@ -280,13 +298,29 @@ public class WherePopulatedOutputter extends ProxyOutputter {
         } else if (level == 1 && pendingStartTag) {
             if (item instanceof NodeInfo) {
                 NodeInfo node = (NodeInfo)item;
-                // ignore empty text nodes
-                if (node.getNodeKind() == Type.TEXT && node.getStringValueCS().length() == 0) {
-                    return;
-                }
-                // ignore empty document nodes
-                if (node.getNodeKind() == Type.DOCUMENT && !node.hasChildNodes()) {
-                    return;
+                switch (node.getNodeKind()) {
+                    case Type.TEXT:
+                        // ignore empty text nodes
+                        if (node.getNodeKind() == Type.TEXT && node.getStringValueCS().length() == 0) {
+                            return;
+                        }
+                        break;
+                    case Type.DOCUMENT:
+                        // ignore empty document nodes
+                        if (node.getNodeKind() == Type.DOCUMENT && !node.hasChildNodes()) {
+                            return;
+                        }
+                        break;
+                    case Type.ATTRIBUTE:
+                        attribute(NameOfNode.makeName(node), (SimpleType)node.getSchemaType(), node.getStringValue(), locationId, 0);
+                        return;
+
+                    case Type.NAMESPACE:
+                        namespace(node.getLocalPart(), node.getStringValue(), 0);
+                        return;
+
+                    default:
+                        break;
                 }
             }
             releaseStartTag();

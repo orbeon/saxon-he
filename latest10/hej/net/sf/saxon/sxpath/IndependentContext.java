@@ -54,6 +54,7 @@ public class IndependentContext extends AbstractStaticContext
     protected Executable executable;
     protected RetainedStaticContext retainedStaticContext;
     protected OptimizerOptions optimizerOptions;
+    protected boolean parentlessContextItem;
 
 
     /**
@@ -554,5 +555,18 @@ public class IndependentContext extends AbstractStaticContext
         return -1;
     }
 
+    /**
+     * Ask whether the context item is known to be parentless
+     *
+     * @return true if it is known that the context item for evaluating the expression will have no parent
+     */
+    @Override
+    public boolean isContextItemParentless() {
+        return parentlessContextItem;
+    }
+
+    public void setContextItemParentless(boolean parentless) {
+        parentlessContextItem = parentless;
+    }
 }
 

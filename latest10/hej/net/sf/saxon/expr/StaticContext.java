@@ -8,13 +8,13 @@
 package net.sf.saxon.expr;
 
 import net.sf.saxon.Configuration;
-import net.sf.saxon.s9api.Location;
 import net.sf.saxon.expr.parser.OptimizerOptions;
 import net.sf.saxon.expr.parser.RetainedStaticContext;
 import net.sf.saxon.functions.FunctionLibrary;
 import net.sf.saxon.lib.NamespaceConstant;
 import net.sf.saxon.om.NamespaceResolver;
 import net.sf.saxon.om.StructuredQName;
+import net.sf.saxon.s9api.Location;
 import net.sf.saxon.s9api.UnprefixedElementMatchingPolicy;
 import net.sf.saxon.trans.DecimalFormatManager;
 import net.sf.saxon.trans.KeyManager;

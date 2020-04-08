@@ -48,6 +48,7 @@ public class TinyBuilder extends Builder {
     private boolean markDefaultedAttributes = false;
     private Eligibility textualElementEligibilityState = Eligibility.INELIGIBLE;
 
+
     /**
      * Create a TinyTree builder
      *
@@ -125,6 +126,8 @@ public class TinyBuilder extends Builder {
             if (lineNumbering) {
                 tree.setLineNumbering();
             }
+            uniformBaseURI = true;
+            tree.setUniformBaseUri(baseURI);
         }
         super.open();
     }
@@ -295,10 +298,15 @@ public class TinyBuilder extends Builder {
         prevAtDepth[currentDepth] = -1;
         siblingsAtDepth[currentDepth] = 0;
 
-        if (isUseEventLocation() && location.getSystemId() != null) {
-            tt.setSystemId(nodeNr, location.getSystemId());
+        String localSystemId = location.getSystemId();
+        if (isUseEventLocation() && localSystemId != null) {
+            tt.setSystemId(nodeNr, localSystemId);
         } else if (currentDepth == 1) {
             tt.setSystemId(nodeNr, systemId);
+        }
+        if (uniformBaseURI && localSystemId != null && !localSystemId.equals(baseURI)) {
+            uniformBaseURI = false;
+            tt.setUniformBaseUri(null);
         }
 
         if (lineNumbering) {
@@ -334,6 +342,10 @@ public class TinyBuilder extends Builder {
         tree.addAttribute(currentRoot, nodeNr, nameCode, type, value, properties);
         if (markDefaultedAttributes && ReceiverOption.contains(properties, ReceiverOption.DEFAULTED_VALUE)) {
             tree.markDefaultedAttribute(tree.numberOfAttributes - 1);
+        }
+        if (fp == StandardNames.XML_BASE) {
+            uniformBaseURI = false;
+            tree.setUniformBaseUri(null);
         }
     }
 
@@ -490,7 +502,12 @@ public class TinyBuilder extends Builder {
         prevAtDepth[currentDepth] = nodeNr;
         siblingsAtDepth[currentDepth]++;
 
-        tt.setSystemId(nodeNr, locationId.getSystemId());
+        String localLocation = locationId.getSystemId();
+        tt.setSystemId(nodeNr, localLocation);
+        if (localLocation != null && !localLocation.equals(baseURI)) {
+            uniformBaseURI = false;
+            tree.setUniformBaseUri(null);
+        }
         if (lineNumbering) {
             tt.setLineNumber(nodeNr, locationId.getLineNumber(), locationId.getColumnNumber());
         }

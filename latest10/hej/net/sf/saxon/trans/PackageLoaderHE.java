@@ -85,8 +85,7 @@ public class PackageLoaderHE implements IPackageLoader {
         underriding = new ExecutableFunctionLibrary(config);
         try {
             parser = config.newExpressionParser("XP", false, 31);
-            QNameParser qNameParser = new QNameParser(null);
-            qNameParser.setAcceptEQName(true);
+            QNameParser qNameParser = new QNameParser(null).withAcceptEQName(true);
             parser.setQNameParser(qNameParser);
         } catch (XPathException e) {
             throw new AssertionError(e);
@@ -1334,7 +1333,7 @@ public class PackageLoaderHE implements IPackageLoader {
         env.setNamespaceResolver(resolver);
         env.setImportedSchemaNamespaces(pack.getSchemaNamespaces());
         env.getImportedSchemaNamespaces().add(NamespaceConstant.ANONYMOUS);
-        parser.getQNameParser().setNamespaceResolver(resolver);
+        parser.setQNameParser(parser.getQNameParser().withNamespaceResolver(resolver));
         return env;
     }
 

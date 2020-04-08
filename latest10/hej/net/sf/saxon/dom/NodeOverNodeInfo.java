@@ -342,16 +342,11 @@ public abstract class NodeOverNodeInfo implements Node {
 
     /**
      * Return a <code>NamedNodeMap</code> containing the attributes of this node (if
-     * it is an <code>Element</code>) or <code>null</code> otherwise. Note that this
-     * implementation changed in Saxon 8.8 to treat namespace declarations as attributes.
+     * it is an <code>Element</code>) or <code>null</code> otherwise.
      */
 
     public NamedNodeMap getAttributes() {
-        if (node.getNodeKind() == Type.ELEMENT) {
-            return new DOMAttributeMap(node);
-        } else {
-            return null;
-        }
+        return null;
     }
 
     /**

@@ -121,7 +121,7 @@ public class AxiomWriter extends net.sf.saxon.event.Builder {
 
         NamespaceMap parentNamespaces = nsStack.peek();
         if (namespaces != parentNamespaces) {
-            NamespaceBinding[] declarations = namespaces.getDifferences(parentNamespaces);
+            NamespaceBinding[] declarations = namespaces.getDifferences(parentNamespaces, false);
             for (NamespaceBinding ns : declarations) {
                 String nsprefix = ns.getPrefix();
                 String nsuri = ns.getURI();

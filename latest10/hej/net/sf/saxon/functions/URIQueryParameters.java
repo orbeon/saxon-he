@@ -40,9 +40,9 @@ public class URIQueryParameters {
     Integer onError = null;
     Maker<XMLReader> parserMaker = null;
     Boolean xinclude = null;
-    boolean unparsed;
     Boolean stable = null;
     Boolean metadata = null;
+    String contentType = null;
 
     public static final int ON_ERROR_FAIL = 1;
     public static final int ON_ERROR_WARNING = 2;
@@ -113,12 +113,8 @@ public class URIQueryParameters {
             } else if (value.equals("no")) {
                 xinclude = Boolean.FALSE;
             }
-        } else if (keyword.equals("unparsed")) {
-            if (value.equals("yes")) {
-                unparsed = true;
-            } else if (value.equals("no")) {
-                unparsed = false;
-            }
+        } else if (keyword.equals("content-type")) {
+            contentType = value;
         } else if (keyword.equals("on-error")) {
             switch (value) {
                 case "warning":
@@ -222,11 +218,11 @@ public class URIQueryParameters {
     }
 
     /**
-     * Get the value of unparsed=yes|no, or false if unspecified
+     * Get the value of media-type, or null if absent
      */
 
-    public boolean isUnparsed() {
-        return unparsed;
+    public String getContentType() {
+        return contentType;
     }
 
     /**

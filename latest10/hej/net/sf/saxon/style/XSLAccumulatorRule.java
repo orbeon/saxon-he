@@ -60,10 +60,10 @@ public class XSLAccumulatorRule extends StyleElement {
                         break;
                 }
             } else if (attName.hasURI(NamespaceConstant.SAXON)) {
-                if (attName.getLocalPart().equals("capture")) {
-                    capture = processBooleanAttribute("saxon:capture", value);
-                } else {
-                    checkUnknownAttribute(attName);
+                if (isExtensionAttributeAllowed(attName.getDisplayName())) {
+                    if (attName.getLocalPart().equals("capture")) {
+                        capture = processBooleanAttribute("saxon:capture", value);
+                    }
                 }
             } else {
                 checkUnknownAttribute(attName);

@@ -16,6 +16,8 @@ import net.sf.saxon.value.Whitespace;
  * Parser to handle QNames in either lexical QName or EQName syntax, including resolving any prefix against
  * a URIResolver. The parser can be instantiated with various options to control the returned error code,
  * the handling of defaults, etc.
+ *
+ * The QNameParser is immutable; its properties are set using the <code>withProperty()</code> fluent API style.
  */
 public class QNameParser {
 
@@ -29,24 +31,82 @@ public class QNameParser {
         this.resolver = resolver;
     }
 
-    public void setNamespaceResolver(NamespaceResolver resolver) {
-        this.resolver = resolver;
+    /**
+     * Set the namespace resolver to be used
+     * @param resolver the namespace resolver
+     * @return a new QNameParser using the specified NamespaceResolver
+     */
+
+    public QNameParser withNamespaceResolver(NamespaceResolver resolver) {
+        QNameParser qp2 = copy();
+        qp2.resolver = resolver;
+        return qp2;
     }
 
-    public void setAcceptEQName(boolean acceptEQName) {
-        this.acceptEQName = acceptEQName;
+    /**
+     * Say whether URI-qualified names in <code>Q{uri}local</code> format should be accepted
+     * @param acceptEQName true if extended QName syntax is accepted
+     * @return a new QNameParser with the requested properties
+     */
+
+    public QNameParser withAcceptEQName(boolean acceptEQName) {
+        if (acceptEQName == this.acceptEQName) {
+            return this;
+        }
+        QNameParser qp2 = copy();
+        qp2.acceptEQName = acceptEQName;
+        return qp2;
     }
 
-    public void setUnescaper(XQueryParser.Unescaper unescaper) {
-        this.unescaper = unescaper;
+    /**
+     * Say what error code should be thrown when the QName syntax is invalid
+     * @param code the error code to be thrown
+     * @return a new QNameParser with the requested properties
+     */
+
+    public QNameParser withErrorOnBadSyntax(String code) {
+        if (code.equals(errorOnBadSyntax)) {
+            return this;
+        }
+        QNameParser qp2 = copy();
+        qp2.errorOnBadSyntax = code;
+        return qp2;
     }
 
-    public void setErrorOnBadSyntax(String code) {
-        errorOnBadSyntax = code;
+    /**
+     * Say what error code should be thrown when the prefix is undeclared
+     * @param code the error code to be thrown
+     * @return a new QNameParser with the requested properties
+     */
+
+    public QNameParser withErrorOnUnresolvedPrefix(String code) {
+        if (code.equals(errorOnUnresolvedPrefix)) {
+            return this;
+        }
+        QNameParser qp2 = copy();
+        qp2.errorOnUnresolvedPrefix = code;
+        return qp2;
     }
 
-    public void setErrorOnUnresolvedPrefix(String code) {
-        errorOnUnresolvedPrefix = code;
+    /**
+     * Supply a callback used to unescape special characters appearing in the URI part of an EQName
+     * @param unescaper the callback to be used
+     * @return a new QNameParser with the requested properties
+     */
+
+    public QNameParser withUnescaper(XQueryParser.Unescaper unescaper) {
+        QNameParser qp2 = copy();
+        qp2.unescaper = unescaper;
+        return qp2;
+    }
+
+    private QNameParser copy() {
+        QNameParser qp2 = new QNameParser(resolver);
+        qp2.acceptEQName = acceptEQName;
+        qp2.errorOnBadSyntax = errorOnBadSyntax;
+        qp2.errorOnUnresolvedPrefix = errorOnUnresolvedPrefix;
+        qp2.unescaper = unescaper;
+        return qp2;
     }
 
     /**

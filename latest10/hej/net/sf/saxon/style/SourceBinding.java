@@ -106,12 +106,14 @@ public class SourceBinding {
             } else if (f.equals("visibility") && permittedAttributes.contains(BindingProperty.VISIBILITY)) {
                 visibilityAtt = Whitespace.trim(att.getValue());
             } else if (NamespaceConstant.SAXON.equals(attName.getURI())) {
-                if (attName.getLocalPart().equals("assignable") && permittedAttributes.contains(BindingProperty.ASSIGNABLE)) {
-                    assignableAtt = Whitespace.trim(att.getValue());
-                } else if (attName.getLocalPart().equals("as")) {
-                    extraAsAtt = att.getValue();
-                } else {
-                    sourceElement.checkUnknownAttribute(att.getNodeName());
+                if (sourceElement.isExtensionAttributeAllowed(attName.getDisplayName())) {
+                    if (attName.getLocalPart().equals("assignable") && permittedAttributes.contains(BindingProperty.ASSIGNABLE)) {
+                        assignableAtt = Whitespace.trim(att.getValue());
+                    } else if (attName.getLocalPart().equals("as")) {
+                        extraAsAtt = att.getValue();
+                    } else {
+                        sourceElement.checkUnknownAttribute(att.getNodeName());
+                    }
                 }
             } else {
                 sourceElement.checkUnknownAttribute(att.getNodeName());

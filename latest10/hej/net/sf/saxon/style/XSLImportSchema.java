@@ -11,6 +11,7 @@ import net.sf.saxon.Configuration;
 import net.sf.saxon.event.PipelineConfiguration;
 import net.sf.saxon.lib.Feature;
 import net.sf.saxon.lib.NamespaceConstant;
+import net.sf.saxon.lib.SchemaURIResolver;
 import net.sf.saxon.om.AttributeInfo;
 import net.sf.saxon.om.NodeName;
 import net.sf.saxon.om.StandardNames;
@@ -141,6 +142,10 @@ public class XSLImportSchema extends StyleElement {
             }
             if (!namespaceKnown) {
                 PipelineConfiguration pipe = config.makePipelineConfiguration();
+                SchemaURIResolver schemaResolver = config.makeSchemaURIResolver(
+                        getCompilation().getCompilerInfo().getURIResolver());
+                pipe.setSchemaURIResolver(schemaResolver);
+                pipe.setErrorReporter(getCompilation().getCompilerInfo().getErrorReporter());
                 namespace = config.readSchema(pipe, getBaseURI(), schemaLoc, namespace);
             }
             getPrincipalStylesheetModule().addImportedSchema(namespace);

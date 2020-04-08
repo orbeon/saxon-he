@@ -84,10 +84,10 @@ public class Compilation {
         preScan = info.isJustInTimeCompilation();
         suppliedParameters = compilerInfo.getParameters();
 
-        qNameParser = new QNameParser(null);
-        qNameParser.setAcceptEQName(true);
-        qNameParser.setErrorOnBadSyntax("XTSE0020");
-        qNameParser.setErrorOnUnresolvedPrefix("XTSE0280");
+        qNameParser = new QNameParser(null)
+                .withAcceptEQName(true)
+                .withErrorOnBadSyntax("XTSE0020")
+                .withErrorOnUnresolvedPrefix("XTSE0280");
 
         if (TIMING) {
             timer = new Timer();

@@ -14,9 +14,7 @@ import java.util.Collections;
 import java.util.Iterator;
 
 /**
- * An implementation of AttributeMap suitable for small collections of attributes (say, up to four or five).
- * Searching for a particular attribute involves a sequential search, and adding a new attribute constructs
- * a full copy.
+ * An implementation of AttributeMap representing an empty AttributeMap
  */
 
 public class EmptyAttributeMap implements AttributeMap {

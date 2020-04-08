@@ -203,16 +203,20 @@ public class XdmValue implements Iterable<XdmItem> {
      *
      * @return the number of items in the value, considered as a sequence. Note that for arrays
      * and maps, the answer will be 1 (one) since arrays and maps are items.
-     * @throws SaxonApiUncheckedException if the value is lazily evaluated and the delayed
-     *                                    evaluation fails with a dynamic error.
      */
 
     public int size() {
-        try {
-            return SequenceTool.getLength(value);
-        } catch (XPathException err) {
-            throw new SaxonApiUncheckedException(err);
-        }
+        return value.getLength();
+    }
+
+    /**
+     * Ask whether the sequence is empty
+     * @return true if the value is an empty sequence
+     * @since 10.1
+     */
+
+    public boolean isEmpty() {
+        return value.head() == null;
     }
 
     /**
@@ -248,7 +252,7 @@ public class XdmValue implements Iterable<XdmItem> {
     public Iterator<XdmItem> iterator() throws SaxonApiUncheckedException {
         try {
             Sequence v = getUnderlyingValue();
-            return new XdmSequenceIterator(v.iterate());
+            return new XdmSequenceIterator<>(v.iterate());
         } catch (XPathException e) {
             throw new SaxonApiUncheckedException(e);
         }
@@ -354,11 +358,11 @@ public class XdmValue implements Iterable<XdmItem> {
         } else if (o instanceof XdmValue) {
             return (XdmValue) o;
         } else if (o instanceof Map) {
-            return XdmMap.makeMap((Map) o);
+            return XdmMap.makeMap((Map<?,?>) o);
         } else if (o instanceof Object[]) {
             return XdmArray.makeArray((Object[]) o);
         } else if (o instanceof Iterable) {
-            return XdmValue.makeSequence((Iterable) o);
+            return XdmValue.makeSequence((Iterable<?>) o);
         } else {
             return XdmAtomicValue.makeAtomicValue(o);
         }

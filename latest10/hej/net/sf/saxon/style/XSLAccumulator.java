@@ -100,7 +100,9 @@ public class XSLAccumulator extends StyleElement implements StylesheetComponent 
                 boolean streamable = processStreamableAtt(value);
                 accumulator.setDeclaredStreamable(streamable);
             } else if (attName.hasURI(NamespaceConstant.SAXON) && attName.getLocalPart().equals("trace")) {
-                accumulator.setTracing(processBooleanAttribute("saxon:trace", value));
+                if (isExtensionAttributeAllowed(attName.getDisplayName())) {
+                    accumulator.setTracing(processBooleanAttribute("saxon:trace", value));
+                }
             } else {
                 // report the error later
             }
@@ -134,7 +136,9 @@ public class XSLAccumulator extends StyleElement implements StylesheetComponent 
                     compileErrorInAttribute(e.getMessage(), e.getErrorCodeLocalPart(), "as");
                 }
             } else if (attName.hasURI(NamespaceConstant.SAXON) && attName.getLocalPart().equals("trace")) {
-                accumulator.setTracing(processBooleanAttribute("saxon:trace", value));
+                if (isExtensionAttributeAllowed(attName.getDisplayName())) {
+                    accumulator.setTracing(processBooleanAttribute("saxon:trace", value));
+                }
             } else {
                 checkUnknownAttribute(attName);
             }

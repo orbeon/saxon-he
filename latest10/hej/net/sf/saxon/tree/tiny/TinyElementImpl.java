@@ -60,6 +60,9 @@ public class TinyElementImpl extends TinyParentNodeImpl {
      */
 
     public String getBaseURI() {
+        if (tree.getUniformBaseUri() != null) {
+            return tree.getUniformBaseUri();
+        }
         synchronized (tree) {
             if (tree.knownBaseUris == null) {
                 tree.knownBaseUris = new IntHashMap<>();
@@ -119,7 +122,7 @@ public class TinyElementImpl extends TinyParentNodeImpl {
     public NamespaceBinding[] getDeclaredNamespaces(NamespaceBinding[] buffer) {
         TinyNodeImpl parent = getParent();
         if (parent != null && parent.getNodeKind() == Type.ELEMENT) {
-            return getAllNamespaces().getDifferences(parent.getAllNamespaces());
+            return getAllNamespaces().getDifferences(parent.getAllNamespaces(), false);
         } else {
             return getAllNamespaces().getNamespaceBindings();
         }

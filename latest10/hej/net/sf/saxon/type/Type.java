@@ -126,7 +126,10 @@ public abstract class Type {
      * to, and it is not always the case that one of them is a subtype of all the others.
      *
      * @param item the item whose type is required
-     * @param th   the type hierarchy cache. If null, the returned type may be less precise
+     * @param th   the type hierarchy cache. In most cases this can be null, but the returned type may
+     *             then be less precise (for example, the type returned for a map or array will simply
+     *             be <code>map(*)</code> or <code>array(*)</code>). For external objects, the parameter
+     *             must not be null
      * @return the item type of the item
      */
 
@@ -202,11 +205,14 @@ public abstract class Type {
                     throw new IllegalArgumentException("Unknown node kind " + node.getNodeKind());
             }
         } else if (item instanceof ExternalObject) {
-            return ((ExternalObject) item).getItemType(th);
+            if (th == null) {
+                throw new IllegalArgumentException("typeHierarchy is required for an external object");
+            }
+            return ((ExternalObject<?>) item).getItemType(th);
         } else if (item instanceof MapItem) {
-            return ((MapItem)item).getItemType(th);
+            return th == null ? MapType.ANY_MAP_TYPE : ((MapItem)item).getItemType(th);
         } else if (item instanceof ArrayItem) {
-            return new ArrayItemType(((ArrayItem) item).getMemberType(th));
+            return th == null ? ArrayItemType.ANY_ARRAY_TYPE : new ArrayItemType(((ArrayItem) item).getMemberType(th));
         } else { //if (item instanceof FunctionItem) {
             return ((Function) item).getFunctionItemType();
         }

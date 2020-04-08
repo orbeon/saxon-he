@@ -148,7 +148,7 @@ public class DOMWriter extends Builder {
 
             NamespaceMap parentNamespaces = nsStack.peek();
             if (namespaces != parentNamespaces) {
-                NamespaceBinding[] declarations = namespaces.getDifferences(parentNamespaces);
+                NamespaceBinding[] declarations = namespaces.getDifferences(parentNamespaces, false);
                 for (NamespaceBinding ns : declarations) {
                     String prefix = ns.getPrefix();
                     String nsuri = ns.getURI();

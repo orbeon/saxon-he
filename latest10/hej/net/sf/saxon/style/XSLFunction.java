@@ -7,6 +7,7 @@
 
 package net.sf.saxon.style;
 
+import net.sf.saxon.Configuration;
 import net.sf.saxon.expr.Component;
 import net.sf.saxon.expr.Expression;
 import net.sf.saxon.expr.Literal;
@@ -52,6 +53,7 @@ public class XSLFunction extends StyleElement implements StylesheetComponent {
     private Visibility visibility;
     private FunctionStreamability streamability;
     private UserFunction.Determinism determinism = UserFunction.Determinism.PROACTIVE;
+    private boolean explaining;
 
     /**
      * Get the corresponding Procedure object that results from the compilation of this
@@ -152,11 +154,18 @@ public class XSLFunction extends StyleElement implements StylesheetComponent {
                         break;
                 }
             } else if (uri.equals(NamespaceConstant.SAXON)) {
-                if (local.equals("memo-function")) {
-                    compileWarning("saxon:memo-function is deprecated: use cache='yes'", SaxonErrorCode.SXWN9014);
-                    memoFunction = processBooleanAttribute("saxon:memo-function", att.getValue());
-                } else if (local.equals("as")) {
-                    extraAsAtt = att.getValue();
+                if (isExtensionAttributeAllowed(att.getNodeName().getDisplayName())) {
+                    if (local.equals("memo-function")) {
+                        compileWarning("saxon:memo-function is deprecated: use cache='yes'", SaxonErrorCode.SXWN9014);
+                        if (getConfiguration().isLicensedFeature(Configuration.LicenseFeature.PROFESSIONAL_EDITION)) {
+                            memoFunction = processBooleanAttribute("saxon:memo-function", att.getValue());
+                        }
+                    } else if (local.equals("as")) {
+                        isExtensionAttributeAllowed(name.getDisplayName());
+                        extraAsAtt = att.getValue();
+                    } else if (local.equals("explain") && isYes(Whitespace.trim(att.getValue()))) {
+                        explaining = true;
+                    }
                 }
             } else {
                 checkUnknownAttribute(name);
@@ -455,7 +464,7 @@ public class XSLFunction extends StyleElement implements StylesheetComponent {
                     compiledFunction, compiledFunction.getBody(), nameAtt, evaluationModes));
         }
 
-        if (isExplaining()) {
+        if (explaining) {
             exp2.explain(getConfiguration().getLogger());
         }
     }

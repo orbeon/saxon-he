@@ -239,6 +239,10 @@ public class ConfigurationReader implements ContentHandler, NamespaceResolver {
                         errors.add(incident);
                     }
                 }
+                String targetEdition = atts.getValue("targetEdition");
+                if (targetEdition != null) {
+                    packageLibrary.getCompilerInfo().setTargetEdition(targetEdition);
+                }
                 String label = atts.getValue("label");
                 if (label != null) {
                     config.setLabel(label);
@@ -604,8 +608,7 @@ public class ConfigurationReader implements ContentHandler, NamespaceResolver {
         if (name == null) {
             error("withParam", "name", null, null);
         }
-        QNameParser qp = new QNameParser(this);
-        qp.setAcceptEQName(true);
+        QNameParser qp = new QNameParser(this).withAcceptEQName(true);
         StructuredQName qName = null;
         try {
             qName = qp.parse(name, "");

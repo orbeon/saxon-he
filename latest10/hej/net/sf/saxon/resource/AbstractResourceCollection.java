@@ -206,7 +206,11 @@ public abstract class AbstractResourceCollection implements ResourceCollection {
             inputDetails.resourceUri = resourceURI;
             URI uri = new URI(resourceURI);
             if ("file".equals(uri.getScheme())) {
-                inputDetails.contentType = guessContentTypeFromName(resourceURI);
+                if (params.getContentType() != null) {
+                    inputDetails.contentType = params.getContentType();
+                } else {
+                    inputDetails.contentType = guessContentTypeFromName(resourceURI);
+                }
             } else {
                 URL url = uri.toURL();
                 URLConnection connection = url.openConnection();
@@ -266,6 +270,9 @@ public abstract class AbstractResourceCollection implements ResourceCollection {
 
     protected String guessContentTypeFromContent(InputStream stream) {
         try {
+            if (!stream.markSupported()) {
+                stream = new BufferedInputStream(stream);
+            }
             return URLConnection.guessContentTypeFromStream(stream);
         } catch (IOException err) {
             return null;

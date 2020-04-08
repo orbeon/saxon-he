@@ -136,7 +136,9 @@ public class XSLEvaluate extends StyleElement {
                     break;
                 default:
                     if (attName.getLocalPart().equals("options") && attName.getURI().equals(NamespaceConstant.SAXON)) {
-                        options = makeExpression(att.getValue(), att);
+                        if (isExtensionAttributeAllowed(attName.getDisplayName())) {
+                            options = makeExpression(att.getValue(), att);
+                        }
                     } else {
                         checkUnknownAttribute(attName);
                     }

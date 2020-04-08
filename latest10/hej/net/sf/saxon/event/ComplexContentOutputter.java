@@ -463,6 +463,12 @@ public final class ComplexContentOutputter extends Outputter implements Receiver
      * by further calls on {@link #attribute(NodeName, SimpleType, CharSequence, Location, int)} or
      * {@link #namespace} to define further attributes and namespaces.
      *
+     * <p>This version of the method does not perform namespace fixup for prefixes used in the element
+     * name or attribute names; it is assumed that these prefixes are declared within the namespace map,
+     * and that there are no conflicts. The method does, however, perform namespace inheritance: that is,
+     * unless {@code properties} includes {@link ReceiverOption#DISINHERIT_NAMESPACES}, namespaces
+     * declared on the parent element and not overridden are implicitly added to the namespace map.</p>
+     *
      * @param elemName   the name of the element.
      * @param type       the type annotation of the element.
      * @param attributes the attributes of this element

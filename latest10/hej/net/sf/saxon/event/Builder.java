@@ -58,6 +58,7 @@ public abstract class Builder implements Receiver {
     protected NamePool namePool;
     protected String systemId;
     protected String baseURI;
+    protected boolean uniformBaseURI = true;
     protected NodeInfo currentRoot;
     protected boolean lineNumbering = false;
     protected boolean useEventLocation = true;

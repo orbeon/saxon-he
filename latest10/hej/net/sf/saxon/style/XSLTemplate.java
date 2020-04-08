@@ -68,6 +68,7 @@ public final class XSLTemplate extends StyleElement implements StylesheetCompone
     //private boolean maySupplyContextItem = true;
     private boolean absentFocus = false;
     private boolean jitCompilationDone = false;
+    private boolean explaining;
     //private Expression body;
 
     /**
@@ -294,8 +295,11 @@ public final class XSLTemplate extends StyleElement implements StylesheetCompone
             } else if (f.equals("visibility")) {
                 visibilityAtt = Whitespace.trim(att.getValue());
             } else if (name.hasURI(NamespaceConstant.SAXON)) {
+                isExtensionAttributeAllowed(name.getDisplayName());
                 if (name.getLocalPart().equals("as")) {
                     extraAsAtt = att.getValue();
+                } else if (name.getLocalPart().equals("explain")) {
+                    explaining = isYes(Whitespace.trim(att.getValue()));
                 }
             } else {
                 checkUnknownAttribute(name);
@@ -992,7 +996,7 @@ public final class XSLTemplate extends StyleElement implements StylesheetCompone
             compiledNamedTemplate.setBody(body);
 
             allocateLocalSlots(body);
-            if (isExplaining()) {
+            if (explaining) {
                 Logger err = getConfiguration().getLogger();
                 err.info("Optimized expression tree for named template at line " +
                                  getLineNumber() + " in " + getSystemId() + ':');
@@ -1053,7 +1057,7 @@ public final class XSLTemplate extends StyleElement implements StylesheetCompone
                             compiledTemplateRule.setBody(opt.makeByteCodeCandidate(compiledTemplateRule, templateRuleBody, diagnosticId, evaluationModes));
                         }
 
-                        if (isExplaining()) {
+                        if (explaining) {
                             Logger err = getConfiguration().getLogger();
                             err.info("Optimized expression tree for template rule at line " +
                                              getLineNumber() + " in " + getSystemId() + ':');

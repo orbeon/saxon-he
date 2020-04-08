@@ -357,7 +357,16 @@ public class Xslt30TestSuiteDriverHE extends TestDriver {
             String optimizationAssertion = optimizationAssertions.get(testName);
             if (optimizationAssertion != null && sheet != null) {
                 try {
-                    assertOptimization(sheet, optimizationAssertion);
+                    boolean ok = assertOptimization(sheet, optimizationAssertion);
+                    if (ok) {
+                        System.err.println("Optimization OK: " + optimizationAssertion);
+                    } else {
+                        outcome.setComment("Optimization assertion failed");
+                        if (strict) {
+                            noteFailure(testSetName, testName);
+                            resultsDoc.writeTestcaseElement(testName, "fail", outcome.getComment());
+                        }
+                    }
                     System.err.println("Optimization OK: " + optimizationAssertion);
                 } catch (SaxonApiException e) {
                     System.err.println("Optimization assertion failed: " + optimizationAssertion);
@@ -524,6 +533,10 @@ public class Xslt30TestSuiteDriverHE extends TestDriver {
         boolean expectEarlyExit = earlyExit.equals(Optional.of("true"));
         if (expectEarlyExit != collector.isMadeEarlyExit()) {
             outcome.setComment(expectEarlyExit ? "Failed to make early exit" : "Unexpected early exit");
+            if (strict) {
+                noteFailure(testSetName, testName);
+                resultsDoc.writeTestcaseElement(testName, "fail", outcome.getComment());
+            }
         }
 
         Optional<XdmNode> assertion = testCase.select(
@@ -544,9 +557,13 @@ public class Xslt30TestSuiteDriverHE extends TestDriver {
         } else {
             if (outcome.getWrongErrorMessage() != null) {
                 outcome.setComment(outcome.getWrongErrorMessage());
-                wrongErrorResults++;
-                successes++;
-                resultsDoc.writeTestcaseElement(testName, "wrongError", outcome.getComment());
+                if (strict) {
+                    resultsDoc.writeTestcaseElement(testName, "fail", outcome.getComment());
+                } else {
+                    wrongErrorResults++;
+                    successes++;
+                    resultsDoc.writeTestcaseElement(testName, "wrongError", outcome.getComment());
+                }
             } else {
                 noteFailure(testSetName, testName);
                 // MHK: Nov 2015 - temporary diagnostics
@@ -1119,7 +1136,7 @@ public class Xslt30TestSuiteDriverHE extends TestDriver {
         }
     }
 
-    protected void assertOptimization(XsltExecutable stylesheet, String assertion) throws SaxonApiException {
+    protected boolean assertOptimization(XsltExecutable stylesheet, String assertion) throws SaxonApiException {
 
         XdmDestination builder = new XdmDestination();
         stylesheet.explain(builder);
@@ -1132,9 +1149,8 @@ public class Xslt30TestSuiteDriverHE extends TestDriver {
         if (bv == null || !bv.getBooleanValue()) {
             println("** Optimization assertion failed");
             println(expressionTree.toString());
-            throw new SaxonApiException("Expected optimization not performed");
         }
-
+        return bv != null && bv.getBooleanValue();
     }
 
     // Dependencies which are always satisfied in Saxon. (Note, this doesn't necessarily

@@ -62,11 +62,11 @@ public final class NamePool {
 
     // A map from QNames to fingerprints
 
-    private final ConcurrentHashMap<StructuredQName, Integer> qNameToInteger = new ConcurrentHashMap<StructuredQName, Integer>(1000);
+    private final ConcurrentHashMap<StructuredQName, Integer> qNameToInteger = new ConcurrentHashMap<>(1000);
 
     // A map from fingerprints to QNames
 
-    private final ConcurrentHashMap<Integer, StructuredQName> integerToQName = new ConcurrentHashMap<Integer, StructuredQName>(1000);
+    private final ConcurrentHashMap<Integer, StructuredQName> integerToQName = new ConcurrentHashMap<>(1000);
 
     // Next fingerprint available to be allocated. Starts at 1024 as low-end fingerprints are statically allocated to system-defined
     // names
@@ -75,7 +75,7 @@ public final class NamePool {
 
     // A map containing suggested prefixes for particular URIs
 
-    private ConcurrentHashMap<String, String> suggestedPrefixes = new ConcurrentHashMap<String, String>();
+    private ConcurrentHashMap<String, String> suggestedPrefixes = new ConcurrentHashMap<>();
 
 
 
@@ -174,7 +174,7 @@ public final class NamePool {
         if (existing != null) {
             return existing;
         }
-        Integer next = unique.getAndIncrement();
+        int next = unique.getAndIncrement();
         if (next > MAX_FINGERPRINT) {
             throw new NamePoolLimitException("Too many distinct names in NamePool");
         }

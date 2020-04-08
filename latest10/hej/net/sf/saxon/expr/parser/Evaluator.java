@@ -443,16 +443,9 @@ public abstract class Evaluator {
                     return new IntegerRange(start, end);
                 }
             }
-            if (base instanceof SequenceExtent) {
-                SequenceExtent baseSeq = (SequenceExtent)base;
-                if (tail.getStart() > ((SequenceExtent) base).getLength()) {
-                    return EmptySequence.getInstance();
-                } else {
-                    return new SequenceExtent(
-                            baseSeq,
-                            tail.getStart() - 1,
-                            baseSeq.getLength() - tail.getStart() + 1).reduce();
-                }
+            if (base instanceof GroundedValue) {
+                GroundedValue baseSeq = (GroundedValue)base;
+                return baseSeq.subsequence(tail.getStart() - 1, baseSeq.getLength() - tail.getStart() + 1);
             }
 
             return new MemoClosure(tail, context);

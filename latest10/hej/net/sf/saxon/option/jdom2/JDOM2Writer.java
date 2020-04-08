@@ -115,7 +115,7 @@ public class JDOM2Writer extends net.sf.saxon.event.Builder {
 
         NamespaceMap parentMap = nsStack.peek();
         if (namespaces != parentMap) {
-            NamespaceBinding[] declarations = namespaces.getDifferences(parentMap);
+            NamespaceBinding[] declarations = namespaces.getDifferences(parentMap, false);
             for (NamespaceBinding ns : declarations) {
                 namespace(element, ns);
             }

@@ -67,7 +67,7 @@ public class JLine2Talker implements Talker {
         }
     }
 
-    private static class XPathCompleter extends StringsCompleter {
+    public static class XPathCompleter extends StringsCompleter {
 
         public XPathCompleter(List<String> candidates) {
             super(candidates);
@@ -103,6 +103,9 @@ public class JLine2Talker implements Talker {
                                 translated = homeDir.getPath() + translated.substring(1);
                             } else if (translated.startsWith("~")) {
                                 translated = homeDir.getParentFile().getAbsolutePath();
+                            } else if (!translated.contains(separator())) {
+                                String cwd = getUserDir().getAbsolutePath();
+                                translated = cwd + separator() + translated;
                             } else if (!(new File(translated).isAbsolute())) {
                                 String cwd = getUserDir().getAbsolutePath();
                                 translated = cwd + separator() + translated;
@@ -119,7 +122,8 @@ public class JLine2Talker implements Talker {
 
                             File[] entries = dir == null ? new File[0] : dir.listFiles();
 
-                            return matchFiles(buffer, translated, entries, candidates);
+                            int index = matchFiles(buffer, translated, entries, candidates);
+                            return index==0 ? space+1 : index;
                         }
                     };
                     return fnc.complete(buffer, cursor, candidates);

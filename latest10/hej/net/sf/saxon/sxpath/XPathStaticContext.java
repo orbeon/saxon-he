@@ -27,7 +27,7 @@ public interface XPathStaticContext extends StaticContext {
      *            in the XPath expression.
      */
 
-    public void setDefaultElementNamespace(String uri);
+    void setDefaultElementNamespace(String uri);
 
     /**
      * Set an external namespace resolver. If this is set, then all resolution of namespace
@@ -37,7 +37,7 @@ public interface XPathStaticContext extends StaticContext {
      * @param resolver the external namespace resolver
      */
 
-    public void setNamespaceResolver(NamespaceResolver resolver);
+    void setNamespaceResolver(NamespaceResolver resolver);
 
     /**
      * Declare a variable. A variable must be declared before an expression referring
@@ -48,7 +48,7 @@ public interface XPathStaticContext extends StaticContext {
      *         declared.
      */
 
-    public XPathVariable declareVariable(QNameValue qname);
+    XPathVariable declareVariable(QNameValue qname);
 
     /**
      * Declare a variable. A variable must be declared before an expression referring
@@ -61,7 +61,7 @@ public interface XPathStaticContext extends StaticContext {
      *         declared.
      */
 
-    public XPathVariable declareVariable(String namespaceURI, String localName);
+    XPathVariable declareVariable(String namespaceURI, String localName);
 
     /**
      * Get a Stack Frame Map containing definitions of all the declared variables. This will return a newly
@@ -71,7 +71,16 @@ public interface XPathStaticContext extends StaticContext {
      * @return a SlotManager object holding details of the allocation of variables on the stack frame.
      */
 
-    public SlotManager getStackFrameMap();
+    SlotManager getStackFrameMap();
+
+    /**
+     * Ask whether the context item is known to be parentless
+     * @return true if it is known that the context item for evaluating the expression will have no parent
+     */
+
+    boolean isContextItemParentless();
+
+
 
 
 }

@@ -104,7 +104,7 @@ public class PullPushTee extends PullFilter {
                 nsStack.push(nsMap);
                 out.startElement(in.getNodeName(), in.getSchemaType(),
                                  in.getAttributes(), nsMap,
-                                 loc, ReceiverOption.NONE);
+                                 loc, ReceiverOption.NAMESPACE_OK);
 
                 break;
 

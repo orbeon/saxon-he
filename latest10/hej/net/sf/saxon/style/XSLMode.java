@@ -220,6 +220,7 @@ public class XSLMode extends StyleElement {
                     break;
                 default:
                     if (attName.hasURI(NamespaceConstant.SAXON)) {
+                        isExtensionAttributeAllowed(attName.getDisplayName());
                         if (attName.getLocalPart().equals("trace")) {
                             traceMatching = processBooleanAttribute("saxon:trace", value);
                         } else if (attName.getLocalPart().equals("as")) {

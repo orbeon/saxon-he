@@ -484,7 +484,7 @@ public abstract class AbstractStaticContext implements StaticContext {
      * @param policy the policy to be used
      */
 
-    public void setUnprefixedElementPolicy(UnprefixedElementMatchingPolicy policy) {
+    public void setUnprefixedElementMatchingPolicy(UnprefixedElementMatchingPolicy policy) {
         this.unprefixedElementPolicy = policy;
     }
 
@@ -494,7 +494,7 @@ public abstract class AbstractStaticContext implements StaticContext {
      * @return the policy to be used
      */
 
-    public UnprefixedElementMatchingPolicy getUnprefixedElementPolicy() {
+    public UnprefixedElementMatchingPolicy getUnprefixedElementMatchingPolicy() {
          return unprefixedElementPolicy;
     }
 }

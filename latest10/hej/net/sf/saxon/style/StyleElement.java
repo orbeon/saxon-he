@@ -62,7 +62,6 @@ public abstract class StyleElement extends ElementImpl {
     protected String defaultCollationName = null;
     protected StructuredQName defaultMode;
     protected boolean expandText = false;
-    private boolean explaining = false;  // true if saxon:explain="yes"
     private StructuredQName objectName;  // for instructions that define an XSLT named object, the name of that object
     private String baseURI;
     private Compilation compilation;
@@ -158,16 +157,6 @@ public abstract class StyleElement extends ElementImpl {
 
     public boolean isSchemaAware() {
         return getCompilation().isSchemaAware();
-    }
-
-    /**
-     * Determine whether saxon:explain has been set to "yes"
-     *
-     * @return true if saxon:explain has been set to "yes" on this element
-     */
-
-    protected boolean isExplaining() {
-        return explaining;
     }
 
     /**
@@ -540,11 +529,6 @@ public abstract class StyleElement extends ElementImpl {
         processAttributes();
         for (NodeInfo child : children(StyleElement.class::isInstance)) {
             ((StyleElement) child).processAllAttributes();
-            if (((StyleElement) child).explaining) {
-                // saxon:explain on any element in a template/function now causes an explanation at the
-                // level of the template/function
-                explaining = true;
-            }
         };
     }
 
@@ -615,11 +599,6 @@ public abstract class StyleElement extends ElementImpl {
         String attributeURI = nc.getURI();
         String elementURI = getURI();
         String clarkName = nc.getStructuredQName().getClarkName();
-
-        if (clarkName.equals(StandardNames.SAXON_EXPLAIN)) {
-            String value = getAttributeValue(clarkName);
-            explaining = processBooleanAttribute("saxon:explain", value);
-        }
 
         if (forwardsCompatibleModeIsEnabled()) {
             // then unknown attributes are permitted and ignored
@@ -868,10 +847,12 @@ public abstract class StyleElement extends ElementImpl {
         }
         XPathParser parser =
                 getConfiguration().newExpressionParser("XP", false, languageLevel);
-        QNameParser qp = new QNameParser(staticContext.getNamespaceResolver());
-        qp.setAcceptEQName(staticContext.getXPathVersion() >= 30);
-        qp.setErrorOnBadSyntax("XPST0003");
-        qp.setErrorOnUnresolvedPrefix("XPST0081");
+
+        QNameParser qp = new QNameParser(staticContext.getNamespaceResolver())
+                .withAcceptEQName(staticContext.getXPathVersion() >= 30)
+                .withErrorOnBadSyntax("XPST0003")
+                .withErrorOnUnresolvedPrefix("XPST0081");
+
         parser.setQNameParser(qp);
         return parser.parseSequenceType(sequenceType, staticContext);
     }
@@ -881,10 +862,10 @@ public abstract class StyleElement extends ElementImpl {
         getStaticContext();
         XPathParser parser =
                 getConfiguration().newExpressionParser("XP", false, 31);
-        QNameParser qp = new QNameParser(staticContext.getNamespaceResolver());
-        qp.setAcceptEQName(staticContext.getXPathVersion() >= 30);
-        qp.setErrorOnBadSyntax("XPST0003");
-        qp.setErrorOnUnresolvedPrefix("XPST0081");
+        QNameParser qp = new QNameParser(staticContext.getNamespaceResolver())
+                .withAcceptEQName(staticContext.getXPathVersion() >= 30)
+                .withErrorOnBadSyntax("XPST0003")
+                .withErrorOnUnresolvedPrefix("XPST0081");
         parser.setQNameParser(qp);
         return parser.parseExtendedSequenceType(sequenceType, staticContext);
     }
@@ -1047,6 +1028,21 @@ public abstract class StyleElement extends ElementImpl {
             code = Validation.STRIP;
         }
         return code;
+    }
+
+    /**
+     * Ask if an extension attribute is allowed; if no Professional Edition license is available,
+     * issue a warning saying the attribute is ignored, and return false
+     * @param attribute the name of the attribute
+     */
+
+    protected boolean isExtensionAttributeAllowed(String attribute)  {
+        if (getConfiguration().isLicensedFeature(Configuration.LicenseFeature.PROFESSIONAL_EDITION)) {
+            return true;
+        } else {
+            issueWarning("The option " + getDisplayName() + "/@" + attribute + " is ignored because it requires a Saxon-PE license", this);
+            return false;
+        }
     }
 
     /**

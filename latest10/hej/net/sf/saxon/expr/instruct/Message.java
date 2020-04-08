@@ -242,23 +242,25 @@ public class Message extends Instruction {
             rec = new MessageAdapter(new TreeReceiver(emitter), errorCode.getEQName(), getLocation());
         }
 
-        rec.startDocument(abort ? ReceiverOption.TERMINATE : ReceiverOption.NONE);
+        ComplexContentOutputter cco = new ComplexContentOutputter(rec);
+        cco.startDocument(abort ? ReceiverOption.TERMINATE : ReceiverOption.NONE);
 
         try {
-            SequenceIterator iter = getSelect().iterate(context);
-            Item item;
-            while ((item = iter.next()) != null) {
-                rec.append(item, getLocation(), ReceiverOption.ALL_NAMESPACES);
-            }
+            getSelect().process(cco, context);
+//            SequenceIterator iter = getSelect().iterate(context);
+//            Item item;
+//            while ((item = iter.next()) != null) {
+//                rec.append(item, getLocation(), ReceiverOption.ALL_NAMESPACES);
+//            }
         } catch (XPathException e) {
-            rec.append(new StringValue("Error " + e.getErrorCodeLocalPart() +
+            cco.append(new StringValue("Error " + e.getErrorCodeLocalPart() +
                                                " while evaluating xsl:message at line "
                                                + getLocation().getLineNumber() + " of " + getLocation().getSystemId() +
                                                ": " + e.getMessage()));
         }
 
-        rec.endDocument();
-        rec.close();
+        cco.endDocument();
+        cco.close();
         if (abort) {
             builder.close();
             NodeInfo content = builder.getCurrentRoot();

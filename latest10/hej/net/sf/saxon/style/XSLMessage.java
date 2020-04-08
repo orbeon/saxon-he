@@ -74,6 +74,7 @@ public final class XSLMessage extends StyleElement {
                     break;
                 default:
                     if (attName.hasURI(NamespaceConstant.SAXON) && attName.getLocalPart().equals("time")) {
+                        isExtensionAttributeAllowed(attName.getDisplayName());
                         boolean timed = processBooleanAttribute("saxon:time", value);
                         if (timed) {
                             timer = makeExpression(

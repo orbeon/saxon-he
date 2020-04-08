@@ -118,6 +118,7 @@ public class XMLIndenter extends ProxyReceiver {
             flushPendingWhitespace();
         }
 
+        level++;
         if (suppressedAtLevel < 0) {
             String xmlSpace = attributes.getValue(NamespaceConstant.XML, "space");
             if (xmlSpace != null && xmlSpace.trim().equals("preserve")) {
@@ -126,8 +127,7 @@ public class XMLIndenter extends ProxyReceiver {
                 suppressedAtLevel = level;
             }
         }
-
-        level++;
+        
         sameline = true;
         afterStartTag = true;
         afterEndTag = false;

@@ -120,7 +120,7 @@ public class DOM4JWriter extends net.sf.saxon.event.Builder {
 
         NamespaceMap parentNamespaces = nsStack.peek();
         if (namespaces != parentNamespaces) {
-            NamespaceBinding[] declarations = namespaces.getDifferences(parentNamespaces);
+            NamespaceBinding[] declarations = namespaces.getDifferences(parentNamespaces, false);
             for (NamespaceBinding ns : declarations) {
                 element.addNamespace(ns.getPrefix(), ns.getURI());
             }

@@ -33,6 +33,7 @@ public class RootExpression extends Expression {
 
 
     private boolean contextMaybeUndefined = true;
+    private boolean doneWarnings = false;
 
     public RootExpression() {
     }
@@ -43,16 +44,19 @@ public class RootExpression extends Expression {
 
     /*@NotNull*/
     public Expression typeCheck(ExpressionVisitor visitor, /*@Nullable*/ ContextItemStaticInfo contextInfo) throws XPathException {
+        TypeHierarchy th = visitor.getConfiguration().getTypeHierarchy();
         if (contextInfo == null || contextInfo.getItemType() == null || contextInfo.getItemType().equals(ErrorType.getInstance())) {
             XPathException err = new XPathException(noContextMessage() + ": the context item is absent");
             err.setErrorCode("XPDY0002");
             err.setIsTypeError(true);
             err.setLocation(getLocation());
             throw err;
-        } else {
-            contextMaybeUndefined = contextInfo.isPossiblyAbsent();
+        } else if (!doneWarnings && contextInfo.isParentless()
+                && th.relationship(contextInfo.getItemType(),NodeKindTest.DOCUMENT) == Affinity.DISJOINT) {
+            visitor.issueWarning(noContextMessage() + ": the context item is parentless and is not a document node", getLocation());
+            doneWarnings = true;
         }
-        TypeHierarchy th = visitor.getConfiguration().getTypeHierarchy();
+        contextMaybeUndefined = contextInfo.isPossiblyAbsent();
         if (th.isSubType(contextInfo.getItemType(), NodeKindTest.DOCUMENT)) {
             // this rewrite is important for streamability analysis
             ContextItemExpression cie = new ContextItemExpression();

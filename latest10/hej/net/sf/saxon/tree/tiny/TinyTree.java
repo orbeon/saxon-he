@@ -166,6 +166,9 @@ public final class TinyTree extends GenericTreeInfo implements NodeVectorTree {
 
     protected IntHashMap<String> knownBaseUris;
 
+    // uniformBaseUri is set if all nodes in the tree have the same Base URI; otherwise it is null.
+    private String uniformBaseUri = null;
+
     /**
      * Create a tree with a specified initial size
      *
@@ -1148,7 +1151,13 @@ public final class TinyTree extends GenericTreeInfo implements NodeVectorTree {
         systemIdMap.setSystemId(seq, uri);
     }
 
+    void setUniformBaseUri(String base) {
+        this.uniformBaseUri = base;
+    }
 
+    String getUniformBaseUri() {
+        return this.uniformBaseUri;
+    }
     /**
      * Get the system id of an element in the document
      *

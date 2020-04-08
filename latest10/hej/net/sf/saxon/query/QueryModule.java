@@ -243,9 +243,9 @@ public class QueryModule implements StaticContext {
         } else if (config.isCompileWithTracing()) {
             qp.setCodeInjector(new TraceCodeInjector());
         }
-        QNameParser qnp = new QNameParser(module.getLiveNamespaceResolver());
-        qnp.setAcceptEQName(importer.getXPathVersion() >= 30);
-        qnp.setUnescaper(new XQueryParser.Unescaper(config.getValidCharacterChecker()));
+        QNameParser qnp = new QNameParser(module.getLiveNamespaceResolver())
+            .withAcceptEQName(importer.getXPathVersion() >= 30)
+            .withUnescaper(new XQueryParser.Unescaper(config.getValidCharacterChecker()));
         qp.setQNameParser(qnp);
 
         qp.parseLibraryModule(query, module);

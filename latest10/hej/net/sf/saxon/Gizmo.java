@@ -8,6 +8,7 @@
 package net.sf.saxon;
 
 import net.sf.saxon.event.Builder;
+import net.sf.saxon.event.ComplexContentOutputter;
 import net.sf.saxon.event.PipelineConfiguration;
 import net.sf.saxon.event.Receiver;
 import net.sf.saxon.expr.parser.Loc;
@@ -230,7 +231,7 @@ public class Gizmo {
         env.declareNamespace("array", NamespaceConstant.ARRAY_FUNCTIONS);
         env.declareNamespace("", "");
 
-        env.setUnprefixedElementPolicy(UnprefixedElementMatchingPolicy.ANY_NAMESPACE);
+        env.setUnprefixedElementMatchingPolicy(UnprefixedElementMatchingPolicy.ANY_NAMESPACE);
 
         System.out.println("Saxon Gizmo " + Version.getProductVersion());
         executeCommands(talker, interactive);
@@ -300,7 +301,7 @@ public class Gizmo {
                 SubCommand cmd = subCommands.get(keyword);
                 if (cmd == null) {
                     if (interactive) {
-                        System.out.println("Unknown command " + cmd + " (Use 'quit' to exit)");
+                        System.out.println("Unknown command " + keyword + " (Use 'quit' to exit)");
                         help(new StringBuffer("?"));
                     } else {
                         throw new XPathException("\"Unknown command \" + cmd + \"");
@@ -773,11 +774,26 @@ public class Gizmo {
 
         GroundedValue value = getSelectedItems(new StringBuffer(buffer.substring(ws + 1)), Token.EOF).materialize();
         if (varName.equals(".")) {
-            if (!(value.getLength() == 1) && value.itemAt(0) instanceof DocumentImpl) {
-                throw new XPathException("Value for context item must be a single document node");
-            }
             saveCurrentDoc();
-            currentDoc = (DocumentImpl) value.itemAt(0);
+            if (value.getLength() == 1 && value.itemAt(0) instanceof DocumentImpl) {
+                currentDoc = (DocumentImpl) value.itemAt(0);
+            } else {
+                try {
+                    Builder builder = new LinkedTreeBuilder(config.makePipelineConfiguration());
+                    ComplexContentOutputter cco = new ComplexContentOutputter(builder);
+                    cco.open();
+                    cco.startDocument(0);
+                    for (Item it : value.asIterable()) {
+                        cco.append(it);
+                    }
+                    cco.endDocument();
+                    cco.close();
+                    currentDoc = (DocumentImpl) builder.getCurrentRoot();
+                } catch (XPathException e) {
+                    throw new XPathException("Cannot save the value as a document (" + e.getMessage() + ")");
+                }
+            }
+
         } else {
             StructuredQName name = getQName(varName);
             variables.put(name, value);
@@ -838,8 +854,15 @@ public class Gizmo {
         for (Item item : value.asIterable()) {
             if (item instanceof NodeInfo) {
                 System.out.println(QueryResult.serialize((NodeInfo) item));
-            } else {
+            } else if (item instanceof AtomicValue) {
                 System.out.println(item.getStringValue());
+            } else {
+                StringWriter sw = new StringWriter();
+                SerializationProperties props = new SerializationProperties();
+                props.setProperty("method", "adaptive");
+                Receiver r = config.getSerializerFactory().getReceiver(new StreamResult(sw), props);
+                r.append(item);
+                System.out.println(sw.toString());
             }
         }
     }

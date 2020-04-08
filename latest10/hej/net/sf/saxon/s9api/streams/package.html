@@ -1,5 +1,5 @@
 <!--~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~-->
-<!-- Copyright (c) 2018 Saxonica Limited. -->
+<!-- Copyright (c) 2018-2020 Saxonica Limited. -->
 <!-- This Source Code Form is subject to the terms of the Mozilla Public License, v. 2.0. -->
 <!-- If a copy of the MPL was not distributed with this file, You can obtain one at http://mozilla.org/MPL/2.0/. -->
 <!-- This Source Code Form is "Incompatible With Secondary Licenses", as defined by the Mozilla Public License, v. 2.0. -->
@@ -140,9 +140,9 @@ the contents of the stream into usable form. These include:</p>
     <li><code>asListOfNodes()</code> - deliver the contents as a <code>List&lt;XdmNode&gt;</code></li>
     <li><code>asOptionalNode()</code> - deliver the contents as an <code>Optional&lt;XdmNode&gt;</code></li>
     <li><code>asNode()</code> - deliver the contents as a single <code>XdmNode</code></li>
-    <li><code>asListOfAtomic()</code> - deliver the contents as a <code>List&lt;XdmNode&gt;</code></li>
-    <li><code>asOptionalAtomic()</code> - deliver the contents as an <code>Optional&lt;XdmNode&gt;</code></li>
-    <li><code>asAtomic()</code> - deliver the contents as a single <code>XdmNode</code></li>
+    <li><code>asListOfAtomic()</code> - deliver the contents as a <code>List&lt;XdmAtomicValue&gt;</code></li>
+    <li><code>asOptionalAtomic()</code> - deliver the contents as an <code>Optional&lt;XdmAtomicValue&gt;</code></li>
+    <li><code>asAtomic()</code> - deliver the contents as a single <code>XdmAtomicValue</code></li>
     <li><code>asOptionalString()</code> - deliver the contents as an <code>Optional&lt;String&gt;</code> by taking
     the string value of each item</li>
     <li><code>asString()</code> - deliver the contents as a single <code>String</code></li>
@@ -153,12 +153,12 @@ returns <code>Optional&lt;XdmNode>)</code>, and also causes a run-time check tha
 conforms to these expectations. For example, if <code>asNode()</code> is used, then an unchecked exception
 occurs if the sequence has a length other than 1 (one), or if its single item is not a node.</p>
 
-<p>Other ways of generating an <code>XdmStream</code> include (TODO!!!):</p>
+<p>Other ways of generating an <code>XdmStream</code> include:</p>
 
 <ul>
     <li>As the result of an XPath expression, using the method <code>XPathSelector.stream()</code></li>
     <li>As the result of an XQuery expression, using the method <code>XQueryEvaluator.stream()</code></li>
-    <li>As a <code>StreamDestination</code> capturing the result of an XSLT transformation</li>
+    <li>As the result of <code>XdmSequenceIterator.stream()</code></li>
 </ul>
 
 <hr>

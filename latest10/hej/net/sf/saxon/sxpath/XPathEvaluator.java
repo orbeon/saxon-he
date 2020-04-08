@@ -124,6 +124,7 @@ public class XPathEvaluator {
         ExpressionVisitor visitor = ExpressionVisitor.make(staticContext);
         ItemType contextItemType = staticContext.getRequiredContextItemType();
         ContextItemStaticInfo cit = config.makeContextItemStaticInfo(contextItemType, true);
+        cit.setParentless(staticContext.isContextItemParentless());
         exp = exp.typeCheck(visitor, cit);
         if (opt.isOptionSet(OptimizerOptions.MISCELLANEOUS)) {
             exp = exp.optimize(visitor, cit);

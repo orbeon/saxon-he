@@ -46,7 +46,7 @@ public class XsltController extends Controller {
 
     private final Map<StructuredQName, Integer> messageCounters = new HashMap<>();
     private Receiver explicitMessageReceiver = null;
-    private Supplier<Receiver> messageFactory = MessageEmitter::new;
+    private Supplier<Receiver> messageFactory = () -> new NamespaceDifferencer(new MessageEmitter(), new Properties());
     private boolean assertionsEnabled = true;
     private ResultDocumentResolver resultDocumentResolver;
     private HashSet<DocumentURI> allOutputDestinations;
@@ -356,21 +356,11 @@ public class XsltController extends Controller {
      * is called to obtain a new Receiver each time an xsl:message instruction is evaluated.</p>
      *
      * @return The newly constructed message Receiver
-     * @throws XPathException if any dynamic error occurs; in
-     *                        particular, if the registered MessageEmitter class is not an
-     *                        Emitter
      */
 
     /*@NotNull*/
-    public Receiver makeMessageReceiver() throws XPathException {
+    public Receiver makeMessageReceiver() {
         return messageFactory.get();
-//        Object messageReceiver = getConfiguration().getInstance(messageReceiverClassName, null);
-//        if (!(messageReceiver instanceof Receiver)) {
-//            throw new XPathException(messageReceiverClassName + " is not a Receiver");
-//        }
-//        ((Receiver) messageReceiver).setPipelineConfiguration(makePipelineConfiguration());
-//        setMessageEmitter((Receiver) messageReceiver);
-//        return (Receiver) messageReceiver;
     }
 
     /**

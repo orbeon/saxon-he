@@ -305,7 +305,7 @@ public class XmlProcessingIncident implements XmlProcessingError {
     }
 
     public static void maybeSetLocation(XmlProcessingError error, Location loc) {
-        if (error.getHostLanguage() == null) {
+        if (error.getLocation() == null) {
             if (error instanceof XmlProcessingIncident) {
                 ((XmlProcessingIncident) error).setLocation(loc);
             } else if (error instanceof XmlProcessingException) {

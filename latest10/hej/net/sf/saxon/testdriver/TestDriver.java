@@ -74,6 +74,7 @@ public abstract class TestDriver {
     protected boolean isAltova = false;
     protected Map<String, Integer> failSummary = new TreeMap<>();
     protected boolean quiet = false;
+    protected boolean strict = false;
     protected String xxCompilerLocation;
     protected XsltExecutable xxCompiler;
 
@@ -130,6 +131,9 @@ public abstract class TestDriver {
             }
             if (args[i].startsWith("-debug")) {
                 debug = true;
+            }
+            if (args[i].startsWith("-strict")) {
+                strict = true;
             }
             if (args[i].startsWith("-export") && !argValue.equals("off")) {
                 export = true;

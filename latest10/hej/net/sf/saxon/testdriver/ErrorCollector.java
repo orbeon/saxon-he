@@ -11,6 +11,8 @@ import net.sf.saxon.lib.NamespaceConstant;
 import net.sf.saxon.lib.StandardErrorReporter;
 import net.sf.saxon.s9api.QName;
 import net.sf.saxon.s9api.XmlProcessingError;
+import net.sf.saxon.trans.QuitParsingException;
+import net.sf.saxon.trans.XmlProcessingException;
 
 import javax.xml.transform.TransformerException;
 import java.util.HashSet;
@@ -41,6 +43,10 @@ public class ErrorCollector extends StandardErrorReporter {
     protected void warning(XmlProcessingError exception) {
         foundWarnings = true;
         super.warning(exception);
+        if (exception instanceof XmlProcessingException
+                && ((XmlProcessingException)exception).getXPathException() instanceof QuitParsingException) {
+            madeEarlyExit = true;
+        }
     }
 
     @Override

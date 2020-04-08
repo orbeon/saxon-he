@@ -103,7 +103,8 @@ public class NumericType extends LocalUnionType implements SimpleType {
      */
 
     public static boolean isNumericType(ItemType type) {
-        return !type.equals(BuiltInAtomicType.ANY_ATOMIC)
+        return type instanceof AtomicType &&
+                !type.equals(BuiltInAtomicType.ANY_ATOMIC)
                 && type.getUType().overlaps(getInstance().getUType());
     }
 

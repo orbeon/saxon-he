@@ -203,6 +203,14 @@ public final class AxisExpression extends Expression {
             return Literal.makeEmptySequence();
         }
 
+        if (contextInfo.isParentless() && (axis == AxisInfo.PARENT || axis == AxisInfo.ANCESTOR)) {
+            if (warnings) {
+                visitor.issueWarning("The " + AxisInfo.axisName[axis] + " axis will never select anything because the context item is parentless",
+                                     getLocation());
+            }
+            return Literal.makeEmptySequence();
+        }
+
         // Test whether the axis ever selects a node of the right kind, when starting at this context node
         if (!targetUType.overlaps(testUType)) {
             if (warnings) {

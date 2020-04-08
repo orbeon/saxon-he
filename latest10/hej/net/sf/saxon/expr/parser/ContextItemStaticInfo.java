@@ -26,6 +26,7 @@ public class ContextItemStaticInfo {
     private ItemType itemType;
     private boolean contextMaybeUndefined;
     private Expression contextSettingExpression;
+    private boolean parentless;
 
     /**
      * Create a ContextItemStaticInfo
@@ -91,6 +92,14 @@ public class ContextItemStaticInfo {
 
     public boolean isStrictStreamabilityRules() {
         return false;
+    }
+
+    public void setParentless(boolean parentless) {
+        this.parentless = parentless;
+    }
+
+    public boolean isParentless() {
+        return parentless;
     }
 
     /**

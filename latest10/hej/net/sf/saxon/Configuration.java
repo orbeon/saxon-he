@@ -4004,6 +4004,17 @@ public class Configuration implements SourceResolver, NotationSet {
     }
 
     /**
+     * Make a SchemaURIResolver that wraps a supplied URIResolver
+     *
+     * @return a new SchemaURIResolver (or null if this is not an EnterpriseConfiguration)
+     * @since 10.0
+     */
+
+    public SchemaURIResolver makeSchemaURIResolver(URIResolver resolver) {
+        return null;
+    }
+
+    /**
      * Get the configuration, given the context. This is provided as a static method to make it accessible
      * as an extension function.
      *

@@ -488,10 +488,10 @@ public class XPathParser {
 
         if (exp == null) {
 
-            qNameParser = new QNameParser(env.getNamespaceResolver());
-            qNameParser.setAcceptEQName(allowXPath30Syntax);
-            qNameParser.setErrorOnBadSyntax(language == ParsedLanguage.XSLT_PATTERN ? "XTSE0340" : "XPST0003");
-            qNameParser.setErrorOnUnresolvedPrefix("XPST0081");
+            qNameParser = new QNameParser(env.getNamespaceResolver())
+                .withAcceptEQName(allowXPath30Syntax)
+                .withErrorOnBadSyntax(language == ParsedLanguage.XSLT_PATTERN ? "XTSE0340" : "XPST0003")
+                .withErrorOnUnresolvedPrefix("XPST0081");
 
             charChecker = env.getConfiguration().getValidCharacterChecker();
             t = new Tokenizer();
@@ -557,7 +557,7 @@ public class XPathParser {
         if (qNameParser == null) {
             qNameParser = new QNameParser(env.getNamespaceResolver());
             if (languageVersion >= 30) {
-                qNameParser.setAcceptEQName(true);
+                qNameParser = qNameParser.withAcceptEQName(true);
             }
         }
         language = ParsedLanguage.SEQUENCE_TYPE;

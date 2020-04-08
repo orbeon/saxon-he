@@ -72,10 +72,10 @@ public class XSLMap extends StyleElement {
             String f = attName.getDisplayName();
             String value = att.getValue();
             if (attName.hasURI(NamespaceConstant.SAXON)) {
-                if (attName.getLocalPart().equals("on-duplicates")) {
-                    onDuplicates = makeExpression(value, att);
-                } else {
-                    checkUnknownAttribute(attName);
+                if (isExtensionAttributeAllowed(attName.getDisplayName())) {
+                    if (attName.getLocalPart().equals("on-duplicates")) {
+                        onDuplicates = makeExpression(value, att);
+                    }
                 }
             } else {
                 checkUnknownAttribute(attName);

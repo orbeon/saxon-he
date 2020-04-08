@@ -31,7 +31,7 @@ import java.util.stream.StreamSupport;
 public class XdmSequenceIterator<T extends XdmItem> implements Iterator<T> {
 
     /*@Nullable*/ private T next = null;
-    private int state = BEFORE_ITEM;
+    private int state;
     private SequenceIterator base;
 
     private final static int BEFORE_ITEM = 0;
@@ -49,15 +49,15 @@ public class XdmSequenceIterator<T extends XdmItem> implements Iterator<T> {
     }
 
     public static XdmSequenceIterator<XdmNode> ofNodes(AxisIterator base) {
-        return new XdmSequenceIterator(base);
+        return new XdmSequenceIterator<>(base);
     }
 
     public static XdmSequenceIterator<XdmAtomicValue> ofAtomicValues(UnfailingIterator base) {
-        return new XdmSequenceIterator(base);
+        return new XdmSequenceIterator<>(base);
     }
 
     protected static XdmSequenceIterator<XdmNode> ofNode(XdmNode node) {
-        return new XdmSequenceIterator(SingletonIterator.makeIterator(node.getUnderlyingNode()));
+        return new XdmSequenceIterator<>(SingletonIterator.makeIterator(node.getUnderlyingNode()));
     }
 
     /**
@@ -77,6 +77,7 @@ public class XdmSequenceIterator<T extends XdmItem> implements Iterator<T> {
                 return false;
             case BEFORE_ITEM:
                 try {
+                    //noinspection unchecked
                     next = (T)XdmItem.wrapItem(base.next());
                     if (next == null) {
                         state = FINISHED;
@@ -111,7 +112,6 @@ public class XdmSequenceIterator<T extends XdmItem> implements Iterator<T> {
                 throw new java.util.NoSuchElementException();
             case BEFORE_ITEM:
                 if (hasNext()) {
-                    state = BEFORE_ITEM;
                     return next;
                 } else {
                     throw new java.util.NoSuchElementException();
@@ -155,13 +155,8 @@ public class XdmSequenceIterator<T extends XdmItem> implements Iterator<T> {
     public XdmStream<T> stream() {
         Stream<T> base = StreamSupport.stream(Spliterators.spliteratorUnknownSize(
                 this, Spliterator.ORDERED), false);
-        base = base.onClose(new Runnable() {
-            @Override
-            public void run() {
-                XdmSequenceIterator.this.close();
-            }
-        });
-        return new XdmStream<T>(base);
+        base = base.onClose(XdmSequenceIterator.this::close);
+        return new XdmStream<>(base);
     }
 
 }

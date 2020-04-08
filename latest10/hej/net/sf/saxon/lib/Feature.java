@@ -126,13 +126,13 @@ public class Feature<T> {
 
 
     /**
-    *            <p>This flag must be set to enable use of extensions to XPath, XQuery and XSLT
+    *            <p>This flag must be set to enable use of extensions to XPath (and potentially XQuery and XSLT)
     *                syntax that go beyond what is allowed by the extensibility mechanisms in the spec.
     *                In some cases these extensions are experimental and may not be carried forward to future
     *            Saxon releases.</p>
-    *            <p>Syntax extensions in Saxon 10 include the use of type aliases (<code>type(...)</code> where
+    *            <p>Syntax extensions in Saxon 9.8 include the use of type aliases (<code>~aliasName</code> where
     *                an item type is expected, and <code>declare type NAME = item-type</code> in the XQuery Prolog); 
-    *                and simple inline functions (for example <code>.{. + 1}</code>).</p>
+    *                and simple inline functions (for example <code>fn{. + 1}</code>).</p>
     *        
     **/
 
@@ -1010,9 +1010,9 @@ public class Feature<T> {
 
 
     /**
-    *            <p>An integer, one of {@link net.sf.saxon.trans.RecoveryPolicy#RECOVER_SILENTLY},
-    *                {@link net.sf.saxon.trans.RecoveryPolicy#RECOVER_WITH_WARNINGS}, or
-    *                {@link net.sf.saxon.trans.RecoveryPolicy#DO_NOT_RECOVER}. Indicates the policy for
+    *            <p>An integer, one of {@link RecoveryPolicy#RECOVER_SILENTLY},
+    *                {@link RecoveryPolicy#RECOVER_WITH_WARNINGS}, or
+    *                {@link RecoveryPolicy#DO_NOT_RECOVER}. Indicates the policy for
     *                handling dynamic errors that the XSLT specification defines as recoverable.</p>
     *            <p>0 means recover silently; 1 means recover after signalling a warning to the
     *                    <code>ErrorListener</code>; 2 means treat the error as fatal. An example of a

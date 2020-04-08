@@ -359,9 +359,10 @@ public class XQueryParser extends XPathParser {
                 t.allowSaxonExtensions =
                         env.getConfiguration().getBooleanProperty(Feature.ALLOW_SYNTAX_EXTENSIONS);
 
-        QNameParser qp = new QNameParser(env.getLiveNamespaceResolver());
-        qp.setAcceptEQName(true);
-        qp.setUnescaper(new Unescaper(env.getConfiguration().getValidCharacterChecker()));
+        QNameParser qp = new QNameParser(env.getLiveNamespaceResolver())
+            .withAcceptEQName(true)
+            .withUnescaper(new Unescaper(env.getConfiguration().getValidCharacterChecker()));
+
         setQNameParser(qp);
 
         parseProlog();
@@ -422,9 +423,9 @@ public class XQueryParser extends XPathParser {
         t = new Tokenizer();
         t.languageLevel = 31;
         t.isXQuery = true;
-        QNameParser qp = new QNameParser(env.getLiveNamespaceResolver());
-        qp.setAcceptEQName(true);
-        qp.setUnescaper(new Unescaper(config.getValidCharacterChecker()));
+        QNameParser qp = new QNameParser(env.getLiveNamespaceResolver())
+            .withAcceptEQName(true)
+            .withUnescaper(new Unescaper(config.getValidCharacterChecker()));
         setQNameParser(qp);
         try {
             t.tokenize(queryString, 0, -1);
