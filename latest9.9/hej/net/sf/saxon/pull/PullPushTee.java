@@ -92,7 +92,7 @@ public class PullPushTee extends PullFilter {
                 break;
 
             case START_ELEMENT:
-                out.startElement(in.getNodeName(), in.getSchemaType(), loc, 0);
+                out.startElement(in.getNodeName(), in.getSchemaType(), loc, ReceiverOptions.NAMESPACE_OK);
 
                 NamespaceBinding[] decl = in.getNamespaceDeclarations();
                 for (NamespaceBinding aDecl : decl) {
