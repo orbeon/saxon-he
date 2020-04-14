@@ -29,6 +29,7 @@
       </xs:choice>
       <xs:attribute name="generatedAt" type="xs:dateTime"/>
       <xs:attribute name="xsdVersion" type="scm:xsdVersionType"/>
+      <xs:attribute name="dmk" use="optional" type="xs:base64Binary"/>
     </xs:complexType>
   </xs:element>
   

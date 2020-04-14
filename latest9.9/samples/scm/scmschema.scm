@@ -1,7 +1,8 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <scm:schema xmlns:scm="http://ns.saxonica.com/schema-component-model"
-            generatedAt="2018-11-14T18:17:04.194Z"
-            xsdVersion="1.1">
+            generatedAt="2020-04-14T16:34:12.23+01:00"
+            xsdVersion="1.0"
+            dmk="TGljZW5zb3I9U2F4b25pY2EKTGljZW5zZWU9TWljaGFlbCBLYXkKQ29tcGFueT1TYXhvbmljYQpFbWFpbD1taWtlQHNheG9uaWNhLmNvbQpFZGl0aW9uPUVFClNBVD15ZXMKU0FRPXllcwpTQVY9eWVzCklzc3VlZD0yMDIwLTAzLTAxClNlcmllcz1WClNlcmlhbD1WMDA4NjgwClVzZXI9UDAwMDEKRXZhbHVhdGlvbj1ubwpFeHBpcmF0aW9uPTIwMjEtMDMtMzEKVXBncmFkZURheXM9MzY1Ck1haW50ZW5hbmNlRGF5cz0zNjUKClNpZ25hdHVyZT0zMDJDMDIxNDcwNjkxMzkxQjNCQ0MyQzlGRjUyMzQ2OERGODIwMzhBMjY0MDIxNDkwMjE0NDQ1MjU2MDYxMjAzRjhCOEI1OUE4NzVCMEUzOUNGN0U1Q0E1REMzOQ==">
    <scm:simpleType id="C0"
                    name="complexVarietyType"
                    targetNamespace="http://ns.saxonica.com/schema-component-model"
@@ -813,6 +814,7 @@
                     variety="element-only">
       <scm:attributeUse required="false" inheritable="false" ref="C140"/>
       <scm:attributeUse required="false" inheritable="false" ref="C141"/>
+      <scm:attributeUse required="false" inheritable="false" ref="C142"/>
       <scm:modelGroupParticle minOccurs="0" maxOccurs="unbounded">
          <scm:choice>
             <scm:elementParticle minOccurs="1" maxOccurs="1" ref="C54"/>
@@ -830,30 +832,30 @@
       </scm:modelGroupParticle>
       <scm:finiteStateMachine initialState="0">
          <scm:state nr="0" final="true">
-            <scm:edge term="C89" to="1"/>
-            <scm:edge term="C58" to="1"/>
-            <scm:edge term="C95" to="1"/>
-            <scm:edge term="C113" to="1"/>
-            <scm:edge term="C94" to="1"/>
-            <scm:edge term="C83" to="1"/>
             <scm:edge term="C128" to="1"/>
             <scm:edge term="C64" to="1"/>
             <scm:edge term="C54" to="1"/>
+            <scm:edge term="C83" to="1"/>
             <scm:edge term="C97" to="1"/>
             <scm:edge term="C73" to="1"/>
+            <scm:edge term="C89" to="1"/>
+            <scm:edge term="C58" to="1"/>
+            <scm:edge term="C113" to="1"/>
+            <scm:edge term="C95" to="1"/>
+            <scm:edge term="C94" to="1"/>
          </scm:state>
          <scm:state nr="1" final="true">
-            <scm:edge term="C89" to="1"/>
-            <scm:edge term="C58" to="1"/>
-            <scm:edge term="C95" to="1"/>
-            <scm:edge term="C113" to="1"/>
-            <scm:edge term="C94" to="1"/>
-            <scm:edge term="C83" to="1"/>
             <scm:edge term="C128" to="1"/>
             <scm:edge term="C64" to="1"/>
             <scm:edge term="C54" to="1"/>
+            <scm:edge term="C83" to="1"/>
             <scm:edge term="C97" to="1"/>
             <scm:edge term="C73" to="1"/>
+            <scm:edge term="C89" to="1"/>
+            <scm:edge term="C58" to="1"/>
+            <scm:edge term="C113" to="1"/>
+            <scm:edge term="C95" to="1"/>
+            <scm:edge term="C94" to="1"/>
          </scm:state>
       </scm:finiteStateMachine>
    </scm:complexType>
@@ -862,7 +864,7 @@
                     derivationMethod="restriction"
                     abstract="false"
                     variety="empty">
-      <scm:attributeUse required="true" inheritable="false" ref="C142"/>
+      <scm:attributeUse required="true" inheritable="false" ref="C143"/>
       <scm:attributeUse required="false" inheritable="false" ref="C24"/>
       <scm:finiteStateMachine initialState="0">
          <scm:state nr="0" final="true"/>
@@ -880,16 +882,16 @@
       </scm:modelGroupParticle>
       <scm:finiteStateMachine initialState="0">
          <scm:state nr="0" final="true">
+            <scm:edge term="C109" to="1"/>
+            <scm:edge term="C80" to="1"/>
             <scm:edge term="C107" to="1"/>
             <scm:edge term="C82" to="1"/>
-            <scm:edge term="C80" to="1"/>
-            <scm:edge term="C109" to="1"/>
          </scm:state>
          <scm:state nr="1" final="true">
+            <scm:edge term="C109" to="1"/>
+            <scm:edge term="C80" to="1"/>
             <scm:edge term="C107" to="1"/>
             <scm:edge term="C82" to="1"/>
-            <scm:edge term="C80" to="1"/>
-            <scm:edge term="C109" to="1"/>
          </scm:state>
       </scm:finiteStateMachine>
    </scm:complexType>
@@ -898,17 +900,17 @@
                     derivationMethod="restriction"
                     abstract="false"
                     variety="element-only">
-      <scm:attributeUse required="true" inheritable="false" ref="C143"/>
-      <scm:attributeUse required="false" inheritable="false" ref="C144"/>
+      <scm:attributeUse required="true" inheritable="false" ref="C144"/>
       <scm:attributeUse required="false" inheritable="false" ref="C145"/>
       <scm:attributeUse required="false" inheritable="false" ref="C146"/>
       <scm:attributeUse required="false" inheritable="false" ref="C147"/>
-      <scm:attributeUse required="true" inheritable="false" ref="C148"/>
+      <scm:attributeUse required="false" inheritable="false" ref="C148"/>
       <scm:attributeUse required="true" inheritable="false" ref="C149"/>
       <scm:attributeUse required="true" inheritable="false" ref="C150"/>
       <scm:attributeUse required="true" inheritable="false" ref="C151"/>
-      <scm:attributeUse required="false" inheritable="false" ref="C152"/>
-      <scm:attributeUse required="true" inheritable="false" ref="C153"/>
+      <scm:attributeUse required="true" inheritable="false" ref="C152"/>
+      <scm:attributeUse required="false" inheritable="false" ref="C153"/>
+      <scm:attributeUse required="true" inheritable="false" ref="C154"/>
       <scm:modelGroupParticle minOccurs="1" maxOccurs="1">
          <scm:sequence>
             <scm:elementParticle minOccurs="0" maxOccurs="unbounded" ref="C111"/>
@@ -924,48 +926,43 @@
       </scm:modelGroupParticle>
       <scm:finiteStateMachine initialState="0">
          <scm:state nr="0" final="true">
-            <scm:edge term="C85" to="1"/>
+            <scm:edge term="C49" to="1"/>
             <scm:edge term="C111" to="2"/>
-            <scm:edge term="C49" to="3"/>
+            <scm:edge term="C72" to="3"/>
+            <scm:edge term="C85" to="3"/>
             <scm:edge term="C115" to="4"/>
-            <scm:edge term="C72" to="1"/>
          </scm:state>
-         <scm:state nr="1" final="true"/>
+         <scm:state nr="1" final="true">
+            <scm:edge term="C49" to="1"/>
+            <scm:edge term="C72" to="3"/>
+            <scm:edge term="C85" to="3"/>
+         </scm:state>
          <scm:state nr="2" final="true">
-            <scm:edge term="C85" to="1"/>
+            <scm:edge term="C49" to="1"/>
             <scm:edge term="C111" to="2"/>
-            <scm:edge term="C49" to="3"/>
+            <scm:edge term="C72" to="3"/>
+            <scm:edge term="C85" to="3"/>
             <scm:edge term="C115" to="4"/>
-            <scm:edge term="C72" to="1"/>
          </scm:state>
-         <scm:state nr="3" final="true">
-            <scm:edge term="C85" to="1"/>
-            <scm:edge term="C49" to="3"/>
-            <scm:edge term="C72" to="1"/>
-         </scm:state>
+         <scm:state nr="3" final="true"/>
          <scm:state nr="4" final="true">
-            <scm:edge term="C85" to="1"/>
-            <scm:edge term="C49" to="3"/>
+            <scm:edge term="C49" to="1"/>
+            <scm:edge term="C72" to="3"/>
+            <scm:edge term="C85" to="3"/>
             <scm:edge term="C115" to="4"/>
-            <scm:edge term="C72" to="1"/>
          </scm:state>
       </scm:finiteStateMachine>
-      <scm:assertion xmlns:xs="http://www.w3.org/2001/XMLSchema"
-                     xmlns:vc="http://www.w3.org/2007/XMLSchema-versioning"
-                     test="not(@default and scm:fixed)"
-                     defaultNamespace=""
-                     xml:base="file:/Users/mike/repo/samples/scm/scmschema.xsd"/>
    </scm:complexType>
    <scm:complexType id="C57"
                     base="#anyType"
                     derivationMethod="restriction"
                     abstract="false"
                     variety="element-only">
-      <scm:attributeUse required="false" inheritable="false" ref="C154"/>
       <scm:attributeUse required="false" inheritable="false" ref="C155"/>
       <scm:attributeUse required="false" inheritable="false" ref="C156"/>
       <scm:attributeUse required="false" inheritable="false" ref="C157"/>
-      <scm:attributeUse required="true" inheritable="false" ref="C158"/>
+      <scm:attributeUse required="false" inheritable="false" ref="C158"/>
+      <scm:attributeUse required="true" inheritable="false" ref="C159"/>
       <scm:elementParticle minOccurs="0" maxOccurs="unbounded" ref="C103"/>
       <scm:finiteStateMachine initialState="0">
          <scm:state nr="0" final="true">
@@ -981,11 +978,11 @@
                     derivationMethod="restriction"
                     abstract="false"
                     variety="empty">
-      <scm:attributeUse required="true" inheritable="false" ref="C159"/>
-      <scm:attributeUse required="false" inheritable="false" ref="C160"/>
+      <scm:attributeUse required="true" inheritable="false" ref="C160"/>
       <scm:attributeUse required="false" inheritable="false" ref="C161"/>
       <scm:attributeUse required="false" inheritable="false" ref="C162"/>
       <scm:attributeUse required="false" inheritable="false" ref="C163"/>
+      <scm:attributeUse required="false" inheritable="false" ref="C164"/>
       <scm:finiteStateMachine initialState="0">
          <scm:state nr="0" final="true"/>
       </scm:finiteStateMachine>
@@ -995,10 +992,10 @@
                     derivationMethod="restriction"
                     abstract="false"
                     variety="element-only">
-      <scm:attributeUse required="false" inheritable="false" ref="C164"/>
-      <scm:attributeUse required="true" inheritable="false" ref="C165"/>
+      <scm:attributeUse required="false" inheritable="false" ref="C165"/>
       <scm:attributeUse required="true" inheritable="false" ref="C166"/>
       <scm:attributeUse required="true" inheritable="false" ref="C167"/>
+      <scm:attributeUse required="true" inheritable="false" ref="C168"/>
       <scm:modelGroupParticle minOccurs="1" maxOccurs="1">
          <scm:choice>
             <scm:elementParticle minOccurs="0" maxOccurs="1" ref="C72"/>
@@ -1007,8 +1004,8 @@
       </scm:modelGroupParticle>
       <scm:finiteStateMachine initialState="0">
          <scm:state nr="0" final="true">
-            <scm:edge term="C85" to="1"/>
             <scm:edge term="C72" to="1"/>
+            <scm:edge term="C85" to="1"/>
          </scm:state>
          <scm:state nr="1" final="true"/>
       </scm:finiteStateMachine>
@@ -1018,8 +1015,8 @@
                     derivationMethod="restriction"
                     abstract="false"
                     variety="empty">
-      <scm:attributeUse required="true" inheritable="false" ref="C168"/>
-      <scm:attributeUse required="false" inheritable="false" ref="C169" default="false">
+      <scm:attributeUse required="true" inheritable="false" ref="C169"/>
+      <scm:attributeUse required="false" inheritable="false" ref="C170" default="false">
          <scm:default lexicalForm="false">
             <scm:item type="#boolean" value="false"/>
          </scm:default>
@@ -1033,9 +1030,9 @@
                     derivationMethod="restriction"
                     abstract="false"
                     variety="element-only">
-      <scm:attributeUse required="true" inheritable="false" ref="C170"/>
-      <scm:attributeUse required="false" inheritable="false" ref="C171"/>
+      <scm:attributeUse required="true" inheritable="false" ref="C171"/>
       <scm:attributeUse required="false" inheritable="false" ref="C172"/>
+      <scm:attributeUse required="false" inheritable="false" ref="C173"/>
       <scm:modelGroupParticle minOccurs="1" maxOccurs="1">
          <scm:sequence>
             <scm:elementParticle minOccurs="0" maxOccurs="unbounded" ref="C60"/>
@@ -1044,14 +1041,14 @@
       </scm:modelGroupParticle>
       <scm:finiteStateMachine initialState="0">
          <scm:state nr="0" final="true">
-            <scm:edge term="C60" to="1"/>
-            <scm:edge term="C70" to="2"/>
+            <scm:edge term="C70" to="1"/>
+            <scm:edge term="C60" to="2"/>
          </scm:state>
-         <scm:state nr="1" final="true">
-            <scm:edge term="C60" to="1"/>
-            <scm:edge term="C70" to="2"/>
+         <scm:state nr="1" final="true"/>
+         <scm:state nr="2" final="true">
+            <scm:edge term="C70" to="1"/>
+            <scm:edge term="C60" to="2"/>
          </scm:state>
-         <scm:state nr="2" final="true"/>
       </scm:finiteStateMachine>
    </scm:complexType>
    <scm:complexType id="C67"
@@ -1059,8 +1056,8 @@
                     derivationMethod="restriction"
                     abstract="false"
                     variety="empty">
-      <scm:attributeUse required="true" inheritable="false" ref="C173"/>
       <scm:attributeUse required="true" inheritable="false" ref="C174"/>
+      <scm:attributeUse required="true" inheritable="false" ref="C175"/>
       <scm:attributeUse required="false" inheritable="false" ref="C24"/>
       <scm:finiteStateMachine initialState="0">
          <scm:state nr="0" final="true"/>
@@ -1071,8 +1068,8 @@
                     derivationMethod="restriction"
                     abstract="false"
                     variety="empty">
-      <scm:attributeUse required="true" inheritable="false" ref="C175"/>
-      <scm:attributeUse required="false" inheritable="false" ref="C176" default="false">
+      <scm:attributeUse required="true" inheritable="false" ref="C176"/>
+      <scm:attributeUse required="false" inheritable="false" ref="C177" default="false">
          <scm:default lexicalForm="false">
             <scm:item type="#boolean" value="false"/>
          </scm:default>
@@ -1086,7 +1083,7 @@
                     derivationMethod="restriction"
                     abstract="false"
                     variety="empty">
-      <scm:attributeUse required="true" inheritable="false" ref="C177"/>
+      <scm:attributeUse required="true" inheritable="false" ref="C178"/>
       <scm:finiteStateMachine initialState="0">
          <scm:state nr="0" final="true"/>
       </scm:finiteStateMachine>
@@ -1096,8 +1093,8 @@
                     derivationMethod="restriction"
                     abstract="false"
                     variety="empty">
-      <scm:attributeUse required="true" inheritable="false" ref="C178"/>
-      <scm:attributeUse required="false" inheritable="false" ref="C179" default="false">
+      <scm:attributeUse required="true" inheritable="false" ref="C179"/>
+      <scm:attributeUse required="false" inheritable="false" ref="C180" default="false">
          <scm:default lexicalForm="false">
             <scm:item type="#boolean" value="false"/>
          </scm:default>
@@ -1111,8 +1108,8 @@
                     derivationMethod="restriction"
                     abstract="false"
                     variety="empty">
-      <scm:attributeUse required="true" inheritable="false" ref="C180"/>
-      <scm:attributeUse required="false" inheritable="false" ref="C181" default="false">
+      <scm:attributeUse required="true" inheritable="false" ref="C181"/>
+      <scm:attributeUse required="false" inheritable="false" ref="C182" default="false">
          <scm:default lexicalForm="false">
             <scm:item type="#boolean" value="false"/>
          </scm:default>
@@ -1126,8 +1123,8 @@
                     derivationMethod="restriction"
                     abstract="false"
                     variety="empty">
-      <scm:attributeUse required="true" inheritable="false" ref="C182"/>
-      <scm:attributeUse required="false" inheritable="false" ref="C183" default="false">
+      <scm:attributeUse required="true" inheritable="false" ref="C183"/>
+      <scm:attributeUse required="false" inheritable="false" ref="C184" default="false">
          <scm:default lexicalForm="false">
             <scm:item type="#boolean" value="false"/>
          </scm:default>
@@ -1141,7 +1138,7 @@
                     derivationMethod="extension"
                     abstract="false"
                     variety="empty">
-      <scm:attributeUse required="true" inheritable="false" ref="C184"/>
+      <scm:attributeUse required="true" inheritable="false" ref="C185"/>
       <scm:attributeUse required="true" inheritable="false" ref="C11"/>
       <scm:attributeUse required="true" inheritable="false" ref="C12"/>
       <scm:finiteStateMachine initialState="0">
@@ -1153,16 +1150,16 @@
                     derivationMethod="restriction"
                     abstract="false"
                     variety="element-only">
-      <scm:attributeUse required="true" inheritable="false" ref="C185"/>
       <scm:attributeUse required="true" inheritable="false" ref="C186"/>
       <scm:attributeUse required="true" inheritable="false" ref="C187"/>
-      <scm:attributeUse required="false" inheritable="false" ref="C188"/>
+      <scm:attributeUse required="true" inheritable="false" ref="C188"/>
       <scm:attributeUse required="false" inheritable="false" ref="C189"/>
-      <scm:attributeUse required="true" inheritable="false" ref="C190"/>
-      <scm:attributeUse required="false" inheritable="false" ref="C191"/>
+      <scm:attributeUse required="false" inheritable="false" ref="C190"/>
+      <scm:attributeUse required="true" inheritable="false" ref="C191"/>
       <scm:attributeUse required="false" inheritable="false" ref="C192"/>
       <scm:attributeUse required="false" inheritable="false" ref="C193"/>
-      <scm:attributeUse required="true" inheritable="false" ref="C194"/>
+      <scm:attributeUse required="false" inheritable="false" ref="C194"/>
+      <scm:attributeUse required="true" inheritable="false" ref="C195"/>
       <scm:modelGroupParticle minOccurs="1" maxOccurs="1">
          <scm:sequence>
             <scm:elementParticle minOccurs="0" maxOccurs="1" ref="C132"/>
@@ -1175,53 +1172,53 @@
       </scm:modelGroupParticle>
       <scm:finiteStateMachine initialState="0">
          <scm:state nr="0" final="true">
-            <scm:edge term="C70" to="1"/>
+            <scm:edge term="C80" to="2"/>
+            <scm:edge term="C70" to="4"/>
             <scm:edge term="C132" to="5"/>
-            <scm:edge term="C66" to="3"/>
-            <scm:edge term="C60" to="2"/>
-            <scm:edge term="C80" to="4"/>
-            <scm:edge term="C109" to="4"/>
-            <scm:edge term="C82" to="4"/>
-            <scm:edge term="C105" to="6"/>
-            <scm:edge term="C107" to="4"/>
+            <scm:edge term="C109" to="2"/>
+            <scm:edge term="C82" to="2"/>
+            <scm:edge term="C105" to="1"/>
+            <scm:edge term="C60" to="3"/>
+            <scm:edge term="C107" to="2"/>
+            <scm:edge term="C66" to="6"/>
          </scm:state>
          <scm:state nr="1" final="true">
-            <scm:edge term="C66" to="3"/>
-            <scm:edge term="C107" to="4"/>
-            <scm:edge term="C82" to="4"/>
-            <scm:edge term="C80" to="4"/>
-            <scm:edge term="C109" to="4"/>
-            <scm:edge term="C105" to="6"/>
+            <scm:edge term="C66" to="6"/>
          </scm:state>
          <scm:state nr="2" final="true">
-            <scm:edge term="C70" to="1"/>
-            <scm:edge term="C60" to="2"/>
-            <scm:edge term="C66" to="3"/>
-            <scm:edge term="C107" to="4"/>
-            <scm:edge term="C82" to="4"/>
-            <scm:edge term="C80" to="4"/>
-            <scm:edge term="C109" to="4"/>
-            <scm:edge term="C105" to="6"/>
+            <scm:edge term="C105" to="1"/>
+            <scm:edge term="C66" to="6"/>
          </scm:state>
          <scm:state nr="3" final="true">
-            <scm:edge term="C66" to="3"/>
+            <scm:edge term="C105" to="1"/>
+            <scm:edge term="C80" to="2"/>
+            <scm:edge term="C60" to="3"/>
+            <scm:edge term="C109" to="2"/>
+            <scm:edge term="C70" to="4"/>
+            <scm:edge term="C82" to="2"/>
+            <scm:edge term="C66" to="6"/>
+            <scm:edge term="C107" to="2"/>
          </scm:state>
          <scm:state nr="4" final="true">
-            <scm:edge term="C66" to="3"/>
-            <scm:edge term="C105" to="6"/>
+            <scm:edge term="C105" to="1"/>
+            <scm:edge term="C80" to="2"/>
+            <scm:edge term="C109" to="2"/>
+            <scm:edge term="C82" to="2"/>
+            <scm:edge term="C66" to="6"/>
+            <scm:edge term="C107" to="2"/>
          </scm:state>
          <scm:state nr="5" final="true">
-            <scm:edge term="C70" to="1"/>
-            <scm:edge term="C60" to="2"/>
-            <scm:edge term="C66" to="3"/>
-            <scm:edge term="C107" to="4"/>
-            <scm:edge term="C82" to="4"/>
-            <scm:edge term="C80" to="4"/>
-            <scm:edge term="C109" to="4"/>
-            <scm:edge term="C105" to="6"/>
+            <scm:edge term="C105" to="1"/>
+            <scm:edge term="C80" to="2"/>
+            <scm:edge term="C60" to="3"/>
+            <scm:edge term="C109" to="2"/>
+            <scm:edge term="C70" to="4"/>
+            <scm:edge term="C82" to="2"/>
+            <scm:edge term="C66" to="6"/>
+            <scm:edge term="C107" to="2"/>
          </scm:state>
          <scm:state nr="6" final="true">
-            <scm:edge term="C66" to="3"/>
+            <scm:edge term="C66" to="6"/>
          </scm:state>
       </scm:finiteStateMachine>
    </scm:complexType>
@@ -1230,8 +1227,8 @@
                     derivationMethod="restriction"
                     abstract="false"
                     variety="empty">
-      <scm:attributeUse required="true" inheritable="false" ref="C195"/>
-      <scm:attributeUse required="false" inheritable="false" ref="C196" default="false">
+      <scm:attributeUse required="true" inheritable="false" ref="C196"/>
+      <scm:attributeUse required="false" inheritable="false" ref="C197" default="false">
          <scm:default lexicalForm="false">
             <scm:item type="#boolean" value="false"/>
          </scm:default>
@@ -1245,8 +1242,8 @@
                     derivationMethod="restriction"
                     abstract="false"
                     variety="empty">
-      <scm:attributeUse required="true" inheritable="false" ref="C197"/>
-      <scm:attributeUse required="false" inheritable="false" ref="C198" default="false">
+      <scm:attributeUse required="true" inheritable="false" ref="C198"/>
+      <scm:attributeUse required="false" inheritable="false" ref="C199" default="false">
          <scm:default lexicalForm="false">
             <scm:item type="#boolean" value="false"/>
          </scm:default>
@@ -1260,8 +1257,8 @@
                     derivationMethod="restriction"
                     abstract="false"
                     variety="empty">
-      <scm:attributeUse required="true" inheritable="false" ref="C199"/>
-      <scm:attributeUse required="false" inheritable="false" ref="C200" default="false">
+      <scm:attributeUse required="true" inheritable="false" ref="C200"/>
+      <scm:attributeUse required="false" inheritable="false" ref="C201" default="false">
          <scm:default lexicalForm="false">
             <scm:item type="#boolean" value="false"/>
          </scm:default>
@@ -1275,11 +1272,11 @@
                     derivationMethod="restriction"
                     abstract="false"
                     variety="empty">
-      <scm:attributeUse required="true" inheritable="false" ref="C201"/>
       <scm:attributeUse required="true" inheritable="false" ref="C202"/>
-      <scm:attributeUse required="false" inheritable="false" ref="C203"/>
-      <scm:attributeUse required="true" inheritable="false" ref="C204"/>
-      <scm:attributeUse required="false" inheritable="false" ref="C205"/>
+      <scm:attributeUse required="true" inheritable="false" ref="C203"/>
+      <scm:attributeUse required="false" inheritable="false" ref="C204"/>
+      <scm:attributeUse required="true" inheritable="false" ref="C205"/>
+      <scm:attributeUse required="false" inheritable="false" ref="C206"/>
       <scm:finiteStateMachine initialState="0">
          <scm:state nr="0" final="true"/>
       </scm:finiteStateMachine>
@@ -1289,22 +1286,22 @@
                     derivationMethod="restriction"
                     abstract="false"
                     variety="element-only">
-      <scm:attributeUse required="true" inheritable="false" ref="C206"/>
-      <scm:attributeUse required="false" inheritable="false" ref="C207"/>
+      <scm:attributeUse required="true" inheritable="false" ref="C207"/>
       <scm:attributeUse required="false" inheritable="false" ref="C208"/>
+      <scm:attributeUse required="false" inheritable="false" ref="C209"/>
       <scm:elementParticle minOccurs="0" maxOccurs="unbounded" ref="C82"/>
       <scm:finiteStateMachine initialState="0">
          <scm:state nr="0" final="true">
-            <scm:edge term="C82" to="1"/>
-            <scm:edge term="C107" to="1"/>
             <scm:edge term="C80" to="1"/>
             <scm:edge term="C109" to="1"/>
+            <scm:edge term="C107" to="1"/>
+            <scm:edge term="C82" to="1"/>
          </scm:state>
          <scm:state nr="1" final="true">
-            <scm:edge term="C82" to="1"/>
-            <scm:edge term="C107" to="1"/>
             <scm:edge term="C80" to="1"/>
             <scm:edge term="C109" to="1"/>
+            <scm:edge term="C107" to="1"/>
+            <scm:edge term="C82" to="1"/>
          </scm:state>
       </scm:finiteStateMachine>
    </scm:complexType>
@@ -1313,8 +1310,8 @@
                     derivationMethod="restriction"
                     abstract="false"
                     variety="empty">
-      <scm:attributeUse required="true" inheritable="false" ref="C209"/>
-      <scm:attributeUse required="false" inheritable="false" ref="C210" default="false">
+      <scm:attributeUse required="true" inheritable="false" ref="C210"/>
+      <scm:attributeUse required="false" inheritable="false" ref="C211" default="false">
          <scm:default lexicalForm="false">
             <scm:item type="#boolean" value="false"/>
          </scm:default>
@@ -1328,8 +1325,8 @@
                     derivationMethod="restriction"
                     abstract="false"
                     variety="empty">
-      <scm:attributeUse required="true" inheritable="false" ref="C211"/>
-      <scm:attributeUse required="false" inheritable="false" ref="C212" default="false">
+      <scm:attributeUse required="true" inheritable="false" ref="C212"/>
+      <scm:attributeUse required="false" inheritable="false" ref="C213" default="false">
          <scm:default lexicalForm="false">
             <scm:item type="#boolean" value="false"/>
          </scm:default>
@@ -1343,8 +1340,8 @@
                     derivationMethod="restriction"
                     abstract="false"
                     variety="empty">
-      <scm:attributeUse required="true" inheritable="false" ref="C213"/>
       <scm:attributeUse required="true" inheritable="false" ref="C214"/>
+      <scm:attributeUse required="true" inheritable="false" ref="C215"/>
       <scm:finiteStateMachine initialState="0">
          <scm:state nr="0" final="true"/>
       </scm:finiteStateMachine>
@@ -1354,7 +1351,7 @@
                     derivationMethod="restriction"
                     abstract="false"
                     variety="element-only">
-      <scm:attributeUse required="true" inheritable="false" ref="C215"/>
+      <scm:attributeUse required="true" inheritable="false" ref="C216"/>
       <scm:elementParticle minOccurs="1" maxOccurs="unbounded" ref="C56"/>
       <scm:finiteStateMachine initialState="0">
          <scm:state nr="0">
@@ -1373,7 +1370,7 @@
                     derivationMethod="extension"
                     abstract="false"
                     variety="empty">
-      <scm:attributeUse required="true" inheritable="false" ref="C216"/>
+      <scm:attributeUse required="true" inheritable="false" ref="C217"/>
       <scm:attributeUse required="true" inheritable="false" ref="C11"/>
       <scm:attributeUse required="true" inheritable="false" ref="C12"/>
       <scm:finiteStateMachine initialState="0">
@@ -1385,20 +1382,20 @@
                     derivationMethod="extension"
                     abstract="false"
                     variety="element-only">
-      <scm:attributeUse required="false" inheritable="false" ref="C217"/>
+      <scm:attributeUse required="false" inheritable="false" ref="C218"/>
       <scm:attributeUse required="true" inheritable="false" ref="C11"/>
       <scm:attributeUse required="true" inheritable="false" ref="C12"/>
       <scm:elementParticle minOccurs="0" maxOccurs="unbounded" ref="C53"/>
       <scm:finiteStateMachine initialState="0">
          <scm:state nr="0" final="true">
-            <scm:edge term="C88" to="1"/>
             <scm:edge term="C51" to="1"/>
+            <scm:edge term="C88" to="1"/>
             <scm:edge term="C127" to="1"/>
             <scm:edge term="C53" to="1"/>
          </scm:state>
          <scm:state nr="1" final="true">
-            <scm:edge term="C88" to="1"/>
             <scm:edge term="C51" to="1"/>
+            <scm:edge term="C88" to="1"/>
             <scm:edge term="C127" to="1"/>
             <scm:edge term="C53" to="1"/>
          </scm:state>
@@ -1409,7 +1406,7 @@
                     derivationMethod="restriction"
                     abstract="false"
                     variety="empty">
-      <scm:attributeUse required="true" inheritable="false" ref="C218"/>
+      <scm:attributeUse required="true" inheritable="false" ref="C219"/>
       <scm:finiteStateMachine initialState="0">
          <scm:state nr="0" final="true"/>
       </scm:finiteStateMachine>
@@ -1419,14 +1416,14 @@
                     derivationMethod="restriction"
                     abstract="false"
                     variety="element-only">
-      <scm:attributeUse required="false" inheritable="false" ref="C219"/>
       <scm:attributeUse required="false" inheritable="false" ref="C220"/>
-      <scm:attributeUse required="true" inheritable="false" ref="C221"/>
+      <scm:attributeUse required="false" inheritable="false" ref="C221"/>
       <scm:attributeUse required="true" inheritable="false" ref="C222"/>
       <scm:attributeUse required="true" inheritable="false" ref="C223"/>
-      <scm:attributeUse required="false" inheritable="false" ref="C224"/>
-      <scm:attributeUse required="true" inheritable="false" ref="C225"/>
+      <scm:attributeUse required="true" inheritable="false" ref="C224"/>
+      <scm:attributeUse required="false" inheritable="false" ref="C225"/>
       <scm:attributeUse required="true" inheritable="false" ref="C226"/>
+      <scm:attributeUse required="true" inheritable="false" ref="C227"/>
       <scm:modelGroupParticle minOccurs="1" maxOccurs="1">
          <scm:choice>
             <scm:elementParticle minOccurs="0" maxOccurs="1" ref="C72"/>
@@ -1446,9 +1443,9 @@
                     derivationMethod="restriction"
                     abstract="false"
                     variety="empty">
-      <scm:attributeUse required="true" inheritable="false" ref="C227"/>
       <scm:attributeUse required="true" inheritable="false" ref="C228"/>
       <scm:attributeUse required="true" inheritable="false" ref="C229"/>
+      <scm:attributeUse required="true" inheritable="false" ref="C230"/>
       <scm:attributeUse required="false" inheritable="false" ref="C24"/>
       <scm:finiteStateMachine initialState="0">
          <scm:state nr="0" final="true"/>
@@ -1459,7 +1456,7 @@
                     derivationMethod="restriction"
                     abstract="false"
                     variety="element-only">
-      <scm:attributeUse required="false" inheritable="false" ref="C230" default="false">
+      <scm:attributeUse required="false" inheritable="false" ref="C231" default="false">
          <scm:default lexicalForm="false">
             <scm:item type="#boolean" value="false"/>
          </scm:default>
@@ -1477,8 +1474,8 @@
                     derivationMethod="restriction"
                     abstract="false"
                     variety="empty">
-      <scm:attributeUse required="true" inheritable="false" ref="C231"/>
-      <scm:attributeUse required="false" inheritable="false" ref="C232" default="false">
+      <scm:attributeUse required="true" inheritable="false" ref="C232"/>
+      <scm:attributeUse required="false" inheritable="false" ref="C233" default="false">
          <scm:default lexicalForm="false">
             <scm:item type="#boolean" value="false"/>
          </scm:default>
@@ -1492,8 +1489,8 @@
                     derivationMethod="restriction"
                     abstract="false"
                     variety="empty">
-      <scm:attributeUse required="true" inheritable="false" ref="C233"/>
-      <scm:attributeUse required="false" inheritable="false" ref="C234" default="false">
+      <scm:attributeUse required="true" inheritable="false" ref="C234"/>
+      <scm:attributeUse required="false" inheritable="false" ref="C235" default="false">
          <scm:default lexicalForm="false">
             <scm:item type="#boolean" value="false"/>
          </scm:default>
@@ -1507,7 +1504,7 @@
                     derivationMethod="restriction"
                     abstract="false"
                     variety="element-only">
-      <scm:attributeUse required="false" inheritable="false" ref="C235" default="false">
+      <scm:attributeUse required="false" inheritable="false" ref="C236" default="false">
          <scm:default lexicalForm="false">
             <scm:item type="#boolean" value="false"/>
          </scm:default>
@@ -1527,8 +1524,8 @@
                     derivationMethod="restriction"
                     abstract="false"
                     variety="empty">
-      <scm:attributeUse required="true" inheritable="false" ref="C236"/>
-      <scm:attributeUse required="false" inheritable="false" ref="C237" default="false">
+      <scm:attributeUse required="true" inheritable="false" ref="C237"/>
+      <scm:attributeUse required="false" inheritable="false" ref="C238" default="false">
          <scm:default lexicalForm="false">
             <scm:item type="#boolean" value="false"/>
          </scm:default>
@@ -1542,15 +1539,15 @@
                     derivationMethod="restriction"
                     abstract="false"
                     variety="element-only">
-      <scm:attributeUse required="true" inheritable="false" ref="C238"/>
-      <scm:attributeUse required="false" inheritable="false" ref="C239"/>
-      <scm:attributeUse required="true" inheritable="false" ref="C240"/>
-      <scm:attributeUse required="false" inheritable="false" ref="C241"/>
+      <scm:attributeUse required="true" inheritable="false" ref="C239"/>
+      <scm:attributeUse required="false" inheritable="false" ref="C240"/>
+      <scm:attributeUse required="true" inheritable="false" ref="C241"/>
       <scm:attributeUse required="false" inheritable="false" ref="C242"/>
       <scm:attributeUse required="false" inheritable="false" ref="C243"/>
       <scm:attributeUse required="false" inheritable="false" ref="C244"/>
       <scm:attributeUse required="false" inheritable="false" ref="C245"/>
-      <scm:attributeUse required="true" inheritable="false" ref="C246"/>
+      <scm:attributeUse required="false" inheritable="false" ref="C246"/>
+      <scm:attributeUse required="true" inheritable="false" ref="C247"/>
       <scm:modelGroupParticle minOccurs="0" maxOccurs="unbounded">
          <scm:sequence>
             <scm:elementParticle minOccurs="1" maxOccurs="1" ref="C46"/>
@@ -1558,11 +1555,6 @@
       </scm:modelGroupParticle>
       <scm:finiteStateMachine initialState="0">
          <scm:state nr="0" final="true">
-            <scm:edge term="C119" to="1"/>
-            <scm:edge term="C76" to="1"/>
-            <scm:edge term="C123" to="1"/>
-            <scm:edge term="C86" to="1"/>
-            <scm:edge term="C125" to="1"/>
             <scm:edge term="C121" to="1"/>
             <scm:edge term="C117" to="1"/>
             <scm:edge term="C90" to="1"/>
@@ -1576,13 +1568,13 @@
             <scm:edge term="C74" to="1"/>
             <scm:edge term="C78" to="1"/>
             <scm:edge term="C92" to="1"/>
+            <scm:edge term="C119" to="1"/>
+            <scm:edge term="C76" to="1"/>
+            <scm:edge term="C123" to="1"/>
+            <scm:edge term="C86" to="1"/>
+            <scm:edge term="C125" to="1"/>
          </scm:state>
          <scm:state nr="1" final="true">
-            <scm:edge term="C119" to="1"/>
-            <scm:edge term="C76" to="1"/>
-            <scm:edge term="C123" to="1"/>
-            <scm:edge term="C86" to="1"/>
-            <scm:edge term="C125" to="1"/>
             <scm:edge term="C121" to="1"/>
             <scm:edge term="C117" to="1"/>
             <scm:edge term="C90" to="1"/>
@@ -1596,6 +1588,11 @@
             <scm:edge term="C74" to="1"/>
             <scm:edge term="C78" to="1"/>
             <scm:edge term="C92" to="1"/>
+            <scm:edge term="C119" to="1"/>
+            <scm:edge term="C76" to="1"/>
+            <scm:edge term="C123" to="1"/>
+            <scm:edge term="C86" to="1"/>
+            <scm:edge term="C125" to="1"/>
          </scm:state>
       </scm:finiteStateMachine>
    </scm:complexType>
@@ -1604,8 +1601,8 @@
                     derivationMethod="restriction"
                     abstract="false"
                     variety="empty">
-      <scm:attributeUse required="true" inheritable="false" ref="C247"/>
-      <scm:attributeUse required="false" inheritable="false" ref="C248" default="false">
+      <scm:attributeUse required="true" inheritable="false" ref="C248"/>
+      <scm:attributeUse required="false" inheritable="false" ref="C249" default="false">
          <scm:default lexicalForm="false">
             <scm:item type="#boolean" value="false"/>
          </scm:default>
@@ -1619,8 +1616,8 @@
                     derivationMethod="restriction"
                     abstract="false"
                     variety="empty">
-      <scm:attributeUse required="false" inheritable="false" ref="C249"/>
       <scm:attributeUse required="false" inheritable="false" ref="C250"/>
+      <scm:attributeUse required="false" inheritable="false" ref="C251"/>
       <scm:finiteStateMachine initialState="0">
          <scm:state nr="0" final="true"/>
       </scm:finiteStateMachine>
@@ -1630,9 +1627,9 @@
                     derivationMethod="restriction"
                     abstract="false"
                     variety="empty">
-      <scm:attributeUse required="true" inheritable="false" ref="C251"/>
       <scm:attributeUse required="true" inheritable="false" ref="C252"/>
-      <scm:attributeUse required="false" inheritable="false" ref="C253"/>
+      <scm:attributeUse required="true" inheritable="false" ref="C253"/>
+      <scm:attributeUse required="false" inheritable="false" ref="C254"/>
       <scm:finiteStateMachine initialState="0">
          <scm:state nr="0" final="true"/>
       </scm:finiteStateMachine>
@@ -1662,560 +1659,560 @@
                   inheritable="false"
                   containingComplexType="C48"/>
    <scm:attribute id="C142"
+                  name="dmk"
+                  type="#base64Binary"
+                  global="false"
+                  inheritable="false"
+                  containingComplexType="C48"/>
+   <scm:attribute id="C143"
                   name="ref"
                   type="#IDREF"
                   global="false"
                   inheritable="false"
                   containingComplexType="C50"/>
-   <scm:attribute id="C143"
+   <scm:attribute id="C144"
                   name="abstract"
                   type="#boolean"
                   global="false"
                   inheritable="false"
                   containingComplexType="C55"/>
-   <scm:attribute id="C144"
+   <scm:attribute id="C145"
                   name="block"
                   type="C17"
                   global="false"
                   inheritable="false"
                   containingComplexType="C55"/>
-   <scm:attribute id="C145"
+   <scm:attribute id="C146"
                   name="containingComplexType"
                   type="#IDREF"
                   global="false"
                   inheritable="false"
                   containingComplexType="C55"/>
-   <scm:attribute id="C146"
+   <scm:attribute id="C147"
                   name="default"
                   type="#string"
                   global="false"
                   inheritable="false"
                   containingComplexType="C55"/>
-   <scm:attribute id="C147"
+   <scm:attribute id="C148"
                   name="final"
                   type="C15"
                   global="false"
                   inheritable="false"
                   containingComplexType="C55"/>
-   <scm:attribute id="C148"
+   <scm:attribute id="C149"
                   name="global"
                   type="#boolean"
                   global="false"
                   inheritable="false"
                   containingComplexType="C55"/>
-   <scm:attribute id="C149"
+   <scm:attribute id="C150"
                   name="id"
                   type="#ID"
                   global="false"
                   inheritable="false"
                   containingComplexType="C55"/>
-   <scm:attribute id="C150"
+   <scm:attribute id="C151"
                   name="name"
                   type="#NCName"
                   global="false"
                   inheritable="false"
                   containingComplexType="C55"/>
-   <scm:attribute id="C151"
+   <scm:attribute id="C152"
                   name="nillable"
                   type="#boolean"
                   global="false"
                   inheritable="false"
                   containingComplexType="C55"/>
-   <scm:attribute id="C152"
+   <scm:attribute id="C153"
                   name="targetNamespace"
                   type="C29"
                   global="false"
                   inheritable="false"
                   containingComplexType="C55"/>
-   <scm:attribute id="C153"
+   <scm:attribute id="C154"
                   name="type"
                   type="C1"
                   global="false"
                   inheritable="false"
                   containingComplexType="C55"/>
-   <scm:attribute id="C154"
+   <scm:attribute id="C155"
                   name="afterMax"
                   type="#integer"
                   global="false"
                   inheritable="false"
                   containingComplexType="C57"/>
-   <scm:attribute id="C155"
+   <scm:attribute id="C156"
                   name="final"
                   type="#boolean"
                   global="false"
                   inheritable="false"
                   containingComplexType="C57"/>
-   <scm:attribute id="C156"
+   <scm:attribute id="C157"
                   name="maxOccurs"
                   type="C26"
                   global="false"
                   inheritable="false"
                   containingComplexType="C57"/>
-   <scm:attribute id="C157"
+   <scm:attribute id="C158"
                   name="minOccurs"
                   type="#integer"
                   global="false"
                   inheritable="false"
                   containingComplexType="C57"/>
-   <scm:attribute id="C158"
+   <scm:attribute id="C159"
                   name="nr"
                   type="#integer"
                   global="false"
                   inheritable="false"
                   containingComplexType="C57"/>
-   <scm:attribute id="C159"
+   <scm:attribute id="C160"
                   name="id"
                   type="#ID"
                   global="false"
                   inheritable="false"
                   containingComplexType="C59"/>
-   <scm:attribute id="C160"
+   <scm:attribute id="C161"
                   name="name"
                   type="#NCName"
                   global="false"
                   inheritable="false"
                   containingComplexType="C59"/>
-   <scm:attribute id="C161"
-                  name="targetNamespace"
-                  type="C29"
-                  global="false"
-                  inheritable="false"
-                  containingComplexType="C59"/>
    <scm:attribute id="C162"
-                  name="systemId"
+                  name="targetNamespace"
                   type="C29"
                   global="false"
                   inheritable="false"
                   containingComplexType="C59"/>
    <scm:attribute id="C163"
+                  name="systemId"
+                  type="C29"
+                  global="false"
+                  inheritable="false"
+                  containingComplexType="C59"/>
+   <scm:attribute id="C164"
                   name="publicId"
                   type="#string"
                   global="false"
                   inheritable="false"
                   containingComplexType="C59"/>
-   <scm:attribute id="C164"
+   <scm:attribute id="C165"
                   name="default"
                   type="#string"
                   global="false"
                   inheritable="false"
                   containingComplexType="C61"/>
-   <scm:attribute id="C165"
+   <scm:attribute id="C166"
                   name="ref"
                   type="#IDREF"
                   global="false"
                   inheritable="false"
                   containingComplexType="C61"/>
-   <scm:attribute id="C166"
+   <scm:attribute id="C167"
                   name="required"
                   type="#boolean"
                   global="false"
                   inheritable="false"
                   containingComplexType="C61"/>
-   <scm:attribute id="C167"
+   <scm:attribute id="C168"
                   name="inheritable"
                   type="#boolean"
                   global="false"
                   inheritable="false"
                   containingComplexType="C61"/>
-   <scm:attribute id="C168"
+   <scm:attribute id="C169"
                   name="value"
                   type="#anySimpleType"
                   global="false"
                   inheritable="false"
                   containingComplexType="C63"/>
-   <scm:attribute id="C169"
+   <scm:attribute id="C170"
                   name="fixed"
                   type="#boolean"
                   global="false"
                   inheritable="false"
                   containingComplexType="C63"/>
-   <scm:attribute id="C170"
+   <scm:attribute id="C171"
                   name="id"
                   type="#ID"
                   global="false"
                   inheritable="false"
                   containingComplexType="C65"/>
-   <scm:attribute id="C171"
+   <scm:attribute id="C172"
                   name="name"
                   type="#NCName"
                   global="false"
                   inheritable="false"
                   containingComplexType="C65"/>
-   <scm:attribute id="C172"
+   <scm:attribute id="C173"
                   name="targetNamespace"
                   type="C29"
                   global="false"
                   inheritable="false"
                   containingComplexType="C65"/>
-   <scm:attribute id="C173"
+   <scm:attribute id="C174"
                   name="test"
                   type="C13"
                   global="false"
                   inheritable="false"
                   containingComplexType="C67"/>
-   <scm:attribute id="C174"
+   <scm:attribute id="C175"
                   name="defaultNamespace"
                   type="C29"
                   global="false"
                   inheritable="false"
                   containingComplexType="C67"/>
-   <scm:attribute id="C175"
+   <scm:attribute id="C176"
                   name="value"
                   type="#anySimpleType"
                   global="false"
                   inheritable="false"
                   containingComplexType="C69"/>
-   <scm:attribute id="C176"
+   <scm:attribute id="C177"
                   name="fixed"
                   type="#boolean"
                   global="false"
                   inheritable="false"
                   containingComplexType="C69"/>
-   <scm:attribute id="C177"
+   <scm:attribute id="C178"
                   name="ref"
                   type="#IDREF"
                   global="false"
                   inheritable="false"
                   containingComplexType="C71"/>
-   <scm:attribute id="C178"
+   <scm:attribute id="C179"
                   name="value"
                   type="#anySimpleType"
                   global="false"
                   inheritable="false"
                   containingComplexType="C75"/>
-   <scm:attribute id="C179"
+   <scm:attribute id="C180"
                   name="fixed"
                   type="#boolean"
                   global="false"
                   inheritable="false"
                   containingComplexType="C75"/>
-   <scm:attribute id="C180"
+   <scm:attribute id="C181"
                   name="value"
                   type="#nonNegativeInteger"
                   global="false"
                   inheritable="false"
                   containingComplexType="C77"/>
-   <scm:attribute id="C181"
+   <scm:attribute id="C182"
                   name="fixed"
                   type="#boolean"
                   global="false"
                   inheritable="false"
                   containingComplexType="C77"/>
-   <scm:attribute id="C182"
+   <scm:attribute id="C183"
                   name="value"
                   type="#anySimpleType"
                   global="false"
                   inheritable="false"
                   containingComplexType="C79"/>
-   <scm:attribute id="C183"
+   <scm:attribute id="C184"
                   name="fixed"
                   type="#boolean"
                   global="false"
                   inheritable="false"
                   containingComplexType="C79"/>
-   <scm:attribute id="C184"
+   <scm:attribute id="C185"
                   name="ref"
                   type="#IDREF"
                   global="false"
                   inheritable="false"
                   containingComplexType="C81"/>
-   <scm:attribute id="C185"
+   <scm:attribute id="C186"
                   name="abstract"
                   type="#boolean"
                   global="false"
                   inheritable="false"
                   containingComplexType="C84"/>
-   <scm:attribute id="C186"
+   <scm:attribute id="C187"
                   name="base"
                   type="C1"
                   global="false"
                   inheritable="false"
                   containingComplexType="C84"/>
-   <scm:attribute id="C187"
+   <scm:attribute id="C188"
                   name="derivationMethod"
                   type="C16"
                   global="false"
                   inheritable="false"
                   containingComplexType="C84"/>
-   <scm:attribute id="C188"
+   <scm:attribute id="C189"
                   name="block"
                   type="C17"
                   global="false"
                   inheritable="false"
                   containingComplexType="C84"/>
-   <scm:attribute id="C189"
+   <scm:attribute id="C190"
                   name="final"
                   type="C15"
                   global="false"
                   inheritable="false"
                   containingComplexType="C84"/>
-   <scm:attribute id="C190"
+   <scm:attribute id="C191"
                   name="id"
                   type="#ID"
                   global="false"
                   inheritable="false"
                   containingComplexType="C84"/>
-   <scm:attribute id="C191"
+   <scm:attribute id="C192"
                   name="name"
                   type="#NCName"
                   global="false"
                   inheritable="false"
                   containingComplexType="C84"/>
-   <scm:attribute id="C192"
+   <scm:attribute id="C193"
                   name="simpleType"
                   type="C1"
                   global="false"
                   inheritable="false"
                   containingComplexType="C84"/>
-   <scm:attribute id="C193"
+   <scm:attribute id="C194"
                   name="targetNamespace"
                   type="C29"
                   global="false"
                   inheritable="false"
                   containingComplexType="C84"/>
-   <scm:attribute id="C194"
+   <scm:attribute id="C195"
                   name="variety"
                   type="C0"
                   global="false"
                   inheritable="false"
                   containingComplexType="C84"/>
-   <scm:attribute id="C195"
+   <scm:attribute id="C196"
                   name="value"
                   type="#anySimpleType"
-                  global="false"
-                  inheritable="false"
-                  containingComplexType="C87"/>
-   <scm:attribute id="C196"
-                  name="fixed"
-                  type="#boolean"
                   global="false"
                   inheritable="false"
                   containingComplexType="C87"/>
    <scm:attribute id="C197"
+                  name="fixed"
+                  type="#boolean"
+                  global="false"
+                  inheritable="false"
+                  containingComplexType="C87"/>
+   <scm:attribute id="C198"
                   name="value"
                   type="#anySimpleType"
                   global="false"
                   inheritable="false"
                   containingComplexType="C91"/>
-   <scm:attribute id="C198"
+   <scm:attribute id="C199"
                   name="fixed"
                   type="#boolean"
                   global="false"
                   inheritable="false"
                   containingComplexType="C91"/>
-   <scm:attribute id="C199"
+   <scm:attribute id="C200"
                   name="value"
                   type="#string"
                   global="false"
                   inheritable="false"
                   containingComplexType="C93"/>
-   <scm:attribute id="C200"
+   <scm:attribute id="C201"
                   name="fixed"
                   type="#boolean"
                   global="false"
                   inheritable="false"
                   containingComplexType="C93"/>
-   <scm:attribute id="C201"
+   <scm:attribute id="C202"
                   name="constraint"
                   type="#NCName"
                   global="false"
                   inheritable="false"
                   containingComplexType="C96"/>
-   <scm:attribute id="C202"
+   <scm:attribute id="C203"
                   name="id"
                   type="#ID"
                   global="false"
                   inheritable="false"
                   containingComplexType="C96"/>
-   <scm:attribute id="C203"
+   <scm:attribute id="C204"
                   name="namespaces"
                   type="C31"
                   global="false"
                   inheritable="false"
                   containingComplexType="C96"/>
-   <scm:attribute id="C204"
+   <scm:attribute id="C205"
                   name="processContents"
                   type="C32"
                   global="false"
                   inheritable="false"
                   containingComplexType="C96"/>
-   <scm:attribute id="C205"
+   <scm:attribute id="C206"
                   name="notQName"
                   type="C3"
                   global="false"
                   inheritable="false"
                   containingComplexType="C96"/>
-   <scm:attribute id="C206"
+   <scm:attribute id="C207"
                   name="id"
                   type="#ID"
                   global="false"
                   inheritable="false"
                   containingComplexType="C98"/>
-   <scm:attribute id="C207"
+   <scm:attribute id="C208"
                   name="name"
                   type="#NCName"
                   global="false"
                   inheritable="false"
                   containingComplexType="C98"/>
-   <scm:attribute id="C208"
+   <scm:attribute id="C209"
                   name="targetNamespace"
                   type="C29"
                   global="false"
                   inheritable="false"
                   containingComplexType="C98"/>
-   <scm:attribute id="C209"
+   <scm:attribute id="C210"
                   name="value"
                   type="#nonNegativeInteger"
                   global="false"
                   inheritable="false"
                   containingComplexType="C100"/>
-   <scm:attribute id="C210"
+   <scm:attribute id="C211"
                   name="fixed"
                   type="#boolean"
                   global="false"
                   inheritable="false"
                   containingComplexType="C100"/>
-   <scm:attribute id="C211"
+   <scm:attribute id="C212"
                   name="value"
                   type="C25"
                   global="false"
                   inheritable="false"
                   containingComplexType="C102"/>
-   <scm:attribute id="C212"
+   <scm:attribute id="C213"
                   name="fixed"
                   type="#boolean"
                   global="false"
                   inheritable="false"
                   containingComplexType="C102"/>
-   <scm:attribute id="C213"
+   <scm:attribute id="C214"
                   name="term"
                   type="#IDREF"
                   global="false"
                   inheritable="false"
                   containingComplexType="C104"/>
-   <scm:attribute id="C214"
+   <scm:attribute id="C215"
                   name="to"
                   type="#integer"
                   global="false"
                   inheritable="false"
                   containingComplexType="C104"/>
-   <scm:attribute id="C215"
+   <scm:attribute id="C216"
                   name="initialState"
                   type="#integer"
                   global="false"
                   inheritable="false"
                   containingComplexType="C106"/>
-   <scm:attribute id="C216"
-                  name="ref"
-                  type="#IDREF"
-                  global="false"
-                  inheritable="false"
-                  containingComplexType="C108"/>
    <scm:attribute id="C217"
                   name="ref"
                   type="#IDREF"
                   global="false"
                   inheritable="false"
-                  containingComplexType="C110"/>
+                  containingComplexType="C108"/>
    <scm:attribute id="C218"
                   name="ref"
                   type="#IDREF"
                   global="false"
                   inheritable="false"
-                  containingComplexType="C112"/>
+                  containingComplexType="C110"/>
    <scm:attribute id="C219"
+                  name="ref"
+                  type="#IDREF"
+                  global="false"
+                  inheritable="false"
+                  containingComplexType="C112"/>
+   <scm:attribute id="C220"
                   name="containingComplexType"
                   type="#IDREF"
                   global="false"
                   inheritable="false"
                   containingComplexType="C114"/>
-   <scm:attribute id="C220"
+   <scm:attribute id="C221"
                   name="default"
                   type="#string"
                   global="false"
                   inheritable="false"
                   containingComplexType="C114"/>
-   <scm:attribute id="C221"
+   <scm:attribute id="C222"
                   name="global"
                   type="#boolean"
                   global="false"
                   inheritable="false"
                   containingComplexType="C114"/>
-   <scm:attribute id="C222"
+   <scm:attribute id="C223"
                   name="id"
                   type="#ID"
                   global="false"
                   inheritable="false"
                   containingComplexType="C114"/>
-   <scm:attribute id="C223"
+   <scm:attribute id="C224"
                   name="name"
                   type="#NCName"
                   global="false"
                   inheritable="false"
                   containingComplexType="C114"/>
-   <scm:attribute id="C224"
+   <scm:attribute id="C225"
                   name="targetNamespace"
                   type="C29"
                   global="false"
                   inheritable="false"
                   containingComplexType="C114"/>
-   <scm:attribute id="C225"
+   <scm:attribute id="C226"
                   name="type"
                   type="C1"
                   global="false"
                   inheritable="false"
                   containingComplexType="C114"/>
-   <scm:attribute id="C226"
+   <scm:attribute id="C227"
                   name="inheritable"
                   type="#boolean"
                   global="false"
                   inheritable="false"
                   containingComplexType="C114"/>
-   <scm:attribute id="C227"
+   <scm:attribute id="C228"
                   name="type"
                   type="C1"
                   global="false"
                   inheritable="false"
                   containingComplexType="C116"/>
-   <scm:attribute id="C228"
+   <scm:attribute id="C229"
                   name="test"
                   type="C13"
                   global="false"
                   inheritable="false"
                   containingComplexType="C116"/>
-   <scm:attribute id="C229"
+   <scm:attribute id="C230"
                   name="defaultNamespace"
                   type="C29"
                   global="false"
                   inheritable="false"
                   containingComplexType="C116"/>
-   <scm:attribute id="C230"
+   <scm:attribute id="C231"
                   name="fixed"
                   type="#boolean"
                   global="false"
                   inheritable="false"
                   containingComplexType="C118"/>
-   <scm:attribute id="C231"
+   <scm:attribute id="C232"
                   name="value"
                   type="#anySimpleType"
                   global="false"
                   inheritable="false"
                   containingComplexType="C120"/>
-   <scm:attribute id="C232"
+   <scm:attribute id="C233"
                   name="namespaceSensitive"
                   type="#boolean"
                   global="false"
                   inheritable="false"
                   containingComplexType="C120"/>
-   <scm:attribute id="C233"
+   <scm:attribute id="C234"
                   name="value"
                   type="#nonNegativeInteger"
-                  global="false"
-                  inheritable="false"
-                  containingComplexType="C122"/>
-   <scm:attribute id="C234"
-                  name="fixed"
-                  type="#boolean"
                   global="false"
                   inheritable="false"
                   containingComplexType="C122"/>
@@ -2224,114 +2221,120 @@
                   type="#boolean"
                   global="false"
                   inheritable="false"
-                  containingComplexType="C124"/>
+                  containingComplexType="C122"/>
    <scm:attribute id="C236"
+                  name="fixed"
+                  type="#boolean"
+                  global="false"
+                  inheritable="false"
+                  containingComplexType="C124"/>
+   <scm:attribute id="C237"
                   name="value"
                   type="C43"
                   global="false"
                   inheritable="false"
                   containingComplexType="C126"/>
-   <scm:attribute id="C237"
+   <scm:attribute id="C238"
                   name="fixed"
                   type="#boolean"
                   global="false"
                   inheritable="false"
                   containingComplexType="C126"/>
-   <scm:attribute id="C238"
+   <scm:attribute id="C239"
                   name="base"
                   type="C1"
                   global="false"
                   inheritable="false"
                   containingComplexType="C129"/>
-   <scm:attribute id="C239"
+   <scm:attribute id="C240"
                   name="final"
                   type="C15"
                   global="false"
                   inheritable="false"
                   containingComplexType="C129"/>
-   <scm:attribute id="C240"
+   <scm:attribute id="C241"
                   name="id"
                   type="#ID"
                   global="false"
                   inheritable="false"
                   containingComplexType="C129"/>
-   <scm:attribute id="C241"
+   <scm:attribute id="C242"
                   name="itemType"
                   type="C1"
                   global="false"
                   inheritable="false"
                   containingComplexType="C129"/>
-   <scm:attribute id="C242"
+   <scm:attribute id="C243"
                   name="memberTypes"
                   type="C19"
                   global="false"
                   inheritable="false"
                   containingComplexType="C129"/>
-   <scm:attribute id="C243"
+   <scm:attribute id="C244"
                   name="name"
                   type="#NCName"
                   global="false"
                   inheritable="false"
                   containingComplexType="C129"/>
-   <scm:attribute id="C244"
+   <scm:attribute id="C245"
                   name="primitiveType"
                   type="C2"
                   global="false"
                   inheritable="false"
                   containingComplexType="C129"/>
-   <scm:attribute id="C245"
+   <scm:attribute id="C246"
                   name="targetNamespace"
                   type="C29"
                   global="false"
                   inheritable="false"
                   containingComplexType="C129"/>
-   <scm:attribute id="C246"
+   <scm:attribute id="C247"
                   name="variety"
                   type="#NCName"
                   global="false"
                   inheritable="false"
                   containingComplexType="C129"/>
-   <scm:attribute id="C247"
+   <scm:attribute id="C248"
                   name="value"
                   type="#nonNegativeInteger"
                   global="false"
                   inheritable="false"
                   containingComplexType="C131"/>
-   <scm:attribute id="C248"
+   <scm:attribute id="C249"
                   name="fixed"
                   type="#boolean"
                   global="false"
                   inheritable="false"
                   containingComplexType="C131"/>
-   <scm:attribute id="C249"
+   <scm:attribute id="C250"
                   name="mode"
                   type="C6"
                   global="false"
                   inheritable="false"
                   containingComplexType="C133"/>
-   <scm:attribute id="C250"
+   <scm:attribute id="C251"
                   name="wildcard"
                   type="#IDREF"
                   global="false"
                   inheritable="false"
                   containingComplexType="C133"/>
-   <scm:attribute id="C251"
+   <scm:attribute id="C252"
                   name="type"
                   type="C2"
                   global="false"
                   inheritable="false"
                   containingComplexType="C137"/>
-   <scm:attribute id="C252"
+   <scm:attribute id="C253"
                   name="value"
                   type="#string"
                   global="false"
                   inheritable="false"
                   containingComplexType="C137"/>
-   <scm:attribute id="C253"
+   <scm:attribute id="C254"
                   name="namespace"
                   type="C29"
                   global="false"
                   inheritable="false"
                   containingComplexType="C137"/>
 </scm:schema>
-<?Σ 91129590?>
+<?Σ a63eb46d?>
