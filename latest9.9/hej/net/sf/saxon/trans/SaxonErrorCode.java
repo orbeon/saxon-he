@@ -60,6 +60,12 @@ public class SaxonErrorCode {
     public static final String SXSE0002 = "SXSE0002";
 
     /**
+     * SXST0001: static errors found during JIT compilation of template rule
+     */
+
+    public static final String SXST0001 = "SXST0001";
+
+    /**
      * SXXP0003: error reported by XML parser while parsing source document. This error code means that an
      * error occurred at the XML parsing level; the error was not detected by Saxon itself, but rather by
      * the underlying parser. It usually means either that the document (or one of its component entities)

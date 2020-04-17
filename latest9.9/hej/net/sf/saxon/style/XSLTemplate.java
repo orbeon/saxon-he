@@ -818,30 +818,26 @@ public final class XSLTemplate extends StyleElement implements StylesheetCompone
             compilation.setPreScan(false);
             processAllAttributes();
 
-            if (compilation.getErrorCount() > 0) {
-                XPathException e = new XPathException("Errors were reported during stylesheet compilation");
-                e.setHasBeenReported(true); // only intended as an exception message, not something to report to ErrorListener
-                throw e;
-            }
+            checkForJitCompilationErrors(compilation);
 
             validateSubtree(decl, false);
 
-            if (compilation.getErrorCount() > 0) {
-                XPathException e = new XPathException("Errors were reported during stylesheet compilation");
-                e.setHasBeenReported(true); // only intended as an exception message, not something to report to ErrorListener
-                throw e;
-            }
+            checkForJitCompilationErrors(compilation);
 
             compileDeclaration(compilation, decl);
-            // xslTemplate.optimize(decl);
-            //allocateBindingSlots();
-            if (compilation.getErrorCount() > 0) {
-                XPathException e = new XPathException("Errors were reported during stylesheet compilation");
-                e.setHasBeenReported(true); // only intended as an exception message, not something to report to ErrorListener
-                throw e;
-            }
+
+            checkForJitCompilationErrors(compilation);
         }
 
+    }
+
+    private void checkForJitCompilationErrors(Compilation compilation) throws XPathException {
+        if (compilation.getErrorCount() > 0) {
+            XPathException e = new XPathException("Errors were reported during JIT compilation of template rule with match=\"" + matchAtt + "\"",
+                                                  SaxonErrorCode.SXST0001, this);
+            e.setHasBeenReported(true); // only intended as an exception message, not something to report to ErrorListener
+            throw e;
+        }
     }
 
 

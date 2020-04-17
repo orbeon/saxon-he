@@ -350,7 +350,7 @@ public final class Atomizer extends UnaryExpression {
             SequenceIterator base = getBaseExpression().iterate(context);
             return getAtomizingIterator(base, untyped && operandItemType instanceof NodeTest);
         } catch (XPathException e) {
-            if (roleDiagnostic == null || !e.getErrorCodeQName().hasURI(NamespaceConstant.ERR)) {
+            if (roleDiagnostic == null || e.getErrorCodeQName() == null || !e.getErrorCodeQName().hasURI(NamespaceConstant.ERR)) {
                 throw e;
             } else {
                 String message = expandMessage(e.getMessage());
