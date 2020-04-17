@@ -246,6 +246,12 @@ public class SaxonErrorCode {
     public static final String SXRD0004 = "SXRD0004";
 
     /**
+     * SXST0001: Static error in template rule, found during JIT compilation
+     */
+
+    public static final String SXST0001 = "SXST0001";
+
+    /**
      * SXST0060: Template in a streaming mode is not streamable
      */
 
