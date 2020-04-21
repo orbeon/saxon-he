@@ -48,6 +48,13 @@
             information into the execution.</xs:documentation>
             </xs:annotation>
          </xs:attribute>
+        <xs:attribute name="targetEdition" type="xs:string">
+          <xs:annotation>
+            <xs:documentation>The target edition if export SEF files are to be used, for example
+              targetEdition="JS". Specifically, this affects the recognition of extension namespaces
+              (such as the IXSL namespace) when packages in the packageLibrary are compiled.</xs:documentation>
+          </xs:annotation>
+        </xs:attribute>
       </xs:complexType>
    </xs:element>
 
