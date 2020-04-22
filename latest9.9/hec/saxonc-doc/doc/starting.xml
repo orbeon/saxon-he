@@ -50,11 +50,16 @@
                <kbd>cd Saxonica/Saxon-[EDITION]C[VERSION]/</kbd>
                <kbd>sudo cp libsaxon[EDITION].so /usr/lib/.</kbd>
 
-               <p>Alternatively you can create a symbolic link to where the saxon library is
-                  installed so it can be found. For example:</p>
+               <p>Alternatively you can either create a symbolic link to where the saxon library is
+                  installed so it can be found or use the SAXONC_HOME environment variable to set the location of the library. For example:</p>
 
                <kbd>ln -s path/Saxonica/Saxon-[EDITION]C[VERSION]/libsaxon[EDITION].so
                   /usr/lib/libsaxon[EDITION].so</kbd>
+
+               <p>Or</p>
+               <kbd>export SAXONC_HOME=path/Saxonica/Saxon-[EDITION]C[VERSION]</kbd>
+               <p>You may also need to set the LD_LIBRARY_PATH to the same location.</p>
+               
             </li>
 
             <li>
@@ -75,11 +80,11 @@
                      <code>JET-home/lib/amd64</code> must be listed in the
                      <code>LD_LIBRARY_PATH</code> environment variable. For instance, if you are
                   using a bash or Bourne shell, use the following command:</p>
-
+               <kbd style="word-wrap: break-word;">export JET_HOME=/usr/lib/rt</kbd>
                <kbd style="word-wrap: break-word;">export
-                  LD_LIBRARY_PATH=/usr/lib/rt/lib/amd64:/usr/lib/rt/lib/amd64/jetvm:$LD_LIBRARY_PATH</kbd>
+                  LD_LIBRARY_PATH=$JET_HOME/lib/amd64/jetvm:$JET_HOME/lib/amd64:$LD_LIBRARY_PATH</kbd>
 
-               <p>So, for Ubuntu, you can create a file <code>/etc/ld.so.conf.d/jetvm.conf</code>
+               <p>Alternatively, for Ubuntu, you can create a file <code>/etc/ld.so.conf.d/jetvm.conf</code>
                   with content:</p>
 
                <samp><![CDATA[# JetVM env path (required for Saxon)
