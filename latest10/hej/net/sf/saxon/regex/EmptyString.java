@@ -39,7 +39,7 @@ public final class EmptyString extends UnicodeString {
     }
 
     public boolean isEnd(int pos) {
-        return pos == 0;
+        return pos >= 0;
     }
 
     public String toString() {
