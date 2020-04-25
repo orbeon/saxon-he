@@ -1217,6 +1217,11 @@ public abstract class Operation {
         }
 
         @Override
+        public int getMinimumMatchLength() {
+            return childOp.getMinimumMatchLength();
+        }
+
+        @Override
         public int matchesEmptyString() {
             return childOp.matchesEmptyString();
         }
