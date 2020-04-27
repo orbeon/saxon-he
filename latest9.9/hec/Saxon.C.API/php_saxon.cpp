@@ -3621,7 +3621,7 @@ PHP_MINIT_FUNCTION(saxon)
 PHP_MINFO_FUNCTION(saxon)
 {
     php_info_print_table_start();
-    php_info_print_table_header(2, "Saxon/C", "enabled");
+    php_info_print_table_header(2, "saxonc", "enabled");
     php_info_print_table_row(2, "Saxon/C EXT version", "1.1.0");
     php_info_print_table_row(2, "Saxon", "9.8.0.4");
     php_info_print_table_row(2, "Excelsior JET", "11.3 MP1");

@@ -233,13 +233,13 @@ public class XQueryEngine extends SaxonCAPI {
     }
 
 
-    public String executeQueryToString(String cwd, String[] params, Object[] values) throws SaxonApiException {
+    public byte[] executeQueryToString(String cwd, String[] params, Object[] values) throws SaxonApiException {
 
-        StringWriter writer = new StringWriter();
-        Serializer serializer = processor.newSerializer(writer);
+        ByteArrayOutputStream bStream = new ByteArrayOutputStream();
+        Serializer serializer = processor.newSerializer(bStream);
         XQueryEvaluator eval = xqueryEvaluator(cwd, params, values, serializer);
         eval.run(serializer);
-        return writer.toString();
+        return bStream.toByteArray();
 
     }
 
@@ -397,11 +397,11 @@ public class XQueryEngine extends SaxonCAPI {
         //String cwd = "C:///www///html///query";
         //String cwd = "http://localhost/query";
         //xquery.executeQueryToFile(cwd, "output1a.xml", params1, values1);
-        String result0 = xquery.executeQueryToString(cwd, params2, values2);
+        String result0 = new String(xquery.executeQueryToString(cwd, params2, values2));
         //String result2 = xquery.executeQueryToString(cwd, params1, values1);
         XdmValue result = xquery.executeQueryToValue(cwd, params4, value4);
 
-        String result2 = xquery.executeQueryToString(cwd, params4, value4);
+        String result2 = new String(xquery.executeQueryToString(cwd, params4, value4));
 
 
         // xquery.executeQueryToFile("/home/ond1/test/saxon9-5-1-1source", outfile, params1, values1);
