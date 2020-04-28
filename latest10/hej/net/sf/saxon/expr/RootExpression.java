@@ -60,6 +60,7 @@ public class RootExpression extends Expression {
         if (th.isSubType(contextInfo.getItemType(), NodeKindTest.DOCUMENT)) {
             // this rewrite is important for streamability analysis
             ContextItemExpression cie = new ContextItemExpression();
+            ExpressionTool.copyLocationInfo(this, cie);
             cie.setStaticInfo(contextInfo);
             return cie;
         }
