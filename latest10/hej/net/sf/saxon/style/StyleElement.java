@@ -1533,7 +1533,7 @@ public abstract class StyleElement extends ElementImpl {
                 return exp;
             } else {
                 ErrorExpression erexp = new ErrorExpression(new XmlProcessingException(err));
-                erexp.setLocation(allocateLocation());
+                ExpressionTool.copyLocationInfo(exp, erexp);
                 return erexp;
             }
         }
