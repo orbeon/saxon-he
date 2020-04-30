@@ -1555,7 +1555,7 @@ public abstract class StyleElement extends ElementImpl {
                 return exp;
             } else {
                 ErrorExpression erexp = new ErrorExpression(err);
-                erexp.setLocation(allocateLocation());
+                ExpressionTool.copyLocationInfo(exp, erexp);
                 return erexp;
             }
         }
