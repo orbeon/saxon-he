@@ -335,7 +335,11 @@ public class ArrayFunctionSet extends BuiltInFunctionSet {
         public Sequence<?> call(XPathContext context, Sequence[] arguments) throws XPathException {
             ArrayItem array = (ArrayItem) arguments[0].head();
             IntegerValue index = (IntegerValue) arguments[1].head();
-            return array.get(checkSubscript(index) - 1);
+            final int pos = checkSubscript(index);
+            if (pos > array.arrayLength()) {
+                throw new XPathException("Array subscript " + pos + " exceeds length of array (" + array.arrayLength() + ")", "FOAY0001");
+            }
+            return array.get(pos - 1);
         }
 
     }
@@ -402,6 +406,9 @@ public class ArrayFunctionSet extends BuiltInFunctionSet {
         public ArrayItem call(XPathContext context, Sequence[] arguments) throws XPathException {
             ArrayItem array = (ArrayItem) arguments[0].head();
             int index = checkSubscript((IntegerValue) arguments[1].head()) - 1;
+            if (index > array.arrayLength()) {
+                throw new XPathException("Array subscript " + index + " exceeds length of array (" + array.arrayLength() + ")", "FOAY0001");
+            }
             GroundedValue<?> newVal = ((Sequence<?>)arguments[2]).materialize();
             return array.put(index, newVal);
         }
@@ -417,20 +424,20 @@ public class ArrayFunctionSet extends BuiltInFunctionSet {
         public ArrayItem call(XPathContext context, Sequence[] arguments) throws XPathException {
             ArrayItem array = (ArrayItem) arguments[0].head();
             if (arguments[1] instanceof IntegerValue) {
-                int index = checkSubscript((IntegerValue) arguments[1]) - 1;
-                if (index >= array.arrayLength()) {
+                int index = checkSubscript((IntegerValue) arguments[1]);
+                if (index > array.arrayLength()) {
                     throw new XPathException("Position " + index + " is not in range", "FOAY0001");
                 }
-                return array.remove(index);
+                return array.remove(index - 1);
             }
             IntSet positions = new IntHashSet();
             SequenceIterator<IntegerValue> arg1 = (SequenceIterator<IntegerValue>)arguments[1].iterate();
             arg1.forEachOrFail(pos -> {
-                int index = checkSubscript(pos) - 1;
-                if (index >= array.arrayLength()) {
+                int index = checkSubscript(pos);
+                if (index > array.arrayLength()) {
                     throw new XPathException("Position " + index + " is not in range", "FOAY0001");
                 }
-                positions.add(index);
+                positions.add(index - 1);
             });
             return array.removeSeveral(positions);
         }
