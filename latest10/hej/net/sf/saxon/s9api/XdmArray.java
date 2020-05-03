@@ -98,12 +98,8 @@ public class XdmArray extends XdmFunctionItem {
      */
 
     public XdmValue get(int n) throws IndexOutOfBoundsException {
-        try {
-            Sequence member = getUnderlyingValue().get(n);
-            return XdmValue.wrap(member);
-        } catch (XPathException e) {
-            throw new IndexOutOfBoundsException();
-        }
+        Sequence member = getUnderlyingValue().get(n);
+        return XdmValue.wrap(member);
     }
 
     /**
@@ -119,12 +115,8 @@ public class XdmArray extends XdmFunctionItem {
      */
 
     public XdmArray put(int n, XdmValue value) throws IndexOutOfBoundsException {
-        try {
-            GroundedValue member = value.getUnderlyingValue();
-            return (XdmArray)XdmValue.wrap(getUnderlyingValue().put(n, member));
-        } catch (XPathException e) {
-            throw new IndexOutOfBoundsException();
-        }
+        GroundedValue member = value.getUnderlyingValue();
+        return (XdmArray)XdmValue.wrap(getUnderlyingValue().put(n, member));
     }
 
     /**

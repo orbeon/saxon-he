@@ -9,7 +9,6 @@ package net.sf.saxon.ma.arrays;
 
 import net.sf.saxon.ma.parray.ImmList;
 import net.sf.saxon.om.GroundedValue;
-import net.sf.saxon.trans.XPathException;
 import net.sf.saxon.z.IntIterator;
 import net.sf.saxon.z.IntSet;
 
@@ -37,15 +36,11 @@ public class ImmutableArrayItem extends AbstractArrayItem {
      *
      * @param index the position of the member to retrieve (zero-based)
      * @return the value at the given position.
-     * @throws XPathException if the index is out of range
+     * @throws IndexOutOfBoundsException if the index is out of range
      */
     @Override
-    public GroundedValue get(int index) throws XPathException {
-        try {
-            return vector.get(index);
-        } catch (IndexOutOfBoundsException e) {
-            throw new XPathException(e.getMessage(), "FOAY0001");
-        }
+    public GroundedValue get(int index) {
+        return vector.get(index);
     }
 
     /**
@@ -54,16 +49,12 @@ public class ImmutableArrayItem extends AbstractArrayItem {
      * @param index    the position of the member to replace (zero-based)
      * @param newValue the replacement value
      * @return the value at the given position.
-     * @throws XPathException if the index is out of range
+     * @throws IndexOutOfBoundsException if the index is out of range
      */
     @Override
-    public ArrayItem put(int index, GroundedValue newValue) throws XPathException {
-        try {
-            ImmList<GroundedValue> v2 = vector.replace(index, newValue);
-            return v2 == vector ? this : new ImmutableArrayItem(v2);
-        } catch (IndexOutOfBoundsException e) {
-            throw new XPathException(e.getMessage(), "FOAY0001");
-        }
+    public ArrayItem put(int index, GroundedValue newValue)  {
+        ImmList<GroundedValue> v2 = vector.replace(index, newValue);
+        return v2 == vector ? this : new ImmutableArrayItem(v2);
     }
 
     /**

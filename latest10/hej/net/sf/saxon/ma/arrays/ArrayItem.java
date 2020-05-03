@@ -11,7 +11,6 @@ import net.sf.saxon.expr.StaticProperty;
 import net.sf.saxon.om.Function;
 import net.sf.saxon.om.Genre;
 import net.sf.saxon.om.GroundedValue;
-import net.sf.saxon.trans.XPathException;
 import net.sf.saxon.type.TypeHierarchy;
 import net.sf.saxon.value.SequenceType;
 import net.sf.saxon.z.IntSet;
@@ -29,10 +28,10 @@ public interface ArrayItem extends Function {
      *
      * @param index the position of the member to retrieve (zero-based)
      * @return the value at the given position.
-     * @throws XPathException if the index is out of range
+     * @throws IndexOutOfBoundsException if the index is out of range
      */
 
-    GroundedValue get(int index) throws XPathException;
+    GroundedValue get(int index);
 
     /**
      * Replace a member of the array
@@ -40,10 +39,10 @@ public interface ArrayItem extends Function {
      * @param index the position of the member to replace (zero-based)
      * @param newValue the replacement value
      * @return the value at the given position.
-     * @throws XPathException if the index is out of range
+     * @throws IndexOutOfBoundsException if the index is out of range
      */
 
-    ArrayItem put(int index, GroundedValue newValue) throws XPathException;
+    ArrayItem put(int index, GroundedValue newValue);
 
     /**
      * Get the number of members in the array
@@ -96,6 +95,7 @@ public interface ArrayItem extends Function {
      * @param positions the positions of the members to be removed (zero-based).
      *                  A value that is out of range is ignored.
      * @return a new array in which the requested member has been removed
+     * @throws IndexOutOfBoundsException if any of the positions is out of range
      */
 
     ArrayItem removeSeveral(IntSet positions);

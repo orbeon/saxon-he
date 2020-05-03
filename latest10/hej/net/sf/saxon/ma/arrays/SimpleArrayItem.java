@@ -8,13 +8,14 @@
 package net.sf.saxon.ma.arrays;
 
 import net.sf.saxon.expr.OperandRole;
-import net.sf.saxon.om.*;
+import net.sf.saxon.om.GroundedValue;
+import net.sf.saxon.om.Sequence;
+import net.sf.saxon.om.SequenceIterator;
 import net.sf.saxon.query.AnnotationList;
 import net.sf.saxon.trans.Err;
 import net.sf.saxon.trans.XPathException;
 import net.sf.saxon.tree.util.FastStringBuffer;
 import net.sf.saxon.value.ExternalObject;
-import net.sf.saxon.value.SequenceType;
 import net.sf.saxon.z.IntSet;
 
 import java.util.ArrayList;
@@ -32,9 +33,8 @@ public class SimpleArrayItem extends AbstractArrayItem implements ArrayItem {
     public static final SimpleArrayItem EMPTY_ARRAY =
             new SimpleArrayItem(new ArrayList<>());
 
-    private List<GroundedValue> members;
+    private final List<GroundedValue> members;
     private boolean knownToBeGrounded = false;
-    private SequenceType memberType = null; // computed on demand
 
     /**
      * Construct an array whose members are arbitrary sequences
@@ -129,14 +129,11 @@ public class SimpleArrayItem extends AbstractArrayItem implements ArrayItem {
      *
      * @param index the position of the member to retrieve (zero-based)
      * @return the value at the given position.
-     * @throws XPathException if the index is out of range
+     * @throws IndexOutOfBoundsException if the index is out of range
      */
 
 
-    public GroundedValue get(int index) throws XPathException {
-        if (index < 0 || index >= members.size()) {
-            throw new XPathException("Array index (" + (index+1) + ") out of range (1 to " + members.size() + ")", "FOAY0001");
-        }
+    public GroundedValue get(int index) {
         return members.get(index);
     }
 
@@ -146,10 +143,10 @@ public class SimpleArrayItem extends AbstractArrayItem implements ArrayItem {
      * @param index    the position of the member to replace (zero-based)
      * @param newValue the replacement value
      * @return the value at the given position.
-     * @throws XPathException if the index is out of range
+     * @throws IndexOutOfBoundsException if the index is out of range
      */
     @Override
-    public ArrayItem put(int index, GroundedValue newValue) throws XPathException {
+    public ArrayItem put(int index, GroundedValue newValue) {
         ImmutableArrayItem a2 = new ImmutableArrayItem(this);
         return a2.put(index, newValue);
     }
@@ -195,18 +192,6 @@ public class SimpleArrayItem extends AbstractArrayItem implements ArrayItem {
     public ArrayItem removeSeveral(IntSet positions) {
         ImmutableArrayItem a2 = new ImmutableArrayItem(this);
         return a2.removeSeveral(positions);
-//        List<Sequence> newList = new ArrayList<Sequence>(members.size() - 1);
-//        for (int i = 0; i < members.size(); i++) {
-//            if (!positions.contains(i)) {
-//                newList.add(members.get(i));
-//            }
-//        }
-//        SimpleArrayItem result = new SimpleArrayItem(newList);
-//        if (knownToBeGrounded) {
-//            result.knownToBeGrounded = true;
-//        }
-//        result.memberType = memberType;
-//        return result;
     }
 
     /**
@@ -220,15 +205,6 @@ public class SimpleArrayItem extends AbstractArrayItem implements ArrayItem {
     public ArrayItem remove(int pos) {
         ImmutableArrayItem a2 = new ImmutableArrayItem(this);
         return a2.remove(pos);
-//        List<Sequence> newList = new ArrayList<Sequence>(members.size() - 1);
-//        newList.addAll(members.subList(0, pos));
-//        newList.addAll(members.subList(pos + 1, members.size()));
-//        SimpleArrayItem result = new SimpleArrayItem(newList);
-//        if (knownToBeGrounded) {
-//            result.knownToBeGrounded = true;
-//        }
-//        result.memberType = memberType;
-//        return result;
     }
 
     /**
@@ -269,21 +245,6 @@ public class SimpleArrayItem extends AbstractArrayItem implements ArrayItem {
     public ArrayItem concat(ArrayItem other) {
         ImmutableArrayItem a2 = new ImmutableArrayItem(this);
         return a2.concat(other);
-//        List<Sequence> newList = new ArrayList<Sequence>(members.size() + other.arrayLength());
-//        newList.addAll(members);
-//        for (Sequence s : other) {
-//            newList.add(s);
-//        }
-//        SimpleArrayItem result = new SimpleArrayItem(newList);
-//        if (other instanceof SimpleArrayItem) {
-//            if (knownToBeGrounded && ((SimpleArrayItem) other).knownToBeGrounded) {
-//                result.knownToBeGrounded = true;
-//            }
-//            if (memberType != null && memberType.equals(((SimpleArrayItem) other).memberType)) {
-//                result.memberType = memberType;
-//            }
-//        }
-//        return result;
     }
 
 

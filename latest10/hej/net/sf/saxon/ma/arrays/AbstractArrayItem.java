@@ -148,14 +148,14 @@ public abstract class AbstractArrayItem implements ArrayItem {
      * Invoke the array in its role as a function
      *
      * @param context the XPath dynamic evaluation context
-     * @param args    the actual arguments to be supplied (a single integer)
+     * @param args    the actual arguments to be supplied (a single integer, one-based)
      * @return the result of invoking the function
-     * @throws XPathException if a dynamic error occurs within the function
+     * @throws XPathException if the index is out of bounds
      */
 
     public GroundedValue call(XPathContext context, Sequence[] args) throws XPathException {
         IntegerValue subscript = (IntegerValue) args[0].head();
-        return get(ArrayFunctionSet.checkSubscript(subscript) - 1);
+        return get(ArrayFunctionSet.checkSubscript(subscript, arrayLength()) - 1);
     }
 
     /**
