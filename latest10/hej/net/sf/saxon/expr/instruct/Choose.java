@@ -392,6 +392,11 @@ public class Choose extends Instruction implements ConditionalInstruction {
         // type of the top-level expression. It's important with tail recursion not to wrap a tail call in a type checking
         // expression just because a dynamic type check is needed on a different branch of the choice.
         for (int i = 0; i < size(); i++) {
+            if (Literal.hasEffectiveBooleanValue(getCondition(i), false)) {
+                // Don't do any checking if we know statically the condition will be false, because it could
+                // result in spurious warnings: bug 4537
+                continue;
+            }
             try {
                 actionOps[i].typeCheck(visitor, contextInfo);
             } catch (XPathException err) {
@@ -414,6 +419,9 @@ public class Choose extends Instruction implements ConditionalInstruction {
                 } else {
                     setAction(i, new ErrorExpression(new XmlProcessingException(err)));
                 }
+            }
+            if (Literal.hasEffectiveBooleanValue(getCondition(i), true)) {
+                break;
             }
         }
         Optimizer opt = visitor.obtainOptimizer();
@@ -523,6 +531,10 @@ public class Choose extends Instruction implements ConditionalInstruction {
             }
         }
         for (int i = 0; i < size; i++) {
+            if (Literal.hasEffectiveBooleanValue(getCondition(i), false)) {
+                // Don't bother with optimisation if the code won't be executed: bug 4537
+                continue;
+            }
             try {
                 actionOps[i].optimize(visitor, contextItemType);
             } catch (XPathException err) {
@@ -542,6 +554,10 @@ public class Choose extends Instruction implements ConditionalInstruction {
                 // Bug 3933: avoid the warning for an implicit xsl:otherwise branch (constant condition = true)
                 visitor.issueWarning("Branch " + (i + 1) + " of conditional will fail with a type error if executed. "
                         + ((ErrorExpression) getAction(i)).getMessage(), getAction(i).getLocation());
+            }
+            if (Literal.hasEffectiveBooleanValue(getCondition(i), true)) {
+                // Don't bother with optimisation of subsequent branches if the code won't be executed: bug 4537
+                break;
             }
         }
 

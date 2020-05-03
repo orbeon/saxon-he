@@ -27,7 +27,7 @@ import java.util.Iterator;
 
 public final class Operand implements Iterable<Operand>, ExpressionOwner {
 
-    private Expression parentExpression;
+    private final Expression parentExpression;
     private Expression childExpression;
     private OperandRole role;
 
@@ -81,7 +81,7 @@ public final class Operand implements Iterable<Operand>, ExpressionOwner {
         }
     }
 
-    private static boolean DEBUG = false;
+    private static final boolean DEBUG = false;
     public void detachChild() {
         if (DEBUG) {
             childExpression.setParentExpression(null);
@@ -196,7 +196,7 @@ public final class Operand implements Iterable<Operand>, ExpressionOwner {
      */
 
     public Iterator<Operand> iterator() {
-        return new MonoIterator<Operand>(this);
+        return new MonoIterator<>(this);
     }
 
     public void typeCheck(ExpressionVisitor visitor, ContextItemStaticInfo contextInfo) throws XPathException {
