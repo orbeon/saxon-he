@@ -41,11 +41,10 @@ public class ImmutableArrayItem extends AbstractArrayItem {
      */
     @Override
     public GroundedValue<?> get(int index) throws XPathException {
-        try {
-            return vector.get(index);
-        } catch (IndexOutOfBoundsException e) {
-            throw new XPathException(e.getMessage(), "FOAY0001");
+        if (index < 0 || index >= vector.size()) {
+            throw new XPathException("Array index (" + (index + 1) + ") out of range (1 to " + vector.size() + ")", "FOAY0001");
         }
+        return vector.get(index);
     }
 
     /**
@@ -58,12 +57,11 @@ public class ImmutableArrayItem extends AbstractArrayItem {
      */
     @Override
     public ArrayItem put(int index, GroundedValue newValue) throws XPathException {
-        try {
-            ImmList<GroundedValue<?>> v2 = vector.replace(index, newValue);
-            return v2 == vector ? this : new ImmutableArrayItem(v2);
-        } catch (IndexOutOfBoundsException e) {
-            throw new XPathException(e.getMessage(), "FOAY0001");
+        if (index < 0 || index >= vector.size()) {
+            throw new XPathException("Array index (" + (index + 1) + ") out of range (1 to " + vector.size() + ")", "FOAY0001");
         }
+        ImmList<GroundedValue<?>> v2 = vector.replace(index, newValue);
+        return v2 == vector ? this : new ImmutableArrayItem(v2);
     }
 
     /**
