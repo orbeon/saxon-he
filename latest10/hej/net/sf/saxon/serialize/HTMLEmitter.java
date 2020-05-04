@@ -478,6 +478,9 @@ public abstract class HTMLEmitter extends XMLEmitter {
             }
         }
         try {
+            if (openStartTag) {
+                closeStartTag();
+            }
             writer.write("<?");
             writer.write(target);
             writer.write(' ');
