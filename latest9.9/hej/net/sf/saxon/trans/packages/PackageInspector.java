@@ -87,12 +87,15 @@ public class PackageInspector extends ProxyReceiver {
         }
     }
 
-    public static PackageDetails getPackageDetails(File top, Configuration config) {
+    public static PackageDetails getPackageDetails(File top, Configuration config) throws XPathException {
         PackageInspector inspector = new PackageInspector(config.makePipelineConfiguration());
         try {
             Sender.send(new StreamSource(top), inspector, new ParseOptions());
         } catch (XPathException e) {
             // early exit is expected
+            if (!e.getMessage().equals("#start#")) {
+                throw e;
+            }
         }
         VersionedPackageName vp = inspector.getNameAndVersion();
         if (vp == null) {
