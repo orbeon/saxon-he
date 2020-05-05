@@ -2370,6 +2370,13 @@ public abstract class StyleElement extends ElementImpl {
                 XSLWithParam wp = (XSLWithParam) child;
                 if (wp.getSourceBinding().hasProperty(SourceBinding.TUNNEL) == tunnel) {
                     WithParam p = wp.compileWithParam(parent, compilation, decl);
+                    if (wp.getParent() instanceof XSLNextIteration && wp.hasChildNodes()) {
+                        // Type-check against the declared type of the xsl:param, unless this was done earlier
+                        SequenceType required = ((XSLNextIteration) wp.getParent()).getDeclaredParamType(
+                                wp.getSourceBinding().getVariableQName());
+                        wp.checkAgainstRequiredType(required);
+                        p.getSelectOperand().setChildExpression(wp.sourceBinding.getSelectExpression());
+                    }
                     array[count++] = p;
                 }
             }

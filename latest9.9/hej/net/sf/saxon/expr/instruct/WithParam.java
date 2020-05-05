@@ -60,6 +60,9 @@ public class WithParam  {
         return selectOp.getChildExpression();
     }
 
+    public Operand getSelectOperand() {
+        return selectOp;
+    }
     /**
      * Set the required type of this variable
      *
