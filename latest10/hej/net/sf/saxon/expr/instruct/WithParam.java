@@ -48,6 +48,14 @@ public class WithParam  {
     }
 
     /**
+     * Get the select operand
+     */
+
+    public Operand getSelectOperand() {
+        return selectOp;
+    }
+
+    /**
      * Get the expression to which this variable is bound
      *
      * @return the initializing expression

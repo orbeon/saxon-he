@@ -2283,7 +2283,8 @@ public abstract class StyleElement extends ElementImpl {
      * @throws XPathException if any error is detected
      */
 
-    public WithParam[] getWithParamInstructions(Expression parent, Compilation compilation, ComponentDeclaration decl, boolean tunnel)
+    public WithParam[] getWithParamInstructions(Expression parent, Compilation compilation,
+                                                ComponentDeclaration decl, boolean tunnel)
             throws XPathException {
         int count = 0;
         for (NodeInfo child : children(XSLWithParam.class::isInstance)) {
@@ -2301,6 +2302,13 @@ public abstract class StyleElement extends ElementImpl {
             XSLWithParam wp = (XSLWithParam) child;
             if (wp.getSourceBinding().hasProperty(SourceBinding.BindingProperty.TUNNEL) == tunnel) {
                 WithParam p = wp.compileWithParam(parent, compilation, decl);
+                if (wp.getParent() instanceof XSLNextIteration && wp.hasChildNodes()) {
+                    // Type-check against the declared type of the xsl:param, unless this was done earlier
+                    SequenceType required = ((XSLNextIteration) wp.getParent()).getDeclaredParamType(
+                            wp.getSourceBinding().getVariableQName());
+                    wp.checkAgainstRequiredType(required);
+                    p.getSelectOperand().setChildExpression(wp.sourceBinding.getSelectExpression());
+                }
                 array[count++] = p;
             }
         }

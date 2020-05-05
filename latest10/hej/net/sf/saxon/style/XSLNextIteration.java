@@ -81,6 +81,15 @@ public class XSLNextIteration extends XSLBreakOrContinue {
         }
     }
 
+    public SequenceType getDeclaredParamType(StructuredQName name) {
+        for (NodeInfo param : xslIterate.children(XSLLocalParam.class::isInstance)) {
+            if (((XSLLocalParam)param).getVariableQName().equals(name)) {
+                return ((XSLLocalParam) param).getRequiredType();
+            }
+        }
+        return null;
+    }
+
 
     public Expression compile(Compilation exec, ComponentDeclaration decl) throws XPathException {
         NextIteration call = new NextIteration();

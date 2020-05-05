@@ -131,20 +131,19 @@ public final class IterateInstr extends Instruction implements ContextSwitchingE
 
         ItemType selectType = getSelectExpression().getItemType();
         if (selectType == ErrorType.getInstance()) {
-            return Literal.makeEmptySequence();
+            selectType = AnyItemType.getInstance();
         }
 
-        ContextItemStaticInfo cit = visitor.getConfiguration().makeContextItemStaticInfo(getSelectExpression().getItemType(), false);
+        ContextItemStaticInfo cit = visitor.getConfiguration().makeContextItemStaticInfo(selectType, false);
         cit.setContextSettingExpression(getSelectExpression());
         actionOp.typeCheck(visitor, cit);
 
         onCompletionOp.typeCheck(visitor, ContextItemStaticInfo.ABSENT);
 
-        if (Literal.isEmptySequence(getSelectExpression())) {
-            return getSelectExpression();
-        }
-        if (Literal.isEmptySequence(getActionExpression())) {
-            return getActionExpression();
+        if (Literal.isEmptySequence(getOnCompletion())) {
+            if (Literal.isEmptySequence(getSelectExpression()) || Literal.isEmptySequence(getActionExpression())) {
+                return getOnCompletion();
+            }
         }
         return this;
     }
@@ -161,11 +160,10 @@ public final class IterateInstr extends Instruction implements ContextSwitchingE
 
         onCompletionOp.optimize(visitor, ContextItemStaticInfo.ABSENT);
 
-        if (Literal.isEmptySequence(getSelectExpression())) {
-            return getSelectExpression();
-        }
-        if (Literal.isEmptySequence(getActionExpression())) {
-            return getActionExpression();
+        if (Literal.isEmptySequence(getOnCompletion())) {
+            if (Literal.isEmptySequence(getSelectExpression()) || Literal.isEmptySequence(getActionExpression())) {
+                return getOnCompletion();
+            }
         }
 
         return this;
