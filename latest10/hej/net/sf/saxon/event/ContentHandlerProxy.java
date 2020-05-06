@@ -7,7 +7,6 @@
 
 package net.sf.saxon.event;
 
-import com.saxonica.ee.jaxp.TypedContentHandler;
 import net.sf.saxon.Configuration;
 import net.sf.saxon.Controller;
 import net.sf.saxon.expr.parser.Loc;
@@ -43,7 +42,7 @@ import java.util.Stack;
  * to deal with well-formed XML documents, so we only pass it the contents of the first
  * element encountered, unless the saxon:require-well-formed output property is set to "no".</p>
  * <p>This ContentHandlerProxy provides no access to type information. For a ContentHandler that
- * makes type information available, see {@link TypedContentHandler}</p>
+ * makes type information available, see {@link com.saxonica.ee.jaxp.TypedContentHandler}</p>
  * <p>The ContentHandlerProxy can also be nominated as a TraceListener, to receive notification
  * of trace events.</p>
  */
