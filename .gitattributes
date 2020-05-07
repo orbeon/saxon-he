@@ -1124,6 +1124,7 @@ latest10/hej/net/sf/saxon/om/IdentityComparable.java svn_eol_002dstyle=native
 latest10/hej/net/sf/saxon/om/IgnorableSpaceStrippingRule.java svn_eol_002dstyle=native
 latest10/hej/net/sf/saxon/om/Item.java svn_eol_002dstyle=native
 latest10/hej/net/sf/saxon/om/ItemConsumer.java svn_eol_002dstyle=native
+latest10/hej/net/sf/saxon/om/IteratorWrapper.java svn_eol_002dstyle=native
 latest10/hej/net/sf/saxon/om/LargeAttributeMap.java svn_eol_002dstyle=native
 latest10/hej/net/sf/saxon/om/LazySequence.java svn_eol_002dstyle=native
 latest10/hej/net/sf/saxon/om/MemoSequence.java svn_eol_002dstyle=native
