@@ -431,7 +431,7 @@ public class Transform {
 
             value = options.getOptionValue("nogo");
             if (value != null) {
-                if (jit) {
+                if ("on".equals(options.getOptionValue("jit"))) {
                     System.err.println("Warning: -jit:on is ignored when -nogo is set");
                 }
                 run = false;
