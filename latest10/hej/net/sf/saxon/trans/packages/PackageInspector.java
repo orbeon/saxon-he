@@ -8,12 +8,15 @@
 package net.sf.saxon.trans.packages;
 
 import net.sf.saxon.Configuration;
+import net.sf.saxon.Version;
 import net.sf.saxon.event.PipelineConfiguration;
 import net.sf.saxon.event.ProxyReceiver;
 import net.sf.saxon.event.Sender;
 import net.sf.saxon.event.Sink;
+import net.sf.saxon.lib.NamespaceConstant;
 import net.sf.saxon.lib.ParseOptions;
 import net.sf.saxon.lib.Validation;
+import net.sf.saxon.om.AttributeInfo;
 import net.sf.saxon.om.AttributeMap;
 import net.sf.saxon.om.NamespaceMap;
 import net.sf.saxon.om.NodeName;
@@ -34,6 +37,7 @@ import java.io.File;
 
 public class PackageInspector extends ProxyReceiver {
 
+    private boolean isSefFile;
     private String packageName;
     private String packageVersion = "1";
     private int elementCount = 0;
@@ -54,6 +58,7 @@ public class PackageInspector extends ProxyReceiver {
             // abort the parse when the second start element tag is found
             throw new XPathException("#start#");
         }
+        isSefFile = elemName.hasURI(NamespaceConstant.SAXON_XSLT_EXPORT);
         if (attributes.get("", "name") != null) {
             packageName = attributes.get("", "name").getValue();
         }
@@ -62,6 +67,12 @@ public class PackageInspector extends ProxyReceiver {
         }
         if (attributes.get("", "packageVersion") != null) {
             packageVersion = attributes.get("", "packageVersion").getValue();
+        }
+        AttributeInfo saxonVersion = attributes.get("", "saxonVersion");
+        if (saxonVersion != null) {
+            if (saxonVersion.getValue().startsWith("9")) {
+                throw new XPathException("Saxon " + Version.getProductVersion() + " cannot load a SEF file created using version " + saxonVersion.getValue());
+            }
         }
     }
     
@@ -95,7 +106,11 @@ public class PackageInspector extends ProxyReceiver {
         } else {
             PackageDetails details = new PackageDetails();
             details.nameAndVersion = vp;
-            details.sourceLocation = new StreamSource(top);
+            if (inspector.isSefFile) {
+                details.exportLocation = new StreamSource(top);
+            } else {
+                details.sourceLocation = new StreamSource(top);
+            }
             return details;
         }
     }
