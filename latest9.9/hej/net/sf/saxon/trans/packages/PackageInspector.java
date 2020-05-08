@@ -8,11 +8,13 @@
 package net.sf.saxon.trans.packages;
 
 import net.sf.saxon.Configuration;
+import net.sf.saxon.Version;
 import net.sf.saxon.event.PipelineConfiguration;
 import net.sf.saxon.event.ProxyReceiver;
 import net.sf.saxon.event.Sender;
 import net.sf.saxon.event.Sink;
 import net.sf.saxon.expr.parser.Location;
+import net.sf.saxon.lib.NamespaceConstant;
 import net.sf.saxon.lib.ParseOptions;
 import net.sf.saxon.om.NodeName;
 import net.sf.saxon.trans.XPathException;
@@ -32,6 +34,7 @@ import java.io.File;
 
 public class PackageInspector extends ProxyReceiver {
 
+    private boolean isSef;
     private String packageName;
     private String packageVersion = "1";
     private int elementCount = 0;
@@ -50,6 +53,7 @@ public class PackageInspector extends ProxyReceiver {
             // abort the parse when the second start element tag is found
             throw new XPathException("#start#");
         }
+        isSef = namecode.hasURI(NamespaceConstant.SAXON_XSLT_EXPORT);
     }
 
     /**
@@ -73,6 +77,10 @@ public class PackageInspector extends ProxyReceiver {
             packageName = value.toString();
         } else if (name.getLocalPart().equals("package-version") || name.getLocalPart().equals("packageVersion")) {
             packageVersion = value.toString();
+        } else if (name.getLocalPart().equals("saxonVersion")) {
+            if (value.toString().startsWith("1")) {
+                throw new XPathException("Saxon " + Version.getProductVersion() + " cannot load a SEF file created using version " + value);
+            }
         }
     }
 
@@ -103,7 +111,11 @@ public class PackageInspector extends ProxyReceiver {
         } else {
             PackageDetails details = new PackageDetails();
             details.nameAndVersion = vp;
-            details.sourceLocation = new StreamSource(top);
+            if (inspector.isSef) {
+                details.exportLocation = new StreamSource(top);
+            } else {
+                details.sourceLocation = new StreamSource(top);
+            }
             return details;
         }
     }
