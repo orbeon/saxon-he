@@ -287,7 +287,7 @@ public class UseWhenFilter extends ProxyReceiver {
                 map.put(key, includedDoc);
                 return includedDoc;
             } catch (XPathException e) {
-                e.setLocation(location);
+                e.maybeSetLocation(location);
                 e.maybeSetErrorCode("XTSE0165");
                 if ("XTSE0180".equals(e.getErrorCodeLocalPart())) {
                     if (isImport) {
