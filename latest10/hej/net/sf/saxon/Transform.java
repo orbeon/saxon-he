@@ -732,6 +732,19 @@ public class Transform {
 
 
                 if (sheet == null) {
+                    if (export && !run) {
+                        // bug 4547
+                        try {
+                            XsltPackage pack = compiler.compilePackage(styleSource);
+                            pack.save(new File(exportOutputFileName));
+                            if (showTime) {
+                                System.err.println("Stylesheet exported to: " + new File(exportOutputFileName).getAbsolutePath());
+                            }
+                            return;
+                        } catch (SaxonApiException err) {
+                            quit(err.getMessage(), 2);
+                        }
+                    }
                     int repeatComp = repeat;
                     if (repeatComp > 20) {
                         repeatComp = 20;
