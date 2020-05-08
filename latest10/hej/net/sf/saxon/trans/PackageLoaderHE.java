@@ -387,7 +387,7 @@ public class PackageLoaderHE implements IPackageLoader {
                 keyDefinition.setComposite(true);
             }
             pack.getKeyManager().addKeyDefinition(keyName, keyDefinition, reusable, pack.getConfiguration());
-            pack.addComponent(keyComponent);
+            //pack.addComponent(keyComponent);
         }
 
     }
