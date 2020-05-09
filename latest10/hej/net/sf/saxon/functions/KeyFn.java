@@ -24,7 +24,7 @@ import net.sf.saxon.type.Type;
 import net.sf.saxon.value.AtomicValue;
 
 
-public class KeyFn extends SystemFunction {
+public class KeyFn extends SystemFunction implements StatefulSystemFunction {
 
     private KeyDefinitionSet staticKeySet = null;
 
@@ -77,6 +77,13 @@ public class KeyFn extends SystemFunction {
             prop |= StaticProperty.CONTEXT_DOCUMENT_NODESET;
         }
         return prop;
+    }
+
+    @Override
+    public SystemFunction copy() {
+        KeyFn k2 = (KeyFn) SystemFunction.makeFunction(getFunctionName().getLocalPart(), getRetainedStaticContext(), getArity());
+        k2.staticKeySet = staticKeySet;
+        return k2;
     }
 
     /**
