@@ -169,9 +169,9 @@ public class ArrayFunctionSet extends BuiltInFunctionSet {
      * the maximum subscript allowed by the implementation (2^31-1), returning the value
      * as a Java int
      *
-     * @param subscript the proposed subscript
+     * @param subscript the proposed subscript (one-based)
      * @param limit the upper limit allowed (usually the size of the array, sometimes arraysize + 1)
-     * @return the proposed subscript as an int, if it is in range
+     * @return the proposed subscript as an int, if it is in range (still one-based)
      * @throws XPathException if the subscript is 0, negative, or outside the permitted range
      */
     public static int checkSubscript(IntegerValue subscript, int limit) throws XPathException {

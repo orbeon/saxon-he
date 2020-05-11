@@ -9,6 +9,7 @@ package net.sf.saxon.expr;
 
 import net.sf.saxon.Configuration;
 import net.sf.saxon.expr.parser.*;
+import net.sf.saxon.ma.arrays.ArrayFunctionSet;
 import net.sf.saxon.ma.arrays.ArrayItem;
 import net.sf.saxon.ma.arrays.ArrayItemType;
 import net.sf.saxon.ma.map.MapItem;
@@ -298,18 +299,31 @@ public class LookupExpression extends BinaryExpression {
             if (isSingleContainer && isSingleEntry) {
                 ArrayItem array = (ArrayItem) getLhsExpression().evaluateItem(context);
                 IntegerValue subscript = (IntegerValue) getRhsExpression().evaluateItem(context);
-                return array.get((int) subscript.longValue() - 1).iterate();
+                int index = ArrayFunctionSet.checkSubscript(subscript, array.arrayLength());
+                return array.get(index - 1).iterate();
             } else if (isSingleEntry) {
                 SequenceIterator baseIterator = getLhsExpression().iterate(context);
-                int subscript = (int) ((IntegerValue) getRhsExpression().evaluateItem(context)).longValue() - 1;
-                return new MappingIterator(baseIterator,
-                                             baseItem -> ((ArrayItem) baseItem).get(subscript).iterate());
+                IntegerValue subscriptValue = (IntegerValue) getRhsExpression().evaluateItem(context);
+                int subscript = subscriptValue.asSubscript() - 1;
+                return new MappingIterator(baseIterator, baseItem -> {
+                    ArrayItem array = (ArrayItem) baseItem;
+                    if (subscript >= 0 && subscript < array.arrayLength()) {
+                        return array.get(subscript).iterate();
+                    } else {
+                        // reuse the diagnostic logic
+                        ArrayFunctionSet.checkSubscript(subscriptValue, array.arrayLength());
+                        return null; // shouldn't happen
+                    }
+                });
             } else {
                 SequenceIterator baseIterator = getLhsExpression().iterate(context);
                 GroundedValue rhs = getRhsExpression().iterate(context).materialize();
                 return new MappingIterator(baseIterator, baseItem -> new MappingIterator(
-                        rhs.iterate(),
-                        index -> ((ArrayItem) baseItem).get((int) ((IntegerValue) index).longValue() - 1).iterate()));
+                        rhs.iterate(), index -> {
+                            ArrayItem array = (ArrayItem) baseItem;
+                            int subscript = ArrayFunctionSet.checkSubscript((IntegerValue) index, array.arrayLength()) - 1;
+                            return array.get(subscript).iterate();
+                }));
             }
         } else if (isMapLookup) {
             if (isSingleContainer && isSingleEntry) {
