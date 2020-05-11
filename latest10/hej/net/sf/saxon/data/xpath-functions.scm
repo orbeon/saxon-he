@@ -1,9 +1,8 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <scm:schema xmlns=""
             xmlns:scm="http://ns.saxonica.com/schema-component-model"
-            generatedAt="2020-03-02T11:30:00.673Z"
-            xsdVersion="1.0"
-            dmk="TGljZW5zb3I9U2F4b25pY2EKTGljZW5zZWU9TWljaGFlbCBLYXkKQ29tcGFueT1TYXhvbmljYQpFbWFpbD1taWtlQHNheG9uaWNhLmNvbQpFZGl0aW9uPUVFClNBVD15ZXMKU0FRPXllcwpTQVY9eWVzCklzc3VlZD0yMDIwLTAzLTAxClNlcmllcz1WClNlcmlhbD1WMDA4NTgxClVzZXI9UDAwMDEKRXZhbHVhdGlvbj1ubwpFeHBpcmF0aW9uPTIwMjAtMDMtMzEKVXBncmFkZURheXM9MzY1Ck1haW50ZW5hbmNlRGF5cz0zNjUKClNpZ25hdHVyZT0zMDJDMDIxNDc5N0Y1QTczMkExMkI3QUZFNkEzODFGNTg2MUQ4MDMyRjQ3MjI0RTIwMjE0NDExMkRGOTI1MzI5RTgyRTdGQjc0ODc2RUUyODZFNTdFOUUyRTI1Mw==">
+            generatedAt="2020-05-11T08:48:27.149+01:00"
+            xsdVersion="1.1">
    <scm:simpleType id="C0"
                    name="finiteNumberType"
                    targetNamespace="http://www.w3.org/2005/xpath-functions"
@@ -93,20 +92,20 @@
       </scm:modelGroupParticle>
       <scm:finiteStateMachine initialState="0">
          <scm:state nr="0" final="true">
-            <scm:edge term="C14" to="1"/>
-            <scm:edge term="C17" to="1"/>
             <scm:edge term="C18" to="1"/>
-            <scm:edge term="C16" to="1"/>
             <scm:edge term="C19" to="1"/>
+            <scm:edge term="C14" to="1"/>
+            <scm:edge term="C16" to="1"/>
             <scm:edge term="C15" to="1"/>
+            <scm:edge term="C17" to="1"/>
          </scm:state>
          <scm:state nr="1" final="true">
-            <scm:edge term="C14" to="1"/>
-            <scm:edge term="C17" to="1"/>
             <scm:edge term="C18" to="1"/>
-            <scm:edge term="C16" to="1"/>
             <scm:edge term="C19" to="1"/>
+            <scm:edge term="C14" to="1"/>
+            <scm:edge term="C16" to="1"/>
             <scm:edge term="C15" to="1"/>
+            <scm:edge term="C17" to="1"/>
          </scm:state>
       </scm:finiteStateMachine>
    </scm:complexType>
@@ -152,20 +151,20 @@
       </scm:modelGroupParticle>
       <scm:finiteStateMachine initialState="0">
          <scm:state nr="0" final="true">
-            <scm:edge term="C14" to="1"/>
-            <scm:edge term="C17" to="1"/>
             <scm:edge term="C18" to="1"/>
-            <scm:edge term="C16" to="1"/>
             <scm:edge term="C19" to="1"/>
+            <scm:edge term="C14" to="1"/>
+            <scm:edge term="C16" to="1"/>
             <scm:edge term="C15" to="1"/>
+            <scm:edge term="C17" to="1"/>
          </scm:state>
          <scm:state nr="1" final="true">
-            <scm:edge term="C14" to="1"/>
-            <scm:edge term="C17" to="1"/>
             <scm:edge term="C18" to="1"/>
-            <scm:edge term="C16" to="1"/>
             <scm:edge term="C19" to="1"/>
+            <scm:edge term="C14" to="1"/>
+            <scm:edge term="C16" to="1"/>
             <scm:edge term="C15" to="1"/>
+            <scm:edge term="C17" to="1"/>
          </scm:state>
       </scm:finiteStateMachine>
    </scm:complexType>
@@ -199,20 +198,20 @@
       </scm:modelGroupParticle>
       <scm:finiteStateMachine initialState="0">
          <scm:state nr="0" final="true">
-            <scm:edge term="C27" to="1"/>
-            <scm:edge term="C31" to="1"/>
-            <scm:edge term="C29" to="1"/>
-            <scm:edge term="C30" to="1"/>
             <scm:edge term="C26" to="1"/>
+            <scm:edge term="C27" to="1"/>
+            <scm:edge term="C29" to="1"/>
             <scm:edge term="C28" to="1"/>
+            <scm:edge term="C30" to="1"/>
+            <scm:edge term="C31" to="1"/>
          </scm:state>
          <scm:state nr="1" final="true">
-            <scm:edge term="C27" to="1"/>
-            <scm:edge term="C31" to="1"/>
-            <scm:edge term="C29" to="1"/>
-            <scm:edge term="C30" to="1"/>
             <scm:edge term="C26" to="1"/>
+            <scm:edge term="C27" to="1"/>
+            <scm:edge term="C29" to="1"/>
             <scm:edge term="C28" to="1"/>
+            <scm:edge term="C30" to="1"/>
+            <scm:edge term="C31" to="1"/>
          </scm:state>
       </scm:finiteStateMachine>
    </scm:complexType>
@@ -242,20 +241,20 @@
       </scm:modelGroupParticle>
       <scm:finiteStateMachine initialState="0">
          <scm:state nr="0" final="true">
-            <scm:edge term="C27" to="1"/>
-            <scm:edge term="C31" to="1"/>
-            <scm:edge term="C29" to="1"/>
-            <scm:edge term="C30" to="1"/>
             <scm:edge term="C26" to="1"/>
+            <scm:edge term="C27" to="1"/>
+            <scm:edge term="C29" to="1"/>
             <scm:edge term="C28" to="1"/>
+            <scm:edge term="C30" to="1"/>
+            <scm:edge term="C31" to="1"/>
          </scm:state>
          <scm:state nr="1" final="true">
-            <scm:edge term="C27" to="1"/>
-            <scm:edge term="C31" to="1"/>
-            <scm:edge term="C29" to="1"/>
-            <scm:edge term="C30" to="1"/>
             <scm:edge term="C26" to="1"/>
+            <scm:edge term="C27" to="1"/>
+            <scm:edge term="C29" to="1"/>
             <scm:edge term="C28" to="1"/>
+            <scm:edge term="C30" to="1"/>
+            <scm:edge term="C31" to="1"/>
          </scm:state>
       </scm:finiteStateMachine>
    </scm:complexType>
@@ -290,12 +289,12 @@
       </scm:modelGroupParticle>
       <scm:finiteStateMachine initialState="0">
          <scm:state nr="0" final="true">
-            <scm:edge term="C36" to="1"/>
             <scm:edge term="C35" to="1"/>
+            <scm:edge term="C36" to="1"/>
          </scm:state>
          <scm:state nr="1" final="true">
-            <scm:edge term="C36" to="1"/>
             <scm:edge term="C35" to="1"/>
+            <scm:edge term="C36" to="1"/>
          </scm:state>
       </scm:finiteStateMachine>
    </scm:complexType>
@@ -540,4 +539,4 @@
       <scm:field xpath="@key" defaultNamespace=""/>
    </scm:unique>
 </scm:schema>
-<?Σ 87048b19?>
+<?Σ a5e7196a?>
