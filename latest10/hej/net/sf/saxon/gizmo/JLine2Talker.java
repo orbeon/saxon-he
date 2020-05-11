@@ -24,6 +24,16 @@ import static jline.internal.Preconditions.checkNotNull;
 
 public class JLine2Talker implements Talker {
 
+    private final static boolean DEBUG = false;
+    public static StringBuilder debugLog;
+    static {
+        if (DEBUG) {
+            // Debug mode is used during unit testing; it allows diagnostic output to be sent to
+            // a local string buffer, avoiding confusion with the console output of the utility itself.
+            debugLog = new StringBuilder();
+        }
+    }
+
     private ConsoleReader console;
     private Completer completer;
 
@@ -58,12 +68,8 @@ public class JLine2Talker implements Talker {
     }
 
     private static void log(String message) {
-        try (FileWriter fw = new FileWriter("/Users/mike/Desktop/log.txt", true);
-             BufferedWriter bw = new BufferedWriter(fw);
-             PrintWriter out = new PrintWriter(bw)) {
-             out.println(message);
-        } catch (IOException e) {
-            //exception handling left as an exercise for the reader
+        if (DEBUG) {
+            debugLog.append(message);
         }
     }
 
@@ -76,6 +82,10 @@ public class JLine2Talker implements Talker {
         @Override
         public int complete(String buffer, int cursor, List<CharSequence> candidates) {
             // Consider using a filename completer
+            if (DEBUG) {
+                log(String.format("Complete buffer='%s' cursor=%d candidates='%s'",
+                                  buffer, cursor, String.join("|", candidates)));
+            }
             int space = buffer.indexOf(' ');
             if (space > 0) {
                 String command = buffer.substring(0, space);
@@ -126,16 +136,26 @@ public class JLine2Talker implements Talker {
                             return index==0 ? space+1 : index;
                         }
                     };
-                    return fnc.complete(buffer, cursor, candidates);
+                    if (DEBUG) {
+                        log(String.format("FileName completer buffer='%s' cursor=%d candidates='%s'",
+                                          buffer, cursor, String.join("|", candidates)));
+                    }
+                    int index = fnc.complete(buffer, cursor, candidates);
+                    if (DEBUG) {
+                        log(String.format("Index=%d", index));
+                    }
+                    return index;
                 }
             }
             int lastDelimiter = Integer.max(cursor - 1, 0);
-            while (lastDelimiter >= 0) {
-                char c = buffer.charAt(lastDelimiter);
-                if (Character.isAlphabetic((c)) || Character.isDigit(c) || c == '-' || c== '_' || c=='@' || c=='.') {
-                    lastDelimiter--;
-                } else {
-                    break;
+            if (lastDelimiter > space) {
+                while (lastDelimiter >= 0) {
+                    char c = buffer.charAt(lastDelimiter);
+                    if (Character.isAlphabetic((c)) || Character.isDigit(c) || c == '-' || c == '_' || c == '@' || c == '.' || c == ' ') {
+                        lastDelimiter--;
+                    } else {
+                        break;
+                    }
                 }
             }
             String currentWord = buffer.substring(lastDelimiter+1);
