@@ -96,7 +96,9 @@ public class DirectoryCollection extends AbstractResourceCollection {
                      InputDetails details = getInputDetails(in);
                      details.resourceUri = in;
                      details.parseOptions = options;
-                     details.contentType = params.getContentType();
+                     if (params.getContentType() != null) {
+                         details.contentType = params.getContentType();
+                     }
                      Resource resource = makeResource(context.getConfiguration(), details);
                      if (resource != null) {
                          if (metadata) {
