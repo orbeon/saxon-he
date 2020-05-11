@@ -23,11 +23,12 @@ public class IteratorWrapper implements SequenceIterator {
     /**
      * Get the next item in the Iterator
      *
-     * @return the next item in the iterator
+     * @return the next item in the iterator, or null if there are no more items. Once a call
+     * on next() has returned null, no further calls should be made.
      */
     @Override
     public Item next() throws XPathException {
-        return iterator.next();
+        return iterator.hasNext() ? iterator.next() : null;
     }
 }
 
