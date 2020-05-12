@@ -16,14 +16,16 @@ import net.sf.saxon.s9api.Location;
 import net.sf.saxon.s9api.QName;
 import net.sf.saxon.s9api.XmlProcessingError;
 import net.sf.saxon.trans.Err;
-import net.sf.saxon.trans.XmlProcessingException;
 import net.sf.saxon.trans.XPathException;
+import net.sf.saxon.trans.XmlProcessingException;
 import net.sf.saxon.tree.AttributeLocation;
 import net.sf.saxon.type.ValidationException;
 import org.xml.sax.SAXParseException;
 
 import javax.xml.transform.SourceLocator;
 import javax.xml.transform.TransformerException;
+import java.io.PrintWriter;
+import java.io.StringWriter;
 import java.util.HashSet;
 import java.util.Set;
 
@@ -481,7 +483,13 @@ public class StandardErrorReporter
             Throwable e = err.getCause();
             while (e != null) {
                 if (!(e instanceof SAXParseException)) {
-                    sb.append(". Caused by ").append(e.getClass().getName());
+                    if (e instanceof RuntimeException) {
+                        StringWriter sw = new StringWriter();
+                        e.printStackTrace(new PrintWriter(sw));
+                        sb.append('\n').append(sw);
+                    } else {
+                        sb.append(". Caused by ").append(e.getClass().getName());
+                    }
                 } 
                 String next = e.getMessage();
                 if (next != null) {
