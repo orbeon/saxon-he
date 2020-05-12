@@ -168,7 +168,7 @@ queryProc->runQueryToString();
 
       <p>Example using the new XSLT 3.0 API:</p>
       <samp><![CDATA[<?php
-  $saxonproc = new Saxon\SaxonProcessor();
+  $saxonProc = new Saxon\SaxonProcessor();
   $transformer = $saxonProc->newXslt30Processor();
   $transformer->compileFromString("<xsl:stylesheet version='2.0'" .
       "xmlns:xsl='http://www.w3.org/1999/XSL/Transform'>" .
