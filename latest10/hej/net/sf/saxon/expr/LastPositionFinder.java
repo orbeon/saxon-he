@@ -24,7 +24,7 @@ public interface LastPositionFinder {
      * non-destructive: it does not change the state of the iterator.
      * The result is undefined if the next() method of the iterator has already returned null.
      * This method must not be called unless the result of getProperties() on the iterator
-     * includes the bit setting {@link SequenceIterator.Property#LAST_POSITION_FINDER}
+     * includes the bit setting {@link net.sf.saxon.om.SequenceIterator.Property#LAST_POSITION_FINDER}
      *
      * @return the number of items in the sequence
      * @throws XPathException if an error occurs evaluating the sequence in order to determine

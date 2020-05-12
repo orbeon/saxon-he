@@ -57,7 +57,7 @@ public final class DayTimeDurationValue extends DurationValue
      * constructor performs limited validation. The components (apart from sign) must all be non-negative
      * integers; they need not be normalized (for example, 36 hours is acceptable)
      * <p>Note: for historic reasons this constructor only supports microsecond precision. For nanosecond
-     * precision, use the constructor {@link DayTimeDurationValue#DayTimeDurationValue(int, int, int, long, int)}</p>
+     * precision, use the constructor {@link #DayTimeDurationValue(int, int, int, long, int)}</p>
      *
      * @param sign         positive number for positive durations, negative for negative duratoins
      * @param days         number of days

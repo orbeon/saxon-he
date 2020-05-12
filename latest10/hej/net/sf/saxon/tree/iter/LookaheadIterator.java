@@ -24,7 +24,7 @@ public interface LookaheadIterator extends SequenceIterator {
      * next(). It is used only when there is an explicit need to tell if we
      * are at the last element.
      * <p>This method must not be called unless the result of getProperties() on the iterator
-     * includes the property {@link SequenceIterator.Property#LOOKAHEAD} </p>
+     * includes the property {@link net.sf.saxon.om.SequenceIterator.Property#LOOKAHEAD} </p>
      *
      * @return true if there are more items in the sequence
      */

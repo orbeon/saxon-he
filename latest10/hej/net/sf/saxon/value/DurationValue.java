@@ -45,7 +45,7 @@ public class DurationValue extends AtomicValue implements AtomicMatchKey {
      * that the values are normalized, for example it is acceptable to specify months=18. The values of
      * the individual components must all be non-negative.
      * <p>Note: For historic reasons this constructor only supports microsecond precision. To get nanosecond
-     * precision, use the constructor {@link DurationValue#DurationValue(int, int, int, int, int, long, int, AtomicType)}.</p>
+     * precision, use the constructor {@link #DurationValue(int, int, int, int, int, long, int, AtomicType)}.</p>
      *
      * @param positive     true if the duration is positive, false if negative. For a negative duration
      *                     the components are all supplied as positive integers (or zero).
@@ -74,7 +74,7 @@ public class DurationValue extends AtomicValue implements AtomicMatchKey {
      * the individual components must all be non-negative.
      * <p>Note: for historic reasons this constructor was written to expect microseconds rather than nanoseconds.
      * To supply nanoseconds, use the alternative constructor
-     * {@link DurationValue#DurationValue(int, int, int, int, int, long, int, AtomicType)}.</p>
+     * {@link #DurationValue(int, int, int, int, int, long, int, AtomicType)}.</p>
      *
      * @param positive     true if the duration is positive, false if negative. For a negative duration
      *                     the components are all supplied as positive integers (or zero).

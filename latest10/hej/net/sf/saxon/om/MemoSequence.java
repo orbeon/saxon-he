@@ -325,7 +325,7 @@ public class MemoSequence implements Sequence {
          * Get properties of this iterator, as a bit-significant integer.
          *
          * @return the properties of this iterator. This will be some combination of
-         *         properties such as {@link Property#GROUNDED} and {@link Property#LAST_POSITION_FINDER}. It is always
+         *         properties such as {@link net.sf.saxon.om.SequenceIterator.Property#GROUNDED} and {@link net.sf.saxon.om.SequenceIterator.Property#LAST_POSITION_FINDER}. It is always
          *         acceptable to return the value zero, indicating that there are no known special properties.
          */
 

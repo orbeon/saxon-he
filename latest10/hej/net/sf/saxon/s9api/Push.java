@@ -201,7 +201,7 @@ public interface Push {
     }
 
     /**
-     * A {@link Container} representing a document node.
+     * A {@link net.sf.saxon.s9api.Push.Container} representing a document node.
      *
      * <p>If the document is constrained to be well-formed then the permitted sequence of events is
      * {@code (COMMENT | PI)* ELEMENT (COMMENT | PI)* CLOSE}.</p>
@@ -223,7 +223,7 @@ public interface Push {
     }
 
     /**
-     * A {@link Container} representing an element node.
+     * A {@link net.sf.saxon.s9api.Push.Container} representing an element node.
      *
      * <p>The permitted sequence of events for an element node is
      * {@code (ATTRIBUTE | NAMESPACE)* (COMMENT | PI | TEXT | ELEMENT)* CLOSE?}.</p>

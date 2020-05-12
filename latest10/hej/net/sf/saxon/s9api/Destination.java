@@ -95,7 +95,7 @@ public interface Destination {
      *               generating a validator to add to the output pipeline. The {@link Destination} object
      *               is responsible for instantiating this validator and inserting it into the pipeline.
      *               In most cases this is done by invoking the helper method
-     *               {@link SerializationProperties#makeSequenceNormalizer(Outputter)}. Validation can be skipped
+     *               {@link SerializationProperties#makeSequenceNormalizer(Receiver)}. Validation can be skipped
      *               in the case of non-XML destinations.
      * @return the Receiver to which events are to be sent.
      *         <p>It is the caller's responsibility to

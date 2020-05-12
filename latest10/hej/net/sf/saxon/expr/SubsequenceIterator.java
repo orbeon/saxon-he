@@ -122,8 +122,8 @@ public class SubsequenceIterator implements SequenceIterator, LastPositionFinder
      * Get properties of this iterator, as a bit-significant integer.
      *
      * @return the properties of this iterator. This will be some combination of
-     *         properties such as {@link Property#GROUNDED}, {@link Property#LAST_POSITION_FINDER},
-     *         and {@link Property#LOOKAHEAD}. It is always
+     *         properties such as {@link net.sf.saxon.om.SequenceIterator.Property#GROUNDED}, {@link net.sf.saxon.om.SequenceIterator.Property#LAST_POSITION_FINDER},
+     *         and {@link net.sf.saxon.om.SequenceIterator.Property#LOOKAHEAD}. It is always
      *         acceptable to return the value zero, indicating that there are no known special properties.
      *         It is acceptable for the properties of the iterator to change depending on its state.
      */
@@ -138,7 +138,7 @@ public class SubsequenceIterator implements SequenceIterator, LastPositionFinder
      * non-destructive: it does not change the state of the iterator.
      * The result is undefined if the next() method of the iterator has already returned null.
      * This method must not be called unless the result of getProperties() on the iterator
-     * includes the bit setting {@link Property#LAST_POSITION_FINDER}
+     * includes the bit setting {@link net.sf.saxon.om.SequenceIterator.Property#LAST_POSITION_FINDER}
      */
 
     public int getLength() throws XPathException {

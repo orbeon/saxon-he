@@ -87,7 +87,7 @@ public class PullFilter implements PullProvider {
      * currentEvent to the event returned by any call on next().</p>
      *
      * @return an integer code indicating the type of event. The code
-     *         {@link Event#END_OF_INPUT} is returned at the end of the sequence.
+     *         {@link net.sf.saxon.pull.PullProvider.Event#END_OF_INPUT} is returned at the end of the sequence.
      */
 
     public Event next() throws XPathException {
@@ -156,7 +156,7 @@ public class PullFilter implements PullProvider {
 
     /**
      * Close the event reader. This indicates that no further events are required.
-     * It is not necessary to close an event reader after {@link Event#END_OF_INPUT} has
+     * It is not necessary to close an event reader after {@link net.sf.saxon.pull.PullProvider.Event#END_OF_INPUT} has
      * been reported, but it is recommended to close it if reading terminates
      * prematurely. Once an event reader has been closed, the effect of further
      * calls on next() is undefined.
@@ -174,8 +174,8 @@ public class PullFilter implements PullProvider {
      * Get the string value of the current element, text node, processing-instruction,
      * or top-level attribute or namespace node, or atomic value.
      * <p>In other situations the result is undefined and may result in an IllegalStateException.</p>
-     * <p>If the most recent event was a {@link Event#START_ELEMENT}, this method causes the content
-     * of the element to be read. The next event notified will be the corresponding {@link Event#END_ELEMENT}.</p>
+     * <p>If the most recent event was a {@link net.sf.saxon.pull.PullProvider.Event#START_ELEMENT}, this method causes the content
+     * of the element to be read. The next event notified will be the corresponding {@link net.sf.saxon.pull.PullProvider.Event#END_ELEMENT}.</p>
      *
      * @return the String Value of the node in question, defined according to the rules in the
      *         XPath data model.
