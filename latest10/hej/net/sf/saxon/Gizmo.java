@@ -173,7 +173,6 @@ public class Gizmo {
         config = Configuration.newConfiguration();
         config.setConfigurationProperty(Feature.ALLOW_SYNTAX_EXTENSIONS, true);
         env = new IndependentContext(config);
-        InputStream commandInput = System.in;
         String source = null;
         String script = null;
         boolean interactive = true;
@@ -188,6 +187,10 @@ public class Gizmo {
         }
         talker = initTalker(script);
         //System.err.println("Using term=" + talker.getClass().getCanonicalName());
+
+        List<String> sortedNames = new ArrayList<>(Arrays.asList(keywords));
+        Collections.sort(sortedNames);
+        talker.setAutoCompletion(sortedNames);
         
         if (source != null) {
             try {
@@ -210,15 +213,6 @@ public class Gizmo {
                 System.exit(2);
             }
         }
-        if (script != null) {
-            try {
-                commandInput = new FileInputStream(new File(script));
-                interactive = false;
-            } catch (FileNotFoundException e) {
-                System.out.println("Cannot read script file " + script + ": " + e.getMessage());
-            }
-        }
-
 
         env.declareNamespace("xml", NamespaceConstant.XML);
         env.declareNamespace("xsl", NamespaceConstant.XSLT);
