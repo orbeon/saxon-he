@@ -206,7 +206,7 @@ public abstract class AbstractResourceCollection implements ResourceCollection {
             inputDetails.resourceUri = resourceURI;
             URI uri = new URI(resourceURI);
             if ("file".equals(uri.getScheme())) {
-                if (params.getContentType() != null) {
+                if (params != null && params.getContentType() != null) {
                     inputDetails.contentType = params.getContentType();
                 } else {
                     inputDetails.contentType = guessContentTypeFromName(resourceURI);

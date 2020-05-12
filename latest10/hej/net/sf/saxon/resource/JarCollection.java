@@ -304,8 +304,9 @@ public class JarCollection extends AbstractResourceCollection {
                         }
                         InputDetails details = new InputDetails();
                         details.binaryContent = output.toByteArray();
-                        details.contentType = params.getContentType();
-                        if (details.contentType == null) {
+                        if (params != null && params.getContentType() != null) {
+                            details.contentType = params.getContentType();
+                        } else {
                             details.contentType = guessContentTypeFromName(entry.getName());
                         }
                         if (details.contentType == null) {
