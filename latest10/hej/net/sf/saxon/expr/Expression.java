@@ -936,7 +936,7 @@ public abstract class Expression implements IdentityComparable, ExportAgent, Loc
     public void process(Outputter output, XPathContext context) throws XPathException {
         int m = getImplementationMethod();
 
-        if ((m & EVALUATE_METHOD) != 0) {
+        if ((m & EVALUATE_METHOD) != 0 && !Cardinality.allowsMany(getCardinality())) {
             Item item = evaluateItem(context);
             if (item != null) {
                 output.append(item, getLocation(), ReceiverOption.ALL_NAMESPACES);
