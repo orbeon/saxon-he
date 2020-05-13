@@ -178,7 +178,7 @@ public abstract class Converter {
      */
 
     public static class UpCastingConverter extends UnfailingConverter {
-        private AtomicType newTypeAnnotation;
+        private final AtomicType newTypeAnnotation;
 
         public UpCastingConverter(AtomicType annotation) {
             this.newTypeAnnotation = annotation;
@@ -196,7 +196,7 @@ public abstract class Converter {
      */
 
     public static class DownCastingConverter extends Converter {
-        private AtomicType newType;
+        private final AtomicType newType;
 
         public DownCastingConverter(AtomicType annotation, ConversionRules rules) {
             this.newType = annotation;
@@ -233,8 +233,8 @@ public abstract class Converter {
      */
 
     public static class TwoPhaseConverter extends Converter {
-        private Converter phaseOne;
-        private Converter phaseTwo;
+        private final Converter phaseOne;
+        private final Converter phaseTwo;
 
         public TwoPhaseConverter(Converter phaseOne, Converter phaseTwo) {
             this.phaseOne = phaseOne;
@@ -682,7 +682,7 @@ public abstract class Converter {
                 if (stringToDouble == null) {
                     stringToDouble = BuiltInAtomicType.DOUBLE.getStringConverter(getConversionRules());
                 }
-                return stringToDouble.convert((UntypedAtomicValue)input);
+                return stringToDouble.convert(input);
             } else {
                 ValidationFailure err = new ValidationFailure(
                         "Cannot promote non-numeric value to xs:double");
@@ -716,7 +716,7 @@ public abstract class Converter {
                 if (stringToFloat == null) {
                     stringToFloat = BuiltInAtomicType.FLOAT.getStringConverter(getConversionRules());
                 }
-                return stringToFloat.convert((UntypedAtomicValue)input);
+                return stringToFloat.convert(input);
             } else {
                 ValidationFailure err = new ValidationFailure(
                         "Cannot promote non-numeric value to xs:double");

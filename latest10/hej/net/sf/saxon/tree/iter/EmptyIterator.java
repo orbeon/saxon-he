@@ -24,7 +24,7 @@ public class EmptyIterator implements SequenceIterator,
         ReversibleIterator, LastPositionFinder, GroundedIterator,
         LookaheadIterator, UnfailingIterator, AtomizedValueIterator {
 
-    private static EmptyIterator theInstance = new EmptyIterator();
+    private static final EmptyIterator theInstance = new EmptyIterator();
 
     /**
      * Get an EmptyIterator, an iterator over an empty sequence.
@@ -37,7 +37,6 @@ public class EmptyIterator implements SequenceIterator,
         return theInstance;
     }
 
-    @SuppressWarnings("unchecked")
     public static EmptyIterator emptyIterator() {
         return theInstance;
     }

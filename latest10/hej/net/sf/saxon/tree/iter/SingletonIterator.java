@@ -11,7 +11,6 @@ import net.sf.saxon.expr.LastPositionFinder;
 import net.sf.saxon.om.GroundedValue;
 import net.sf.saxon.om.Item;
 import net.sf.saxon.om.SequenceIterator;
-import net.sf.saxon.om.ZeroOrOne;
 import net.sf.saxon.value.EmptySequence;
 
 import java.util.EnumSet;
@@ -24,7 +23,7 @@ import java.util.EnumSet;
 public class SingletonIterator<T extends Item> implements SequenceIterator, UnfailingIterator,
         ReversibleIterator, LastPositionFinder, GroundedIterator, LookaheadIterator {
 
-    private T item;
+    private final T item;
     boolean gone = false;
 
     /**
@@ -113,11 +112,10 @@ public class SingletonIterator<T extends Item> implements SequenceIterator, Unfa
 
     /*@NotNull*/
     public GroundedValue materialize() {
-        if (item instanceof GroundedValue) {
-            // noinspection unchecked
-            return (GroundedValue)item;
+        if (item != null) {
+            return item;
         } else {
-            return new ZeroOrOne(null);
+            return EmptySequence.getInstance();
         }
     }
 

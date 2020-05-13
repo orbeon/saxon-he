@@ -21,11 +21,11 @@ import java.util.function.Predicate;
 
 final class AttributeAxisIterator implements AxisIterator, LookaheadIterator {
 
-    private ElementImpl element;
-    private Predicate<? super NodeInfo> nodeTest;
+    private final ElementImpl element;
+    private final Predicate<? super NodeInfo> nodeTest;
     /*@Nullable*/ private NodeInfo next;
     private int index;
-    private int length;
+    private final int length;
 
     /**
      * Constructor

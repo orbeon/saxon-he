@@ -27,7 +27,7 @@ import java.util.EnumSet;
 public class UntypedAtomizingIterator implements SequenceIterator,
         LastPositionFinder, LookaheadIterator {
 
-    private SequenceIterator base;
+    private final SequenceIterator base;
 
     /**
      * Construct an AtomizingIterator that will atomize the values returned by the base iterator.

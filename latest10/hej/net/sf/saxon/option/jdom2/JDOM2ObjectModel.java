@@ -34,7 +34,7 @@ import javax.xml.transform.Source;
 
 public class JDOM2ObjectModel extends TreeModel implements ExternalObjectModel {
 
-    private static JDOM2ObjectModel THE_INSTANCE = new JDOM2ObjectModel();
+    private final static JDOM2ObjectModel THE_INSTANCE = new JDOM2ObjectModel();
 
     public static JDOM2ObjectModel getInstance() {
         return THE_INSTANCE;
@@ -159,7 +159,7 @@ public class JDOM2ObjectModel extends TreeModel implements ExternalObjectModel {
      * Test whether this object model recognizes a particular kind of JAXP Result object,
      * and if it does, return a Receiver that builds an instance of this data model from
      * a sequence of events. If the Result is not recognised, return null.
-     * @return
+     * @return always null
      */
 
     public Receiver getDocumentBuilder(Result result) {

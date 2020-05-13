@@ -20,7 +20,6 @@ import net.sf.saxon.om.NodeInfo;
 import net.sf.saxon.om.Sequence;
 import net.sf.saxon.om.TreeModel;
 import net.sf.saxon.pattern.AnyNodeTest;
-import net.sf.saxon.trans.XPathException;
 import net.sf.saxon.tree.wrapper.VirtualNode;
 import net.sf.saxon.type.ItemType;
 import org.apache.axiom.om.*;
@@ -37,7 +36,7 @@ import javax.xml.transform.Source;
 
 public class AxiomObjectModel extends TreeModel implements ExternalObjectModel {
 
-    private static AxiomObjectModel THE_INSTANCE = new AxiomObjectModel();
+    private final static AxiomObjectModel THE_INSTANCE = new AxiomObjectModel();
 
     public static AxiomObjectModel getInstance() {
         return THE_INSTANCE;
@@ -112,7 +111,7 @@ public class AxiomObjectModel extends TreeModel implements ExternalObjectModel {
     public JPConverter getJPConverter(Class sourceClass, Configuration config) {
         if (isRecognizedNodeClass(sourceClass)) {
             return new JPConverter() {
-                public Sequence convert(Object object, XPathContext context) throws XPathException {
+                public Sequence convert(Object object, XPathContext context) {
                     return convertObjectToXPathValue(object, context.getConfiguration());
                 }
 
@@ -161,7 +160,7 @@ public class AxiomObjectModel extends TreeModel implements ExternalObjectModel {
      * Test whether this object model recognizes a particular kind of JAXP Result object,
      * and if it does, return a Receiver that builds an instance of this data model from
      * a sequence of events. If the Result is not recognised, return null.
-     * @return
+     * @return always null
      */
 
     public Receiver getDocumentBuilder(Result result) {

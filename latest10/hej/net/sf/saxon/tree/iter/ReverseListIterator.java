@@ -25,10 +25,8 @@ import java.util.List;
 public class ReverseListIterator<T extends Item> implements UnfailingIterator,
         ReversibleIterator, LookaheadIterator, LastPositionFinder {
 
-    List<T> items;
-    int index = 0;
-    int start;
-    int end;         // item after the last to be output
+    private final List<T> items;
+    private int index;
 
     /**
      * Create an iterator a slice of an array

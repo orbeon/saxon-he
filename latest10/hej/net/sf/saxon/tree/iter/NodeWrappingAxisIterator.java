@@ -22,7 +22,7 @@ public class NodeWrappingAxisIterator<B>
 
 
     Iterator<? extends B> base;
-    private NodeWrappingFunction<? super B, NodeInfo> wrappingFunction;
+    private final NodeWrappingFunction<? super B, NodeInfo> wrappingFunction;
 
 
     /**

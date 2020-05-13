@@ -21,7 +21,7 @@ import java.util.EnumSet;
 public class SingleNodeIterator implements AxisIterator,
         ReversibleIterator, LastPositionFinder, GroundedIterator, LookaheadIterator {
 
-    private NodeInfo item;
+    private final NodeInfo item;
     private int position = 0;
 
     /**
@@ -100,12 +100,12 @@ public class SingleNodeIterator implements AxisIterator,
 
     /*@NotNull*/
     public GroundedValue materialize() {
-        return new ZeroOrOne(item);
+        return new ZeroOrOne<>(item);
     }
 
     @Override
     public GroundedValue getResidue() {
-        return item==null ? EmptySequence.getInstance() : new One(item);
+        return item==null ? EmptySequence.getInstance() : new One<>(item);
     }
 
     /**

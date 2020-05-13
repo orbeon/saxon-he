@@ -150,7 +150,7 @@ public class LookupAllExpression extends UnaryExpression {
      * and we assume that a sequence has length 5. The resulting estimates may be used, for
      * example, to reorder the predicates in a filter expression so cheaper predicates are
      * evaluated first.
-     * @return
+     * @return a rough estimate of the cost of evaluation
      */
     @Override
     public double getCost() {
@@ -221,7 +221,7 @@ public class LookupAllExpression extends UnaryExpression {
 
         return new SequenceIterator() {
 
-            SequenceIterator level0 = getBaseExpression().iterate(context);
+            final SequenceIterator level0 = getBaseExpression().iterate(context);
             Iterator<?> level1 = null;
                 // delivers GroundedValue in the case of an array, or KeyValuePair in the case of a map
             SequenceIterator level2 = null;
@@ -254,11 +254,10 @@ public class LookupAllExpression extends UnaryExpression {
                             } else {
                                 throw new IllegalStateException();
                             }
-                            return next();
                         } else {
                             level1 = null;
-                            return next();
                         }
+                        return next();
                     }
                 } else {
                     Item next = level2.next();

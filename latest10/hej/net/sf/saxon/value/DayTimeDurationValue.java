@@ -16,6 +16,7 @@ import net.sf.saxon.type.*;
 import java.math.BigDecimal;
 import java.math.BigInteger;
 import java.math.RoundingMode;
+import java.util.Objects;
 
 /**
  * A value of type xs:dayTimeDuration.
@@ -204,20 +205,7 @@ public final class DayTimeDurationValue extends DurationValue
             if (nanoseconds == 0) {
                 sb.append(seconds + "S");
             } else {
-                long ms = (seconds * 1_000_000_000L) + nanoseconds;
-                String mss = ms + "";
-                if (seconds == 0) {
-                    mss = "0000000000" + mss;
-                    mss = mss.substring(mss.length() - 10);
-                }
-                sb.append(mss.substring(0, mss.length() - 9));
-                sb.cat('.');
-                int lastSigDigit = mss.length() - 1;
-                while (mss.charAt(lastSigDigit) == '0') {
-                    lastSigDigit--;
-                }
-                sb.append(mss.substring(mss.length() - 9, lastSigDigit + 1));
-                sb.cat('S');
+                formatFractionalSeconds(sb, seconds, (seconds * 1_000_000_000L) + nanoseconds);
             }
         }
         return sb;
@@ -342,7 +330,6 @@ public final class DayTimeDurationValue extends DurationValue
      */
 
     public static DayTimeDurationValue fromNanoseconds(long nanoseconds) throws IllegalArgumentException {
-        int sign = Long.signum(nanoseconds);
         return new DayTimeDurationValue(
                     0, 0, 0, nanoseconds / 1_000_000_000L, (int) (nanoseconds % 1_000_000_000L));
     }
@@ -575,21 +562,17 @@ public final class DayTimeDurationValue extends DurationValue
      * @param other The other dateTime value
      * @return negative value if this one is the smaller, 0 if they are equal,
      *         positive value if this one is the greater.
-     * @throws ClassCastException if the other value is not a DayTimeDurationValue
+     * @throws NullPointerException if the other value is null
      */
 
     public int compareTo(DayTimeDurationValue other) {
-        if (other instanceof DayTimeDurationValue) {
-            if (this.negative != other.negative) {
-                return this.negative ? -1 : +1;
-            } else if (this.seconds != other.seconds) {
-                return Long.compare(this.seconds, other.seconds) * (this.negative ? -1 : +1);
-            } else {
-                return Integer.compare(this.nanoseconds, other.nanoseconds) * (this.negative ? -1 : +1);
-            }
+        Objects.requireNonNull(other);
+        if (this.negative != other.negative) {
+            return this.negative ? -1 : +1;
+        } else if (this.seconds != other.seconds) {
+            return Long.compare(this.seconds, other.seconds) * (this.negative ? -1 : +1);
         } else {
-            throw new ClassCastException("Cannot compare a dayTimeDuration to an object of class "
-                    + other.getClass());
+            return Integer.compare(this.nanoseconds, other.nanoseconds) * (this.negative ? -1 : +1);
         }
     }
 

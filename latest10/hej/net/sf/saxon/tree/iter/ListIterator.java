@@ -25,7 +25,7 @@ import java.util.List;
 public class ListIterator<T extends Item>
         implements UnfailingIterator, LastPositionFinder, LookaheadIterator, GroundedIterator, ReversibleIterator {
 
-    private int index = 0;
+    private int index;
     protected List<T> list;
 
     /**
@@ -94,7 +94,7 @@ public class ListIterator<T extends Item>
         return new ReverseListIterator<>(list);
     }
 
-    public static class Atomic extends ListIterator<AtomicValue> implements AtomicIterator {
+    public static class Atomic extends ListIterator<AtomicValue> implements AtomicIterator<AtomicValue> {
         public Atomic (List<AtomicValue> list) {
             super(list);
         }

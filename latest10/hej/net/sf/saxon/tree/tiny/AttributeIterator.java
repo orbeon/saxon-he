@@ -23,9 +23,9 @@ import java.util.EnumSet;
 
 final class AttributeIterator implements AxisIterator, AtomizedValueIterator {
 
-    private TinyTree tree;
-    private int element;
-    private NodeTest nodeTest;
+    private final TinyTree tree;
+    private final int element;
+    private final NodeTest nodeTest;
     private int index;
     private int currentNodeNr;
 

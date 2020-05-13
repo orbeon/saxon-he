@@ -46,7 +46,7 @@ import java.util.List;
 
 public class XOMObjectModel extends TreeModel implements ExternalObjectModel {
 
-    private static XOMObjectModel THE_INSTANCE = new XOMObjectModel();
+    private final static XOMObjectModel THE_INSTANCE = new XOMObjectModel();
 
     public static XOMObjectModel getInstance() {
         return THE_INSTANCE;
@@ -150,7 +150,7 @@ public class XOMObjectModel extends TreeModel implements ExternalObjectModel {
      * Test whether this object model recognizes a particular kind of JAXP Result object,
      * and if it does, return a Receiver that builds an instance of this data model from
      * a sequence of events. If the Result is not recognised, return null.
-     * @return
+     * @return always null
      */
 
     public Receiver getDocumentBuilder(Result result) {

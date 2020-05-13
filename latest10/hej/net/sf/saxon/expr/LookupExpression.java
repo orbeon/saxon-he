@@ -194,7 +194,7 @@ public class LookupExpression extends BinaryExpression {
      * and we assume that a sequence has length 5. The resulting estimates may be used, for
      * example, to reorder the predicates in a filter expression so cheaper predicates are
      * evaluated first.
-     * @return
+     * @return a rough estimate of the cost of evaluation
      */
     @Override
     public double getCost() {

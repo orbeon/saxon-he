@@ -169,6 +169,22 @@ public class DurationValue extends AtomicValue implements AtomicMatchKey {
         typeLabel = type;
     }
 
+    protected static void formatFractionalSeconds(FastStringBuffer sb, int seconds, long nanosecs) {
+        String mss = nanosecs + "";
+        if (seconds == 0) {
+            mss = "0000000000" + mss;
+            mss = mss.substring(mss.length() - 10);
+        }
+        sb.append(mss.substring(0, mss.length() - 9));
+        sb.cat('.');
+        int lastSigDigit = mss.length() - 1;
+        while (mss.charAt(lastSigDigit) == '0') {
+            lastSigDigit--;
+        }
+        sb.append(mss.substring(mss.length() - 9, lastSigDigit + 1));
+        sb.cat('S');
+    }
+
 
     /**
      * Ensure that a zero duration is considered positive
@@ -594,20 +610,7 @@ public class DurationValue extends AtomicValue implements AtomicMatchKey {
             if (seconds != 0 && nanoseconds == 0) {
                 sb.append(seconds + "S");
             } else {
-                long ms = (seconds * 1_000_000_000L) + nanoseconds;
-                String mss = ms + "";
-                if (seconds == 0) {
-                    mss = "0000000000" + mss;
-                    mss = mss.substring(mss.length() - 10);
-                }
-                sb.append(mss.substring(0, mss.length() - 9));
-                sb.cat('.');
-                int lastSigDigit = mss.length() - 1;
-                while (mss.charAt(lastSigDigit) == '0') {
-                    lastSigDigit--;
-                }
-                sb.append(mss.substring(mss.length() - 9, lastSigDigit + 1));
-                sb.cat('S');
+                formatFractionalSeconds(sb, seconds, (seconds * 1_000_000_000L) + nanoseconds);
             }
         }
 
