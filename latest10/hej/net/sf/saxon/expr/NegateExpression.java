@@ -88,6 +88,11 @@ public class NegateExpression extends UnaryExpression {
         return getBaseExpression().getItemType().getPrimitiveItemType();
     }
 
+    @Override
+    public int computeCardinality() {
+        return getBaseExpression().getCardinality() & ~StaticProperty.ALLOWS_MANY;
+    }
+
     /**
      * An implementation of Expression must provide at least one of the methods evaluateItem(), iterate(), or process().
      * This method indicates which of these methods is provided directly. The other methods will always be available

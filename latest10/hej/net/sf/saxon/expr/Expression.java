@@ -936,24 +936,24 @@ public abstract class Expression implements IdentityComparable, ExportAgent, Loc
     public void process(Outputter output, XPathContext context) throws XPathException {
         int m = getImplementationMethod();
 
-        if ((m & EVALUATE_METHOD) != 0 && !Cardinality.allowsMany(getCardinality())) {
-            Item item = evaluateItem(context);
-            if (item != null) {
-                output.append(item, getLocation(), ReceiverOption.ALL_NAMESPACES);
-            }
+        boolean hasEvaluateMethod = (m & EVALUATE_METHOD) != 0;
+        boolean hasIterateMethod = (m & ITERATE_METHOD) != 0;
 
-        } else if ((m & ITERATE_METHOD) != 0) {
-
-            try {
+        try {
+            if (hasEvaluateMethod && (!hasIterateMethod || !Cardinality.allowsMany(getCardinality()))) {
+                Item item = evaluateItem(context);
+                if (item != null) {
+                    output.append(item, getLocation(), ReceiverOption.ALL_NAMESPACES);
+                }
+            } else if (hasIterateMethod) {
                 iterate(context).forEachOrFail(it -> output.append(it, getLocation(), ReceiverOption.ALL_NAMESPACES));
-            } catch (XPathException e) {
-                e.maybeSetLocation(getLocation());
-                e.maybeSetContext(context);
-                throw e;
+            } else {
+                throw new AssertionError("process() is not implemented in the subclass " + getClass());
             }
-
-        } else {
-            throw new AssertionError("process() is not implemented in the subclass " + getClass());
+        } catch (XPathException e) {
+            e.maybeSetLocation(getLocation());
+            e.maybeSetContext(context);
+            throw e;
         }
     }
 
