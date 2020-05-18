@@ -517,7 +517,7 @@ public class FLWORExpression extends Expression {
                         boolean simpleSeq = lc.getSequence() instanceof VariableReference ||
                                 lc.getSequence() instanceof Literal;
                         if (oneRef || simpleSeq) {
-                            ExpressionTool.replaceVariableReferences(this, lc.getRangeVariable(), lc.getSequence(), !oneRef);
+                            ExpressionTool.replaceVariableReferences(this, lc.getRangeVariable(), lc.getSequence(), true);
                             clauses.remove(c);
                             if (clauses.isEmpty()) {
                                 return getReturnClause();

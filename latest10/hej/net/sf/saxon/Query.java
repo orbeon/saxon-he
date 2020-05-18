@@ -362,7 +362,7 @@ public class Query {
                 out.setOutputProperty(Serializer.Property.METHOD, "xml");
                 out.setOutputProperty(Serializer.Property.INDENT, "yes");
                 out.setOutputProperty(Serializer.Property.OMIT_XML_DECLARATION, "yes");
-                if (!"HE".equals(processor.getSaxonEdition())) {
+                if (processor.getUnderlyingConfiguration().isLicensedFeature(Configuration.LicenseFeature.PROFESSIONAL_EDITION)) {
                     out.setOutputProperty(Serializer.Property.SAXON_INDENT_SPACES, "2");
                 }
                 exp.explain(out);
