@@ -777,7 +777,17 @@ public class AlphaCode {
                     itemType = new SpecificFunctionType(a, r);
                 }
             }
-
+        } else if (principal.startsWith("X")) {
+            Class<?> theClass = Object.class;
+            if (tree.name != null) {
+                String className = StructuredQName.fromEQName(tree.name).getLocalPart();
+                try {
+                    theClass = Class.forName(className);
+                } catch (ClassNotFoundException e) {
+                    theClass = Object.class;
+                }
+            }
+            itemType = new JavaExternalObjectType(config, theClass);
         }
         String indicator = tree.cardinality;
         int cardinality = Cardinality.fromOccurrenceIndicator(indicator);
