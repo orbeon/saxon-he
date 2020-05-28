@@ -44,12 +44,13 @@ import java.util.Objects;
  * calling a stylesheet-defined function directly) work equally well with XSLT 2.0 and in some cases
  * XSLT 1.0 stylesheets.</p>
  * <p>An <code>Xslt30Transformer</code> must not be used concurrently in multiple threads.
- * It is safe, however, to reuse the object within a single thread to run the same
- * stylesheet several times. Running the stylesheet does not change the context
- * that has been established. Some of the entry point methods are synchronized. This is not
+ * It is safe to reuse the object within a single thread to run several transformations using
+ * the same stylesheet, but the values of the global context item and of stylesheet parameters
+ * must be initialized before any transformations are run, and must remain unchanged thereafter.</p>
+ * <p>Some of the entry point methods are synchronized. This is not
  * because multi-threaded execution is permitted; rather it is to reduce the damage if it is attempted.</p>
- * <p>An <code>Xslt30Transformer</code> is always constructed by running the <code>Load30</code>
- * method of an {@link XsltExecutable}.</p>
+ * <p>An <code>Xslt30Transformer</code> is always constructed by running the
+ * method {@link XsltExecutable#load30()}.</p>
  * <p>Unlike <code>XsltTransformer</code>, an <code>Xslt30Transformer</code> is not a <code>Destination</code>.
  * To pipe the results of one transformation into another, the target should be an <code>XsltTransfomer</code>
  * rather than an <code>Xslt30Transformer</code>.</p>
