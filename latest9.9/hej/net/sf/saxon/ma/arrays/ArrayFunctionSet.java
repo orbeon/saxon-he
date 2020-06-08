@@ -257,7 +257,7 @@ public class ArrayFunctionSet extends BuiltInFunctionSet {
             ArrayItem array = (ArrayItem) arguments[0].head();
             assert array != null;
             int arraySize = array.arrayLength();
-            Sequence<?> zero = ((Sequence<?>)arguments[1]).head();
+            Sequence<?> zero = (Sequence<?>)arguments[1];
             Function fn = (Function) arguments[2].head();
             int i;
             for (i=0; i < arraySize; i++) {
@@ -276,7 +276,7 @@ public class ArrayFunctionSet extends BuiltInFunctionSet {
         public Sequence<?> call(XPathContext context, Sequence[] arguments) throws XPathException {
             ArrayItem array = (ArrayItem) arguments[0].head();
             assert array != null;
-            Sequence<?> zero = ((Sequence<?>)arguments[1]).head();
+            Sequence<?> zero = (Sequence<?>)arguments[1];
             Function fn = (Function) arguments[2].head();
             int i;
             for (i = array.arrayLength() - 1; i >= 0; i--) {
