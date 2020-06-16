@@ -25,30 +25,57 @@
 #endif
 
 
-char dllname[] =
-#ifdef __linux__
+char * dllname;
+char * resources_dir;
+int jvmCreated = 0;
+char * tempDllname =
+#if defined (__linux__)
     #ifdef EEC
-            "/usr/lib/libsaxoneec.so";
+            "/libsaxoneec.so";
     #elif defined PEC
-	    "/usr/lib/libsaxonpec.so";
+	    "/libsaxonpec.so";
     #else
-	    "/usr/lib/libsaxonhec.so";
+	    "/libsaxonhec.so";
     #endif
-#elif defined __APPLE__
+#elif  defined (__APPLE__) && defined(__MACH__)
     #ifdef EEC
-        "/usr/local/lib/libsaxoneec.dylib";
+        "/libsaxoneec.dylib";
     #elif defined PEC
-	    "/usr/local/lib/libsaxonpec.dylib";
+	    "/libsaxonpec.dylib";
     #else
-	    "/usr/local/lib/libsaxonhec.dylib";
+	    "/libsaxonhec.dylib";
     #endif
 #else
     #ifdef EEC
-        "libsaxoneec.dll";
+        "\\libsaxoneec.dll";
     #elif defined PEC
-	    "libsaxonpec.dll";
+	    "\\libsaxonpec.dll";
     #else
-	    "libsaxonhec.dll";
+	    "\\libsaxonhec.dll";
+    #endif
+#endif
+
+char * tempResources_dir =
+#ifdef __linux__
+"/saxon-data";
+#elif  defined (__APPLE__) && defined(__MACH__)
+"/saxon-data";
+#else
+"\\saxon-data";
+#endif
+
+char * dllPath =
+#if defined (__linux__)
+"/usr/lib";
+#elif  defined (__APPLE__) && defined(__MACH__)
+"/usr/local/lib";
+#else
+    #ifdef EEC
+        "C:\\Program Files\\Saxonica\\SaxonEEC1.2.1";
+    #elif defined PEC
+	    "C:\\Program Files\\Saxonica\\SaxonPEC1.2.1";
+    #else
+	    "C:\\Program Files\\Saxonica\\SaxonHEC1.2.1";
     #endif
 #endif
 
@@ -88,6 +115,78 @@ jobject cpp;
 
 
 const char * failure;
+
+
+/*
+* Set Dll name. Also set the saxon resources directory.
+* If the SAXONC_HOME sxnc_environmental variable is set then use that as base.
+*/
+void setDllname() {
+	size_t name_len = strlen(tempDllname);
+	size_t rDir_len = strlen(tempResources_dir);
+	char * env = getenv("SAXONC_HOME");
+	size_t env_len;
+	if (env != NULL) {
+
+
+		env_len = strlen(env);
+		int bufSize = name_len + env_len + 1;
+		int rbufSize = rDir_len + env_len + 1;
+		dllname = malloc(sizeof(char)*bufSize);
+		resources_dir = malloc(sizeof(char)*rbufSize);
+		snprintf(dllname, bufSize, "%s%s", env, tempDllname);
+		snprintf(resources_dir, rbufSize, "%s%s", env, tempResources_dir);
+
+#ifdef DEBUG
+
+		printf("envDir: %s\n", env);
+
+
+#endif
+
+	}
+	else {
+		env_len = strlen(dllPath);
+		int bufSize = name_len + env_len + 1;
+		int rbufSize = rDir_len + env_len + 1;
+		dllname = malloc(sizeof(char)*bufSize);
+		resources_dir = malloc(sizeof(char)*rbufSize);
+
+#ifdef DEBUG
+		if (dllname == NULL || resources_dir == NULL)
+		{
+			// error
+			printf("Error in allocation of Dllname\n");
+		}
+#endif
+		if (snprintf(dllname, bufSize, "%s%s", dllPath, tempDllname) >= bufSize) {
+			bufSize *= 2;
+			free(dllname);
+			dllname = malloc(sizeof(char)*bufSize);
+			if (snprintf(dllname, bufSize, "%s%s", dllPath, tempDllname) >= bufSize) {
+				printf("Saxon/C Error: Unable to allocate space for dllname and path");
+				exit(1);
+			}
+		}
+		if (snprintf(resources_dir, rbufSize, "%s%s", dllPath, tempResources_dir) >= rbufSize) {
+			printf("Saxon/C warning: Unable to allocate space for resources directory");
+
+		}
+	}
+
+
+#ifdef DEBUG
+
+	printf("Library length: %zu\n", name_len);
+	printf("Env length: %zu\n", env_len);
+	printf("size of dllname %zu\n", strlen(dllname));
+	printf("dllName: %s\n", dllname);
+	printf("resources_dir: %s\n", resources_dir);
+	printf("size of resources dir %zu\n", strlen(resources_dir));
+#endif
+
+}
+
 /*
  * Load dll.
  */
@@ -302,6 +401,7 @@ int main( int argc, const char* argv[] )
      * First of all, load required component.
      * By the time of JET initialization, all components should be loaded.
      */
+    setDllname();
     environi.myDllHandle = loadDll (dllname);
    
 
