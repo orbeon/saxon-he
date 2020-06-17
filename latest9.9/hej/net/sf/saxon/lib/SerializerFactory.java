@@ -207,12 +207,13 @@ public class SerializerFactory {
             return prepareNextStylesheet(pipe, href, base, result);
         }
         String paramDoc = props.getProperty(SaxonOutputKeys.PARAMETER_DOCUMENT);
-        if (paramDoc != null) {
+        if (paramDoc != null && !paramDoc.isEmpty()) {
             String base = props.getProperty(SaxonOutputKeys.PARAMETER_DOCUMENT_BASE_URI);
             if (base == null) {
                 base = result.getSystemId();
             }
             Properties props2 = new Properties(props);
+            props2.setProperty(SaxonOutputKeys.PARAMETER_DOCUMENT, "");
             Source source;
             try {
                 source = config.getURIResolver().resolve(paramDoc, base);
