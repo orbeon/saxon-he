@@ -208,11 +208,7 @@ public class AdaptiveEmitter extends SequenceWriter implements ReceiverWithOutpu
             default:
                 StringWriter sw = new StringWriter();
                 Properties props = new Properties(outputProperties);
-                String nodeMethod = outputProperties.getProperty(SaxonOutputKeys.JSON_NODE_OUTPUT_METHOD);
-                if (nodeMethod == null) {
-                    nodeMethod = "xml";
-                }
-                props.setProperty("method", nodeMethod);
+                props.setProperty("method", "xml");
                 props.setProperty("indent", "no");
                 props.setProperty("omit-xml-declaration", "yes");
                 props.setProperty(SaxonOutputKeys.UNFAILING, "yes");
