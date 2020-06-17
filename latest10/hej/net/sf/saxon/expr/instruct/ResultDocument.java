@@ -419,7 +419,7 @@ public class ResultDocument extends Instruction
         checkNotTemporaryOutputState(context);
 
         Properties computedLocalProps = gatherOutputProperties(context);
-        if (getStaticBaseURIString() != null) {
+        if (localProperties.contains(SaxonOutputKeys.PARAMETER_DOCUMENT) && getStaticBaseURIString() != null) {
             computedLocalProps.setProperty(SaxonOutputKeys.PARAMETER_DOCUMENT_BASE_URI, getStaticBaseURIString());
         }
         SerializationProperties serParams = new SerializationProperties(computedLocalProps, characterMapIndex);
