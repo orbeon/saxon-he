@@ -8,6 +8,7 @@
 package net.sf.saxon.expr;
 
 import net.sf.saxon.Configuration;
+import net.sf.saxon.expr.instruct.TerminationException;
 import net.sf.saxon.expr.parser.*;
 import net.sf.saxon.functions.Error;
 import net.sf.saxon.ma.map.MapType;
@@ -219,8 +220,10 @@ public final class SingletonAtomizer extends UnaryExpression {
             AtomicSequence seq;
             try {
                 seq = item.atomize();
+            } catch (TerminationException | Error.UserDefinedXPathException e) {
+                throw e;
             } catch (XPathException e) {
-                if (roleDiagnostic == null || e instanceof Error.UserDefinedXPathException) {
+                if (roleDiagnostic == null) {
                     throw e;
                 } else {
                     String message = e.getMessage() + ". Failed while atomizing the " + roleDiagnostic.getMessage();

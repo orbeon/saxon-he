@@ -10,6 +10,7 @@ package net.sf.saxon.expr;
 import net.sf.saxon.event.ReceiverOption;
 import net.sf.saxon.expr.instruct.Block;
 import net.sf.saxon.expr.instruct.Choose;
+import net.sf.saxon.expr.instruct.TerminationException;
 import net.sf.saxon.expr.instruct.ValueOf;
 import net.sf.saxon.expr.parser.*;
 import net.sf.saxon.functions.Error;
@@ -358,8 +359,10 @@ public final class Atomizer extends UnaryExpression {
         try {
             SequenceIterator base = getBaseExpression().iterate(context);
             return getAtomizingIterator(base, untyped && operandItemType instanceof NodeTest);
+        } catch (TerminationException | Error.UserDefinedXPathException e) {
+            throw e;
         } catch (XPathException e) {
-            if (roleDiagnostic == null || e instanceof Error.UserDefinedXPathException) {
+            if (roleDiagnostic == null) {
                 throw e;
             } else {
                 String message = expandMessage(e.getMessage());
