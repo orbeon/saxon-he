@@ -238,6 +238,7 @@ public class SerializerFactory {
                 charMapIndex.putCharacterMap(charMap.getName(), charMap);
             }
             props = props2;
+            params = new SerializationProperties(props2, charMapIndex);
         }
         if (result instanceof StreamResult) {
 
