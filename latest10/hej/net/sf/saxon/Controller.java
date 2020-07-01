@@ -583,11 +583,15 @@ public class Controller implements ContextOriginator {
             }
             if (contextItem instanceof NodeInfo) {
                 // In XSLT, apply strip-space and strip-type-annotations options
-                contextItem = prepareInputTree((NodeInfo) contextItem);
+                NodeInfo node = (NodeInfo) contextItem;
+                contextItem = prepareInputTree(node);
+                if (node.getNodeKind() == Type.DOCUMENT && node.getSystemId() != null) {
+                    getDocumentPool().add(node.getTreeInfo(), node.getSystemId());
+                }
             }
         }
-        if (globalContextItem instanceof NodeInfo) {
-            NodeInfo startNode = (NodeInfo) globalContextItem;
+        if (contextItem instanceof NodeInfo) {
+            NodeInfo startNode = (NodeInfo) contextItem;
             if (startNode.getConfiguration() == null) {
                 // must be a non-standard document implementation
                 throw new XPathException("The supplied source document must be associated with a Configuration");
