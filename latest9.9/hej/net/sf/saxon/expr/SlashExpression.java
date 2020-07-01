@@ -347,11 +347,14 @@ public class SlashExpression extends BinaryExpression
         Optimizer opt = visitor.obtainOptimizer();
 
         getLhs().optimize(visitor, contextItemType);
+        if (Literal.isEmptySequence(getStart())) {
+            return Literal.makeEmptySequence();
+        }
+
         ContextItemStaticInfo cit = visitor.getConfiguration().makeContextItemStaticInfo(getStart().getItemType(), false);
         cit.setContextSettingExpression(getStart());
         getRhs().optimize(visitor, cit);
-
-        if (Literal.isEmptySequence(getStart()) || Literal.isEmptySequence(getStep())) {
+        if (Literal.isEmptySequence(getStep())) {
             return Literal.makeEmptySequence();
         }
 
