@@ -1686,7 +1686,7 @@ public class Feature<T> {
     *                stylesheets and schema documents. It can be overridden for individual documents
     *                using the {@link net.sf.saxon.lib.ParseOptions} class.</p>
     *            <p>This option relies on support in the underlying XML parser. If the XML parser does
-    *                not support XInclude processing, the option is ignored.</p>
+    *                not support XInclude processing, setting this option results in a parsing failure.</p>
     *        
     **/
 
