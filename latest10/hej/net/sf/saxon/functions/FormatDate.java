@@ -104,7 +104,9 @@ public class FormatDate extends SystemFunction implements Callable {
 
         Numberer numberer = config.makeNumberer(language, place);
         FastStringBuffer sb = new FastStringBuffer(FastStringBuffer.C64);
-        if (numberer.getClass() == Numberer_en.class && !"en".equals(language) && !languageDefaulted) {
+        if (!languageDefaulted && numberer.getClass() == Numberer_en.class && !language.startsWith("en")) {
+            // See bug #4582. We're not outputting the prefix in cases where ICU is used for numbering.
+            // But the test on numberer.defaultedLocale() below may catch it...
             sb.append("[Language: en]");
         }
         if (numberer.defaultedLocale() != null) {
