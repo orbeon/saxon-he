@@ -104,7 +104,7 @@ public class FormatDate extends SystemFunction implements Callable {
 
         Numberer numberer = config.makeNumberer(language, place);
         FastStringBuffer sb = new FastStringBuffer(FastStringBuffer.C64);
-        if (numberer.getClass() == Numberer_en.class && !"en".equals(language) && !languageDefaulted) {
+        if (!languageDefaulted && numberer.getClass() == Numberer_en.class && !language.startsWith("en")) {
             sb.append("[Language: en]");
         }
         if (numberer.defaultedLocale() != null) {
