@@ -21,7 +21,7 @@ import java.util.*;
 public class GenericTreeInfo implements TreeInfo {
 
     private Configuration config;
-    private NodeInfo root;
+    protected NodeInfo root;
     private String systemId;
     private Map<String, Object> userData;
     private long documentNumber = -1;

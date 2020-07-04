@@ -172,7 +172,7 @@ public final class Navigator {
                         return null;
                     }
                     String parentSystemId = parent.getSystemId();
-                    boolean isTopWithinEntity = false;
+                    boolean isTopWithinEntity = false; // TODO: variable is unused. What's going on here? - MHK 2020-07-04
                     if (node instanceof TinyElementImpl) {
                         isTopWithinEntity = ((TinyElementImpl)node).getTree().isTopWithinEntity(((TinyElementImpl) node).getNodeNumber());
                     } else {
