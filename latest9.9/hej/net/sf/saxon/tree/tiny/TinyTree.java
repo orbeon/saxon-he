@@ -167,7 +167,6 @@ public final class TinyTree extends GenericTreeInfo implements NodeVectorTree {
 
     protected PrefixPool prefixPool = new PrefixPool();
 
-    private TinyDocumentImpl root;
     private HashMap<String, NodeInfo> idTable;
     protected HashMap<String, String[]> entityTable;
 
