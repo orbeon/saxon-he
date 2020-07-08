@@ -69,7 +69,7 @@ public class ShallowCopyRuleSet implements BuiltInRuleSet {
                     c2.trackFocus(node.iterateAxis(AxisInfo.CHILD));
                     c2.setCurrentComponent(c2.getCurrentMode());  // Bug 3508
                     pipe.setXPathContext(c2);
-                    TailCall tc = context.getCurrentMode().getActor().applyTemplates(parameters, tunnelParams, out, c2, locationId);
+                    TailCall tc = context.getCurrentMode().getActor().applyTemplates(parameters, tunnelParams, null, out, c2, locationId);
                     while (tc != null) {
                         tc = tc.processLeavingTail();
                     }
@@ -96,7 +96,7 @@ public class ShallowCopyRuleSet implements BuiltInRuleSet {
                     if (attributes != EmptyIterator.ofNodes()) {
                         c2.setOrigin(this);
                         c2.trackFocus(attributes);
-                        TailCall tc = c2.getCurrentMode().getActor().applyTemplates(parameters, tunnelParams, out, c2, locationId);
+                        TailCall tc = c2.getCurrentMode().getActor().applyTemplates(parameters, tunnelParams, null, out, c2, locationId);
                         while (tc != null) {
                             tc = tc.processLeavingTail();
                         }
@@ -105,7 +105,7 @@ public class ShallowCopyRuleSet implements BuiltInRuleSet {
                     // apply-templates to all children
                     if (node.hasChildNodes()) {
                         c2.trackFocus(node.iterateAxis(AxisInfo.CHILD));
-                        TailCall tc = c2.getCurrentMode().getActor().applyTemplates(parameters, tunnelParams, out, c2, locationId);
+                        TailCall tc = c2.getCurrentMode().getActor().applyTemplates(parameters, tunnelParams, null, out, c2, locationId);
                         while (tc != null) {
                             tc = tc.processLeavingTail();
                         }

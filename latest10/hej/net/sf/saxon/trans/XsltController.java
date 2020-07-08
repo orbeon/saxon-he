@@ -656,7 +656,7 @@ public class XsltController extends Controller {
             initialContext.setCurrentMode(initialMode);
             initialContext.setCurrentComponent(initialMode);
 
-            TailCall tc = mode.applyTemplates(ordinaryParams, tunnelParams, dest, initialContext, Loc.NONE);
+            TailCall tc = mode.applyTemplates(ordinaryParams, tunnelParams, null, dest, initialContext, Loc.NONE);
             while (tc != null) {
                 tc = tc.processLeavingTail();
             }

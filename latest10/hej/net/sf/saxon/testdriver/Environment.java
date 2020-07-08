@@ -386,7 +386,9 @@ public class Environment implements URIResolver {
             if (defaultAtt != null && (defaultAtt.trim().equals("true") || defaultAtt.trim().equals("1"))) {
                 environment.xpathCompiler.declareDefaultCollation(uri);
                 environment.xqueryCompiler.declareDefaultCollation(uri);
-                environment.xsltCompiler.declareDefaultCollation(uri);
+                if (environment.xsltCompiler != null) {
+                    environment.xsltCompiler.declareDefaultCollation(uri);
+                }
             }
         }
     }

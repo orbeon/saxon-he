@@ -420,6 +420,8 @@ public abstract class Mode extends Actor {
      * @param tunnelParameters A ParameterSet containing the parameters to
      *                         the handler/template being invoked. Specify null if there are no
      *                         parameters.
+     * @param separator        Text node to be inserted between the output of successive input items;
+     *                         may be null
      * @param output           The destination for the result of the selected templates
      * @param context          A newly-created context object (this must be freshly created by the caller,
      *                         as it will be modified by this method). The nodes to be processed are those
@@ -435,6 +437,7 @@ public abstract class Mode extends Actor {
     public TailCall applyTemplates(
             ParameterSet parameters,
             ParameterSet tunnelParameters,
+            NodeInfo separator,
             Outputter output,
             XPathContextMajor context,
             Location locationId)
@@ -457,6 +460,8 @@ public abstract class Mode extends Actor {
 
         boolean lookahead = iterator.getProperties().contains(SequenceIterator.Property.LOOKAHEAD);
         TemplateRule previousTemplate = null;
+        boolean first = true;
+
         while (true) {
 
             // process any tail calls returned from previous nodes. We need to do this before changing
@@ -477,6 +482,14 @@ public abstract class Mode extends Actor {
             Item item = iterator.next();
             if (item == null) {
                 break;
+            }
+
+            if (separator != null) {
+                if (first) {
+                    first = false;
+                } else {
+                    output.append(separator);
+                }
             }
 
             if (mustBeTyped) {

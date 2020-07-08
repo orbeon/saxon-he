@@ -50,7 +50,10 @@ public final class IterateInstr extends Instruction implements ContextSwitchingE
         selectOp = new Operand(this, select, OperandRole.FOCUS_CONTROLLING_SELECT);
         actionOp = new Operand(this, action, OperandRole.FOCUS_CONTROLLED_ACTION);
         initiallyOp = new Operand(this, initiallyExp,
-                                  new OperandRole(OperandRole.CONSTRAINED_CLASS, OperandUsage.NAVIGATION, SequenceType.ANY_SEQUENCE));
+                                  new OperandRole(OperandRole.CONSTRAINED_CLASS,
+                                                  OperandUsage.NAVIGATION,
+                                                  SequenceType.ANY_SEQUENCE,
+                                                  expr -> expr instanceof LocalParamBlock));
         onCompletionOp = new Operand(this, onCompletion,
                                      new OperandRole(OperandRole.USES_NEW_FOCUS, OperandUsage.TRANSMISSION));
     }

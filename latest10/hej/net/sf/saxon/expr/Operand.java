@@ -71,8 +71,14 @@ public final class Operand implements Iterable<Operand>, ExpressionOwner {
 
     public void setChildExpression(Expression childExpression) {
         if (childExpression != this.childExpression) {
-            if (role.isConstrainedClass() && this.childExpression != null && childExpression.getClass() != this.childExpression.getClass()) {
-                throw new AssertionError();
+            if (role.isConstrainedClass()) {
+                if (role.getConstraint() != null) {
+                    if (!role.getConstraint().test(childExpression)) {
+                        throw new AssertionError();
+                    }
+                } else if (this.childExpression != null && childExpression.getClass() != this.childExpression.getClass()) {
+                    throw new AssertionError();
+                }
             }
             this.childExpression = childExpression;
             parentExpression.adoptChildExpression(childExpression);

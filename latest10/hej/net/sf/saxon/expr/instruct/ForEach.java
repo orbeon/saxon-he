@@ -13,17 +13,14 @@ import net.sf.saxon.event.PipelineConfiguration;
 import net.sf.saxon.expr.*;
 import net.sf.saxon.expr.parser.*;
 import net.sf.saxon.lib.TraceListener;
-import net.sf.saxon.om.FocusIterator;
-import net.sf.saxon.om.Item;
-import net.sf.saxon.om.SequenceIterator;
-import net.sf.saxon.om.StandardNames;
+import net.sf.saxon.om.*;
 import net.sf.saxon.trace.ExpressionPresenter;
 import net.sf.saxon.trans.XPathException;
-import net.sf.saxon.type.ErrorType;
-import net.sf.saxon.type.ItemType;
-import net.sf.saxon.type.SchemaType;
-import net.sf.saxon.type.UType;
+import net.sf.saxon.tree.iter.PrependSequenceIterator;
+import net.sf.saxon.tree.util.Orphan;
+import net.sf.saxon.type.*;
 import net.sf.saxon.value.Cardinality;
+import org.jetbrains.annotations.NotNull;
 
 
 /**
@@ -37,6 +34,7 @@ public class ForEach extends Instruction implements ContextMappingFunction, Cont
     protected boolean containsTailCall;
     protected Operand selectOp;
     protected Operand actionOp;
+    protected Operand separatorOp;
     protected Operand threadsOp;
     protected boolean isInstruction;
 
@@ -67,6 +65,18 @@ public class ForEach extends Instruction implements ContextMappingFunction, Cont
             threadsOp = new Operand(this, threads, OperandRole.SINGLE_ATOMIC);
         }
         this.containsTailCall = containsTailCall && action instanceof TailCallReturner;
+    }
+
+    /**
+     * Set the separator expression (Saxon extension)
+     */
+
+    public void setSeparatorExpression(Expression separator) {
+        separatorOp = new Operand(this, separator, OperandRole.SINGLE_ATOMIC);
+    }
+
+    public Expression getSeparatorExpression() {
+        return separatorOp == null ? null : separatorOp.getChildExpression();
     }
 
     /**
@@ -161,11 +171,7 @@ public class ForEach extends Instruction implements ContextMappingFunction, Cont
 
     @Override
     public Iterable<Operand> operands() {
-        if (threadsOp == null) {
-            return operandList(selectOp, actionOp);
-        } else {
-            return operandList(selectOp, actionOp, threadsOp);
-        }
+        return operandSparseList(selectOp, actionOp, separatorOp, threadsOp);
     }
 
     /**
@@ -367,6 +373,9 @@ public class ForEach extends Instruction implements ContextMappingFunction, Cont
     /*@NotNull*/
     public Expression copy(RebindingMap rebindings) {
         ForEach f2 = new ForEach(getSelect().copy(rebindings), getAction().copy(rebindings), containsTailCall, getThreads());
+        if (separatorOp != null) {
+            f2.setSeparatorExpression(getSeparatorExpression().copy(rebindings));
+        }
         ExpressionTool.copyLocationInfo(this, f2);
         f2.setInstruction(isInstruction());
         return f2;
@@ -476,14 +485,30 @@ public class ForEach extends Instruction implements ContextMappingFunction, Cont
         } else {
             PipelineConfiguration pipe = output.getPipelineConfiguration();
             pipe.setXPathContext(c2);
-            if (controller.isTracing()) {
+            NodeInfo separator = null;
+            if (separatorOp != null) {
+                separator = makeSeparator(context);
+            }
+            if (controller.isTracing() || separator != null) {
                 TraceListener listener = controller.getTraceListener();
-                assert listener != null;
                 Item item;
+                boolean first = true;
                 while ((item = iter.next()) != null) {
-                    listener.startCurrentItem(item);
+                    if (controller.isTracing()) {
+                        assert listener != null;
+                        listener.startCurrentItem(item);
+                    }
+                    if (separator != null) {
+                        if (first) {
+                            first = false;
+                        } else {
+                            output.append(separator);
+                        }
+                    }
                     action.process(output, c2);
-                    listener.endCurrentItem(item);
+                    if (controller.isTracing()) {
+                        listener.endCurrentItem(item);
+                    }
                 }
             } else {
                 iter.forEachOrFail(item -> action.process(output, c2));
@@ -491,6 +516,17 @@ public class ForEach extends Instruction implements ContextMappingFunction, Cont
             pipe.setXPathContext(context);
         }
         return null;
+    }
+
+    @NotNull
+    protected NodeInfo makeSeparator(XPathContext context) throws XPathException {
+        NodeInfo separator;
+        CharSequence sepValue = separatorOp.getChildExpression().evaluateAsString(context);
+        Orphan orphan = new Orphan(context.getConfiguration());
+        orphan.setNodeKind(Type.TEXT);
+        orphan.setStringValue(sepValue);
+        separator = orphan;
+        return separator;
     }
 
     /**
@@ -507,7 +543,19 @@ public class ForEach extends Instruction implements ContextMappingFunction, Cont
     public SequenceIterator iterate(XPathContext context) throws XPathException {
         XPathContextMinor c2 = context.newMinorContext();
         c2.trackFocus(getSelect().iterate(context));
-        return new ContextMappingIterator(this, c2);
+        if (separatorOp == null) {
+            return new ContextMappingIterator(this, c2);
+        } else {
+            NodeInfo separator = makeSeparator(context);
+            ContextMappingFunction mapper = cxt -> {
+               if (cxt.getCurrentIterator().position() == 1) {
+                   return ForEach.this.map(cxt);
+               } else {
+                   return new PrependSequenceIterator(separator, ForEach.this.map(cxt));
+               }
+            };
+            return new ContextMappingIterator(mapper, c2);
+        }
     }
 
     /**
@@ -553,6 +601,10 @@ public class ForEach extends Instruction implements ContextMappingFunction, Cont
         out.startElement("forEach", this);
         getSelect().export(out);
         getAction().export(out);
+        if (separatorOp != null) {
+            out.setChildRole("separator");
+            separatorOp.getChildExpression().export(out);
+        }
         explainThreads(out);
         out.endElement();
     }

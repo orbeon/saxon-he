@@ -66,7 +66,7 @@ public class ParseXml extends SystemFunction implements Callable {
             Source source = new SAXSource(is);
             source.setSystemId(baseURI);
 
-            Builder b = TreeModel.TINY_TREE.makeBuilder(controller.makePipelineConfiguration());
+            Builder b = controller.makeBuilder();
             Receiver s = b;
             ParseOptions options = new ParseOptions(config.getParseOptions());
             PackageData pd = getRetainedStaticContext().getPackageData();

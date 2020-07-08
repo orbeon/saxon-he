@@ -31,6 +31,7 @@ public class XSLForEach extends StyleElement {
     /*@Nullable*/ private Expression select = null;
     private boolean containsTailCall = false;
     private Expression threads = null;
+    private Expression separator = null;
 
     /**
      * Determine whether this node is an instruction.
@@ -82,6 +83,9 @@ public class XSLForEach extends StyleElement {
             if (f.equals("select")) {
                 selectAtt = value;
                 select = makeExpression(selectAtt, att);
+            } else if (f.equals("separator")) {
+                requireSyntaxExtensions("separator");
+                separator = makeAttributeValueTemplate(value, att);
             } else if (attName.getLocalPart().equals("threads") && attName.hasURI(NamespaceConstant.SAXON)) {
                 String threadsAtt = Whitespace.trim(value);
                 threads = makeAttributeValueTemplate(threadsAtt, att);
@@ -109,6 +113,12 @@ public class XSLForEach extends StyleElement {
     public void validate(ComponentDeclaration decl) throws XPathException {
         checkSortComesFirst(false);
         select = typeCheck("select", select);
+        if (separator != null) {
+            separator = typeCheck("separator", separator);
+        }
+        if (threads != null) {
+            threads = typeCheck("threads", threads);
+        }
         if (!hasChildNodes()) {
             compileWarning("An empty xsl:for-each instruction has no effect", SaxonErrorCode.SXWN9009);
         }
@@ -130,6 +140,9 @@ public class XSLForEach extends StyleElement {
             ForEach result = new ForEach(sortedSequence, block.simplify(), containsTailCall, threads);
             result.setInstruction(true);
             result.setLocation(allocateLocation());
+            if (separator != null) {
+                result.setSeparatorExpression(separator);
+            }
             return result;
         } catch (XPathException err) {
             compileError(err);

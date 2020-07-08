@@ -39,7 +39,7 @@ import javax.xml.transform.SourceLocator;
  */
 public class VendorFunctionSetHE extends BuiltInFunctionSet {
 
-    private static VendorFunctionSetHE THE_INSTANCE = new VendorFunctionSetHE();
+    private final static VendorFunctionSetHE THE_INSTANCE = new VendorFunctionSetHE();
 
     public static VendorFunctionSetHE getInstance() {
         return THE_INSTANCE;

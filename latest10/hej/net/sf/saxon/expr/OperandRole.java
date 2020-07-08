@@ -8,10 +8,14 @@
 package net.sf.saxon.expr;
 
 
+import net.sf.saxon.expr.flwor.TupleExpression;
+import net.sf.saxon.pattern.Pattern;
 import net.sf.saxon.type.FunctionItemType;
 import net.sf.saxon.type.ItemType;
 import net.sf.saxon.type.PlainType;
 import net.sf.saxon.value.SequenceType;
+
+import java.util.function.Predicate;
 
 /**
  * Defines the role of a child expression relative to its parent expression. The properties
@@ -47,7 +51,10 @@ public class OperandRole {
     public final static OperandRole REPEAT_NAVIGATE =
             new OperandRole(OperandRole.HIGHER_ORDER, OperandUsage.NAVIGATION, SequenceType.ANY_SEQUENCE);
     public final static OperandRole REPEAT_NAVIGATE_CONSTRAINED =
-            new OperandRole(OperandRole.HIGHER_ORDER | OperandRole.CONSTRAINED_CLASS, OperandUsage.NAVIGATION, SequenceType.ANY_SEQUENCE);
+            new OperandRole(OperandRole.HIGHER_ORDER | OperandRole.CONSTRAINED_CLASS,
+                            OperandUsage.NAVIGATION,
+                            SequenceType.ANY_SEQUENCE,
+                            expr -> expr instanceof TupleExpression);
     public final static OperandRole SINGLE_ATOMIC =
             new OperandRole(0, OperandUsage.ABSORPTION,  SequenceType.SINGLE_ATOMIC);
     public final static OperandRole ATOMIC_SEQUENCE =
@@ -55,11 +62,16 @@ public class OperandRole {
     public final static OperandRole NEW_FOCUS_ATOMIC =
             new OperandRole(OperandRole.USES_NEW_FOCUS | OperandRole.HIGHER_ORDER, OperandUsage.ABSORPTION, SequenceType.ATOMIC_SEQUENCE);
     public final static OperandRole PATTERN =
-            new OperandRole(OperandRole.USES_NEW_FOCUS | OperandRole.HIGHER_ORDER | OperandRole.CONSTRAINED_CLASS, OperandUsage.ABSORPTION, SequenceType.ATOMIC_SEQUENCE);
+            new OperandRole(OperandRole.USES_NEW_FOCUS | OperandRole.HIGHER_ORDER | OperandRole.CONSTRAINED_CLASS,
+                            OperandUsage.ABSORPTION,
+                            SequenceType.ATOMIC_SEQUENCE,
+                            expr -> expr instanceof Pattern)
+    ;
 
     int properties;
     private OperandUsage usage;
     private SequenceType requiredType = SequenceType.ANY_SEQUENCE;
+    private Predicate<Expression> constraint;
 
     public OperandRole(int properties, OperandUsage usage) {
         this.properties = properties;
@@ -70,6 +82,13 @@ public class OperandRole {
         this.properties = properties;
         this.usage = usage;
         this.requiredType = requiredType;
+    }
+
+    public OperandRole(int properties, OperandUsage usage, SequenceType requiredType, Predicate<Expression> constraint) {
+        this.properties = properties;
+        this.usage = usage;
+        this.requiredType = requiredType;
+        this.constraint = constraint;
     }
 
     /**
@@ -121,6 +140,23 @@ public class OperandRole {
      */
 
      public boolean isConstrainedClass() { return (properties & CONSTRAINED_CLASS) != 0; }
+
+    /**
+     * Set a constraint on the expression that can be associated with this operand type
+     */
+
+    public void setConstraint(Predicate<Expression> constraint) {
+        this.constraint = constraint;
+    }
+
+    /**
+     * Get any constraint on the expression that can be associated with this operand type
+     * @return any constraint that has been registered, or null
+     */
+
+    public Predicate<Expression> getConstraint() {
+        return constraint;
+    }
 
     /**
      * Get the usage of the operand

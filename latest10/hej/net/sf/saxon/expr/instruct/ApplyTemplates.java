@@ -17,6 +17,9 @@ import net.sf.saxon.trace.ExpressionPresenter;
 import net.sf.saxon.trans.*;
 import net.sf.saxon.trans.rules.RuleManager;
 import net.sf.saxon.tree.iter.EmptyIterator;
+import net.sf.saxon.tree.util.Orphan;
+import net.sf.saxon.type.Type;
+import org.jetbrains.annotations.NotNull;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -29,6 +32,7 @@ import java.util.List;
 public class ApplyTemplates extends Instruction implements ITemplateCall, ComponentInvocation {
 
     private Operand selectOp;
+    private Operand separatorOp;
     private WithParam[] actualParams;
     private WithParam[] tunnelParams;
 
@@ -91,6 +95,18 @@ public class ApplyTemplates extends Instruction implements ITemplateCall, Compon
     }
 
     /**
+     * Set the separator expression (Saxon extension)
+     */
+
+    public void setSeparatorExpression(Expression separator) {
+        separatorOp = new Operand(this, separator, OperandRole.SINGLE_ATOMIC);
+    }
+
+    public Expression getSeparatorExpression() {
+        return separatorOp == null ? null : separatorOp.getChildExpression();
+    }
+
+    /**
      * Get the actual parameters passed to the called template
      *
      * @return the non-tunnel parameters
@@ -124,6 +140,9 @@ public class ApplyTemplates extends Instruction implements ITemplateCall, Compon
     public Iterable<Operand> operands() {
         List<Operand> operanda = new ArrayList<>();
         operanda.add(selectOp);
+        if (separatorOp != null) {
+            operanda.add(separatorOp);
+        }
         WithParam.gatherOperands(this, getActualParams(), operanda);
         WithParam.gatherOperands(this, getTunnelParams(), operanda);
         return operanda;
@@ -236,6 +255,9 @@ public class ApplyTemplates extends Instruction implements ITemplateCall, Compon
         a2.setTunnelParams(WithParam.copy(a2, getTunnelParams(), rebindings));
         ExpressionTool.copyLocationInfo(this, a2);
         a2.ruleManager = ruleManager;
+        if (separatorOp != null) {
+            a2.setSeparatorExpression(getSeparatorExpression().copy(rebindings));
+        }
         return a2;
     }
 
@@ -257,10 +279,27 @@ public class ApplyTemplates extends Instruction implements ITemplateCall, Compon
         return apply(output, context, useTailRecursion);
     }
 
+
+    @NotNull
+    protected NodeInfo makeSeparator(XPathContext context) throws XPathException {
+        NodeInfo separator;
+        CharSequence sepValue = separatorOp.getChildExpression().evaluateAsString(context);
+        Orphan orphan = new Orphan(context.getConfiguration());
+        orphan.setNodeKind(Type.TEXT);
+        orphan.setStringValue(sepValue);
+        separator = orphan;
+        return separator;
+    }
+
     protected TailCall apply(Outputter output, XPathContext context, boolean returnTailCall) throws XPathException {
 
         Component.M targetMode = getTargetMode(context);
         Mode thisMode = targetMode.getActor();
+
+        NodeInfo separator = null;
+        if (separatorOp != null) {
+            separator = makeSeparator(context);
+        }
 
         // handle parameters if any
 
@@ -272,7 +311,7 @@ public class ApplyTemplates extends Instruction implements ITemplateCall, Compon
             c2.setOrigin(this);
             return new ApplyTemplatesPackage(
                     ExpressionTool.lazyEvaluate(getSelect(), context, false),
-                    targetMode, params, tunnels, output, c2, getLocation());
+                    targetMode, params, tunnels, separator, output, c2, getLocation());
         }
 
         // Get an iterator to iterate through the selected nodes in original order
@@ -299,7 +338,7 @@ public class ApplyTemplates extends Instruction implements ITemplateCall, Compon
         pipe.setXPathContext(c2);
 
         try {
-            TailCall tc = thisMode.applyTemplates(params, tunnels, output, c2, getLocation());
+            TailCall tc = thisMode.applyTemplates(params, tunnels, separator, output, c2, getLocation());
             while (tc != null) {
                 tc = tc.processLeavingTail();
             }
@@ -467,6 +506,10 @@ public class ApplyTemplates extends Instruction implements ITemplateCall, Compon
         out.emitAttribute("bSlot", "" + getBindingSlot());
         out.setChildRole("select");
         getSelect().export(out);
+        if (separatorOp != null) {
+            out.setChildRole("separator");
+            getSeparatorExpression().export(out);
+        }
         if (getActualParams().length != 0) {
             WithParam.exportParameters(getActualParams(), out, false);
         }
@@ -535,6 +578,7 @@ public class ApplyTemplates extends Instruction implements ITemplateCall, Compon
         private Component.M targetMode;
         private ParameterSet params;
         private ParameterSet tunnelParams;
+        private NodeInfo separator;
         private XPathContextMajor evaluationContext;
         private Outputter output;
         private Location locationId;
@@ -543,6 +587,7 @@ public class ApplyTemplates extends Instruction implements ITemplateCall, Compon
                               Component.M targetMode,
                               ParameterSet params,
                               ParameterSet tunnelParams,
+                              NodeInfo separator,
                               Outputter output,
                               XPathContextMajor context,
                               Location locationId) {
@@ -550,6 +595,7 @@ public class ApplyTemplates extends Instruction implements ITemplateCall, Compon
             this.targetMode = targetMode;
             this.params = params;
             this.tunnelParams = tunnelParams;
+            this.separator = separator;
             this.output = output;
             evaluationContext = context;
             this.locationId = locationId;
@@ -559,7 +605,7 @@ public class ApplyTemplates extends Instruction implements ITemplateCall, Compon
             evaluationContext.trackFocus(selectedItems.iterate());
             evaluationContext.setCurrentMode(targetMode);
             evaluationContext.setCurrentComponent(targetMode);
-            return targetMode.getActor().applyTemplates(params, tunnelParams, output, evaluationContext, locationId);
+            return targetMode.getActor().applyTemplates(params, tunnelParams, separator, output, evaluationContext, locationId);
         }
     }
 

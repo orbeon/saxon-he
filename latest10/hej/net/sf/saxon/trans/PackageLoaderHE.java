@@ -1565,6 +1565,10 @@ public class PackageLoaderHE implements IPackageLoader {
 
             ApplyTemplates inst = new ApplyTemplates(
                     select, useCurrentMode, useTailRecursion, implicitSelect, inStreamableConstruct, mode, loader.packStack.peek().getRuleManager());
+            Expression sep = loader.getExpressionWithRole(element, "separator");
+            if (sep != null) {
+                inst.setSeparatorExpression(sep);
+            }
             WithParam[] actuals = loader.loadWithParams(element, inst, false);
             WithParam[] tunnels = loader.loadWithParams(element, inst, true);
             inst.setActualParams(actuals);
@@ -2350,7 +2354,11 @@ public class PackageLoaderHE implements IPackageLoader {
             if (threads == null) {
                 return new ForEach(lhs, rhs);
             } else {
-                Expression forEach = new ForEach(lhs, rhs, false, threads);
+                ForEach forEach = new ForEach(lhs, rhs, false, threads);
+                Expression sep = loader.getExpressionWithRole(element, "separator");
+                if (sep != null) {
+                    forEach.setSeparatorExpression(sep);
+                } 
                 return loader.getConfiguration().obtainOptimizer().generateMultithreadedInstruction(forEach);
             }
         });

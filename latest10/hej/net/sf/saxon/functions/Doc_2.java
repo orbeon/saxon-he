@@ -14,6 +14,7 @@ import net.sf.saxon.event.Sender;
 import net.sf.saxon.expr.*;
 import net.sf.saxon.expr.accum.Accumulator;
 import net.sf.saxon.expr.accum.AccumulatorRegistry;
+import net.sf.saxon.expr.parser.RetainedStaticContext;
 import net.sf.saxon.lib.ParseOptions;
 import net.sf.saxon.lib.Validation;
 import net.sf.saxon.ma.map.MapItem;
@@ -51,11 +52,12 @@ public class Doc_2 extends SystemFunction implements Callable {
     public static OptionsParameter makeOptionsParameter() {
         SequenceType listOfQNames = SequenceType.makeSequenceType(BuiltInAtomicType.QNAME, StaticProperty.ALLOWS_ZERO_OR_MORE);
         OptionsParameter op = new OptionsParameter();
+        op.addAllowedOption("base-uri", SequenceType.SINGLE_STRING);
         op.addAllowedOption("validation", SequenceType.SINGLE_STRING);
-        op.setAllowedValues("validation", "SXZZ0001", "strict", "lax", "preserve", "skip");
+        op.setAllowedValues("validation", "SXZZ0001", "strict", "lax", "preserve", "strip", "skip");
         op.addAllowedOption("type", SequenceType.SINGLE_QNAME);
         op.addAllowedOption("strip-space", SequenceType.SINGLE_STRING);
-        op.setAllowedValues("strip-space", "SXZZ0001", "none", "all", "package-defined");
+        op.setAllowedValues("strip-space", "SXZZ0001", "none", "all", "ignorable", "package-defined", "default");
         op.addAllowedOption("stable", SequenceType.SINGLE_BOOLEAN);
         op.addAllowedOption("dtd-validation", SequenceType.SINGLE_BOOLEAN);
         op.addAllowedOption("accumulators", listOfQNames);
@@ -64,8 +66,8 @@ public class Doc_2 extends SystemFunction implements Callable {
     }
 
 
-    private ParseOptions setParseOptions(
-            Map<String, Sequence> checkedOptions, XPathContext context) throws XPathException {
+    public static ParseOptions setParseOptions(
+            RetainedStaticContext rsc, Map<String, Sequence> checkedOptions, XPathContext context) throws XPathException {
         ParseOptions result = new ParseOptions(context.getConfiguration().getParseOptions());
 
         Sequence value = checkedOptions.get("validation");
@@ -96,8 +98,12 @@ public class Doc_2 extends SystemFunction implements Callable {
                 case "none":
                     result.setSpaceStrippingRule(NoElementsSpaceStrippingRule.getInstance());
                     break;
+                case "ignorable":
+                    result.setSpaceStrippingRule(IgnorableSpaceStrippingRule.getInstance());
+                    break;
                 case "package-defined":
-                    PackageData data = getRetainedStaticContext().getPackageData();
+                case "default":
+                    PackageData data = rsc.getPackageData();
                     if (data instanceof StylesheetPackage) {
                         result.setSpaceStrippingRule(((StylesheetPackage) data).getSpaceStrippingRule());
                     }
@@ -110,7 +116,7 @@ public class Doc_2 extends SystemFunction implements Callable {
         }
         value = checkedOptions.get("accumulators");
         if (value != null) {
-            AccumulatorRegistry reg = getRetainedStaticContext().getPackageData().getAccumulatorRegistry();
+            AccumulatorRegistry reg = rsc.getPackageData().getAccumulatorRegistry();
             Set<Accumulator> accumulators = new HashSet<>();
             SequenceIterator iter = value.iterate();
 
@@ -138,7 +144,7 @@ public class Doc_2 extends SystemFunction implements Callable {
      * @return the result of the evaluation, in the form of a SequenceIterator
      * @throws XPathException if a dynamic error occurs during the evaluation of the expression
      */
-    public ZeroOrOne call(XPathContext context, Sequence[] arguments) throws XPathException {
+    public ZeroOrOne<NodeInfo> call(XPathContext context, Sequence[] arguments) throws XPathException {
         AtomicValue hrefVal = (AtomicValue) arguments[0].head();
         if (hrefVal == null) {
             return ZeroOrOne.empty();
@@ -147,7 +153,7 @@ public class Doc_2 extends SystemFunction implements Callable {
         Item param = arguments[1].head();
         Map<String, Sequence> checkedOptions =
                 getDetails().optionDetails.processSuppliedOptions((MapItem) param, context);
-        ParseOptions parseOptions = setParseOptions(checkedOptions, context);
+        ParseOptions parseOptions = setParseOptions(getRetainedStaticContext(), checkedOptions, context);
 
         NodeInfo item = fetch(href, parseOptions, context).getRootNode();
         if (item == null) {
@@ -155,12 +161,12 @@ public class Doc_2 extends SystemFunction implements Callable {
             throw new XPathException("Failed to load document " + href, "FODC0002", context);
         }
         Controller controller = context.getController();
-        if (parseOptions != null && controller instanceof XsltController) {
+        if (controller instanceof XsltController) {
             ((XsltController) controller).getAccumulatorManager().setApplicableAccumulators(
                     item.getTreeInfo(), parseOptions.getApplicableAccumulators()
             );
         }
-        return new ZeroOrOne(item);
+        return new ZeroOrOne<>(item);
     }
 
     private TreeInfo fetch(String href, ParseOptions options, XPathContext context) throws XPathException {
@@ -184,7 +190,6 @@ public class Doc_2 extends SystemFunction implements Callable {
             if (b instanceof TinyBuilder) {
                 ((TinyBuilder) b).setStatistics(config.getTreeStatistics().SOURCE_DOCUMENT_STATISTICS);
             }
-
             b.setPipelineConfiguration(b.getPipelineConfiguration());
             try {
                 Sender.send(source, b, options);

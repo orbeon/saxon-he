@@ -64,7 +64,7 @@ public class ShallowSkipRuleSet implements BuiltInRuleSet {
                     c2.setOrigin(this);
                     c2.trackFocus(node.iterateAxis(AxisInfo.ATTRIBUTE));
                     c2.setCurrentComponent(c2.getCurrentMode());  // Bug 3508
-                    TailCall tc = c2.getCurrentMode().getActor().applyTemplates(parameters, tunnelParams, output, c2, locationId);
+                    TailCall tc = c2.getCurrentMode().getActor().applyTemplates(parameters, tunnelParams, null, output, c2, locationId);
                     while (tc != null) {
                         tc = tc.processLeavingTail();
                     }
@@ -74,7 +74,7 @@ public class ShallowSkipRuleSet implements BuiltInRuleSet {
                     c2.setOrigin(this);
                     c2.trackFocus(node.iterateAxis(AxisInfo.CHILD));
                     c2.setCurrentComponent(c2.getCurrentMode());  // Bug 3508
-                    TailCall tc = c2.getCurrentMode().getActor().applyTemplates(parameters, tunnelParams, output, c2, locationId);
+                    TailCall tc = c2.getCurrentMode().getActor().applyTemplates(parameters, tunnelParams, null, output, c2, locationId);
                     while (tc != null) {
                         tc = tc.processLeavingTail();
                     }
@@ -94,7 +94,7 @@ public class ShallowSkipRuleSet implements BuiltInRuleSet {
             c2.setOrigin(this);
             c2.trackFocus(members);
             c2.setCurrentComponent(c2.getCurrentMode());  // Bug 3508
-            TailCall tc = c2.getCurrentMode().getActor().applyTemplates(parameters, tunnelParams, output, c2, locationId);
+            TailCall tc = c2.getCurrentMode().getActor().applyTemplates(parameters, tunnelParams, null, output, c2, locationId);
             while (tc != null) {
                 tc = tc.processLeavingTail();
             }

@@ -39,7 +39,10 @@ public class ConditionalSorter extends Expression {
     }
 
     private final static OperandRole DOC_SORTER_ROLE =
-            new OperandRole(OperandRole.CONSTRAINED_CLASS, OperandUsage.TRANSMISSION, SequenceType.ANY_SEQUENCE);
+            new OperandRole(OperandRole.CONSTRAINED_CLASS,
+                            OperandUsage.TRANSMISSION,
+                            SequenceType.ANY_SEQUENCE,
+                            expr -> expr instanceof DocumentSorter);
 
     /**
      * Create a conditional document sorter

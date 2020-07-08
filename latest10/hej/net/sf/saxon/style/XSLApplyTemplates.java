@@ -33,6 +33,7 @@ import java.util.HashMap;
 public class XSLApplyTemplates extends StyleElement {
 
     /*@Nullable*/ private Expression select;
+    private Expression separator;
     private StructuredQName modeName;   // null if no name specified or if conventional values such as #current used
     private boolean useCurrentMode = false;
     private boolean useTailRecursion = false;
@@ -67,6 +68,10 @@ public class XSLApplyTemplates extends StyleElement {
                     selectAtt = value;
                     select = makeExpression(selectAtt, att);
                     defaultedSelectExpression = false;
+                    break;
+                case "separator":
+                    requireSyntaxExtensions("separator");
+                    separator = makeAttributeValueTemplate(value, att);
                     break;
                 default:
                     checkUnknownAttribute(attName);
@@ -158,6 +163,10 @@ public class XSLApplyTemplates extends StyleElement {
 
         select = typeCheck("select", select);
 
+        if (separator != null) {
+            separator = typeCheck("separator", separator);
+        }
+
     }
 
     /**
@@ -193,6 +202,9 @@ public class XSLApplyTemplates extends StyleElement {
                 rm);
         app.setActualParams(getWithParamInstructions(app, compilation, decl, false));
         app.setTunnelParams(getWithParamInstructions(app, compilation, decl, true));
+        if (separator != null) {
+            app.setSeparatorExpression(separator);
+        }
         return app;
     }
 
