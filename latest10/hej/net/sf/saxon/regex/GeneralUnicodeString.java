@@ -8,7 +8,6 @@
 package net.sf.saxon.regex;
 
 import net.sf.saxon.value.*;
-import org.jetbrains.annotations.NotNull;
 
 /**
  * A Unicode string which, in general, may contain non-BMP characters (that is, codepoints
@@ -73,7 +72,6 @@ public final class GeneralUnicodeString extends UnicodeString {
         return pos >= (end - start);
     }
 
-    @NotNull
     public String toString() {
         obtainCharSequence();
         charSequence = charSequence.toString();

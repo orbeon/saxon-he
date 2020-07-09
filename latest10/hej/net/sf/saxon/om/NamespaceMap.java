@@ -8,7 +8,6 @@
 package net.sf.saxon.om;
 
 import net.sf.saxon.lib.NamespaceConstant;
-import org.jetbrains.annotations.NotNull;
 
 import java.util.*;
 
@@ -435,7 +434,6 @@ public class NamespaceMap implements NamespaceBindingSet, NamespaceResolver {
      * they will be in alphabetical order of namespace prefix.)
      */
 
-    @NotNull
     @Override
     public Iterator<NamespaceBinding> iterator() {
         return new Iterator<NamespaceBinding>() {

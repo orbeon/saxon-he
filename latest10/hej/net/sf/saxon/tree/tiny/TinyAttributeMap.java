@@ -10,7 +10,6 @@ package net.sf.saxon.tree.tiny;
 import net.sf.saxon.event.ReceiverOption;
 import net.sf.saxon.expr.parser.Loc;
 import net.sf.saxon.om.*;
-import org.jetbrains.annotations.NotNull;
 
 import java.util.Iterator;
 
@@ -61,7 +60,6 @@ public class TinyAttributeMap implements AttributeMap {
         return null;
     }
 
-    @NotNull
     @Override
     public Iterator<AttributeInfo> iterator() {
         return new AttributeInfoIterator(tree, element);

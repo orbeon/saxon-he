@@ -20,8 +20,6 @@ import net.sf.saxon.tree.iter.PrependSequenceIterator;
 import net.sf.saxon.tree.util.Orphan;
 import net.sf.saxon.type.*;
 import net.sf.saxon.value.Cardinality;
-import org.jetbrains.annotations.NotNull;
-
 
 /**
  * Handler for xsl:for-each elements in a stylesheet. The same class handles the "!" operator in XPath 3.0,
@@ -532,7 +530,6 @@ public class ForEach extends Instruction implements ContextMappingFunction, Cont
         return null;
     }
 
-    @NotNull
     protected NodeInfo makeSeparator(XPathContext context) throws XPathException {
         NodeInfo separator;
         CharSequence sepValue = separatorOp.getChildExpression().evaluateAsString(context);

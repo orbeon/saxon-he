@@ -19,7 +19,6 @@ import net.sf.saxon.trans.rules.RuleManager;
 import net.sf.saxon.tree.iter.EmptyIterator;
 import net.sf.saxon.tree.util.Orphan;
 import net.sf.saxon.type.Type;
-import org.jetbrains.annotations.NotNull;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -292,7 +291,6 @@ public class ApplyTemplates extends Instruction implements ITemplateCall, Compon
     }
 
 
-    @NotNull
     protected NodeInfo makeSeparator(XPathContext context) throws XPathException {
         NodeInfo separator;
         CharSequence sepValue = separatorOp.getChildExpression().evaluateAsString(context);
