@@ -111,23 +111,31 @@ public class RangeKey implements MapItem {
      */
     @Override
     public Iterable<KeyValuePair> keyValuePairs() {
-        return () -> new Iterator<KeyValuePair>() {
-            AtomicIterator keys = keys();
-            AtomicValue next = keys.next();
+        // For .NEU - don't use a lambda expression here
+        return new Iterable<KeyValuePair>() {
+            @NotNull
             @Override
-            public boolean hasNext() {
-                return next != null;
-            }
+            public Iterator<KeyValuePair> iterator() {
+                return new Iterator<KeyValuePair>() {
+                    AtomicIterator keys = keys();
+                    AtomicValue next = keys.next();
 
-            @Override
-            public KeyValuePair next() {
-                if (next == null) {
-                    return null;
-                } else {
-                    KeyValuePair kvp = new KeyValuePair(next, get(next));
-                    next = keys.next();
-                    return kvp;
-                }
+                    @Override
+                    public boolean hasNext() {
+                        return next != null;
+                    }
+
+                    @Override
+                    public KeyValuePair next() {
+                        if (next == null) {
+                            return null;
+                        } else {
+                            KeyValuePair kvp = new KeyValuePair(next, get(next));
+                            next = keys.next();
+                            return kvp;
+                        }
+                    }
+                };
             }
         };
     }

@@ -17,6 +17,7 @@ import net.sf.saxon.type.AtomicType;
 import net.sf.saxon.value.Cardinality;
 
 import java.util.ArrayList;
+import java.util.Iterator;
 import java.util.List;
 
 /**
@@ -50,7 +51,13 @@ public abstract class BinaryExpression extends Expression {
 
     @Override
     final public Iterable<Operand> operands() {
-        return () -> new PairIterator<>(lhs, rhs);
+        // For .NEU - don't use a lambda expression here
+        return new Iterable<Operand>() {
+            @Override
+            public Iterator<Operand> iterator() {
+                return new PairIterator<>(lhs, rhs);
+            }
+        };
     }
 
 

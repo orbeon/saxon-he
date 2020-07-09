@@ -20,6 +20,8 @@ import net.sf.saxon.type.UType;
 import net.sf.saxon.value.AtomicValue;
 import net.sf.saxon.value.SequenceType;
 
+import java.util.Iterator;
+
 /**
  * A key and a corresponding value to be held in a Map. A key-value pair also acts as a singleton
  * map in its own right.
@@ -82,7 +84,13 @@ public class SingleEntryMap implements MapItem {
      */
     @Override
     public Iterable<KeyValuePair> keyValuePairs() {
-        return () -> new MonoIterator<>(new KeyValuePair(key, value));
+        // For .NEU - don't use a lambda expression here
+        return new Iterable<KeyValuePair>() {
+            @Override
+            public Iterator<KeyValuePair> iterator() {
+                return new MonoIterator<>(new KeyValuePair(key, value));
+            }
+        };
     }
 
     /**
