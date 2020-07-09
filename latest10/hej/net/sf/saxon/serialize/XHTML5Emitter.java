@@ -99,6 +99,7 @@ public class XHTML5Emitter extends XMLEmitter {
         }
     }
 
+    @Override
     protected boolean writeDocTypeWithNullSystemId() {
         return true;
     }
@@ -107,6 +108,7 @@ public class XHTML5Emitter extends XMLEmitter {
      * Close an empty element tag.
      */
 
+    @Override
     protected String emptyElementTagCloser(String displayName, /*@NotNull*/ NodeName name) {
         if (isRecognizedHtmlElement(name) && emptyTags5.contains(name.getLocalPart())) {
             return "/>";

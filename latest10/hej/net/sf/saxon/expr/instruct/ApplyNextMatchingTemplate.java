@@ -37,6 +37,7 @@ public abstract class ApplyNextMatchingTemplate extends Instruction implements I
      * This method indicates which of these methods is prefered. For instructions this is the process() method.
      */
 
+    @Override
     public int getImplementationMethod() {
         return super.getImplementationMethod() | Expression.WATCH_METHOD;
     }
@@ -49,6 +50,7 @@ public abstract class ApplyNextMatchingTemplate extends Instruction implements I
      */
 
 
+    @Override
     public WithParam[] getActualParams() {
         return actualParams;
     }
@@ -60,6 +62,7 @@ public abstract class ApplyNextMatchingTemplate extends Instruction implements I
      */
 
 
+    @Override
     public WithParam[] getTunnelParams() {
         return tunnelParams;
     }
@@ -93,6 +96,7 @@ public abstract class ApplyNextMatchingTemplate extends Instruction implements I
      */
 
     /*@NotNull*/
+    @Override
     public Expression simplify() throws XPathException {
         WithParam.simplify(getActualParams());
         WithParam.simplify(getTunnelParams());
@@ -100,6 +104,7 @@ public abstract class ApplyNextMatchingTemplate extends Instruction implements I
     }
 
     /*@NotNull*/
+    @Override
     public Expression typeCheck(ExpressionVisitor visitor, ContextItemStaticInfo contextInfo) throws XPathException {
         WithParam.typeCheck(actualParams, visitor, contextInfo);
         WithParam.typeCheck(tunnelParams, visitor, contextInfo);
@@ -107,12 +112,14 @@ public abstract class ApplyNextMatchingTemplate extends Instruction implements I
     }
 
     /*@NotNull*/
+    @Override
     public Expression optimize(ExpressionVisitor visitor, ContextItemStaticInfo contextInfo) throws XPathException {
         WithParam.optimize(visitor, actualParams, contextInfo);
         WithParam.optimize(visitor, tunnelParams, contextInfo);
         return this;
     }
 
+    @Override
     public int getIntrinsicDependencies() {
         return StaticProperty.DEPENDS_ON_CONTEXT_ITEM;
     }
@@ -123,6 +130,7 @@ public abstract class ApplyNextMatchingTemplate extends Instruction implements I
      * doing any further analysis to find out more precisely).
      */
 
+    @Override
     public final boolean mayCreateNewNodes() {
         return true;
     }
@@ -147,6 +155,7 @@ public abstract class ApplyNextMatchingTemplate extends Instruction implements I
      *         expressions, it is the same as the input pathMapNode.
      */
 
+    @Override
     public PathMap.PathMapNodeSet addToPathMap(PathMap pathMap, PathMap.PathMapNodeSet pathMapNodeSet) {
         // This logic is assuming the mode is streamable (so called templates can't return streamed nodes)
         //PathMap.PathMapNodeSet result = super.addToPathMap(pathMap, pathMapNodeSet);

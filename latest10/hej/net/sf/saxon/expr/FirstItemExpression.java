@@ -58,6 +58,7 @@ public final class FirstItemExpression extends SingleItemFilter {
      */
 
     /*@NotNull*/
+    @Override
     public Expression copy(RebindingMap rebindings) {
         Expression e2 = new FirstItemExpression(getBaseExpression().copy(rebindings));
         ExpressionTool.copyLocationInfo(this, e2);
@@ -108,6 +109,7 @@ public final class FirstItemExpression extends SingleItemFilter {
      * Evaluate the expression
      */
 
+    @Override
     public Item evaluateItem(XPathContext context) throws XPathException {
         SequenceIterator iter = getBaseExpression().iterate(context);
         Item result = iter.next();
@@ -115,6 +117,7 @@ public final class FirstItemExpression extends SingleItemFilter {
         return result;
     }
 
+    @Override
     public String getExpressionName() {
         return "first";
     }

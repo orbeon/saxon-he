@@ -41,6 +41,7 @@ public class XSLMap extends StyleElement {
      * @return true - it is an instruction
      */
 
+    @Override
     public boolean isInstruction() {
         return true;
     }
@@ -62,10 +63,12 @@ public class XSLMap extends StyleElement {
      * @return true: yes, it may contain a sequence constructor
      */
 
+    @Override
     public boolean mayContainSequenceConstructor() {
         return true;
     }
 
+    @Override
     public void prepareAttributes() {
         for (AttributeInfo att : attributes()) {
             NodeName attName = att.getNodeName();
@@ -83,6 +86,7 @@ public class XSLMap extends StyleElement {
         }
     }
 
+    @Override
     public Expression compile(Compilation exec, ComponentDeclaration decl) throws XPathException {
         select = compileSequenceConstructor(exec, decl, false);
         select = select.simplify();

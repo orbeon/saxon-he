@@ -51,6 +51,7 @@ public class WhereClause extends Clause {
         predicateOp.setChildExpression(predicate);
     }
 
+    @Override
     public WhereClause copy(FLWORExpression flwor, RebindingMap rebindings) {
         WhereClause w2 = new WhereClause(flwor, getPredicate().copy(rebindings));
         w2.setLocation(getLocation());
@@ -139,6 +140,7 @@ public class WhereClause extends Clause {
         out.endElement();
     }
 
+    @Override
     public String toShortString() {
         FastStringBuffer fsb = new FastStringBuffer(FastStringBuffer.C64);
         fsb.append("where ");

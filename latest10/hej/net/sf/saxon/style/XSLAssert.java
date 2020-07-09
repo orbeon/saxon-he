@@ -36,6 +36,7 @@ public final class XSLAssert extends StyleElement {
      * @return true - it is an instruction
      */
 
+    @Override
     public boolean isInstruction() {
         return true;
     }
@@ -46,10 +47,12 @@ public final class XSLAssert extends StyleElement {
      * @return true: yes, it may contain a template-body
      */
 
+    @Override
     public boolean mayContainSequenceConstructor() {
         return true;
     }
 
+    @Override
     public void prepareAttributes() {
 
         String testAtt = null;
@@ -85,6 +88,7 @@ public final class XSLAssert extends StyleElement {
 
     }
 
+    @Override
     public void validate(ComponentDeclaration decl) throws XPathException {
         select = typeCheck("select", select);
         test = typeCheck("test", test);
@@ -95,6 +99,7 @@ public final class XSLAssert extends StyleElement {
         }
     }
 
+    @Override
     public Expression compile(Compilation exec, ComponentDeclaration decl) throws XPathException {
         if (exec.getCompilerInfo().isAssertionsEnabled()) {
             Expression b = compileSequenceConstructor(exec, decl, true);

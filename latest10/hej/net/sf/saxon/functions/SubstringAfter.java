@@ -32,6 +32,7 @@ public class SubstringAfter extends CollatingFunctionFixed {
      * @throws net.sf.saxon.trans.XPathException
      *          if a dynamic error occurs during the evaluation of the expression
      */
+    @Override
     public StringValue call(XPathContext context, Sequence[] arguments) throws XPathException {
         StringValue arg1 = (StringValue) arguments[0].head();
         StringValue arg2 = (StringValue) arguments[1].head();
@@ -63,6 +64,7 @@ public class SubstringAfter extends CollatingFunctionFixed {
         return s;
     }
 
+    @Override
     public String getCompilerName() {
         return "SubstringAfterCompiler";
     }

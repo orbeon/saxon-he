@@ -35,6 +35,7 @@ public final class XSLValueOf extends XSLLeafNodeConstructor {
     /*@Nullable*/ private Expression separator;
 
 
+    @Override
     public void prepareAttributes() {
 
         String selectAtt = null;
@@ -68,6 +69,7 @@ public final class XSLValueOf extends XSLLeafNodeConstructor {
         }
     }
 
+    @Override
     public void validate(ComponentDeclaration decl) throws XPathException {
         super.validate(decl);
         select = typeCheck("select", select);
@@ -80,10 +82,12 @@ public final class XSLValueOf extends XSLLeafNodeConstructor {
      * @return the error code defined for this condition, for this particular instruction
      */
 
+    @Override
     protected String getErrorCodeForSelectPlusContent() {
         return "XTSE0870";
     }
 
+    @Override
     public Expression compile(Compilation exec, ComponentDeclaration decl) throws XPathException {
         Configuration config = getConfiguration();
         final TypeHierarchy th = config.getTypeHierarchy();

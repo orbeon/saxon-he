@@ -70,6 +70,7 @@ public class XSLUsePackage extends StyleElement {
      * @return the package that is referenced.
      */
 
+    @Override
     public StylesheetPackage getUsedPackage() {
         return usedPackage;
     }
@@ -119,6 +120,7 @@ public class XSLUsePackage extends StyleElement {
         return true;
     }
 
+    @Override
     public void validate(ComponentDeclaration decl) {
         for (NodeInfo child : children()) {
             if (child.getNodeKind() == Type.TEXT) {

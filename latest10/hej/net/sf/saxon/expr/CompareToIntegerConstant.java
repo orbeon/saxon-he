@@ -60,6 +60,7 @@ public class CompareToIntegerConstant extends CompareToConstant {
      * @return a Literal representing the RHS expression
      */
 
+    @Override
     public Expression getRhsExpression() {
         return new Literal(new Int64Value(comparand));
     }
@@ -72,6 +73,7 @@ public class CompareToIntegerConstant extends CompareToConstant {
      */
 
     /*@NotNull*/
+    @Override
     public Expression copy(RebindingMap rebindings) {
         CompareToIntegerConstant c2 = new CompareToIntegerConstant(getLhsExpression().copy(rebindings), operator, comparand);
         ExpressionTool.copyLocationInfo(this, c2);
@@ -95,6 +97,7 @@ public class CompareToIntegerConstant extends CompareToConstant {
      * Hashcode supporting equals()
      */
 
+    @Override
     public int computeHashCode() {
         int h = 0x836b12a0;
         return h + getLhsExpression().hashCode() ^ (int)comparand;
@@ -113,6 +116,7 @@ public class CompareToIntegerConstant extends CompareToConstant {
      *          expression
      */
 
+    @Override
     public boolean effectiveBooleanValue(XPathContext context) throws XPathException {
         NumericValue n = (NumericValue) getLhsExpression().evaluateItem(context);
         if (n.isNaN()) {
@@ -122,6 +126,7 @@ public class CompareToIntegerConstant extends CompareToConstant {
         return interpretComparisonResult(c);
     }
 
+    @Override
     public int computeCardinality() {
         return StaticProperty.EXACTLY_ONE;
     }
@@ -143,6 +148,7 @@ public class CompareToIntegerConstant extends CompareToConstant {
      * is written to the supplied output destination.
      */
 
+    @Override
     public void export(ExpressionPresenter destination) throws XPathException {
         destination.startElement("compareToInt", this);
         destination.emitAttribute("op", Token.tokens[operator]);
@@ -179,6 +185,7 @@ public class CompareToIntegerConstant extends CompareToConstant {
      * Get the AtomicComparer used to compare atomic values. This encapsulates any collation that is used
      */
 
+    @Override
     public AtomicComparer getAtomicComparer() {
         return DoubleSortComparer.getInstance();
         // Note: this treats NaN=NaN as true, but it doesn't matter, because the rhs will never be NaN.

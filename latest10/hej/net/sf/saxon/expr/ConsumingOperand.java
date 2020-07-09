@@ -60,6 +60,7 @@ public class ConsumingOperand extends UnaryExpression {
      */
 
     /*@NotNull*/
+    @Override
     public ItemType getItemType() {
         return getBaseExpression().getItemType();
     }
@@ -74,6 +75,7 @@ public class ConsumingOperand extends UnaryExpression {
      *         dependencies. The flags are documented in class net.sf.saxon.value.StaticProperty
      */
 
+    @Override
     public int getIntrinsicDependencies() {
         return getBaseExpression().getIntrinsicDependencies();
     }
@@ -85,6 +87,7 @@ public class ConsumingOperand extends UnaryExpression {
      *         in advance.
      */
 
+    @Override
     public int computeCardinality() {
         return getBaseExpression().getCardinality();
     }
@@ -97,6 +100,7 @@ public class ConsumingOperand extends UnaryExpression {
      */
 
     /*@NotNull*/
+    @Override
     public Expression copy(RebindingMap rebindings) {
         ConsumingOperand exp = new ConsumingOperand(getBaseExpression().copy(rebindings));
         ExpressionTool.copyLocationInfo(this, exp);
@@ -141,6 +145,7 @@ public class ConsumingOperand extends UnaryExpression {
      */
 
     /*@NotNull*/
+    @Override
     public SequenceIterator iterate(XPathContext context) throws XPathException {
         return evaluate(context).iterate();
     }
@@ -161,6 +166,7 @@ public class ConsumingOperand extends UnaryExpression {
      *          expression
      */
 
+    @Override
     public Item evaluateItem(XPathContext context) throws XPathException {
         return evaluate(context).head();
     }
@@ -182,6 +188,7 @@ public class ConsumingOperand extends UnaryExpression {
      * is written to the supplied output destination.
      */
 
+    @Override
     public void export(ExpressionPresenter destination) throws XPathException {
         destination.startElement("consume", this);
         getBaseExpression().export(destination);

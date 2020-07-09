@@ -60,6 +60,7 @@ public class GMonthDayValue extends GDateValue {
      * @param typeLabel
      */
 
+    @Override
     public AtomicValue copyAsSubType(AtomicType typeLabel) {
         GMonthDayValue v = new GMonthDayValue(month, day, getTimezoneInMinutes());
         v.typeLabel = typeLabel;
@@ -73,11 +74,13 @@ public class GMonthDayValue extends GDateValue {
      * and xs:untypedAtomic. For external objects, the result is AnyAtomicType.
      */
 
+    @Override
     public BuiltInAtomicType getPrimitiveType() {
         return BuiltInAtomicType.G_MONTH_DAY;
     }
 
     /*@NotNull*/
+    @Override
     public CharSequence getPrimitiveStringValue() {
 
         FastStringBuffer sb = new FastStringBuffer(FastStringBuffer.C16);
@@ -105,6 +108,7 @@ public class GMonthDayValue extends GDateValue {
      *
      */
 
+    @Override
     public CalendarValue add(DurationValue duration) throws XPathException {
         XPathException err = new XPathException("Cannot add a duration to an xs:gMonthDay");
         err.setErrorCode("XPTY0004");
@@ -119,6 +123,7 @@ public class GMonthDayValue extends GDateValue {
      * @return the date/time in the new timezone
      */
 
+    @Override
     public CalendarValue adjustTimezone(int tz) {
         DateTimeValue dt = (DateTimeValue) toDateTime().adjustTimezone(tz);
         return new GMonthDayValue(dt.getMonth(), dt.getDay(), dt.getTimezoneInMinutes());

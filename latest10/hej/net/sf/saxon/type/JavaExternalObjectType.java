@@ -46,6 +46,7 @@ public class JavaExternalObjectType extends ExternalObjectType {
      */
 
     /*@Nullable*/
+    @Override
     public String getName() {
         return javaClass.getName();
     }
@@ -57,6 +58,7 @@ public class JavaExternalObjectType extends ExternalObjectType {
      */
 
     /*@Nullable*/
+    @Override
     public String getTargetNamespace() {
         return NamespaceConstant.JAVA_TYPE;
     }
@@ -69,6 +71,7 @@ public class JavaExternalObjectType extends ExternalObjectType {
      */
 
     /*@Nullable*/
+    @Override
     public StructuredQName getTypeName() {
         return classNameToQName(javaClass.getName());
     }
@@ -81,6 +84,7 @@ public class JavaExternalObjectType extends ExternalObjectType {
      */
 
     /*@NotNull*/
+    @Override
     public ItemType getPrimitiveItemType() {
         return config.getJavaExternalObjectType(Object.class);
     }
@@ -124,6 +128,7 @@ public class JavaExternalObjectType extends ExternalObjectType {
      * @param th      The type hierarchy cache
      * @return true if the item is an instance of this type; false otherwise
      */
+    @Override
     public boolean matches(/*@NotNull*/ Item item, /*@NotNull*/TypeHierarchy th) {
         if (item instanceof ObjectValue) {
             Object obj = ((ObjectValue) item).getObject();

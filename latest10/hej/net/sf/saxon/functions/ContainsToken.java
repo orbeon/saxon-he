@@ -61,6 +61,7 @@ public class ContainsToken extends CollatingFunctionFixed  {
      * @throws XPathException if a dynamic error occurs
      */
 
+    @Override
     public BooleanValue call(XPathContext context, Sequence[] arguments) throws XPathException {
         return BooleanValue.get(
             containsToken(arguments[0].iterate(), (StringValue) arguments[1].head(), getStringCollator()));

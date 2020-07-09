@@ -96,6 +96,7 @@ public class CoercedFunction extends AbstractFunction {
      * @return the function item's type
      */
 
+    @Override
     public FunctionItemType getFunctionItemType() {
         return requiredType;
     }
@@ -107,6 +108,7 @@ public class CoercedFunction extends AbstractFunction {
      */
 
     /*@Nullable*/
+    @Override
     public StructuredQName getFunctionName() {
         return targetFunction.getFunctionName();
     }
@@ -118,6 +120,7 @@ public class CoercedFunction extends AbstractFunction {
      *
      * @return a description of the function for use in error messages
      */
+    @Override
     public String getDescription() {
         return "coerced " + targetFunction.getDescription();
     }
@@ -128,6 +131,7 @@ public class CoercedFunction extends AbstractFunction {
      * @return the number of arguments in the function signature
      */
 
+    @Override
     public int getArity() {
         return targetFunction.getArity();
     }
@@ -142,6 +146,7 @@ public class CoercedFunction extends AbstractFunction {
      *
      */
 
+    @Override
     public Sequence call(XPathContext context, Sequence[] args) throws XPathException {
         SpecificFunctionType req = requiredType;
         SequenceType[] argTypes = targetFunction.getFunctionItemType().getArgumentTypes();

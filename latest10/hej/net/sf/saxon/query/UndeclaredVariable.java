@@ -33,6 +33,7 @@ public class UndeclaredVariable extends GlobalVariable {
     }
 
     /*@NotNull*/
+    @Override
     public void compile(Executable exec, int slot) throws XPathException {
         throw new UnsupportedOperationException("Attempt to compile a place-holder for an undeclared variable");
     }

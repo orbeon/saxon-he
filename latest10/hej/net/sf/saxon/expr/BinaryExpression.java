@@ -124,6 +124,7 @@ public abstract class BinaryExpression extends Expression {
      */
 
     /*@NotNull*/
+    @Override
     public Expression typeCheck(ExpressionVisitor visitor, ContextItemStaticInfo contextInfo) throws XPathException {
         resetLocalStaticProperties();
         lhs.typeCheck(visitor, contextInfo);
@@ -158,6 +159,7 @@ public abstract class BinaryExpression extends Expression {
      */
 
     /*@NotNull*/
+    @Override
     public Expression optimize(ExpressionVisitor visitor, ContextItemStaticInfo contextItemType) throws XPathException {
         lhs.optimize(visitor, contextItemType);
         rhs.optimize(visitor, contextItemType);
@@ -191,6 +193,7 @@ public abstract class BinaryExpression extends Expression {
      *                  an atomic value
      */
 
+    @Override
     public void setFlattened(boolean flattened) {
         getLhsExpression().setFlattened(flattened);
         getRhsExpression().setFlattened(flattened);
@@ -213,6 +216,7 @@ public abstract class BinaryExpression extends Expression {
      * or array with cardinality [1..n] might be atomized to an empty sequence.
      */
 
+    @Override
     public int computeCardinality() {
         Expression lhs = getLhsExpression();
         Expression rhs = getRhsExpression();
@@ -233,6 +237,7 @@ public abstract class BinaryExpression extends Expression {
      *         for some subclasses.
      */
 
+    @Override
     public int computeSpecialProperties() {
         int p = super.computeSpecialProperties();
         return p | StaticProperty.NO_NODES_NEWLY_CREATED;
@@ -393,6 +398,7 @@ public abstract class BinaryExpression extends Expression {
      * result for (A op B) and for (B op A), whether or not the operator is commutative.
      */
 
+    @Override
     public int computeHashCode() {
         // Ensure that an operator and its inverse get the same hash code,
         // so that (A lt B) has the same hash code as (B gt A)
@@ -437,6 +443,7 @@ public abstract class BinaryExpression extends Expression {
      * @param out the output destination for the displayed expression tree
      */
 
+    @Override
     public void export(ExpressionPresenter out) throws XPathException {
         out.startElement(tag(), this);
         out.emitAttribute("op", displayOperator());

@@ -292,6 +292,7 @@ public class XQueryParser extends XPathParser {
      * Callback to tailor the tokenizer
      */
 
+    @Override
     protected void customizeTokenizer(Tokenizer t) {
         t.isXQuery = true;
     }
@@ -813,6 +814,7 @@ public class XQueryParser extends XPathParser {
      * @throws XPathException in the event of a syntax error
      */
 
+    @Override
     protected AnnotationList parseAnnotationsList() throws XPathException {
         // we have read "declare" and have seen "%" as lookahead
         ArrayList<Annotation> annotations = new ArrayList<>();
@@ -2223,6 +2225,7 @@ public class XQueryParser extends XPathParser {
      */
 
     /*@Nullable*/
+    @Override
     protected Expression parseFLWORExpression() throws XPathException {
         FLWORExpression flwor = new FLWORExpression();
         int exprOffset = t.currentTokenStartOffset;
@@ -2929,6 +2932,7 @@ public class XQueryParser extends XPathParser {
      */
 
     /*@NotNull*/
+    @Override
     protected Expression parseTypeswitchExpression() throws XPathException {
 
         // On entry, the "(" has already been read
@@ -3087,6 +3091,7 @@ public class XQueryParser extends XPathParser {
      */
 
     /*@NotNull*/
+    @Override
     protected Expression parseSwitchExpression() throws XPathException {
 
         // On entry, the "(" has already been read
@@ -3171,6 +3176,7 @@ public class XQueryParser extends XPathParser {
      */
 
     /*@NotNull*/
+    @Override
     protected Expression parseValidateExpression() throws XPathException {
         int offset = t.currentTokenStartOffset;
         int mode = Validation.STRICT;
@@ -3257,6 +3263,7 @@ public class XQueryParser extends XPathParser {
      */
 
     /*@NotNull*/
+    @Override
     protected Expression parseExtensionExpression() throws XPathException {
         SchemaType requiredType = null;
         CharSequence trimmed = Whitespace.removeLeadingWhitespace(t.currentTokenValue);
@@ -3352,6 +3359,7 @@ public class XQueryParser extends XPathParser {
      */
 
     /*@NotNull*/
+    @Override
     protected Expression parseConstructor() throws XPathException {
         int offset = t.currentTokenStartOffset;
         switch (t.currentToken) {
@@ -3819,6 +3827,7 @@ public class XQueryParser extends XPathParser {
      * We don't currently implement the CatchVars
      */
 
+    @Override
     protected Expression parseTryCatchExpression() throws XPathException {
         if (!allowXPath30Syntax) {
             grumble("try/catch requires XQuery 3.0");
@@ -4870,6 +4879,7 @@ public class XQueryParser extends XPathParser {
      */
 
     /*@NotNull*/
+    @Override
     protected CharSequence unescape(/*@NotNull*/ String token) throws XPathException {
         return new Unescaper(env.getConfiguration().getValidCharacterChecker()).unescape(token);
     }
@@ -5161,6 +5171,7 @@ public class XQueryParser extends XPathParser {
      */
 
     /*@NotNull*/
+    @Override
     protected String getLanguage() {
         return "XQuery";
     }

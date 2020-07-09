@@ -42,6 +42,7 @@ public class AccumulatorRule implements RuleTarget {
         return newValueExpression;
     }
 
+    @Override
     public void export(ExpressionPresenter out) throws XPathException {
         newValueExpression.export(out);
     }
@@ -55,6 +56,7 @@ public class AccumulatorRule implements RuleTarget {
      *
      * @param rule a rule in which this is the target
      */
+    @Override
     public void registerRule(Rule rule) {
         // no action
     }

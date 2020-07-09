@@ -98,6 +98,7 @@ public class Stripper extends ProxyReceiver {
      * Callback interface for SAX: not for application use
      */
 
+    @Override
     public void open() throws XPathException {
         // System.err.println("Stripper#startDocument()");
         top = 0;
@@ -105,6 +106,7 @@ public class Stripper extends ProxyReceiver {
         super.open();
     }
 
+    @Override
     public void startElement(NodeName elemName, SchemaType type,
                              AttributeMap attributes, NamespaceMap namespaces,
                              Location location, int properties) throws XPathException {
@@ -171,6 +173,7 @@ public class Stripper extends ProxyReceiver {
      * Handle an end-of-element event
      */
 
+    @Override
     public void endElement() throws XPathException {
         nextReceiver.endElement();
         top--;
@@ -180,6 +183,7 @@ public class Stripper extends ProxyReceiver {
      * Handle a text node
      */
 
+    @Override
     public void characters(CharSequence chars, Location locationId, int properties) throws XPathException {
         // assume adjacent chunks of text are already concatenated
 
@@ -199,15 +203,18 @@ public class Stripper extends ProxyReceiver {
      *         may supply untyped nodes instead of supplying the type annotation
      */
 
+    @Override
     public boolean usesTypeAnnotations() {
         return true;
     }
 
     public static class StripRuleTarget implements RuleTarget {
+        @Override
         public void export(ExpressionPresenter presenter) throws XPathException {
             // no-op
         }
 
+        @Override
         public void registerRule(Rule rule) {
             // no action
         }

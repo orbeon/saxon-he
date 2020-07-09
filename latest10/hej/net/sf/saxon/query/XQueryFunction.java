@@ -454,6 +454,7 @@ public class XQueryFunction implements Declaration, Location {
         if (opt.isOptionSet(OptimizerOptions.EXTRACT_GLOBALS)) {
             final Executable exec = ((QueryModule)getStaticContext()).getExecutable();
             GlobalVariableManager manager = new GlobalVariableManager() {
+                @Override
                 public void addGlobalVariable(GlobalVariable variable) throws XPathException {
                     PackageData pd = staticContext.getPackageData();
                     variable.setPackageData(pd);
@@ -587,6 +588,7 @@ public class XQueryFunction implements Declaration, Location {
      * always retained.
      */
 
+    @Override
     public String getSystemId() {
         return location.getSystemId();
     }
@@ -597,6 +599,7 @@ public class XQueryFunction implements Declaration, Location {
      * not relate to anything in the source code, the value returned may be -1.
      */
 
+    @Override
     public int getLineNumber() {
         return location.getLineNumber();
     }
@@ -609,6 +612,7 @@ public class XQueryFunction implements Declaration, Location {
      * @see #getSystemId
      */
     /*@Nullable*/
+    @Override
     public String getPublicId() {
         return null;
     }
@@ -620,6 +624,7 @@ public class XQueryFunction implements Declaration, Location {
      * @see #getLineNumber
      */
 
+    @Override
     public int getColumnNumber() {
         return -1;
     }
@@ -629,6 +634,7 @@ public class XQueryFunction implements Declaration, Location {
      * should not be saved for later use. The result of this operation holds the same location information,
      * but in an immutable form.
      */
+    @Override
     public Location saveLocation() {
         return this;
     }

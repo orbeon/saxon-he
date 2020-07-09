@@ -79,6 +79,7 @@ public class AttributeSet extends Actor {
      * @param stackFrameMap the stack frame map
      */
 
+    @Override
     public void setStackFrameMap(/*@Nullable*/ SlotManager stackFrameMap) {
         if (stackFrameMap != null) {
             super.setStackFrameMap(stackFrameMap);

@@ -60,11 +60,13 @@ public class SingleNodeIterator implements AxisIterator,
      * @return true if there are more items
      */
 
+    @Override
     public boolean hasNext() {
         return position == 0;
     }
 
     /*@Nullable*/
+    @Override
     public NodeInfo next() {
         if (position == 0) {
             position = 1;
@@ -77,11 +79,13 @@ public class SingleNodeIterator implements AxisIterator,
         }
     }
 
+    @Override
     public int getLength() {
         return 1;
     }
 
     /*@NotNull*/
+    @Override
     public SequenceIterator getReverseIterator() {
         return new SingleNodeIterator(item);
     }
@@ -99,6 +103,7 @@ public class SingleNodeIterator implements AxisIterator,
      */
 
     /*@NotNull*/
+    @Override
     public GroundedValue materialize() {
         return new ZeroOrOne<>(item);
     }
@@ -118,6 +123,7 @@ public class SingleNodeIterator implements AxisIterator,
      *         It is acceptable for the properties of the iterator to change depending on its state.
      */
 
+    @Override
     public EnumSet<Property> getProperties() {
         return EnumSet.of(Property.LOOKAHEAD, Property.LAST_POSITION_FINDER, Property.GROUNDED);
     }

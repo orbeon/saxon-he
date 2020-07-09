@@ -77,6 +77,7 @@ public class FLWORExpression extends Expression {
      * @return true if this binding belongs to one of the clauses of this FLWOR expression
      */
 
+    @Override
     public boolean hasVariableBinding(Binding binding) {
         for (Clause c : clauses) {
             if (clauseHasBinding(c, binding)) {
@@ -184,6 +185,7 @@ public class FLWORExpression extends Expression {
      *         method
      */
 
+    @Override
     public boolean implementsStaticTypeCheck() {
         for (Clause c : clauses) {
             switch (c.getClauseKey()) {
@@ -212,6 +214,7 @@ public class FLWORExpression extends Expression {
      *                        is incompatible with the required type
      */
 
+    @Override
     public Expression staticTypeCheck(SequenceType req,
                                       boolean backwardsCompatible,
                                       RoleDiagnostic role, ExpressionVisitor visitor)
@@ -289,6 +292,7 @@ public class FLWORExpression extends Expression {
      *          if the expression has a non-permitted updateing subexpression
      */
 
+    @Override
     public void checkForUpdatingSubexpressions() throws XPathException {
         OperandProcessor processor = op -> {
             op.getChildExpression().checkForUpdatingSubexpressions();
@@ -347,6 +351,7 @@ public class FLWORExpression extends Expression {
      * expressions, it is the same as the input pathMapNode.
      */
 
+    @Override
     public PathMap.PathMapNodeSet addToPathMap(PathMap pathMap, /*@Nullable*/ PathMap.PathMapNodeSet pathMapNodeSet) {
         for (Clause c : clauses) {
             c.addToPathMap(pathMap, pathMapNodeSet);
@@ -466,6 +471,7 @@ public class FLWORExpression extends Expression {
 
 
     /*@NotNull*/
+    @Override
     public Expression optimize(
             final ExpressionVisitor visitor,
             final ContextItemStaticInfo contextItemType) throws XPathException {

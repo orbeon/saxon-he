@@ -78,6 +78,7 @@ public final class AxisExpression extends Expression {
      * in explain() output displaying the expression.
      */
 
+    @Override
     public String getExpressionName() {
         return "axisStep";
     }
@@ -87,6 +88,7 @@ public final class AxisExpression extends Expression {
      */
 
     /*@NotNull*/
+    @Override
     public Expression simplify() throws XPathException {
         Expression e2 = super.simplify();
         if (e2 != this) {
@@ -105,6 +107,7 @@ public final class AxisExpression extends Expression {
      */
 
     /*@NotNull*/
+    @Override
     public Expression typeCheck(ExpressionVisitor visitor, ContextItemStaticInfo contextInfo) throws XPathException {
         ItemType contextItemType = contextInfo.getItemType();
         boolean noWarnings = doneOptimize || (doneTypeCheck && this.staticInfo.getItemType().equals(contextItemType));
@@ -702,6 +705,7 @@ public final class AxisExpression extends Expression {
      * @return the original expression, rewritten if appropriate to optimize execution
      */
 
+    @Override
     public Expression optimize(ExpressionVisitor visitor, ContextItemStaticInfo contextInfo) {
         doneOptimize = true; // This ensures no more warnings about empty axes, because (a) we've probably output the
         // warning already, and (b) we're now looking at a different expression from what the user
@@ -751,6 +755,7 @@ public final class AxisExpression extends Expression {
      * get HashCode for comparing two expressions
      */
 
+    @Override
     public int computeHashCode() {
         // generate an arbitrary hash code that depends on the axis and the node test
         int h = 9375162 + axis << 20;
@@ -771,6 +776,7 @@ public final class AxisExpression extends Expression {
      */
 
     /*@NotNull*/
+    @Override
     public Expression copy(RebindingMap rebindings) {
         AxisExpression a2 = new AxisExpression(axis, test);
         a2.itemType = itemType;
@@ -787,6 +793,7 @@ public final class AxisExpression extends Expression {
      * property bit is set, it is true, but if it is unset, the value is unknown.
      */
 
+    @Override
     public int computeSpecialProperties() {
         return StaticProperty.CONTEXT_DOCUMENT_NODESET |
                 StaticProperty.SINGLE_DOCUMENT_NODESET |
@@ -829,6 +836,7 @@ public final class AxisExpression extends Expression {
      */
 
     /*@NotNull*/
+    @Override
     public final ItemType getItemType() {
         if (itemType != null) {
             return itemType;
@@ -885,6 +893,7 @@ public final class AxisExpression extends Expression {
      * Determine the cardinality of the result of this expression
      */
 
+    @Override
     public final int computeCardinality() {
         NodeTest originNodeType;
         NodeTest nodeTest = test;
@@ -940,6 +949,7 @@ public final class AxisExpression extends Expression {
      * axes.
      */
 
+    @Override
     public boolean isSubtreeExpression() {
         return AxisInfo.isSubtreeAxis[axis];
     }
@@ -975,6 +985,7 @@ public final class AxisExpression extends Expression {
      * expression is the first operand of a path expression or filter expression
      */
 
+    @Override
     public PathMap.PathMapNodeSet addToPathMap(PathMap pathMap, PathMap.PathMapNodeSet pathMapNodeSet) {
         if (pathMapNodeSet == null) {
             ContextItemExpression cie = new ContextItemExpression();
@@ -1065,6 +1076,7 @@ public final class AxisExpression extends Expression {
      */
 
     /*@NotNull*/
+    @Override
     public SequenceIterator iterate(XPathContext context) throws XPathException {
         Item item = context.getContextItem();
         if (item == null) {
@@ -1125,6 +1137,7 @@ public final class AxisExpression extends Expression {
      * is written to the supplied output destination.
      */
 
+    @Override
     public void export(ExpressionPresenter destination) throws XPathException {
         destination.startElement("axis", this);
         destination.emitAttribute("name", AxisInfo.axisName[axis]);

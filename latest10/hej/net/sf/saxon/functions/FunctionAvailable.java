@@ -137,6 +137,7 @@ public class FunctionAvailable extends SystemFunction {
      * @throws net.sf.saxon.trans.XPathException
      *          if a dynamic error occurs during the evaluation of the expression
      */
+    @Override
     public BooleanValue call(XPathContext context, Sequence[] arguments) throws XPathException {
         String lexicalQName = arguments[0].head().getStringValue();
         int arity = -1;

@@ -32,6 +32,7 @@ public class HomogeneityChecker extends UnaryExpression {
         super(base);
     }
 
+    @Override
     protected OperandRole getOperandRole() {
         return OperandRole.INSPECT;
     }
@@ -122,6 +123,7 @@ public class HomogeneityChecker extends UnaryExpression {
      */
 
     /*@NotNull*/
+    @Override
     public SequenceIterator iterate(final XPathContext context) throws XPathException {
 
         // This class delivers the result of the path expression in unsorted order,

@@ -45,6 +45,7 @@ public class AlphanumericCollator implements StringCollator {
      *
      * @return a collation URI that can be used to reconstruct the collation when an XSLT package is reloaded.
      */
+    @Override
     public String getCollationURI() {
         // Note this form of collation URI is not externally documented, it is retained solely to make
         // it possible to reconstitute the collation easily
@@ -57,6 +58,7 @@ public class AlphanumericCollator implements StringCollator {
      * @return &lt;0 if a&lt;b, 0 if a=b, &gt;0 if a&gt;b
      */
 
+    @Override
     public int compareStrings(CharSequence cs1, CharSequence cs2) {
         String s1 = cs1.toString();
         String s2 = cs2.toString();
@@ -115,6 +117,7 @@ public class AlphanumericCollator implements StringCollator {
      * @return true if and only if the strings are considered equal,
      */
 
+    @Override
     public boolean comparesEqual(CharSequence s1, CharSequence s2) {
         return compareStrings(s1, s2) == 0;
     }
@@ -126,6 +129,7 @@ public class AlphanumericCollator implements StringCollator {
      * @param cs the string whose collation key is required
      */
 
+    @Override
     public AtomicMatchKey getCollationKey(/*@NotNull*/ CharSequence cs) {
         // The string is normalized by removing leading zeros in a numeric component
         String s = cs.toString();

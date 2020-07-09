@@ -75,6 +75,7 @@ public class DotNetRegexIterator implements RegexIterator, LastPositionFinder {
      * @return the next item in the sequence
      */
 
+    @Override
     public StringValue next() {
         if (next == null && prevEnd >= 0) {
             // we've returned a match (or we're at the start), so find the next match
@@ -135,6 +136,7 @@ public class DotNetRegexIterator implements RegexIterator, LastPositionFinder {
      * @return the properties of this iterator.
      */
 
+    @Override
     public EnumSet<Property> getProperties() {
         return EnumSet.of(Property.LAST_POSITION_FINDER);
     }
@@ -147,6 +149,7 @@ public class DotNetRegexIterator implements RegexIterator, LastPositionFinder {
      *         does not match
      */
 
+    @Override
     public boolean isMatching() {
         return next == null && prevEnd >= 0;
     }
@@ -159,6 +162,7 @@ public class DotNetRegexIterator implements RegexIterator, LastPositionFinder {
      *         within the regular expression
      */
 
+    @Override
     public String getRegexGroup(int number) {
         if (!isMatching()) return null;
         GroupCollection groups = match.get_Groups();
@@ -171,6 +175,7 @@ public class DotNetRegexIterator implements RegexIterator, LastPositionFinder {
     /**
      * Get the number of captured groups
      */
+    @Override
     public int getNumberOfGroups() {
         return match.get_Groups().get_Count();
     }
@@ -184,6 +189,7 @@ public class DotNetRegexIterator implements RegexIterator, LastPositionFinder {
      * @param action  defines the processing to be performed at the start and end of a group
      */
 
+    @Override
     public void processMatchingSubstring(MatchHandler action) throws XPathException {
         GroupCollection groups = match.get_Groups();
         int c = groups.get_Count();
@@ -292,6 +298,7 @@ public class DotNetRegexIterator implements RegexIterator, LastPositionFinder {
      *
      * @since 9.1
      */
+    @Override
     public void close() {
         //
     }

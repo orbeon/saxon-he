@@ -63,6 +63,7 @@ public abstract class VennPattern extends Pattern {
      *
      */
 
+    @Override
     public Pattern simplify() throws XPathException {
         p1 = p1.simplify();
         p2 = p2.simplify();
@@ -76,6 +77,7 @@ public abstract class VennPattern extends Pattern {
      * @return the optimised Pattern
      */
 
+    @Override
     public Pattern typeCheck(ExpressionVisitor visitor, ContextItemStaticInfo contextItemType) throws XPathException {
         mustBeNodePattern(p1);
         p1 = p1.typeCheck(visitor, contextItemType);
@@ -125,6 +127,7 @@ public abstract class VennPattern extends Pattern {
      * @param nextFree    the next slot that is free to be allocated @return the next slot that is free to be allocated
      */
 
+    @Override
     public int allocateSlots(SlotManager slotManager, int nextFree) {
         nextFree = p1.allocateSlots(slotManager, nextFree);
         nextFree = p2.allocateSlots(slotManager, nextFree);
@@ -158,6 +161,7 @@ public abstract class VennPattern extends Pattern {
      * @return the dependencies, as a bit-significant mask
      */
 
+    @Override
     public int getDependencies() {
         return p1.getDependencies() | p2.getDependencies();
     }
@@ -217,6 +221,7 @@ public abstract class VennPattern extends Pattern {
      * Hashcode supporting equals()
      */
 
+    @Override
     public int computeHashCode() {
         return 0x9bd723a6 ^ p1.hashCode() ^ p2.hashCode();
     }
@@ -236,6 +241,7 @@ public abstract class VennPattern extends Pattern {
         return p1 + " " + getOperatorName() + " " + p2;
     }
 
+    @Override
     public void export(ExpressionPresenter presenter) throws XPathException{
         presenter.startElement("p.venn");
         presenter.emitAttribute("op", getOperatorName());

@@ -49,6 +49,7 @@ public class DotNetInputStream extends InputStream {
      *         stream is reached.
      * @throws java.io.IOException if an I/O error occurs.
      */
+    @Override
     public int read() throws IOException {
         int i = stream.ReadByte();
         if (i != -1) {
@@ -113,6 +114,7 @@ public class DotNetInputStream extends InputStream {
      * @throws NullPointerException if <code>b</code> is <code>null</code>.
      * @see java.io.InputStream#read()
      */
+    @Override
     public int read(byte b[], int off, int len) throws IOException {
         int i = stream.Read(b, off, len);
         if (i > 0) {
@@ -135,6 +137,7 @@ public class DotNetInputStream extends InputStream {
      * @see java.io.InputStream#mark(int)
      * @see java.io.InputStream#reset()
      */
+    @Override
     public boolean markSupported() {
         return stream.get_CanSeek();
     }
@@ -160,6 +163,7 @@ public class DotNetInputStream extends InputStream {
      *                  the mark position becomes invalid.
      * @see java.io.InputStream#reset()
      */
+    @Override
     public synchronized void mark(int readlimit) {
         markedOffset = currentOffset;
     }
@@ -200,6 +204,7 @@ public class DotNetInputStream extends InputStream {
      * @see java.io.InputStream#mark(int)
      * @see java.io.IOException
      */
+    @Override
     public synchronized void reset() throws IOException {
         currentOffset = markedOffset;
         stream.Seek(markedOffset, SeekOrigin.wrap(SeekOrigin.Begin));
@@ -214,6 +219,7 @@ public class DotNetInputStream extends InputStream {
      *
      * @throws java.io.IOException if an I/O error occurs.
      */
+    @Override
     public void close() throws IOException {
         stream.Close();
     }

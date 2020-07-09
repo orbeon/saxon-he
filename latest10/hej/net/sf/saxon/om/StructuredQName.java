@@ -409,6 +409,7 @@ public class StructuredQName implements IdentityComparable {
      * @param other the value to be compared with
      * @return true if the two values are indentical, false otherwise
      */
+    @Override
     public boolean isIdentical(IdentityComparable other) {
         return equals(other) && ((StructuredQName)other).getPrefix().equals(getPrefix());
     }
@@ -418,6 +419,7 @@ public class StructuredQName implements IdentityComparable {
      *
      * @return a hashCode suitable for use when testing for identity.
      */
+    @Override
     public int identityHashCode() {
         return hashCode() ^ getPrefix().hashCode();
     }

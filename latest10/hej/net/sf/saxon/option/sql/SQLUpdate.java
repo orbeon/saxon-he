@@ -53,6 +53,7 @@ public class SQLUpdate extends ExtensionInstruction {
     String table;
     Expression where;
 
+    @Override
     public void prepareAttributes() {
 
         final AttributeMap atts = attributes();
@@ -77,6 +78,7 @@ public class SQLUpdate extends ExtensionInstruction {
         }
     }
 
+    @Override
     public void validate(ComponentDeclaration decl) throws XPathException {
         super.validate(decl);
         where = typeCheck("where", where);
@@ -92,6 +94,7 @@ public class SQLUpdate extends ExtensionInstruction {
         }
     }
 
+    @Override
     public Expression compile(Compilation exec, ComponentDeclaration decl) throws XPathException {
 
         // Collect names of columns to be added
@@ -148,10 +151,12 @@ public class SQLUpdate extends ExtensionInstruction {
          * This method indicates which of the three is provided.
          */
 
+        @Override
         public int getImplementationMethod() {
             return Expression.EVALUATE_METHOD;
         }
 
+        @Override
         public String getExpressionType() {
             return "sql:update";
         }
@@ -162,6 +167,7 @@ public class SQLUpdate extends ExtensionInstruction {
             return u2.copyOperandsFrom(this);
         }
 
+        @Override
         public Sequence call(XPathContext context, Sequence[] arguments) throws XPathException {
 
             // Prepare the SQL statement (only do this once)

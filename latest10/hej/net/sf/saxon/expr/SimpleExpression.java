@@ -90,6 +90,7 @@ public abstract class SimpleExpression extends Expression implements Callable {
      */
 
     /*@NotNull*/
+    @Override
     public Expression copy(RebindingMap rebindings) {
 
         try {
@@ -133,6 +134,7 @@ public abstract class SimpleExpression extends Expression implements Callable {
      */
 
     /*@NotNull*/
+    @Override
     public ItemType getItemType() {
         return Type.ITEM_TYPE;
     }
@@ -142,6 +144,7 @@ public abstract class SimpleExpression extends Expression implements Callable {
      * returns "zero or more", which can be overridden in a subclass.
      */
 
+    @Override
     public int computeCardinality() {
         if ((getImplementationMethod() & Expression.EVALUATE_METHOD) == 0) {
             return StaticProperty.ALLOWS_ONE_OR_MORE;
@@ -165,6 +168,7 @@ public abstract class SimpleExpression extends Expression implements Callable {
      *                        expression
      */
 
+    @Override
     public final Item evaluateItem(XPathContext context) throws XPathException {
         return call(context, evaluateArguments(context)).head();
     }
@@ -184,6 +188,7 @@ public abstract class SimpleExpression extends Expression implements Callable {
      */
 
     /*@NotNull*/
+    @Override
     public final SequenceIterator iterate(XPathContext context) throws XPathException {
         return call(context, evaluateArguments(context)).iterate();
     }
@@ -195,6 +200,7 @@ public abstract class SimpleExpression extends Expression implements Callable {
      * @param context The dynamic context, giving access to the current node,
      */
 
+    @Override
     public final void process(Outputter output, XPathContext context) throws XPathException {
         SequenceIterator iter = call(context, evaluateArguments(context)).iterate();
         iter.forEachOrFail(
@@ -225,6 +231,7 @@ public abstract class SimpleExpression extends Expression implements Callable {
      * is written to the supplied output destination.
      */
 
+    @Override
     public void export(ExpressionPresenter destination) throws XPathException {
         throw new XPathException("In general, stylesheets using extension instructions cannot be exported");
     }

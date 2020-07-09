@@ -42,6 +42,7 @@ public class IDFilter extends ProxyReceiver {
      * startElement
      */
 
+    @Override
     public void startElement(NodeName elemName, SchemaType type,
                              AttributeMap attributes, NamespaceMap namespaces,
                              Location location, int properties)
@@ -70,6 +71,7 @@ public class IDFilter extends ProxyReceiver {
      * endElement:
      */
 
+    @Override
     public void endElement() throws XPathException {
         if (activeDepth > 0) {
             nextReceiver.endElement();
@@ -81,6 +83,7 @@ public class IDFilter extends ProxyReceiver {
      * Character data
      */
 
+    @Override
     public void characters(CharSequence chars, Location locationId, int properties) throws XPathException {
         if (activeDepth > 0) {
             super.characters(chars, locationId, properties);
@@ -91,6 +94,7 @@ public class IDFilter extends ProxyReceiver {
      * Processing Instruction
      */
 
+    @Override
     public void processingInstruction(String target, CharSequence data, Location locationId, int properties) throws XPathException {
         if (activeDepth > 0) {
             super.processingInstruction(target, data, locationId, properties);
@@ -101,6 +105,7 @@ public class IDFilter extends ProxyReceiver {
      * Output a comment
      */
 
+    @Override
     public void comment(CharSequence chars, Location locationId, int properties) throws XPathException {
         if (activeDepth > 0) {
             super.comment(chars, locationId, properties);
@@ -115,6 +120,7 @@ public class IDFilter extends ProxyReceiver {
      *         may supply untyped nodes instead of supplying the type annotation
      */
 
+    @Override
     public boolean usesTypeAnnotations() {
         return true;
     }

@@ -37,6 +37,7 @@ public class LocalUnionType implements PlainType, UnionType {
         return Genre.ATOMIC;
     }
 
+    @Override
     public StructuredQName getTypeName() {
         return new StructuredQName("", NamespaceConstant.ANONYMOUS, "U" + hashCode());
     }
@@ -61,6 +62,7 @@ public class LocalUnionType implements PlainType, UnionType {
      * @return false, this is not an atomic type
      */
 
+    @Override
     public boolean isAtomicType() {
         return false;
     }
@@ -69,6 +71,7 @@ public class LocalUnionType implements PlainType, UnionType {
      * Ask whether this union type includes any list types among its members
      */
 
+    @Override
     public boolean containsListType() {
         return false;
     }
@@ -81,6 +84,7 @@ public class LocalUnionType implements PlainType, UnionType {
      * a non-plain union type
      */
 
+    @Override
     public boolean isPlainType() {
         return true;
     }
@@ -96,6 +100,7 @@ public class LocalUnionType implements PlainType, UnionType {
      * @return the most precise SequenceType for the result of casting
      */
 
+    @Override
     public SequenceType getResultTypeOfCast() {
         return SequenceType.makeSequenceType(this, StaticProperty.ALLOWS_ZERO_OR_ONE);
     }
@@ -154,6 +159,7 @@ public class LocalUnionType implements PlainType, UnionType {
      *
      * @return the smallest UType that subsumes this item type
      */
+    @Override
     public UType getUType() {
         UType u = UType.VOID;
         for (AtomicType at : memberTypes) {
@@ -185,6 +191,7 @@ public class LocalUnionType implements PlainType, UnionType {
      * cannot be determined because there are components missing from the schema.
      */
 
+    @Override
     public boolean isNamespaceSensitive() {
         return memberTypes.stream().anyMatch(AtomicType::isNamespaceSensitive);
     }
@@ -232,6 +239,7 @@ public class LocalUnionType implements PlainType, UnionType {
         return null;
     }
 
+    @Override
     public AtomicValue getTypedValue(CharSequence value, NamespaceResolver resolver, ConversionRules rules)
             throws ValidationException {
         for (AtomicType type : memberTypes) {
@@ -255,6 +263,7 @@ public class LocalUnionType implements PlainType, UnionType {
      * @param th   The type hierarchy
      * @return true if the item is an instance of this type; false otherwise
      */
+    @Override
     public boolean matches(Item item, TypeHierarchy th) {
         if (item instanceof AtomicValue) {
             return memberTypes.stream().anyMatch(at -> at.matches(item, th));
@@ -270,6 +279,7 @@ public class LocalUnionType implements PlainType, UnionType {
      */
 
     /*@NotNull*/
+    @Override
     public AtomicType getPrimitiveItemType() {
         return BuiltInAtomicType.ANY_ATOMIC;
     }
@@ -280,15 +290,18 @@ public class LocalUnionType implements PlainType, UnionType {
      * @return StandardNames.XS_ANY_ATOMIC_TYPE
      */
 
+    @Override
     public int getPrimitiveType() {
         return StandardNames.XS_ANY_ATOMIC_TYPE;
     }
 
     /*@NotNull*/
+    @Override
     public PlainType getAtomizedItemType() {
         return this;
     }
 
+    @Override
     public boolean isAtomizable(TypeHierarchy th) {
         return true;
     }
@@ -299,6 +312,7 @@ public class LocalUnionType implements PlainType, UnionType {
      * @return for an atomic type, the type itself; for a plain union type, the list of plain types
      *         in its transitive membership, in declaration order
      */
+    @Override
     public Iterable<AtomicType> getPlainMemberTypes()  {
         return memberTypes;
     }
@@ -340,6 +354,7 @@ public class LocalUnionType implements PlainType, UnionType {
         return fsb.toString();
     }
 
+    @Override
     public String toExportString() {
         FastStringBuffer fsb = new FastStringBuffer(FastStringBuffer.C256);
         fsb.append("union(");

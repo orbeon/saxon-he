@@ -50,6 +50,7 @@ public class TypeStrippedDocument extends GenericTreeInfo {
      */
 
     /*@Nullable*/
+    @Override
     public NodeInfo selectID(String id, boolean getParent) {
         NodeInfo n = underlyingTree.selectID(id, false);
         if (n == null) {

@@ -58,6 +58,7 @@ public class IntToIntHashMap implements IntToIntMap {
      * @param defaultValue the value to be returned by {@link #get(int)} if no entry
      *                     exists for the supplied key
      */
+    @Override
     public void setDefaultValue(int defaultValue) {
         _defaultValue = defaultValue;
     }
@@ -69,6 +70,7 @@ public class IntToIntHashMap implements IntToIntMap {
      *         exists for the supplied key
      */
 
+    @Override
     public int getDefaultValue() {
         return _defaultValue;
     }
@@ -76,6 +78,7 @@ public class IntToIntHashMap implements IntToIntMap {
     /**
      * Clears the map.
      */
+    @Override
     public void clear() {
         _n = 0;
         for (int i = 0; i < _nmax; ++i) {
@@ -89,6 +92,7 @@ public class IntToIntHashMap implements IntToIntMap {
      * @param key Key
      * @return true if the key is mapped
      */
+    @Override
     public boolean find(int key) {
         return _filled[indexOf(key)];
     }
@@ -99,6 +103,7 @@ public class IntToIntHashMap implements IntToIntMap {
      * @param key Key
      * @return the value, or the default value if not found.
      */
+    @Override
     public int get(int key) {
         int i = indexOf(key);
         return _filled[i] ? _value[i] : _defaultValue;
@@ -109,6 +114,7 @@ public class IntToIntHashMap implements IntToIntMap {
      *
      * @return the size
      */
+    @Override
     public int size() {
         return _n;
     }
@@ -119,6 +125,7 @@ public class IntToIntHashMap implements IntToIntMap {
      * @param key Key to remove
      * @return true if the value was removed
      */
+    @Override
     public boolean remove(int key) {
         // Knuth, v. 3, 527, Algorithm R.
         int i = indexOf(key);
@@ -149,6 +156,7 @@ public class IntToIntHashMap implements IntToIntMap {
      * @param key   Key
      * @param value Value
      */
+    @Override
     public void put(int key, int value) {
         int i = indexOf(key);
         if (_filled[i]) {
@@ -168,6 +176,7 @@ public class IntToIntHashMap implements IntToIntMap {
      */
 
     /*@NotNull*/
+    @Override
     public IntIterator keyIterator() {
         return new IntToIntHashMapKeyIterator();
     }
@@ -293,6 +302,7 @@ public class IntToIntHashMap implements IntToIntMap {
             i = 0;
         }
 
+        @Override
         public boolean hasNext() {
             while (i < _key.length) {
                 if (_filled[i]) {
@@ -304,6 +314,7 @@ public class IntToIntHashMap implements IntToIntMap {
             return false;
         }
 
+        @Override
         public int next() {
             return _key[i++];
         }

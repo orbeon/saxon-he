@@ -57,6 +57,7 @@ public class WherePopulated extends UnaryExpression implements ItemMappingFuncti
     }
 
     /*@NotNull*/
+    @Override
     public Expression copy(RebindingMap rebindings) {
         return new WherePopulated(getBaseExpression().copy(rebindings));
     }
@@ -117,6 +118,7 @@ public class WherePopulated extends UnaryExpression implements ItemMappingFuncti
      * @return either the output item, or null.
      * @throws net.sf.saxon.trans.XPathException if a dynamic error occurs
      */
+    @Override
     public Item mapItem(Item item) throws XPathException {
         return isDeemedEmpty(item) ? null : item;
     }
@@ -162,6 +164,7 @@ public class WherePopulated extends UnaryExpression implements ItemMappingFuncti
 
 
 
+    @Override
     public void export(ExpressionPresenter out) throws XPathException {
         out.startElement("condCont", this);
         getBaseExpression().export(out);

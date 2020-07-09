@@ -61,6 +61,7 @@ public class LookupAllExpression extends UnaryExpression {
      */
 
     /*@NotNull*/
+    @Override
     public final ItemType getItemType() {
         ItemType base = getBaseExpression().getItemType();
         if (base instanceof MapType) {
@@ -90,6 +91,7 @@ public class LookupAllExpression extends UnaryExpression {
      */
 
     /*@NotNull*/
+    @Override
     public Expression typeCheck(ExpressionVisitor visitor, ContextItemStaticInfo contextInfo) throws XPathException {
 
         Configuration config = visitor.getConfiguration();
@@ -120,6 +122,7 @@ public class LookupAllExpression extends UnaryExpression {
         return this;
     }
 
+    @Override
     public Expression optimize(ExpressionVisitor visitor, ContextItemStaticInfo contextItemType) throws XPathException {
         getOperand().optimize(visitor, contextItemType);
 
@@ -178,6 +181,7 @@ public class LookupAllExpression extends UnaryExpression {
      */
 
     /*@NotNull*/
+    @Override
     public LookupAllExpression copy(RebindingMap rebindings) {
         return new LookupAllExpression(getBaseExpression().copy(rebindings));
     }
@@ -186,6 +190,7 @@ public class LookupAllExpression extends UnaryExpression {
      * Determine the static cardinality of the expression
      */
 
+    @Override
     public int computeCardinality() {
         return StaticProperty.ALLOWS_ZERO_OR_MORE;
     }
@@ -206,6 +211,7 @@ public class LookupAllExpression extends UnaryExpression {
      * get HashCode for comparing two expressions
      */
 
+    @Override
     public int computeHashCode() {
         return "LookupAll".hashCode() ^ getBaseExpression().hashCode();
     }
@@ -217,6 +223,7 @@ public class LookupAllExpression extends UnaryExpression {
      */
 
     /*@NotNull*/
+    @Override
     public SequenceIterator iterate(final XPathContext context) throws XPathException {
 
         return new SequenceIterator() {
@@ -289,6 +296,7 @@ public class LookupAllExpression extends UnaryExpression {
      * is written to the supplied output destination.
      */
 
+    @Override
     public void export(ExpressionPresenter destination) throws XPathException {
         destination.startElement("lookupAll", this);
         getBaseExpression().export(destination);
@@ -307,6 +315,7 @@ public class LookupAllExpression extends UnaryExpression {
         return ExpressionTool.parenthesize(getBaseExpression()) + "?*";
     }
 
+    @Override
     public String toShortString() {
         return getBaseExpression().toShortString() + "?*";
     }

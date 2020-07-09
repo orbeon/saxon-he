@@ -37,6 +37,7 @@ public class MonoIterator<T> implements Iterator<T> {
      * @return <tt>true</tt> if the iterator has more elements.
      */
 
+    @Override
     public boolean hasNext() {
         return !gone;
     }
@@ -48,6 +49,7 @@ public class MonoIterator<T> implements Iterator<T> {
      * @throws NoSuchElementException iteration has no more elements.
      */
 
+    @Override
     public T next() {
         if (gone) {
             throw new NoSuchElementException();

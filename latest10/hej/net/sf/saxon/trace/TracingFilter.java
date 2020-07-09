@@ -75,6 +75,7 @@ public class TracingFilter extends ProxyReceiver {
 *                       need to be copied. Values are {@link ReceiverOption#ALL_NAMESPACES}; the default (0) means
      */
 
+    @Override
     public void append(Item item, Location locationId, int copyNamespaces) throws XPathException {
         out.println("RCVR " + id + indent + " APPEND " + item.getClass().getName());
         if (nextReceiver instanceof SequenceReceiver) {
@@ -88,6 +89,7 @@ public class TracingFilter extends ProxyReceiver {
      * Character data
      */
 
+    @Override
     public void characters(CharSequence chars, Location locationId, int properties) throws XPathException {
         out.println("RCVR " + id + indent + " CHARACTERS " + (Whitespace.isWhite(chars) ? "(whitespace)" : ""));
         FastStringBuffer sb = new FastStringBuffer(chars.length() * 4);
@@ -103,6 +105,7 @@ public class TracingFilter extends ProxyReceiver {
      * End of document
      */
 
+    @Override
     public void close() throws XPathException {
         out.println("RCVR " + id + indent + " CLOSE");
         nextReceiver.close();
@@ -112,6 +115,7 @@ public class TracingFilter extends ProxyReceiver {
      * Output a comment
      */
 
+    @Override
     public void comment(CharSequence chars, Location locationId, int properties) throws XPathException {
         out.println("RCVR " + id + indent + " COMMENT");
         nextReceiver.comment(chars, locationId, properties);
@@ -121,6 +125,7 @@ public class TracingFilter extends ProxyReceiver {
      * Notify the end of a document node
      */
 
+    @Override
     public void endDocument() throws XPathException {
         out.println("RCVR " + id + indent + " END DOCUMENT");
         nextReceiver.endDocument();
@@ -130,6 +135,7 @@ public class TracingFilter extends ProxyReceiver {
      * End of element
      */
 
+    @Override
     public void endElement() throws XPathException {
         if (indent.isEmpty()) {
             throw new XPathException("RCVR " + id + " Unmatched end tag");
@@ -143,6 +149,7 @@ public class TracingFilter extends ProxyReceiver {
      * Start of event stream
      */
 
+    @Override
     public void open() throws XPathException {
         out.println("RCVR " + id + indent + " OPEN");
         nextReceiver.open();
@@ -152,6 +159,7 @@ public class TracingFilter extends ProxyReceiver {
      * Processing Instruction
      */
 
+    @Override
     public void processingInstruction(String target, CharSequence data, Location locationId, int properties) throws XPathException {
         out.println("RCVR " + id + indent + " PROCESSING INSTRUCTION");
         nextReceiver.processingInstruction(target, data, locationId, properties);
@@ -162,6 +170,7 @@ public class TracingFilter extends ProxyReceiver {
      * @param properties
      */
 
+    @Override
     public void startDocument(int properties) throws XPathException {
         out.println("RCVR " + id + indent + " START DOCUMENT");
         nextReceiver.startDocument(properties);
@@ -171,6 +180,7 @@ public class TracingFilter extends ProxyReceiver {
      * Notify the start of an element
      */
 
+    @Override
     public void startElement(NodeName elemName, SchemaType type,
                              AttributeMap attributes, NamespaceMap namespaces,
                              Location location, int properties) throws XPathException {

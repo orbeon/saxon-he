@@ -315,6 +315,7 @@ public class QueryModule implements StaticContext {
      * @return the Saxon Configuration
      */
 
+    @Override
     public Configuration getConfiguration() {
         return config;
     }
@@ -326,6 +327,7 @@ public class QueryModule implements StaticContext {
      * @return data about this query module
      */
 
+    @Override
     public PackageData getPackageData() {
         return packageData;
     }
@@ -428,6 +430,7 @@ public class QueryModule implements StaticContext {
      * @return a RetainedStaticContext object: either a newly created one, or one that is
      * reused from a previous invocation.
      */
+    @Override
     public RetainedStaticContext makeRetainedStaticContext() {
         // The only part of the RetainedStaticContext that can change as the query module is parsed is the
         // "activeNamespaces", that is, namespaces declared on direct element constructors. If this is empty,
@@ -656,6 +659,7 @@ public class QueryModule implements StaticContext {
      * @return the LocationMap
      */
 
+    @Override
     public Location getContainingLocation() {
         return moduleLocation;
     }
@@ -713,6 +717,7 @@ public class QueryModule implements StaticContext {
      */
 
     /*@Nullable*/
+    @Override
     public String getSystemId() {
         return locationURI == null ? null : locationURI.toString();
     }
@@ -733,6 +738,7 @@ public class QueryModule implements StaticContext {
      * @return the base URI
      */
 
+    @Override
     public String getStaticBaseURI() {
         return baseURI;
     }
@@ -1033,6 +1039,7 @@ public class QueryModule implements StaticContext {
      */
 
     /*@NotNull*/
+    @Override
     public Expression bindVariable(/*@NotNull*/ StructuredQName qName) throws XPathException {
         GlobalVariable var = variables.get(qName);
         if (var == null) {
@@ -1108,6 +1115,7 @@ public class QueryModule implements StaticContext {
      * @see net.sf.saxon.functions.FunctionLibraryList
      */
 
+    @Override
     public FunctionLibrary getFunctionLibrary() {
         return functionLibraryList;
     }
@@ -1313,6 +1321,7 @@ public class QueryModule implements StaticContext {
      * @since 8.4
      */
 
+    @Override
     public boolean isImportedSchema(String namespace) {
         return importedSchemata != null && importedSchemata.contains(namespace);
     }
@@ -1324,6 +1333,7 @@ public class QueryModule implements StaticContext {
      */
 
     /*@Nullable*/
+    @Override
     public Set<String> getImportedSchemaNamespaces() {
         if (importedSchemata == null) {
             return Collections.emptySet();
@@ -1365,6 +1375,7 @@ public class QueryModule implements StaticContext {
      */
 
     /*@NotNull*/
+    @Override
     public XPathContext makeEarlyEvaluationContext() {
         return new EarlyEvaluationContext(getConfiguration());
     }
@@ -1378,6 +1389,7 @@ public class QueryModule implements StaticContext {
      */
 
     /*@Nullable*/
+    @Override
     public String getDefaultCollationName() {
         if (defaultCollationName == null) {
             defaultCollationName = NamespaceConstant.CODEPOINT_COLLATION_URI;
@@ -1488,6 +1500,7 @@ public class QueryModule implements StaticContext {
              * @return the uri for the namespace, or null if the prefix is not in scope.
              *         The "null namespace" is represented by the pseudo-URI "".
              */
+            @Override
             public String getURIForPrefix(String prefix, boolean useDefault) {
                 return checkURIForPrefix(prefix);
             }
@@ -1499,6 +1512,7 @@ public class QueryModule implements StaticContext {
              * @return an iterator over all the prefixes for which a namespace binding exists, including
              *         the zero-length string to represent the null/absent prefix if it is bound
              */
+            @Override
             public Iterator<String> iteratePrefixes() {
                 return getNamespaceResolver().iteratePrefixes();
             }
@@ -1560,6 +1574,7 @@ public class QueryModule implements StaticContext {
      */
 
     /*@Nullable*/
+    @Override
     public String getDefaultElementNamespace() {
         return checkURIForPrefix("");
     }
@@ -1580,6 +1595,7 @@ public class QueryModule implements StaticContext {
      * @return the default namespace for function names
      */
 
+    @Override
     public String getDefaultFunctionNamespace() {
         return defaultFunctionNamespace;
     }
@@ -1661,6 +1677,7 @@ public class QueryModule implements StaticContext {
      */
 
     /*@NotNull*/
+    @Override
     public NamespaceResolver getNamespaceResolver() {
         NamespaceMap result = NamespaceMap.emptyMap();
 
@@ -1701,6 +1718,7 @@ public class QueryModule implements StaticContext {
      * @since 9.3
      */
 
+    @Override
     public ItemType getRequiredContextItemType() {
         return requiredContextItemType;
     }
@@ -1714,6 +1732,7 @@ public class QueryModule implements StaticContext {
      */
 
     /*@Nullable*/
+    @Override
     public DecimalFormatManager getDecimalFormatManager() {
         if (decimalFormatManager == null) {
             decimalFormatManager = new DecimalFormatManager(HostLanguage.XQUERY, getXPathVersion());
@@ -1727,6 +1746,7 @@ public class QueryModule implements StaticContext {
      * <p>This method is intended for internal use only.</p>
      */
 
+    @Override
     public void issueWarning(String s, Location locator) {
         XmlProcessingIncident err = new XmlProcessingIncident(s).asWarning();
         err.setLocation(locator);
@@ -1741,6 +1761,7 @@ public class QueryModule implements StaticContext {
      * @since 8.4
      */
 
+    @Override
     public boolean isInBackwardsCompatibleMode() {
         return false;
     }
@@ -1764,6 +1785,7 @@ public class QueryModule implements StaticContext {
      * @since 9.7
      */
 
+    @Override
     public int getXPathVersion() {
         return 31;
     }
@@ -1785,6 +1807,7 @@ public class QueryModule implements StaticContext {
      *         on key() used in XSLT, and system-generated calls on key() which may
      *         also appear in XQuery and XPath
      */
+    @Override
     public KeyManager getKeyManager() {
         return packageData.getKeyManager();
     }

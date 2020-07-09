@@ -33,6 +33,7 @@ public interface GroundedValue extends Sequence {
      * {@link java.util.Iterator}) over all the items in this Sequence.
      */
 
+    @Override
     UnfailingIterator iterate();
 
     /**
@@ -49,6 +50,7 @@ public interface GroundedValue extends Sequence {
      * @return the first item of the sequence, or null if the sequence is empty
      */
 
+    @Override
     Item head();
 
     /**
@@ -129,6 +131,7 @@ public interface GroundedValue extends Sequence {
      * @return this {@link GroundedValue}
      */
 
+    @Override
     default GroundedValue materialize() {
         return this;
     }

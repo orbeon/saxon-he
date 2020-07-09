@@ -67,6 +67,7 @@ public class PullPushTee extends PullFilter {
      *         {@link net.sf.saxon.pull.PullProvider.Event#END_OF_INPUT} is returned at the end of the sequence.
      */
 
+    @Override
     public Event next() throws XPathException {
         currentEvent = super.next();
         copyEvent(currentEvent);

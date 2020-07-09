@@ -194,6 +194,7 @@ public class PartialApply extends Expression {
      * Hashcode supporting equals()
      */
 
+    @Override
     public int computeHashCode() {
         int h = 0x836b92a0;
         int i = 0;
@@ -285,6 +286,7 @@ public class PartialApply extends Expression {
      *          if a dynamic error occurs during evaluation of the function.
      */
 
+    @Override
     public Function evaluateItem(XPathContext context) throws XPathException {
         Function f = (Function) getBaseExpression().evaluateItem(context);
         assert f != null;

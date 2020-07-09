@@ -185,6 +185,7 @@ public class SchemaValidatorForCpp extends SaxonCAPI {
                return warningCount;
            }
 
+           @Override
            public void error(TransformerException exception) throws TransformerException {
                errorCount++;
                try {
@@ -212,6 +213,7 @@ public class SchemaValidatorForCpp extends SaxonCAPI {
 
            }
 
+           @Override
            public void fatalError(TransformerException exception) throws TransformerException {
                try {
                    writer.writeStartElement("fatal");
@@ -236,6 +238,7 @@ public class SchemaValidatorForCpp extends SaxonCAPI {
                }
            }
 
+           @Override
            public void warning(TransformerException exception) throws TransformerException {
                warningCount++;
                try {
@@ -262,6 +265,7 @@ public class SchemaValidatorForCpp extends SaxonCAPI {
                }
            }
 
+           @Override
            public void initialize(Configuration config) throws TransformerException {
                throw new AssertionError("Code needs adapting to use ErrorReporter (MHK 2019-06-09)");
                //config.setErrorListener(this);

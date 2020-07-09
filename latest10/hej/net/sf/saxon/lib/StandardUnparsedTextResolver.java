@@ -61,6 +61,7 @@ public class StandardUnparsedTextResolver implements UnparsedTextURIResolver {
      * @since 8.9
      */
 
+    @Override
     public Reader resolve(URI absoluteURI, String encoding, Configuration config) throws XPathException {
         URL absoluteURL;
         Logger err = config.getLogger();

@@ -568,12 +568,14 @@ public class DeepEqual extends CollatingFunctionFixed {
      * @throws XPathException (should not happen)
      */
 
+    @Override
     public BooleanValue call(XPathContext context, Sequence[] arguments) throws XPathException {
         GenericAtomicComparer comparer = new GenericAtomicComparer(getStringCollator(), context);
         boolean b = deepEqual(arguments[0].iterate(), arguments[1].iterate(), comparer, context, 0);
         return BooleanValue.get(b);
     }
 
+    @Override
     public String getStreamerName() {
         return "DeepEqual";
     }

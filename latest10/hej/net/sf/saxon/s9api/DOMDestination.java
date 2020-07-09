@@ -45,6 +45,7 @@ public class DOMDestination extends AbstractDestination {
      * @return the Receiver to which events are to be sent.
      */
 
+    @Override
     public Receiver getReceiver(/*@NotNull*/ PipelineConfiguration pipe, SerializationProperties params) {
         domWriter.setPipelineConfiguration(pipe);
         return params.makeSequenceNormalizer(domWriter);
@@ -55,6 +56,7 @@ public class DOMDestination extends AbstractDestination {
      * it has finished writing to the destination.
      */
 
+    @Override
     public void close() throws SaxonApiException {
         // no action
     }

@@ -50,7 +50,7 @@ public class OperandRole {
             new OperandRole(0, OperandUsage.NAVIGATION,  SequenceType.ANY_SEQUENCE);
     public final static OperandRole REPEAT_NAVIGATE =
             new OperandRole(OperandRole.HIGHER_ORDER, OperandUsage.NAVIGATION, SequenceType.ANY_SEQUENCE);
-    public final static OperandRole REPEAT_NAVIGATE_CONSTRAINED =
+    public final static OperandRole FLWOR_TUPLE_CONSTRAINED =
             new OperandRole(OperandRole.HIGHER_ORDER | OperandRole.CONSTRAINED_CLASS,
                             OperandUsage.NAVIGATION,
                             SequenceType.ANY_SEQUENCE,

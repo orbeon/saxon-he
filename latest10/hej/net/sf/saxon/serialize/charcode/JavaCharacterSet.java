@@ -53,6 +53,7 @@ public class JavaCharacterSet implements CharacterSet {
         return c;
     }
 
+    @Override
     public final boolean inCharset(int c) {
         // Assume ASCII chars are always OK
         if (c <= 127) {
@@ -81,6 +82,7 @@ public class JavaCharacterSet implements CharacterSet {
 
     }
 
+    @Override
     public String getCanonicalName() {
         return encoder.charset().name();
     }

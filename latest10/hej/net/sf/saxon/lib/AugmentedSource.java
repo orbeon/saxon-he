@@ -387,6 +387,7 @@ public class AugmentedSource implements Source {
      * @since 8.8, changed in 9.7 it no longer modifies the original source object
      */
 
+    @Override
     public void setSystemId(String id) {
         systemID = id;
     }
@@ -399,6 +400,7 @@ public class AugmentedSource implements Source {
      * @since 8.8
      */
 
+    @Override
     public String getSystemId() {
         return systemID != null ? systemID : source.getSystemId();
     }

@@ -35,6 +35,7 @@ public class XSLCatch extends StyleElement {
      * @return true - it is an instruction
      */
 
+    @Override
     public boolean isInstruction() {
         return false;
     }
@@ -45,6 +46,7 @@ public class XSLCatch extends StyleElement {
      * @return true: yes, it may contain a template-body
      */
 
+    @Override
     public boolean mayContainSequenceConstructor() {
         return true;
     }
@@ -55,10 +57,12 @@ public class XSLCatch extends StyleElement {
      * @return true for all elements except xsl:fallback and saxon:catch
      */
 
+    @Override
     protected boolean seesAvuncularVariables() {
         return false;
     }
 
+    @Override
     public void prepareAttributes() {
 
         String selectAtt = null;
@@ -166,6 +170,7 @@ public class XSLCatch extends StyleElement {
         return result;
     }
 
+    @Override
     public void validate(ComponentDeclaration decl) throws XPathException {
         select = typeCheck("select", select);
         if (select != null && hasChildNodes()) {
@@ -177,6 +182,7 @@ public class XSLCatch extends StyleElement {
     }
 
     /*@Nullable*/
+    @Override
     public Expression compile(Compilation exec, ComponentDeclaration decl) throws XPathException {
         if (select == null) {
             select = compileSequenceConstructor(exec, decl, true);

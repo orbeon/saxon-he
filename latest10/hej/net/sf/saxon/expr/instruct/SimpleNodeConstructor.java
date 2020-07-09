@@ -99,6 +99,7 @@ public abstract class SimpleNodeConstructor extends Instruction {
      * @return the static cardinality
      */
 
+    @Override
     public int computeCardinality() {
         return getSelect().getCardinality(); // may allow empty sequence
     }
@@ -111,6 +112,7 @@ public abstract class SimpleNodeConstructor extends Instruction {
      * @return a set of flags indicating static properties of this expression
      */
 
+    @Override
     public int computeSpecialProperties() {
         return super.computeSpecialProperties() |
                 StaticProperty.SINGLE_DOCUMENT_NODESET;
@@ -153,6 +155,7 @@ public abstract class SimpleNodeConstructor extends Instruction {
      */
 
     /*@NotNull*/
+    @Override
     public Expression typeCheck(ExpressionVisitor visitor, ContextItemStaticInfo contextInfo) throws XPathException {
         typeCheckChildren(visitor, contextInfo);
         localTypeCheck(visitor, contextInfo);
@@ -184,6 +187,7 @@ public abstract class SimpleNodeConstructor extends Instruction {
     }
 
     /*@NotNull*/
+    @Override
     public Expression optimize(ExpressionVisitor visitor, ContextItemStaticInfo contextItemType) throws XPathException {
         optimizeChildren(visitor, contextItemType);
         if (getSelect().isCallOn(String_1.class)) {
@@ -217,6 +221,7 @@ public abstract class SimpleNodeConstructor extends Instruction {
      * @return a TailCall to be executed by the caller, always null for this instruction
      */
 
+    @Override
     public TailCall processLeavingTail(Outputter output, XPathContext context) throws XPathException {
         CharSequence value = getSelect().evaluateAsString(context);
         try {
@@ -244,6 +249,7 @@ public abstract class SimpleNodeConstructor extends Instruction {
      * Evaluate as an expression.
      */
 
+    @Override
     public Item evaluateItem(XPathContext context) throws XPathException {
         Item contentItem = getSelect().evaluateItem(context);
         String content;
@@ -288,6 +294,7 @@ public abstract class SimpleNodeConstructor extends Instruction {
     }
 
     /*@NotNull*/
+    @Override
     public SequenceIterator iterate(XPathContext context) throws XPathException {
         return SingletonIterator.makeIterator(evaluateItem(context));
     }

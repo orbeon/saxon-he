@@ -47,6 +47,7 @@ public class ItemTypePattern extends Pattern {
      * @return true if the item matches the Pattern, false otherwise
      */
 
+    @Override
     public boolean matches(Item item, XPathContext context) throws XPathException {
         return itemType.matches(item, context.getConfiguration().getTypeHierarchy());
     }
@@ -57,6 +58,7 @@ public class ItemTypePattern extends Pattern {
      * @return an ItemType, as specific as possible, which all the matching items satisfy
      */
 
+    @Override
     public ItemType getItemType() {
         return itemType;
     }
@@ -94,10 +96,12 @@ public class ItemTypePattern extends Pattern {
      * Hashcode supporting equals()
      */
 
+    @Override
     public int computeHashCode() {
         return 0x7a83d1a8 ^ itemType.hashCode();
     }
 
+    @Override
     public void export(ExpressionPresenter presenter) throws XPathException {
         presenter.startElement("p.nodeTest");
         presenter.emitAttribute("test", AlphaCode.fromItemType(itemType));
@@ -112,6 +116,7 @@ public class ItemTypePattern extends Pattern {
      */
 
     /*@NotNull*/
+    @Override
     public Pattern copy(RebindingMap rebindings) {
         // (is this necessary? I think the class is immutable...)
         return new ItemTypePattern(itemType);

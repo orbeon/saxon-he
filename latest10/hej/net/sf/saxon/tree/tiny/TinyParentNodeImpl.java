@@ -24,6 +24,7 @@ public abstract class TinyParentNodeImpl extends TinyNodeImpl {
      * Determine if the node has children.
      */
 
+    @Override
     public boolean hasChildNodes() {
         return nodeNr + 1 < tree.numberOfNodes &&
                 tree.depth[nodeNr + 1] > tree.depth[nodeNr];
@@ -36,6 +37,7 @@ public abstract class TinyParentNodeImpl extends TinyNodeImpl {
      * @return the accumulated character content of the element, including descendant elements.
      */
 
+    @Override
     public String getStringValue() {
         return getStringValueCS(tree, nodeNr).toString();
     }
@@ -45,6 +47,7 @@ public abstract class TinyParentNodeImpl extends TinyNodeImpl {
      * the version of the method that returns a String.
      */
 
+    @Override
     public CharSequence getStringValueCS() {
         return getStringValueCS(tree, nodeNr);
     }

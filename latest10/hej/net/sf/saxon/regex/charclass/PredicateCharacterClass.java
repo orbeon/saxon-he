@@ -26,14 +26,17 @@ public class PredicateCharacterClass implements CharacterClass {
         this.predicate = predicate;
     }
 
+    @Override
     public boolean test(int value) {
         return predicate.test(value);
     }
 
+    @Override
     public boolean isDisjoint(CharacterClass other) {
         return other instanceof InverseCharacterClass && other.isDisjoint(this);
     }
 
+    @Override
     public IntSet getIntSet() {
         return null;  // Not known
     }

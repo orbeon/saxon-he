@@ -34,6 +34,7 @@ import java.util.List;
  */
 public class SnapshotFn extends SystemFunction {
 
+    @Override
     public int getCardinality(Expression[] arguments) {
         return arguments[0].getCardinality();
     }
@@ -47,6 +48,7 @@ public class SnapshotFn extends SystemFunction {
      * @throws net.sf.saxon.trans.XPathException
      *          if a dynamic error occurs during the evaluation of the expression
      */
+    @Override
     public Sequence call(XPathContext context, Sequence[] arguments) throws XPathException {
         Sequence in = arguments.length == 0 ? context.getContextItem() : arguments[0];
         SequenceIterator iter = snapshotSequence(in.iterate(), context);
@@ -156,6 +158,7 @@ public class SnapshotFn extends SystemFunction {
         bm.close();
     }
 
+    @Override
     public String getStreamerName() {
         return "SnapshotFn";
     }

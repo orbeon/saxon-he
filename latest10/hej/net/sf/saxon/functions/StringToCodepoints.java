@@ -40,6 +40,7 @@ public class StringToCodepoints extends SystemFunction {
         return new IntegerValue[]{Int64Value.PLUS_ONE, Int64Value.makeIntegerValue(1114111)};
     }
 
+    @Override
     public Sequence call(XPathContext context, Sequence[] arguments) throws XPathException {
         StringValue val = (StringValue)arguments[0].head();
         if (val == null) {

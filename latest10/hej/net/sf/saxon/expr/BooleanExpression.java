@@ -52,6 +52,7 @@ public abstract class BooleanExpression extends BinaryExpression implements Nega
     }
 
     /*@NotNull*/
+    @Override
     public Expression typeCheck(ExpressionVisitor visitor, ContextItemStaticInfo contextInfo) throws XPathException {
 
         getLhs().typeCheck(visitor, contextInfo);
@@ -84,6 +85,7 @@ public abstract class BooleanExpression extends BinaryExpression implements Nega
      * Determine the static cardinality. Returns [1..1]
      */
 
+    @Override
     public int computeCardinality() {
         return StaticProperty.EXACTLY_ONE;
     }
@@ -104,6 +106,7 @@ public abstract class BooleanExpression extends BinaryExpression implements Nega
      */
 
     /*@NotNull*/
+    @Override
     public Expression optimize(ExpressionVisitor visitor, ContextItemStaticInfo contextItemType) throws XPathException {
 
         optimizeChildren(visitor, contextItemType);
@@ -147,6 +150,7 @@ public abstract class BooleanExpression extends BinaryExpression implements Nega
      * @param th the type hierarchy, if needed
      */
 
+    @Override
     public boolean isNegatable(TypeHierarchy th) {
         return true;
     }
@@ -158,12 +162,14 @@ public abstract class BooleanExpression extends BinaryExpression implements Nega
      * @return the negation of this expression
      */
 
+    @Override
     public abstract Expression negate();
 
     /**
      * Evaluate the expression
      */
 
+    @Override
     public BooleanValue evaluateItem(XPathContext context) throws XPathException {
         return BooleanValue.get(effectiveBooleanValue(context));
     }
@@ -172,6 +178,7 @@ public abstract class BooleanExpression extends BinaryExpression implements Nega
      * Evaluate as a boolean.
      */
 
+    @Override
     public abstract boolean effectiveBooleanValue(XPathContext c) throws XPathException;
 
     /**
@@ -181,6 +188,7 @@ public abstract class BooleanExpression extends BinaryExpression implements Nega
      */
 
     /*@NotNull*/
+    @Override
     public ItemType getItemType() {
         return BuiltInAtomicType.BOOLEAN;
     }

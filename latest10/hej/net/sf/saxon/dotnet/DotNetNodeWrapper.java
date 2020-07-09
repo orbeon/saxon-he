@@ -145,6 +145,7 @@ public class DotNetNodeWrapper extends AbstractNodeWrapper implements SteppingNo
      * Get the underlying DOM node, to implement the VirtualNode interface
      */
 
+    @Override
     public XmlNode getUnderlyingNode() {
         return node;
     }
@@ -155,6 +156,7 @@ public class DotNetNodeWrapper extends AbstractNodeWrapper implements SteppingNo
      * @return one of the values Node.ELEMENT, Node.TEXT, Node.ATTRIBUTE, etc.
      */
 
+    @Override
     public int getNodeKind() {
         return nodeKind;
     }
@@ -201,6 +203,7 @@ public class DotNetNodeWrapper extends AbstractNodeWrapper implements SteppingNo
      *         return true, and the two nodes will produce the same result for generateId())
      */
 
+    @Override
     public int compareOrder(NodeInfo other) {
         if (other instanceof SiblingCountingNode) {
             return Navigator.compareOrder(this, (SiblingCountingNode) other);
@@ -215,6 +218,7 @@ public class DotNetNodeWrapper extends AbstractNodeWrapper implements SteppingNo
      * the version of the method that returns a String.
      */
 
+    @Override
     public CharSequence getStringValueCS() {
         switch (nodeKind) {
             case Type.DOCUMENT:
@@ -253,6 +257,7 @@ public class DotNetNodeWrapper extends AbstractNodeWrapper implements SteppingNo
      *         un unnamed namespace node, which returns "".
      */
 
+    @Override
     public String getLocalPart() {
         return node.get_LocalName();
     }
@@ -266,6 +271,7 @@ public class DotNetNodeWrapper extends AbstractNodeWrapper implements SteppingNo
      *         string.
      */
 
+    @Override
     public String getURI() {
         NodeInfo element;
         if (nodeKind == Type.ELEMENT) {
@@ -337,6 +343,7 @@ public class DotNetNodeWrapper extends AbstractNodeWrapper implements SteppingNo
      * @return The prefix of the name of the node.
      */
 
+    @Override
     public String getPrefix() {
         return node.get_Prefix();
     }
@@ -349,6 +356,7 @@ public class DotNetNodeWrapper extends AbstractNodeWrapper implements SteppingNo
      *         For a node with no name, return an empty string.
      */
 
+    @Override
     public String getDisplayName() {
         switch (nodeKind) {
             case Type.ELEMENT:
@@ -365,6 +373,7 @@ public class DotNetNodeWrapper extends AbstractNodeWrapper implements SteppingNo
      * Get the NodeInfo object representing the parent of this node
      */
 
+    @Override
     public DotNetNodeWrapper getParent() {
         if (parent == null) {
             switch (getNodeKind()) {
@@ -392,6 +401,7 @@ public class DotNetNodeWrapper extends AbstractNodeWrapper implements SteppingNo
      * consecutive.
      */
 
+    @Override
     public int getSiblingPosition() {
         if (index == -1) {
             switch (nodeKind) {
@@ -482,6 +492,7 @@ public class DotNetNodeWrapper extends AbstractNodeWrapper implements SteppingNo
      *         if this node is not an element.
      * @since 9.4
      */
+    @Override
     public String getAttributeValue(/*@NotNull*/ String uri, /*@NotNull*/ String local) {
         NameTest test = new NameTest(Type.ATTRIBUTE, uri, local, getNamePool());
         AxisIterator iterator = iterateAxis(AxisInfo.ATTRIBUTE, test);
@@ -499,6 +510,7 @@ public class DotNetNodeWrapper extends AbstractNodeWrapper implements SteppingNo
      * <code>getEnumeration(Axis.CHILD, AnyNodeTest.getInstance()).hasNext()</code></p>
      */
 
+    @Override
     public boolean hasChildNodes() {
         return node.get_NodeType().Value != XmlNodeType.Attribute &&
                 node.get_HasChildNodes();
@@ -512,6 +524,7 @@ public class DotNetNodeWrapper extends AbstractNodeWrapper implements SteppingNo
      *               documents
      */
 
+    @Override
     public void generateId(FastStringBuffer buffer) {
         Navigator.appendSequentialKey(this, buffer, true);
     }
@@ -520,6 +533,7 @@ public class DotNetNodeWrapper extends AbstractNodeWrapper implements SteppingNo
      * Copy this node to a given outputter (deep copy)
      */
 
+    @Override
     public void copy(Receiver out, int copyOptions, Location locationId) throws XPathException {
         Receiver r = new NamespaceReducer(out);
         Navigator.copy(this, r, copyOptions, locationId);
@@ -540,6 +554,7 @@ public class DotNetNodeWrapper extends AbstractNodeWrapper implements SteppingNo
      *         <p>For a node other than an element, the method returns null.</p>
      */
 
+    @Override
     public NamespaceBinding[] getDeclaredNamespaces(NamespaceBinding[] buffer) {
         // Note: in a DOM created by the XML parser, all namespaces are present as attribute nodes. But
         // in a DOM created programmatically, this is not necessarily the case. So we need to add
@@ -579,6 +594,7 @@ public class DotNetNodeWrapper extends AbstractNodeWrapper implements SteppingNo
         }
     }
 
+    @Override
     public DotNetNodeWrapper getNextSibling() {
         XmlNode currNode = node.get_NextSibling();
         if (currNode != null) {
@@ -588,6 +604,7 @@ public class DotNetNodeWrapper extends AbstractNodeWrapper implements SteppingNo
     }
 
 
+    @Override
     public DotNetNodeWrapper getFirstChild() {
         XmlNode currNode = node.get_FirstChild();
         if (currNode != null) {
@@ -596,6 +613,7 @@ public class DotNetNodeWrapper extends AbstractNodeWrapper implements SteppingNo
         return null;
     }
 
+    @Override
     public DotNetNodeWrapper getPreviousSibling() {
         XmlNode currNode = node.get_PreviousSibling();
         if (currNode != null) {
@@ -604,6 +622,7 @@ public class DotNetNodeWrapper extends AbstractNodeWrapper implements SteppingNo
         return null;
     }
 
+    @Override
     public DotNetNodeWrapper getSuccessorElement(DotNetNodeWrapper anchor, String uri, String local) {
         XmlNode stop = (anchor == null ? null : ((DotNetNodeWrapper) anchor).node);
         XmlNode next = node;
@@ -668,10 +687,12 @@ public class DotNetNodeWrapper extends AbstractNodeWrapper implements SteppingNo
             ix = 0;
         }
 
+        @Override
         public boolean hasNext() {
             return ix < attList.size();
         }
 
+        @Override
         public NodeInfo next() {
             if (ix >= attList.size()) {
                 return null;
@@ -691,6 +712,7 @@ public class DotNetNodeWrapper extends AbstractNodeWrapper implements SteppingNo
          *         It is acceptable for the properties of the iterator to change depending on its state.
          */
 
+        @Override
         public EnumSet<Property> getProperties() {
             return EnumSet.of(Property.LOOKAHEAD);
         }
@@ -831,11 +853,13 @@ public class DotNetNodeWrapper extends AbstractNodeWrapper implements SteppingNo
             }
         }
 
+        @Override
         public boolean hasNext() {
             return position < items.size();
         }
 
         /*@Nullable*/
+        @Override
         public NodeInfo next() {
             if (position > -1 && position < items.size()) {
                 return items.get(position++);
@@ -855,6 +879,7 @@ public class DotNetNodeWrapper extends AbstractNodeWrapper implements SteppingNo
          *         It is acceptable for the properties of the iterator to change depending on its state.
          */
 
+        @Override
         public EnumSet<Property> getProperties() {
             return EnumSet.of(Property.LOOKAHEAD);
         }

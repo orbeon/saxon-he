@@ -87,14 +87,17 @@ public class TemplateRule implements RuleTarget, Location, ExpressionOwner, Trac
 
     }
 
+    @Override
     public Expression getBody() {
         return body;
     }
 
+    @Override
     public Expression getChildExpression() {
         return body;
     }
 
+    @Override
     public Location getLocation() {
         return this;
     }
@@ -145,6 +148,7 @@ public class TemplateRule implements RuleTarget, Location, ExpressionOwner, Trac
      * @param body the body of the template
      */
 
+    @Override
     public void setBody(Expression body) {
         this.body = body;
         bodyIsTailCallReturner = (body instanceof TailCallReturner);
@@ -215,6 +219,7 @@ public class TemplateRule implements RuleTarget, Location, ExpressionOwner, Trac
      *
      * @param rule a rule in which this is the target
      */
+    @Override
     public void registerRule(Rule rule) {
         rules.add(rule);
     }
@@ -243,10 +248,12 @@ public class TemplateRule implements RuleTarget, Location, ExpressionOwner, Trac
         this.packageData = data;
     }
 
+    @Override
     public String getPublicId() {
         return null;
     }
 
+    @Override
     public String getSystemId() {
         return systemId;
     }
@@ -255,6 +262,7 @@ public class TemplateRule implements RuleTarget, Location, ExpressionOwner, Trac
         this.systemId = id;
     }
 
+    @Override
     public int getLineNumber() {
         return lineNumber;
     }
@@ -263,6 +271,7 @@ public class TemplateRule implements RuleTarget, Location, ExpressionOwner, Trac
         this.lineNumber = line;
     }
 
+    @Override
     public int getColumnNumber() {
         return -1;
     }
@@ -272,6 +281,7 @@ public class TemplateRule implements RuleTarget, Location, ExpressionOwner, Trac
      * should not be saved for later use. The result of this operation holds the same location information,
      * but in an immutable form.
      */
+    @Override
     public Location saveLocation() {
         return this;
     }
@@ -398,6 +408,7 @@ public class TemplateRule implements RuleTarget, Location, ExpressionOwner, Trac
      * Output diagnostic explanation to an ExpressionPresenter
      */
 
+    @Override
     public void export(ExpressionPresenter presenter) throws XPathException {
         // NOT USED - see Rule.export
         throw new UnsupportedOperationException();
@@ -494,6 +505,7 @@ public class TemplateRule implements RuleTarget, Location, ExpressionOwner, Trac
         tr.lineNumber = lineNumber;
     }
 
+    @Override
     public void setChildExpression(Expression expr) {
         setBody(expr);
     }

@@ -128,6 +128,7 @@ public class DOM4JNodeWrapper extends AbstractNodeWrapper implements SiblingCoun
         return wrapper;
     }
 
+    @Override
     public DOM4JDocumentWrapper getTreeInfo() {
         return (DOM4JDocumentWrapper)treeInfo;
     }
@@ -136,6 +137,7 @@ public class DOM4JNodeWrapper extends AbstractNodeWrapper implements SiblingCoun
      * Get the underlying DOM4J node, to implement the VirtualNode interface
      */
 
+    @Override
     public Node getUnderlyingNode() {
         return node;
     }
@@ -146,6 +148,7 @@ public class DOM4JNodeWrapper extends AbstractNodeWrapper implements SiblingCoun
      * @return one of the values Node.ELEMENT, Node.TEXT, Node.ATTRIBUTE, etc.
      */
 
+    @Override
     public int getNodeKind() {
         return nodeKind;
     }
@@ -158,10 +161,12 @@ public class DOM4JNodeWrapper extends AbstractNodeWrapper implements SiblingCoun
      *         modified by xml:base, but the system ID cannot.
      */
 
+    @Override
     public String getSystemId() {
         return getTreeInfo().getSystemId();
     }
 
+    @Override
     public void setSystemId(String uri) {
         getTreeInfo().setSystemId(uri);
     }
@@ -176,6 +181,7 @@ public class DOM4JNodeWrapper extends AbstractNodeWrapper implements SiblingCoun
      *         return true, and the two nodes will produce the same result for generateId())
      */
 
+    @Override
     public int compareOrder(NodeInfo other) {
         if (other instanceof SiblingCountingNode) {
             return Navigator.compareOrder(this, (SiblingCountingNode) other);
@@ -185,6 +191,7 @@ public class DOM4JNodeWrapper extends AbstractNodeWrapper implements SiblingCoun
         }
     }
 
+    @Override
     public CharSequence getStringValueCS() {
         return getStringValue(node);
     }
@@ -215,6 +222,7 @@ public class DOM4JNodeWrapper extends AbstractNodeWrapper implements SiblingCoun
      * @return the local part of the name. For an unnamed node, returns "".
      */
 
+    @Override
     public String getLocalPart() {
         switch (nodeKind) {
             case Type.ELEMENT:
@@ -240,6 +248,7 @@ public class DOM4JNodeWrapper extends AbstractNodeWrapper implements SiblingCoun
      * @return the prefix part of the name. For an unnamed node, return an empty string.
      */
 
+    @Override
     public String getPrefix() {
         switch (nodeKind) {
             case Type.ELEMENT:
@@ -259,6 +268,7 @@ public class DOM4JNodeWrapper extends AbstractNodeWrapper implements SiblingCoun
      *         For a node with an empty prefix, return an empty string.
      */
 
+    @Override
     public String getURI() {
         switch (nodeKind) {
             case Type.ELEMENT:
@@ -279,6 +289,7 @@ public class DOM4JNodeWrapper extends AbstractNodeWrapper implements SiblingCoun
      *         For a node with no name, return an empty string.
      */
 
+    @Override
     public String getDisplayName() {
         switch (nodeKind) {
             case Type.ELEMENT:
@@ -298,6 +309,7 @@ public class DOM4JNodeWrapper extends AbstractNodeWrapper implements SiblingCoun
      * Get the NodeInfo object representing the parent of this node
      */
 
+    @Override
     public DOM4JNodeWrapper getParent() {
         if (parent == null) {
             Branch parenti = getInternalParent(node, (DOM4JNodeWrapper) treeInfo.getRootNode());
@@ -326,6 +338,7 @@ public class DOM4JNodeWrapper extends AbstractNodeWrapper implements SiblingCoun
     /**
      * Get the index position of this node among its siblings (starting from 0)
      */
+    @Override
     public int getSiblingPosition() {
         if (index == -1) {
             int ix = 0;
@@ -545,6 +558,7 @@ public class DOM4JNodeWrapper extends AbstractNodeWrapper implements SiblingCoun
      *         if this node is not an element.
      * @since 9.4
      */
+    @Override
     public String getAttributeValue(/*@NotNull*/ String uri, /*@NotNull*/ String local) {
         if (nodeKind == Type.ELEMENT) {
             for (Object o : ((Element) node).attributes()) {
@@ -563,6 +577,7 @@ public class DOM4JNodeWrapper extends AbstractNodeWrapper implements SiblingCoun
      * @return the NodeInfo representing the containing document
      */
 
+    @Override
     public NodeInfo getRoot() {
         return treeInfo.getRootNode();
     }
@@ -573,6 +588,7 @@ public class DOM4JNodeWrapper extends AbstractNodeWrapper implements SiblingCoun
      * <code>getEnumeration(Axis.CHILD, AnyNodeTest.getInstance()).hasNext()</code></p>
      */
 
+    @Override
     public boolean hasChildNodes() {
         switch (nodeKind) {
             case Type.DOCUMENT:
@@ -593,11 +609,13 @@ public class DOM4JNodeWrapper extends AbstractNodeWrapper implements SiblingCoun
      *               documents
      */
 
+    @Override
     public void generateId(FastStringBuffer buffer) {
         Navigator.appendSequentialKey(this, buffer, true);
         //buffer.append(Navigator.getSequentialKey(this));
     }
 
+    @Override
     public DOM4JNodeWrapper getNextSibling() {
         Branch parenti = (Branch) getParent().node;
         int count = parenti.nodeCount();
@@ -610,6 +628,7 @@ public class DOM4JNodeWrapper extends AbstractNodeWrapper implements SiblingCoun
     }
 
 
+    @Override
     public DOM4JNodeWrapper getPreviousSibling() {
         Branch parenti = (Branch) getParent().node;
         int i = parenti.indexOf(node);
@@ -621,6 +640,7 @@ public class DOM4JNodeWrapper extends AbstractNodeWrapper implements SiblingCoun
     }
 
 
+    @Override
     public DOM4JNodeWrapper getFirstChild() {
         Node nodei = node;
         if (nodei.hasContent()) {
@@ -636,6 +656,7 @@ public class DOM4JNodeWrapper extends AbstractNodeWrapper implements SiblingCoun
         return null;
     }
 
+    @Override
     public DOM4JNodeWrapper getSuccessorElement(DOM4JNodeWrapper anchor, String uri, String local) {
         Node stop = anchor == null ? null : anchor.node;
         Node next = node;
@@ -709,6 +730,7 @@ public class DOM4JNodeWrapper extends AbstractNodeWrapper implements SiblingCoun
             atts = ((Element) start.node).attributes().iterator();
         }
 
+        @Override
         public final NodeInfo next() {
             if (atts.hasNext()) {
                 return makeWrapper(atts.next(), getTreeInfo(), start, ix++);
@@ -781,6 +803,7 @@ public class DOM4JNodeWrapper extends AbstractNodeWrapper implements SiblingCoun
         }
 
 
+        @Override
         public NodeInfo next() {
             if (forwards) {
                 if (children.hasNext()) {
@@ -854,6 +877,7 @@ public class DOM4JNodeWrapper extends AbstractNodeWrapper implements SiblingCoun
      *         then the first unused entry will be set to -1.
      *         <p>For a node other than an element, the method returns null.</p>
      */
+    @Override
     public NamespaceBinding[] getDeclaredNamespaces(NamespaceBinding[] buffer) {
         if (node instanceof Element) {
             final Element elem = (Element) node;

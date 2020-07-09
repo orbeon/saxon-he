@@ -23,6 +23,7 @@ import java.util.function.Consumer;
 
 public interface AxisIterator extends UnfailingIterator {
 
+    @Override
     NodeInfo next();
 
     /**

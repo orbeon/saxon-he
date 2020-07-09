@@ -86,6 +86,7 @@ public class IndexOf extends CollatingFunctionFixed  {
          *
          * @since 9.1
          */
+        @Override
         public void close() {
             base.close();
         }
@@ -102,6 +103,7 @@ public class IndexOf extends CollatingFunctionFixed  {
          * @throws net.sf.saxon.trans.XPathException if an error occurs retrieving the next item
          * @since 8.4
          */
+        @Override
         public Int64Value next() throws XPathException {
             AtomicValue baseItem;
             while ((baseItem = (AtomicValue) base.next()) != null) {
@@ -127,6 +129,7 @@ public class IndexOf extends CollatingFunctionFixed  {
      * @throws net.sf.saxon.trans.XPathException
      *          if a dynamic error occurs during the evaluation of the expression
      */
+    @Override
     public Sequence call(XPathContext context, Sequence[] arguments) throws XPathException {
         AtomicComparer comparer = getAtomicComparer(context);
         SequenceIterator seq = arguments[0].iterate();
@@ -135,6 +138,7 @@ public class IndexOf extends CollatingFunctionFixed  {
         return SequenceTool.toLazySequence(new IndexIterator(seq, searchType, val, comparer));
     }
 
+    @Override
     public String getStreamerName() {
         return "IndexOf";
     }

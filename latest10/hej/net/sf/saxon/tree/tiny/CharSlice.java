@@ -63,6 +63,7 @@ public final class CharSlice implements CharSequence {
      *
      * @return the number of characters in this sequence
      */
+    @Override
     public int length() {
         return count;
     }
@@ -90,6 +91,7 @@ public final class CharSlice implements CharSequence {
      *          if the <tt>index</tt> argument is negative or not less than
      *          <tt>length()</tt>
      */
+    @Override
     public char charAt(int index) {
         return array[offset + index];
     }
@@ -109,6 +111,7 @@ public final class CharSlice implements CharSequence {
      *          if <tt>end</tt> is greater than <tt>length()</tt>,
      *          or if <tt>start</tt> is greater than <tt>end</tt>
      */
+    @Override
     public CharSequence subSequence(int start, int end) {
         return new CharSlice(array, offset + start, end - start);
     }

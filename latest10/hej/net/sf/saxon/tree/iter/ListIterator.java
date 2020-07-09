@@ -39,11 +39,13 @@ public class ListIterator<T extends Item>
         this.list = list;
     }
 
+    @Override
     public boolean hasNext() {
         return index < list.size();
     }
 
     /*@Nullable*/
+    @Override
     public T next() {
         if (index >= list.size()) {
             return null;
@@ -51,6 +53,7 @@ public class ListIterator<T extends Item>
         return list.get(index++);
     }
 
+    @Override
     public int getLength() {
         return list.size();
     }
@@ -65,6 +68,7 @@ public class ListIterator<T extends Item>
      *         It is acceptable for the properties of the iterator to change depending on its state.
      */
 
+    @Override
     public EnumSet<Property> getProperties() {
         return EnumSet.of(Property.LOOKAHEAD, Property.GROUNDED, Property.LAST_POSITION_FINDER);
     }
@@ -77,6 +81,7 @@ public class ListIterator<T extends Item>
      */
 
     /*@Nullable*/
+    @Override
     public GroundedValue materialize() {
         return SequenceExtent.makeSequenceExtent(list);
     }
@@ -90,6 +95,7 @@ public class ListIterator<T extends Item>
         return SequenceExtent.makeSequenceExtent(l2);
     }
 
+    @Override
     public SequenceIterator getReverseIterator() {
         return new ReverseListIterator<>(list);
     }
@@ -105,6 +111,7 @@ public class ListIterator<T extends Item>
             super(list);
         }
 
+        @Override
         public NodeInfo next() {
             return super.next();
         }

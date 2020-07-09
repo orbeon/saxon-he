@@ -56,6 +56,7 @@ public class SingletonClosure extends Closure implements Sequence {
      */
 
     /*@NotNull*/
+    @Override
     public UnfailingIterator iterate() throws XPathException {
         return SingletonIterator.makeIterator(asItem());
     }
@@ -105,6 +106,7 @@ public class SingletonClosure extends Closure implements Sequence {
      * @return the corresponding value
      */
 
+    @Override
     public ZeroOrOne materialize() throws XPathException {
         return new ZeroOrOne(asItem());
     }

@@ -34,16 +34,19 @@ public final class LatinString extends UnicodeString {
         this.chars = chars;
     }
 
+    @Override
     public LatinString uSubstring(int beginIndex, int endIndex) {
         byte[] s = new byte[endIndex - beginIndex];
         System.arraycopy(chars, beginIndex, s, 0, endIndex - beginIndex);
         return new LatinString(s);
     }
 
+    @Override
     public int uCharAt(int pos) {
         return chars[pos] & 0xff;
     }
 
+    @Override
     public int uIndexOf(int search, int pos) {
         if (search > 255) {
             return -1;
@@ -57,10 +60,12 @@ public final class LatinString extends UnicodeString {
         }
     }
 
+    @Override
     public int uLength() {
         return chars.length;
     }
 
+    @Override
     public boolean isEnd(int pos) {
         return pos >= chars.length;
     }
@@ -79,6 +84,7 @@ public final class LatinString extends UnicodeString {
      *
      * @return the number of <code>char</code>s in this sequence
      */
+    @Override
     public int length() {
         return chars.length;
     }
@@ -97,6 +103,7 @@ public final class LatinString extends UnicodeString {
      * @throws IndexOutOfBoundsException if the <tt>index</tt> argument is negative or not less than
      *                                   <tt>length()</tt>
      */
+    @Override
     public char charAt(int index) {
         return (char)(chars[index] & 0xff);
     }
@@ -116,6 +123,7 @@ public final class LatinString extends UnicodeString {
      *                                   if <tt>end</tt> is greater than <tt>length()</tt>,
      *                                   or if <tt>start</tt> is greater than <tt>end</tt>
      */
+    @Override
     public CharSequence subSequence(int start, int end) {
         return uSubstring(start, end);
     }

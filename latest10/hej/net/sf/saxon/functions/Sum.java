@@ -24,6 +24,7 @@ import net.sf.saxon.value.*;
 public class Sum extends FoldingFunction {
 
     /*@NotNull*/
+    @Override
     public ItemType getResultItemType(Expression[] args) {
         TypeHierarchy th = getRetainedStaticContext().getConfiguration().getTypeHierarchy();
         ItemType base = Atomizer.getAtomizedItemType(args[0], false, th);
@@ -41,6 +42,7 @@ public class Sum extends FoldingFunction {
         }
     }
 
+    @Override
     public int getCardinality(Expression[] arguments) {
         if (getArity() == 1 || arguments[1].getCardinality() == 1) {
             return StaticProperty.EXACTLY_ONE;
@@ -111,6 +113,7 @@ public class Sum extends FoldingFunction {
          * @param item the item to be processed from the input sequence
          * @throws net.sf.saxon.trans.XPathException if a dynamic error occurs
          */
+        @Override
         public void processItem(Item item) throws XPathException {
             AtomicValue next = (AtomicValue)item;
             if (atStart) {
@@ -174,6 +177,7 @@ public class Sum extends FoldingFunction {
          * @return true if the result of the function is now available even though not all
          * items in the sequence have been processed
          */
+        @Override
         public boolean isFinished() {
             return data instanceof DoubleValue && data.isNaN();
         }
@@ -183,6 +187,7 @@ public class Sum extends FoldingFunction {
          *
          * @return the result of the function
          */
+        @Override
         public Sequence result() {
             if (atStart) {
                 return zeroValue == null ? EmptySequence.getInstance() : zeroValue;
@@ -192,6 +197,7 @@ public class Sum extends FoldingFunction {
         }
     }
 
+    @Override
     public String getCompilerName() {
         return "SumCompiler";
     }

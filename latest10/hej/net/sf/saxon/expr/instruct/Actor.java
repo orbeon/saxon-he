@@ -195,6 +195,7 @@ public abstract class Actor implements ExpressionOwner, Location {
         return body;
     }
 
+    @Override
     public final Expression getChildExpression() {
         return getBody();
     }
@@ -219,23 +220,28 @@ public abstract class Actor implements ExpressionOwner, Location {
         return (Location)this;
     }
 
+    @Override
     public int getLineNumber() {
         return lineNumber;
     }
 
+    @Override
     public String getSystemId() {
         return systemId;
     }
 
+    @Override
     public int getColumnNumber() {
         return -1;
     }
 
     /*@Nullable*/
+    @Override
     public String getPublicId() {
         return null;
     }
 
+    @Override
     public Location saveLocation() {
         return (Location)this;
     }
@@ -298,6 +304,7 @@ public abstract class Actor implements ExpressionOwner, Location {
         return true;
     }
 
+    @Override
     public void setChildExpression(Expression expr) {
         setBody(expr);
     }

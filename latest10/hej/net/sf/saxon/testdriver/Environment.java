@@ -711,10 +711,12 @@ public class Environment implements URIResolver {
                     resourcesi.add(r);
                 }
 
+                @Override
                 public String getCollectionURI() {
                     return cURI;
                 }
 
+                @Override
                 public Iterator<String> getResourceURIs(XPathContext context) {
                     List<String> resourceUris = new ArrayList<>();
                     for (Resource resource : resourcesi) {
@@ -723,6 +725,7 @@ public class Environment implements URIResolver {
                     return resourceUris.iterator();
                 }
 
+                @Override
                 public Iterator<Resource> getResources(XPathContext context) {
                     return resourcesi.iterator();
                 }
@@ -813,14 +816,17 @@ public class Environment implements URIResolver {
 
                 for (final XdmItem itemi : result) {
                     resourcesi.add(new Resource() {
+                        @Override
                         public String getResourceURI() {
                             return "";
                         }
 
+                        @Override
                         public Item getItem(XPathContext context) {
                             return itemi.getUnderlyingValue();
                         }
 
+                        @Override
                         public String getContentType() {
                             return null;
                         }
@@ -833,6 +839,7 @@ public class Environment implements URIResolver {
 
         if (collections != null) {
             environment.processor.getUnderlyingConfiguration().setCollectionFinder(new CollectionFinder() {
+                @Override
                 public ResourceCollection findCollection(XPathContext context, String collectionURI) throws XPathException {
                     if (collectionURI == null) {
                         collectionURI = "";
@@ -1072,6 +1079,7 @@ public class Environment implements URIResolver {
      * The environment acts as a URIResolver
      */
 
+    @Override
     public Source resolve(String href, String base) throws TransformerException {
         XdmNode node = sourceDocs.get(href);
         if (node == null) {

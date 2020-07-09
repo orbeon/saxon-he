@@ -36,6 +36,7 @@ public final class XSLMessage extends StyleElement {
      * @return true - it is an instruction
      */
 
+    @Override
     public boolean isInstruction() {
         return true;
     }
@@ -46,10 +47,12 @@ public final class XSLMessage extends StyleElement {
      * @return true: yes, it may contain a template-body
      */
 
+    @Override
     public boolean mayContainSequenceConstructor() {
         return true;
     }
 
+    @Override
     public void prepareAttributes() {
 
         String terminateAtt = null;
@@ -96,6 +99,7 @@ public final class XSLMessage extends StyleElement {
 
     }
 
+    @Override
     public void validate(ComponentDeclaration decl) throws XPathException {
         select = typeCheck("select", select);
         terminate = typeCheck("terminate", terminate);
@@ -106,6 +110,7 @@ public final class XSLMessage extends StyleElement {
         }
     }
 
+    @Override
     public Expression compile(Compilation exec, ComponentDeclaration decl) throws XPathException {
         Expression b = compileSequenceConstructor(exec, decl, true);
         if (b != null) {

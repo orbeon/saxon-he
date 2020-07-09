@@ -44,6 +44,7 @@ public class AnyFunctionType implements FunctionItemType {
      *
      * @return the smallest UType that subsumes this item type
      */
+    @Override
     public UType getUType() {
         return UType.FUNCTION;
     }
@@ -53,6 +54,7 @@ public class AnyFunctionType implements FunctionItemType {
      *
      * @return true if this is ANY_ATOMIC_TYPE or a subtype thereof
      */
+    @Override
     public boolean isAtomicType() {
         return false;
     }
@@ -64,6 +66,7 @@ public class AnyFunctionType implements FunctionItemType {
      * @return true if this is ANY_ATOMIC_TYPE or a subtype thereof
      */
 
+    @Override
     public boolean isPlainType() {
         return false;
     }
@@ -74,6 +77,7 @@ public class AnyFunctionType implements FunctionItemType {
      *
      * @return true if this FunctionItemType is a map type
      */
+    @Override
     public boolean isMapType() {
         return false;
     }
@@ -85,6 +89,7 @@ public class AnyFunctionType implements FunctionItemType {
      * @return true if this FunctionItemType is an array type
      */
 
+    @Override
     public boolean isArrayType() {
         return false;
     }
@@ -117,6 +122,7 @@ public class AnyFunctionType implements FunctionItemType {
      *         type function(*)
      */
     /*@Nullable*/
+    @Override
     public SequenceType[] getArgumentTypes() {
         return null;
     }
@@ -126,6 +132,7 @@ public class AnyFunctionType implements FunctionItemType {
      * @return the list of annotation assertions, or an empty list if there are none
      */
 
+    @Override
     public AnnotationList getAnnotationAssertions() {
         return AnnotationList.EMPTY;
     }
@@ -139,6 +146,7 @@ public class AnyFunctionType implements FunctionItemType {
      * @param th
      * @return true if the item is an instance of this type; false otherwise
      */
+    @Override
     public boolean matches(Item item, TypeHierarchy th) throws XPathException {
         return item instanceof Function;
     }
@@ -155,6 +163,7 @@ public class AnyFunctionType implements FunctionItemType {
      */
 
     /*@NotNull*/
+    @Override
     public final ItemType getPrimitiveItemType() {
         return ANY_FUNCTION;
     }
@@ -168,6 +177,7 @@ public class AnyFunctionType implements FunctionItemType {
      * except that INTEGER is considered to be a primitive type.
      */
 
+    @Override
     public final int getPrimitiveType() {
         return Type.FUNCTION;
     }
@@ -192,6 +202,7 @@ public class AnyFunctionType implements FunctionItemType {
      */
 
     /*@NotNull*/
+    @Override
     public PlainType getAtomizedItemType() {
         return null;
     }
@@ -204,6 +215,7 @@ public class AnyFunctionType implements FunctionItemType {
      * @param th The type hierarchy cache
      */
 
+    @Override
     public boolean isAtomizable(TypeHierarchy th) {
         return true; // arrays can be atomized
     }
@@ -214,6 +226,7 @@ public class AnyFunctionType implements FunctionItemType {
      * @return for example {@link Affinity#SUBSUMES}, {@link Affinity#SAME_TYPE}
      */
 
+    @Override
     public Affinity relationship(FunctionItemType other, TypeHierarchy th) {
         if (other == this) {
             return Affinity.SAME_TYPE;
@@ -231,6 +244,7 @@ public class AnyFunctionType implements FunctionItemType {
      * after checking the parameters
      */
 
+    @Override
     public Expression makeFunctionSequenceCoercer(Expression exp, RoleDiagnostic role)
             throws XPathException {
         return new ItemChecker(exp, this, role);
@@ -242,6 +256,7 @@ public class AnyFunctionType implements FunctionItemType {
      * @return the result type
      */
 
+    @Override
     public SequenceType getResultType() {
         return SequenceType.ANY_SEQUENCE;
     }

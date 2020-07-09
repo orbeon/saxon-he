@@ -65,6 +65,7 @@ public class HTML50Emitter extends HTMLEmitter {
         return uri.equals("") || uri.equals(NamespaceConstant.XHTML);
     }
 
+    @Override
     protected void openDocument() throws XPathException {
         version = 5;
         super.openDocument();
@@ -78,6 +79,7 @@ public class HTML50Emitter extends HTMLEmitter {
      * @param publicId    The DOCTYPE public identifier
      */
 
+    @Override
     protected void writeDocType(NodeName name, String displayName, String systemId, String publicId) throws XPathException {
         try {
             if (systemId == null && publicId == null) {
@@ -91,6 +93,7 @@ public class HTML50Emitter extends HTMLEmitter {
 
     }
 
+    @Override
     protected boolean writeDocTypeWithNullSystemId() {
         return true;
     }

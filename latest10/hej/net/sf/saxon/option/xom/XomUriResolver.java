@@ -48,6 +48,7 @@ public class XomUriResolver extends StandardURIResolver {
      */
 
     /*@Nullable*/
+    @Override
     public Source resolve(String href, String base)
             throws XPathException {
 

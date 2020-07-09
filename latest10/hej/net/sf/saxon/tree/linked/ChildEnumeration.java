@@ -21,6 +21,7 @@ final class ChildEnumeration extends TreeEnumeration {
         }
     }
 
+    @Override
     protected void step() {
         next = next.getNextSibling();
     }

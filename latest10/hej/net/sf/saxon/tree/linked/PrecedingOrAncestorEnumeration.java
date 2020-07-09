@@ -25,6 +25,7 @@ final class PrecedingOrAncestorEnumeration extends TreeEnumeration {
         advance();
     }
 
+    @Override
     protected void step() {
         next = next.getPreviousInDocument();
     }

@@ -43,6 +43,7 @@ public class ForEachPairFn extends SystemFunction {
         }
     }
 
+    @Override
     public Sequence call(XPathContext context, Sequence[] arguments) throws XPathException {
         return SequenceTool.toLazySequence(evalMapPairs(
                 (Function) arguments[2].head(), arguments[0].iterate(), arguments[1].iterate(), context));
@@ -77,6 +78,7 @@ public class ForEachPairFn extends SystemFunction {
             this.seq1 = seq1;
         }
 
+        @Override
         public ObjectValue<Sequence[]> next() throws XPathException {
             Item i0 = seq0.next();
             if (i0 == null) {
@@ -93,6 +95,7 @@ public class ForEachPairFn extends SystemFunction {
             return new ObjectValue<>(args);
         }
 
+        @Override
         public void close() {
             seq0.close();
             seq1.close();

@@ -42,6 +42,7 @@ public class Concat extends SystemFunction implements PushableFunction {
      *
      * @return an array of OperandRole objects, one for each argument
      */
+    @Override
     public OperandRole[] getOperandRoles() {
         OperandRole[] roles = new OperandRole[getArity()];
         OperandRole operandRole = new OperandRole(0, OperandUsage.ABSORPTION);
@@ -110,6 +111,7 @@ public class Concat extends SystemFunction implements PushableFunction {
     }
 
 
+    @Override
     public StringValue call(XPathContext context, Sequence[] arguments) throws XPathException {
         FastStringBuffer fsb = new FastStringBuffer(FastStringBuffer.C64);
         for (Sequence arg : arguments) {
@@ -138,11 +140,13 @@ public class Concat extends SystemFunction implements PushableFunction {
      * Get the required type of the nth argument
      */
 
+    @Override
     public SequenceType getRequiredType(int arg) {
         return getDetails().argumentTypes[0];
         // concat() is a special case
     }
 
+    @Override
     public String getCompilerName() {
         return "ConcatCompiler";
     }

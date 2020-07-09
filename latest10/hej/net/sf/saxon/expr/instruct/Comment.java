@@ -39,15 +39,18 @@ public final class Comment extends SimpleNodeConstructor {
      * return the string "xsl:comment"
      */
 
+    @Override
     public int getInstructionNameCode() {
         return StandardNames.XSL_COMMENT;
     }
 
     /*@NotNull*/
+    @Override
     public ItemType getItemType() {
         return NodeKindTest.COMMENT;
     }
 
+    @Override
     public int getCardinality() {
         return StaticProperty.EXACTLY_ONE;
     }
@@ -61,6 +64,7 @@ public final class Comment extends SimpleNodeConstructor {
      */
 
     /*@NotNull*/
+    @Override
     public Expression copy(RebindingMap rebindings) {
         Comment exp = new Comment();
         ExpressionTool.copyLocationInfo(this, exp);
@@ -68,6 +72,7 @@ public final class Comment extends SimpleNodeConstructor {
         return exp;
     }
 
+    @Override
     public void localTypeCheck(ExpressionVisitor visitor, ContextItemStaticInfo contextItemType) throws XPathException {
         // Do early checking of content if known statically
 
@@ -90,6 +95,7 @@ public final class Comment extends SimpleNodeConstructor {
      * @throws XPathException if a dynamic error occurs
      */
 
+    @Override
     public void processValue(CharSequence value, Outputter output, XPathContext context) throws XPathException {
         String comment = checkContent(value.toString(), context);
         output.comment(comment, getLocation(), ReceiverOption.NONE);
@@ -163,6 +169,7 @@ public final class Comment extends SimpleNodeConstructor {
      * is written to the supplied output destination.
      */
 
+    @Override
     public void export(ExpressionPresenter out) throws XPathException {
         out.startElement("comment", this);
         String flags = "";

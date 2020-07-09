@@ -150,6 +150,7 @@ public class NamespaceMap implements NamespaceBindingSet, NamespaceResolver {
      * when no mapping is present, even for the case where the prefix is the empty string.
      */
 
+    @Override
     public String getURI(String prefix) {
         if (prefix.equals("xml")) {
             return NamespaceConstant.XML;

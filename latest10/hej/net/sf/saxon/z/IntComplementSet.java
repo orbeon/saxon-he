@@ -22,30 +22,37 @@ public class IntComplementSet implements IntSet {
         return exclusions;
     }
 
+    @Override
     public IntSet copy() {
         return new IntComplementSet(exclusions.copy());
     }
 
+    @Override
     public IntSet mutableCopy() {
         return copy();
     }
 
+    @Override
     public void clear() {
         throw new UnsupportedOperationException("IntComplementSet cannot be emptied");
     }
 
+    @Override
     public int size() {
         return Integer.MAX_VALUE - exclusions.size();
     }
 
+    @Override
     public boolean isEmpty() {
         return size() == 0;
     }
 
+    @Override
     public boolean contains(int value) {
         return !exclusions.contains(value);
     }
 
+    @Override
     public boolean remove(int value) {
         boolean b = contains(value);
         if (b) {
@@ -54,6 +61,7 @@ public class IntComplementSet implements IntSet {
         return b;
     }
 
+    @Override
     public boolean add(int value) {
         boolean b = contains(value);
         if (!b) {
@@ -62,14 +70,17 @@ public class IntComplementSet implements IntSet {
         return b;
     }
 
+    @Override
     public IntIterator iterator() {
         throw new UnsupportedOperationException("Cannot enumerate an infinite set");
     }
 
+    @Override
     public IntSet union(IntSet other) {
         return new IntComplementSet(exclusions.except(other));
     }
 
+    @Override
     public IntSet intersect(IntSet other) {
         if (other.isEmpty()) {
             return IntEmptySet.getInstance();
@@ -82,10 +93,12 @@ public class IntComplementSet implements IntSet {
         }
     }
 
+    @Override
     public IntSet except(IntSet other) {
         return new IntComplementSet(exclusions.union(other));
     }
 
+    @Override
     public boolean containsAll(/*@NotNull*/ IntSet other) {
         if (other instanceof IntComplementSet) {
             return ((IntComplementSet) other).exclusions.containsAll(exclusions);

@@ -66,6 +66,7 @@ public class UnionPattern extends VennPattern {
      * @return true if the node matches either of the operand patterns
      */
 
+    @Override
     public boolean matches(Item item, XPathContext context) throws XPathException {
         return p1.matches(item, context) || p2.matches(item, context);
     }
@@ -81,6 +82,7 @@ public class UnionPattern extends VennPattern {
      * @return true if the node matches the Pattern, false otherwise
      */
 
+    @Override
     public boolean matchesBeneathAnchor(NodeInfo node, NodeInfo anchor, XPathContext context) throws XPathException {
         return p1.matchesBeneathAnchor(node, anchor, context) ||
                 p2.matchesBeneathAnchor(node, anchor, context);
@@ -128,6 +130,7 @@ public class UnionPattern extends VennPattern {
      * Hashcode supporting equals()
      */
 
+    @Override
     public int computeHashCode() {
         return 0x9bd723a6 ^ p1.hashCode() ^ p2.hashCode();
     }
@@ -150,6 +153,7 @@ public class UnionPattern extends VennPattern {
      */
 
     /*@NotNull*/
+    @Override
     public Pattern copy(RebindingMap rebindings) {
         UnionPattern n = new UnionPattern(p1.copy(rebindings), p2.copy(rebindings));
         ExpressionTool.copyLocationInfo(this, n);

@@ -49,6 +49,7 @@ public class XSLLocalParam extends XSLGeneralVariable {
      * @return the binding information if this element binds a variable of this name; otherwise null
      */
 
+    @Override
     public SourceBinding getBindingInformation(StructuredQName name) {
         if (name.equals(sourceBinding.getVariableQName())) {
             return sourceBinding;
@@ -97,6 +98,7 @@ public class XSLLocalParam extends XSLGeneralVariable {
         }
     }
 
+    @Override
     public void validate(ComponentDeclaration decl) throws XPathException {
 
         StructuredQName name = sourceBinding.getVariableQName();
@@ -161,6 +163,7 @@ public class XSLLocalParam extends XSLGeneralVariable {
     }
 
 
+    @Override
     public Expression compile(Compilation exec, ComponentDeclaration decl) throws XPathException {
 //        if (!"iterate".equals(getParent().getLocalPart()) &&
 //                sourceBinding.getReferences().size() == 0 && !sourceBinding.hasProperty(SourceBinding.REQUIRED)) {

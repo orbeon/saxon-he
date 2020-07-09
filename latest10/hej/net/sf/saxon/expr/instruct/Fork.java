@@ -64,6 +64,7 @@ public class Fork extends Instruction {
      *         the fingerprint of a name in the XSLT namespace
      */
 
+    @Override
     public int getInstructionNameCode() {
         return StandardNames.XSL_FORK;
     }
@@ -93,6 +94,7 @@ public class Fork extends Instruction {
      */
 
     /*@NotNull*/
+    @Override
     public ItemType getItemType() {
         if (getSize() == 0) {
             return ErrorType.getInstance();
@@ -127,6 +129,7 @@ public class Fork extends Instruction {
      */
 
     /*@NotNull*/
+    @Override
     public Expression copy(RebindingMap rebindings) {
         Expression[] e2 = new Expression[getSize()];
         int i=0;
@@ -161,6 +164,7 @@ public class Fork extends Instruction {
      * @param out the expression presenter used to display the structure
      */
 
+    @Override
     public void export(ExpressionPresenter out) throws XPathException {
         out.startElement("fork", this);
         for (Operand o : operands()) {

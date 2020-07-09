@@ -99,6 +99,7 @@ public class XSLResultDocument extends StyleElement {
      * @return true - it is an instruction
      */
 
+    @Override
     public boolean isInstruction() {
         return true;
     }
@@ -109,10 +110,12 @@ public class XSLResultDocument extends StyleElement {
      * @return true: yes, it may contain a template-body
      */
 
+    @Override
     public boolean mayContainSequenceConstructor() {
         return true;
     }
 
+    @Override
     public void prepareAttributes() {
         String formatAttribute = null;
         String hrefAttribute = null;
@@ -193,6 +196,7 @@ public class XSLResultDocument extends StyleElement {
         }
     }
 
+    @Override
     public void validate(ComponentDeclaration decl) throws XPathException {
         if (href != null && !getConfiguration().getBooleanProperty(Feature.ALLOW_EXTERNAL_FUNCTIONS)) {
             compileError("xsl:result-document is disabled when extension functions are disabled");
@@ -216,6 +220,7 @@ public class XSLResultDocument extends StyleElement {
     public static StructuredQName BUILD_TREE = new StructuredQName("", "", "build-tree");
 
     /*@Nullable*/
+    @Override
     public Expression compile(Compilation exec, ComponentDeclaration decl) throws XPathException {
 
         // Check that the call is not within xsl:variable or xsl:function.

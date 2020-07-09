@@ -49,6 +49,7 @@ public class ArithmeticExpression10 extends ArithmeticExpression implements Call
      */
 
     /*@NotNull*/
+    @Override
     public Expression typeCheck(ExpressionVisitor visitor, ContextItemStaticInfo contextInfo) throws XPathException {
 
         getLhs().typeCheck(visitor, contextInfo);
@@ -159,6 +160,7 @@ public class ArithmeticExpression10 extends ArithmeticExpression implements Call
      * @param calc the calculator to be used
      */
 
+    @Override
     public void setCalculator(Calculator calc) {
         this.calculator = calc;
     }
@@ -257,6 +259,7 @@ public class ArithmeticExpression10 extends ArithmeticExpression implements Call
      */
 
     /*@NotNull*/
+    @Override
     public PlainType getItemType() {
         if (calculator == null) {
             return BuiltInAtomicType.ANY_ATOMIC;  // type is not known statically
@@ -283,6 +286,7 @@ public class ArithmeticExpression10 extends ArithmeticExpression implements Call
      */
 
     /*@NotNull*/
+    @Override
     public Expression copy(RebindingMap rebindings) {
         ArithmeticExpression10 a2 = new ArithmeticExpression10(getLhsExpression().copy(rebindings), operator, getRhsExpression().copy(rebindings));
         ExpressionTool.copyLocationInfo(this, a2);
@@ -304,6 +308,7 @@ public class ArithmeticExpression10 extends ArithmeticExpression implements Call
      * Evaluate the expression.
      */
 
+    @Override
     public AtomicValue evaluateItem(XPathContext context) throws XPathException {
 
         Calculator calc = calculator;
@@ -335,6 +340,7 @@ public class ArithmeticExpression10 extends ArithmeticExpression implements Call
      * @throws XPathException
      *          if a dynamic error occurs during the evaluation of the expression
      */
+    @Override
     public AtomicValue call(XPathContext context, Sequence[] arguments) throws XPathException {
         Calculator calc = calculator;
         AtomicValue v1 = (AtomicValue) arguments[0].head();

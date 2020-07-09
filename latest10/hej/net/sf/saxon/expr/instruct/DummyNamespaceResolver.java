@@ -47,6 +47,7 @@ public final class DummyNamespaceResolver implements NamespaceResolver {
      * @return the uri for the namespace, or null if the prefix is not in scope
      */
 
+    @Override
     public String getURIForPrefix(String prefix, boolean useDefault) {
         if (prefix.isEmpty()) {
             return NamespaceConstant.NULL;
@@ -63,6 +64,7 @@ public final class DummyNamespaceResolver implements NamespaceResolver {
      * the default namespace (prefix="") and the XML namespace where appropriate
      */
 
+    @Override
     public Iterator<String> iteratePrefixes() {
         return new PairIterator<String>("", "xml");
     }

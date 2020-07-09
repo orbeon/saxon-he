@@ -75,6 +75,7 @@ public class VennExpression extends BinaryExpression {
      *         in explain() output displaying the expression.
      */
 
+    @Override
     public String getExpressionName() {
         switch (operator) {
             case Token.UNION:
@@ -95,6 +96,7 @@ public class VennExpression extends BinaryExpression {
      */
 
     /*@NotNull*/
+    @Override
     public final ItemType getItemType() {
         final ItemType t1 = getLhsExpression().getItemType();
         if (operator == Token.UNION) {
@@ -131,6 +133,7 @@ public class VennExpression extends BinaryExpression {
      * Determine the static cardinality of the expression
      */
 
+    @Override
     public final int computeCardinality() {
         final int c1 = getLhsExpression().getCardinality();
         final int c2 = getRhsExpression().getCardinality();
@@ -172,6 +175,7 @@ public class VennExpression extends BinaryExpression {
      * property bit is set, it is true, but if it is unset, the value is unknown.
      */
 
+    @Override
     public int computeSpecialProperties() {
         final int prop0 = getLhsExpression().getSpecialProperties();
         final int prop1 = getRhsExpression().getSpecialProperties();
@@ -270,6 +274,7 @@ public class VennExpression extends BinaryExpression {
      */
 
     /*@NotNull*/
+    @Override
     public Expression typeCheck(ExpressionVisitor visitor, final ContextItemStaticInfo contextInfo) throws XPathException {
 
         Configuration config = visitor.getConfiguration();
@@ -326,6 +331,7 @@ public class VennExpression extends BinaryExpression {
      */
 
     /*@NotNull*/
+    @Override
     public Expression optimize(ExpressionVisitor visitor, ContextItemStaticInfo contextItemType) throws XPathException {
         Expression e = super.optimize(visitor, contextItemType);
         if (e != this) {
@@ -536,6 +542,7 @@ public class VennExpression extends BinaryExpression {
      */
 
     /*@NotNull*/
+    @Override
     public Expression copy(RebindingMap rebindings) {
         VennExpression exp = new VennExpression(getLhsExpression().copy(rebindings), operator, getRhsExpression().copy(rebindings));
         ExpressionTool.copyLocationInfo(this, exp);
@@ -561,6 +568,7 @@ public class VennExpression extends BinaryExpression {
      * @param arg which argument: 0 for the lhs, 1 for the rhs
      */
 
+    @Override
     protected OperandRole getOperandRole(int arg) {
         return OperandRole.SAME_FOCUS_ACTION;
     }
@@ -592,6 +600,7 @@ public class VennExpression extends BinaryExpression {
         return false;
     }
 
+    @Override
     public int computeHashCode() {
         return getLhsExpression().hashCode() ^ getRhsExpression().hashCode();
     }
@@ -657,6 +666,7 @@ public class VennExpression extends BinaryExpression {
      */
 
     /*@NotNull*/
+    @Override
     public SequenceIterator iterate(final XPathContext c) throws XPathException {
         SequenceIterator i1 = getLhsExpression().iterate(c);
         SequenceIterator i2 = getRhsExpression().iterate(c);
@@ -679,6 +689,7 @@ public class VennExpression extends BinaryExpression {
      * is reduced to an OR expression, for efficiency
      */
 
+    @Override
     public boolean effectiveBooleanValue(final XPathContext context) throws XPathException {
         if (operator == Token.UNION) {
             // NOTE: this optimization was probably already done statically

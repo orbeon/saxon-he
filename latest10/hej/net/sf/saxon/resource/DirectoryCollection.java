@@ -79,10 +79,12 @@ public class DirectoryCollection extends AbstractResourceCollection {
         return true;
     }
 
+    @Override
     public Iterator<String> getResourceURIs(XPathContext context) {
         return directoryContents(dirFile, params);
     }
 
+    @Override
     public Iterator<Resource> getResources(final XPathContext context) {
         final ParseOptions options = optionsFromQueryParameters(params, context);
         options.setSpaceStrippingRule(whitespaceRules);
@@ -213,16 +215,19 @@ public class DirectoryCollection extends AbstractResourceCollection {
             advance();
         }
 
+        @Override
         public boolean hasNext() {
             return next != null;
         }
 
+        @Override
         public String next() {
             String s = next;
             advance();
             return s;
         }
 
+        @Override
         public void remove() {
             throw new UnsupportedOperationException();
         }

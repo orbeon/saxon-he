@@ -56,6 +56,7 @@ public class MergeGroupingIterator implements GroupIterator, LookaheadIterator, 
     }
 
     //#if EE==true
+    @Override
     public ManualMergeGroupingIterator getSnapShot(XPathContext context) {
         return new ManualMergeGroupingIterator();
     }
@@ -115,10 +116,12 @@ public class MergeGroupingIterator implements GroupIterator, LookaheadIterator, 
         }
     }
 
+    @Override
     public boolean hasNext() {
         return next != null;
     }
 
+    @Override
     public Item next() throws XPathException {
         if (next == null) {
             currenti = null;
@@ -132,6 +135,7 @@ public class MergeGroupingIterator implements GroupIterator, LookaheadIterator, 
         return currenti.getObject().baseItem;
     }
 
+    @Override
     public void close() {
         baseItr.close();
     }
@@ -141,14 +145,17 @@ public class MergeGroupingIterator implements GroupIterator, LookaheadIterator, 
         return lastPositionFinder.getLength();
     }
 
+    @Override
     public EnumSet<Property> getProperties() {
         return EnumSet.of(Property.LOOKAHEAD, Property.LAST_POSITION_FINDER);
     }
 
+    @Override
     public AtomicSequence getCurrentGroupingKey() {
         return new AtomicArray(compositeMergeKey);
     }
 
+    @Override
     public SequenceIterator iterateCurrentGroup() {
         return new ListIterator<>(currentMembers);
     }
@@ -173,10 +180,12 @@ public class MergeGroupingIterator implements GroupIterator, LookaheadIterator, 
             setLastPositionFinder(() -> currentMembers.size());
         }
 
+        @Override
         public SequenceIterator iterateCurrentGroup() {
             return new ListIterator<>(currentGroup);
         }
 
+        @Override
         public AtomicSequence getCurrentGroupingKey() {
             return currentGroupingKey;
         }

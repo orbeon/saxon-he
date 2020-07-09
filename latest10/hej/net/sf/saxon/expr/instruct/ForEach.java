@@ -180,6 +180,7 @@ public class ForEach extends Instruction implements ContextMappingFunction, Cont
      * @return the code for name xsl:for-each
      */
 
+    @Override
     public int getInstructionNameCode() {
         return StandardNames.XSL_FOR_EACH;
     }
@@ -191,6 +192,7 @@ public class ForEach extends Instruction implements ContextMappingFunction, Cont
      *         if sorting was requested.
      */
 
+    @Override
     public Expression getSelectExpression() {
         return getSelect();
     }
@@ -220,6 +222,7 @@ public class ForEach extends Instruction implements ContextMappingFunction, Cont
      *
      * @return the subexpression evaluated in the context set by the controlling expression
      */
+    @Override
     public Expression getActionExpression() {
         return getAction();
     }
@@ -241,6 +244,7 @@ public class ForEach extends Instruction implements ContextMappingFunction, Cont
      */
 
     /*@NotNull*/
+    @Override
     public final ItemType getItemType() {
         return getAction().getItemType();
     }
@@ -269,12 +273,14 @@ public class ForEach extends Instruction implements ContextMappingFunction, Cont
      * (Nodes created by the condition can't contribute to the result).
      */
 
+    @Override
     public final boolean mayCreateNewNodes() {
         int props = getAction().getSpecialProperties();
         return (props & StaticProperty.NO_NODES_NEWLY_CREATED) == 0;
     }
 
     /*@NotNull*/
+    @Override
     public Expression typeCheck(ExpressionVisitor visitor, ContextItemStaticInfo contextInfo) throws XPathException {
 
         selectOp.typeCheck(visitor, contextInfo);
@@ -296,6 +302,7 @@ public class ForEach extends Instruction implements ContextMappingFunction, Cont
     }
 
     /*@NotNull*/
+    @Override
     public Expression optimize(ExpressionVisitor visitor, ContextItemStaticInfo contextInfo) throws XPathException {
         selectOp.optimize(visitor, contextInfo);
 
@@ -358,6 +365,7 @@ public class ForEach extends Instruction implements ContextMappingFunction, Cont
      *         expressions, it is the same as the input pathMapNode.
      */
 
+    @Override
     public PathMap.PathMapNodeSet addToPathMap(PathMap pathMap, PathMap.PathMapNodeSet pathMapNodeSet) {
         PathMap.PathMapNodeSet target = getSelect().addToPathMap(pathMap, pathMapNodeSet);
         return getAction().addToPathMap(pathMap, target);
@@ -371,6 +379,7 @@ public class ForEach extends Instruction implements ContextMappingFunction, Cont
      */
 
     /*@NotNull*/
+    @Override
     public Expression copy(RebindingMap rebindings) {
         ForEach f2 = new ForEach(getSelect().copy(rebindings), getAction().copy(rebindings), containsTailCall, getThreads());
         if (separatorOp != null) {
@@ -410,6 +419,7 @@ public class ForEach extends Instruction implements ContextMappingFunction, Cont
      * @return true if this is an updating expression
      */
 
+    @Override
     public boolean isUpdatingExpression() {
         return getAction().isUpdatingExpression();
     }
@@ -421,6 +431,7 @@ public class ForEach extends Instruction implements ContextMappingFunction, Cont
      * @throws XPathException if the expression has a non-permitted updating subexpression
      */
 
+    @Override
     public void checkForUpdatingSubexpressions() throws XPathException {
         if (getSelect().isUpdatingExpression()) {
             XPathException err = new XPathException(
@@ -437,6 +448,7 @@ public class ForEach extends Instruction implements ContextMappingFunction, Cont
      * process() methods natively.
      */
 
+    @Override
     public int getImplementationMethod() {
         return ITERATE_METHOD | PROCESS_METHOD | Expression.WATCH_METHOD | Expression.ITEM_FEED_METHOD;
     }
@@ -449,10 +461,12 @@ public class ForEach extends Instruction implements ContextMappingFunction, Cont
      * static validation can continue recursively.
      */
 
+    @Override
     public void checkPermittedContents(SchemaType parentType, boolean whole) throws XPathException {
         getAction().checkPermittedContents(parentType, false);
     }
 
+    @Override
     public TailCall processLeavingTail(Outputter output, XPathContext context) throws XPathException {
         Controller controller = context.getController();
         assert controller != null;
@@ -540,6 +554,7 @@ public class ForEach extends Instruction implements ContextMappingFunction, Cont
      */
 
     /*@NotNull*/
+    @Override
     public SequenceIterator iterate(XPathContext context) throws XPathException {
         XPathContextMinor c2 = context.newMinorContext();
         c2.trackFocus(getSelect().iterate(context));
@@ -567,6 +582,7 @@ public class ForEach extends Instruction implements ContextMappingFunction, Cont
      *         item maps to
      */
 
+    @Override
     public SequenceIterator map(XPathContext context) throws XPathException {
         return getAction().iterate(context);
     }
@@ -582,6 +598,7 @@ public class ForEach extends Instruction implements ContextMappingFunction, Cont
      * @throws UnsupportedOperationException     if the expression is not an updating expression
      */
 
+    @Override
     public void evaluatePendingUpdates(XPathContext context, PendingUpdateList pul) throws XPathException {
         XPathContextMinor c2 = context.newMinorContext();
         c2.trackFocus(getSelect().iterate(context));
@@ -597,6 +614,7 @@ public class ForEach extends Instruction implements ContextMappingFunction, Cont
      * is written to the supplied output destination.
      */
 
+    @Override
     public void export(ExpressionPresenter out) throws XPathException {
         out.startElement("forEach", this);
         getSelect().export(out);

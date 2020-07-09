@@ -75,6 +75,7 @@ public final class XSLTemplate extends StyleElement implements StylesheetCompone
      * Get the corresponding NamedTemplate object that results from the compilation of this
      * StylesheetComponent
      */
+    @Override
     public NamedTemplate getActor() {
         return compiledNamedTemplate;
     }
@@ -118,14 +119,17 @@ public final class XSLTemplate extends StyleElement implements StylesheetCompone
      * @return true: yes, it may contain a template-body
      */
 
+    @Override
     public boolean mayContainSequenceConstructor() {
         return true;
     }
 
+    @Override
     protected boolean mayContainParam() {
         return true;
     }
 
+    @Override
     protected boolean isWithinDeclaredStreamableConstruct() {
         try {
             for (Mode m : getApplicableModes()) {
@@ -157,6 +161,7 @@ public final class XSLTemplate extends StyleElement implements StylesheetCompone
      * Specify that xsl:param and xsl:context-item are permitted children
      */
 
+    @Override
     protected boolean isPermittedChild(StyleElement child) {
         return child instanceof XSLLocalParam || child.getFingerprint() == StandardNames.XSL_CONTEXT_ITEM;
     }
@@ -181,6 +186,7 @@ public final class XSLTemplate extends StyleElement implements StylesheetCompone
         return getObjectName();
     }
 
+    @Override
     public SymbolicName getSymbolicName() {
         if (getTemplateName() == null) {
             return null;
@@ -198,6 +204,7 @@ public final class XSLTemplate extends StyleElement implements StylesheetCompone
     }
 
 
+    @Override
     public void checkCompatibility(Component component) {
         NamedTemplate other = (NamedTemplate) component.getActor();
         if (!getSymbolicName().equals(other.getSymbolicName())) {
@@ -274,6 +281,7 @@ public final class XSLTemplate extends StyleElement implements StylesheetCompone
     }
 
 
+    @Override
     public void prepareAttributes() {
 
         AttributeMap atts = attributes();
@@ -521,6 +529,7 @@ public final class XSLTemplate extends StyleElement implements StylesheetCompone
         return false;
     }
 
+    @Override
     public void validate(ComponentDeclaration decl) throws XPathException {
         stackFrameMap = getConfiguration().makeSlotManager();
         checkTopLevel("XTSE0010", true);
@@ -586,6 +595,7 @@ public final class XSLTemplate extends StyleElement implements StylesheetCompone
         }
     }
 
+    @Override
     public void index(ComponentDeclaration decl, PrincipalStylesheetModule top) throws XPathException {
         if (getTemplateName() != null) {
             if (compiledNamedTemplate == null) {
@@ -600,6 +610,7 @@ public final class XSLTemplate extends StyleElement implements StylesheetCompone
      * Mark tail-recursive calls on templates and functions.
      */
 
+    @Override
     public boolean markTailCalls() {
         StyleElement last = getLastChildInstruction();
         return last != null && last.markTailCalls();
@@ -609,6 +620,7 @@ public final class XSLTemplate extends StyleElement implements StylesheetCompone
      * Compile: creates the executable form of the template
      */
 
+    @Override
     public void compileDeclaration(Compilation compilation, ComponentDeclaration decl) throws XPathException {
         if (isDeferredCompilation(compilation)) {
             createSkeletonTemplate(compilation, decl);
@@ -975,6 +987,7 @@ public final class XSLTemplate extends StyleElement implements StylesheetCompone
      * @throws XPathException if errors are found
      */
 
+    @Override
     public void optimize(ComponentDeclaration declaration) throws XPathException {
         Configuration config = getConfiguration();
         if (compiledNamedTemplate != null) {
@@ -1099,6 +1112,7 @@ public final class XSLTemplate extends StyleElement implements StylesheetCompone
      * @throws XPathException if byte code generation fails
      */
 
+    @Override
     public void generateByteCode(Optimizer opt) throws XPathException {
         // Generate byte code if appropriate
 
@@ -1142,6 +1156,7 @@ public final class XSLTemplate extends StyleElement implements StylesheetCompone
      * Get associated Procedure (for details of stack frame)
      */
 
+    @Override
     public SlotManager getSlotManager() {
         return stackFrameMap;
     }

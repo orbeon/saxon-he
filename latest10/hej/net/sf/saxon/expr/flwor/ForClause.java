@@ -45,6 +45,7 @@ public class ForClause extends Clause {
         return FOR;
     }
 
+    @Override
     public ForClause copy(FLWORExpression flwor, RebindingMap rebindings) {
         ForClause f2 = new ForClause();
         f2.setLocation(getLocation());
@@ -410,6 +411,7 @@ public class ForClause extends Clause {
         out.endElement();
     }
 
+    @Override
     public String toShortString() {
         FastStringBuffer fsb = new FastStringBuffer(FastStringBuffer.C64);
         fsb.append("for $");

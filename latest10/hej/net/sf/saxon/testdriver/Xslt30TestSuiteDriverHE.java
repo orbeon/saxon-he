@@ -216,6 +216,7 @@ public class Xslt30TestSuiteDriverHE extends TestDriver {
 
         if (testName.contains("environment-variable")) {
             EnvironmentVariableResolver resolver = new EnvironmentVariableResolver() {
+                @Override
                 public Set<String> getAvailableEnvironmentVariables() {
                     Set<String> strings = new HashSet<>();
                     strings.add("QTTEST");
@@ -224,6 +225,7 @@ public class Xslt30TestSuiteDriverHE extends TestDriver {
                     return strings;
                 }
 
+                @Override
                 public String getEnvironmentVariable(String name) {
                     switch (name) {
                         case "QTTEST":
@@ -1318,6 +1320,7 @@ public class Xslt30TestSuiteDriverHE extends TestDriver {
                 if (!value.equals(old)) {
                     env.processor.setConfigurationProperty(Feature.DEFAULT_LANGUAGE, value);
                     env.resetActions.add(new Environment.ResetAction() {
+                        @Override
                         public void reset(Environment env) {
                             env.processor.setConfigurationProperty(Feature.DEFAULT_LANGUAGE, old);
                         }
@@ -1330,6 +1333,7 @@ public class Xslt30TestSuiteDriverHE extends TestDriver {
                 final boolean old = env.xsltCompiler.isAssertionsEnabled();
                 env.xsltCompiler.setAssertionsEnabled(on);
                 env.resetActions.add(new Environment.ResetAction() {
+                    @Override
                     public void reset(Environment env) {
                         env.xsltCompiler.setAssertionsEnabled(old);
                     }
@@ -1466,6 +1470,7 @@ public class Xslt30TestSuiteDriverHE extends TestDriver {
             this.serialized = serialized;
         }
 
+        @Override
         public Destination apply(URI uri) {
             if (serialized) {
                 StringWriter stringWriter = new StringWriter();
@@ -1506,10 +1511,12 @@ public class Xslt30TestSuiteDriverHE extends TestDriver {
             this.serialized = serialized;
         }
 
+        @Override
         public OutputResolver newInstance() {
             return new OutputResolver(proc, outcome, serialized);
         }
 
+        @Override
         public Result resolve(String href, String base) throws XPathException {
             try {
                 uri = new URI(base).resolve(href);
@@ -1534,6 +1541,7 @@ public class Xslt30TestSuiteDriverHE extends TestDriver {
             }
         }
 
+        @Override
         public void close(Result result) throws XPathException {
             if (uri != null) {
                 if (serialized) {

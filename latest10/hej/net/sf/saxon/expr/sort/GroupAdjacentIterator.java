@@ -131,18 +131,22 @@ public class GroupAdjacentIterator implements GroupIterator, LastPositionFinder,
         nextKey = null;
     }
 
+    @Override
     public AtomicSequence getCurrentGroupingKey() {
         return currentKey;
     }
 
+    @Override
     public SequenceIterator iterateCurrentGroup() {
         return new ListIterator<>(currentMembers);
     }
 
+    @Override
     public boolean hasNext() {
         return next != null;
     }
 
+    @Override
     public Item next() throws XPathException {
         if (next == null) {
             current = null;
@@ -161,6 +165,7 @@ public class GroupAdjacentIterator implements GroupIterator, LastPositionFinder,
         return current;
     }
 
+    @Override
     public void close() {
         population.close();
     }
@@ -175,6 +180,7 @@ public class GroupAdjacentIterator implements GroupIterator, LastPositionFinder,
      *         It is acceptable for the properties of the iterator to change depending on its state.
      */
 
+    @Override
     public EnumSet<Property> getProperties() {
         return EnumSet.of(Property.LOOKAHEAD, Property.LAST_POSITION_FINDER);
     }
@@ -182,6 +188,7 @@ public class GroupAdjacentIterator implements GroupIterator, LastPositionFinder,
 
 //#if EE==true
 
+    @Override
     public ManualGroupIterator getSnapShot(XPathContext context) {
         return new ManualGroupAdjacentIterator();
     }
@@ -197,6 +204,7 @@ public class GroupAdjacentIterator implements GroupIterator, LastPositionFinder,
             setLastPositionFinder(() -> savedcontext.getLast());
         }
 
+        @Override
         public SequenceIterator iterateCurrentGroup() {
             return new ListIterator<>(cMembers);
         }

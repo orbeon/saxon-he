@@ -30,6 +30,7 @@ public abstract class EventSource implements Source {
      *
      * @param systemId The system identifier as a URL string.
      */
+    @Override
     public void setSystemId(String systemId) {
         this.systemId = systemId;
     }
@@ -40,6 +41,7 @@ public abstract class EventSource implements Source {
      * @return The system identifier that was set with setSystemId, or null
      *         if setSystemId was not called.
      */
+    @Override
     public String getSystemId() {
         return systemId;
     }

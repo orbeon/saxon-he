@@ -36,6 +36,7 @@ public interface GroundedIterator extends SequenceIterator {
      * which cause evaluation of expressions while materializing the value.
      */
 
+    @Override
     GroundedValue materialize() throws XPathException;
 
     /**

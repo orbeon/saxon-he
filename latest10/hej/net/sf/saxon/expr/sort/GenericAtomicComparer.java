@@ -109,6 +109,7 @@ public class GenericAtomicComparer implements AtomicComparer {
         return new GenericAtomicComparer(collator, context);
     }
 
+    @Override
     public StringCollator getCollator() {
         return collator;
     }
@@ -121,6 +122,7 @@ public class GenericAtomicComparer implements AtomicComparer {
      *         is known. The original AtomicComparer is not modified
      */
 
+    @Override
     public GenericAtomicComparer provideContext(XPathContext context) {
         return new GenericAtomicComparer(collator, context);
     }
@@ -154,6 +156,7 @@ public class GenericAtomicComparer implements AtomicComparer {
      *                                   code that tries again at run-time.
      */
 
+    @Override
     public int compareAtomicValues(AtomicValue a, AtomicValue b) throws NoDynamicContextException {
 
         // System.err.println("Comparing " + a.getClass() + "(" + a + ") with " + b.getClass() + "(" + b + ") using " + collator);
@@ -197,6 +200,7 @@ public class GenericAtomicComparer implements AtomicComparer {
      * @throws ClassCastException if the objects are not comparable
      */
 
+    @Override
     public boolean comparesEqual(AtomicValue a, AtomicValue b) throws NoDynamicContextException {
         // System.err.println("Comparing " + a.getClass() + ": " + a + " with " + b.getClass() + ": " + b);
         if (a instanceof StringValue && b instanceof StringValue) {
@@ -221,6 +225,7 @@ public class GenericAtomicComparer implements AtomicComparer {
      *
      * @return a string representation of the AtomicComparer
      */
+    @Override
     public String save() {
         return "GAC|" + collator.getCollationURI();
     }

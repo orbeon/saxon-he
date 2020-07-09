@@ -21,10 +21,12 @@ public class XSLProcessingInstruction extends XSLLeafNodeConstructor {
 
     Expression name;
 
+    @Override
     public void prepareAttributes() {
         name = prepareAttributesNameAndSelect();
     }
 
+    @Override
     public void validate(ComponentDeclaration decl) throws XPathException {
         name = typeCheck("name", name);
         select = typeCheck("select", select);
@@ -37,10 +39,12 @@ public class XSLProcessingInstruction extends XSLLeafNodeConstructor {
      * @return the error code defined for this condition, for this particular instruction
      */
 
+    @Override
     protected String getErrorCodeForSelectPlusContent() {
         return "XTSE0880";
     }
 
+    @Override
     public Expression compile(Compilation exec, ComponentDeclaration decl) throws XPathException {
         ProcessingInstruction inst = new ProcessingInstruction(name);
         compileContent(exec, decl, inst, new StringLiteral(StringValue.SINGLE_SPACE));

@@ -71,6 +71,7 @@ public class ARegexIterator implements RegexIterator, LastPositionFinder {
      * @return the next item in the sequence
      */
 
+    @Override
     public StringValue next() throws XPathException {
         try {
             if (next == null && prevEnd >= 0) {
@@ -151,6 +152,7 @@ public class ARegexIterator implements RegexIterator, LastPositionFinder {
      *         It is acceptable for the properties of the iterator to change depending on its state.
      */
 
+    @Override
     public EnumSet<Property> getProperties() {
         return EnumSet.of(Property.LAST_POSITION_FINDER);
     }
@@ -163,6 +165,7 @@ public class ARegexIterator implements RegexIterator, LastPositionFinder {
      *         does not match
      */
 
+    @Override
     public boolean isMatching() {
         return next == null && prevEnd >= 0;
     }
@@ -175,6 +178,7 @@ public class ARegexIterator implements RegexIterator, LastPositionFinder {
      *         within the regular expression
      */
 
+    @Override
     public String getRegexGroup(int number) {
         if (!isMatching()) {
             return null;
@@ -201,6 +205,7 @@ public class ARegexIterator implements RegexIterator, LastPositionFinder {
      * @param action  defines the processing to be performed at the start and end of a group
      */
 
+    @Override
     public void processMatchingSubstring(MatchHandler action) throws XPathException {
         int c = matcher.getParenCount() - 1;
         if (c == 0) {

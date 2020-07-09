@@ -35,6 +35,7 @@ public class Substring extends SystemFunction implements Callable {
      */
 
     /*@NotNull*/
+    @Override
     public Expression typeCheckCaller(FunctionCall caller, ExpressionVisitor visitor, ContextItemStaticInfo contextInfo) throws XPathException {
         Expression e2 = super.typeCheckCaller(caller, visitor, contextInfo);
         if (e2 != caller) {
@@ -187,6 +188,7 @@ public class Substring extends SystemFunction implements Callable {
      * @throws net.sf.saxon.trans.XPathException
      *          if a dynamic error occurs during the evaluation of the expression
      */
+    @Override
     public ZeroOrOne call(XPathContext context, Sequence[] arguments) throws XPathException {
         StringValue arg0 = (StringValue) arguments[0].head();
         if (arg0 == null) {
@@ -201,6 +203,7 @@ public class Substring extends SystemFunction implements Callable {
         }
     }
 
+    @Override
     public String getCompilerName() {
         return "SubstringCompiler";
     }

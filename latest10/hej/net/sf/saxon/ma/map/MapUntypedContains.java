@@ -26,6 +26,7 @@ import net.sf.saxon.value.UntypedAtomicValue;
  */
 public class MapUntypedContains extends SystemFunction {
 
+        @Override
         public Sequence call(XPathContext context, Sequence[] arguments) throws XPathException {
             ConversionRules rules = context.getConfiguration().getConversionRules();
             MapItem map = (MapItem) arguments[0].head();

@@ -52,6 +52,7 @@ public class JsonToXMLFn extends SystemFunction {
      * @throws net.sf.saxon.trans.XPathException
      *          if a dynamic error occurs during the evaluation of the expression
      */
+    @Override
     public Sequence call(XPathContext context, Sequence[] arguments) throws XPathException {
         Item arg0 = arguments[0].head();
         if (arg0 == null) {

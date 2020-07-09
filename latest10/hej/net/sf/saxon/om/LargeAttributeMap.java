@@ -74,6 +74,7 @@ public class LargeAttributeMap implements AttributeMap {
      * @return The number of attributes in the map.
      */
 
+    @Override
     public int size() {
         return size;
     }
@@ -90,6 +91,7 @@ public class LargeAttributeMap implements AttributeMap {
         return get(name);
     }
 
+    @Override
     public AttributeInfo getByFingerprint(int fingerprint, NamePool namePool) {
         NodeName name = new FingerprintedQName(namePool.getStructuredQName(fingerprint), fingerprint);
         return get(name);

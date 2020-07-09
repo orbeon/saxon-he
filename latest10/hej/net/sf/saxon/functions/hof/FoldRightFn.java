@@ -41,6 +41,7 @@ public class FoldRightFn extends SystemFunction {
         }
     }
 
+    @Override
     public Sequence call(XPathContext context, Sequence[] arguments) throws XPathException {
         return evalFoldRight((Function) arguments[2].head(), arguments[1].materialize(), arguments[0].iterate(), context);
     }

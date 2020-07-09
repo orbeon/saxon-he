@@ -74,6 +74,7 @@ public abstract class CastingExpression extends UnaryExpression {
         return targetType;
     }
 
+    @Override
     protected OperandRole getOperandRole() {
         return OperandRole.SINGLE_ATOMIC;
     }
@@ -156,6 +157,7 @@ public abstract class CastingExpression extends UnaryExpression {
      */
 
     /*@NotNull*/
+    @Override
     public Expression simplify() throws XPathException {
         if (targetType instanceof BuiltInAtomicType) {
             String s = XPathParser.whyDisallowedType(getPackageData(), (BuiltInAtomicType)targetType);
@@ -178,6 +180,7 @@ public abstract class CastingExpression extends UnaryExpression {
      * @return {@link net.sf.saxon.expr.StaticProperty#NO_NODES_NEWLY_CREATED}.
      */
 
+    @Override
     public int computeSpecialProperties() {
         int p = super.computeSpecialProperties();
         return p | StaticProperty.NO_NODES_NEWLY_CREATED;

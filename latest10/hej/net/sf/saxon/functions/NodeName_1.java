@@ -33,6 +33,7 @@ public class NodeName_1 extends ScalarSystemFunction {
         return new QNameValue(node.getPrefix(), node.getURI(), node.getLocalPart(), BuiltInAtomicType.QNAME);
     }
 
+    @Override
     public String getCompilerName() {
         return "NodeNameFnCompiler";
     }

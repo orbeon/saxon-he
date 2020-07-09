@@ -42,6 +42,7 @@ public class ReceivingDestination extends AbstractDestination {
      * @return the wrapped {@code Receiver}
      */
 
+    @Override
     public Receiver getReceiver(PipelineConfiguration pipe, SerializationProperties properties) {
         if (acceptsRawOutput()) {
             return outputTarget;
@@ -74,6 +75,7 @@ public class ReceivingDestination extends AbstractDestination {
         return false;
     }
 
+    @Override
     public void close() throws SaxonApiException {
 //        try {
 //            outputTarget.close();

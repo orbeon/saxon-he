@@ -64,6 +64,7 @@ public class DotNetPlatform implements Platform {
      * Perform platform-specific initialization of the configuration
      */
 
+    @Override
     public void initialize(Configuration config) {
         config.setURIResolver(new DotNetURIResolver(new XmlUrlResolver()));
     }
@@ -73,6 +74,7 @@ public class DotNetPlatform implements Platform {
      * Return true if this is the Java platform
      */
 
+    @Override
     public boolean isJava() {
         return false;
     }
@@ -81,6 +83,7 @@ public class DotNetPlatform implements Platform {
      * Return true if this is the .NET platform
      */
 
+    @Override
     public boolean isDotNet() {
         return true;
     }
@@ -89,6 +92,7 @@ public class DotNetPlatform implements Platform {
      * Get the platform version
      */
 
+    @Override
     public String getPlatformVersion() {
         return ".NET " + Environment.get_Version().ToString() +
                 " on " + Environment.get_OSVersion().ToString();
@@ -98,6 +102,7 @@ public class DotNetPlatform implements Platform {
      * Get a suffix letter to add to the Saxon version number to identify the platform
      */
 
+    @Override
     public String getPlatformSuffix() {
         return "N";
     }
@@ -112,13 +117,16 @@ public class DotNetPlatform implements Platform {
      * No ICU features
      */
 
+    @Override
     public boolean hasICUCollator() {
         return false;
     }
 
+    @Override
     public boolean hasICUNumberer() {
         return false;
     }
+    @Override
     public XMLReader loadParser() {
         XMLReader parser;
         try {
@@ -138,6 +146,7 @@ public class DotNetPlatform implements Platform {
      *
      * @return the parser (XMLReader)
      */
+    @Override
     public XMLReader loadParserForXmlFragments(){
         return loadParser();
     }
@@ -155,6 +164,7 @@ public class DotNetPlatform implements Platform {
      *         that wraps one of these.
      */
 
+    @Override
     public Source getParserSource(PipelineConfiguration pipe, StreamSource input, int validation, boolean dtdValidation) {
             return getParserSourceInternal(pipe, input, validation, dtdValidation, 0);
     }
@@ -307,6 +317,7 @@ public class DotNetPlatform implements Platform {
      * @throws XPathException if a fatal error occurs
      */
 
+    @Override
     public StringCollator makeCollation(Configuration config, Properties props, String uri) throws XPathException {
         return DotNetCollationFactory.makeCollation(config, uri, props);
     }
@@ -321,6 +332,7 @@ public class DotNetPlatform implements Platform {
      * @return true if this collation can supply collation keys
      */
 
+    @Override
     public boolean canReturnCollationKeys(StringCollator collation) {
         return collation instanceof DotNetComparator ||
                 collation instanceof CodepointCollator;
@@ -335,6 +347,7 @@ public class DotNetPlatform implements Platform {
      *                            collation keys (this should have been checked in advance)
      */
 
+    @Override
     public AtomicMatchKey getCollationKey(SimpleCollation namedCollation, String value) {
         DotNetComparator c = (DotNetComparator) namedCollation.getComparator();
         return c.getCollationKey(value);
@@ -348,6 +361,7 @@ public class DotNetPlatform implements Platform {
      * @throws XPathException if the URI is malformed in some way
      */
 
+    @Override
     public StringCollator makeUcaCollator(String uri, Configuration config) throws XPathException {
         return null;
     }
@@ -365,6 +379,7 @@ public class DotNetPlatform implements Platform {
      * @throws net.sf.saxon.trans.XPathException
      *          if the regular expression or the flags are invalid
      */
+    @Override
     public RegularExpression compileRegularExpression(Configuration config, CharSequence regex, String flags, String hostLanguage, List<String> warnings) throws XPathException {
         // recognize implementation-defined flags following a semicolon in the flags string
         boolean useJava = false;
@@ -404,6 +419,7 @@ public class DotNetPlatform implements Platform {
      */
 
 
+    @Override
     public ExternalObjectType getExternalObjectType(Configuration config, String uri, String localName) {
         if (uri.equals(NamespaceConstant.DOT_NET_TYPE)) {
             return new DotNetExternalObjectType(cli.System.Type.GetType(localName), config);
@@ -421,6 +437,7 @@ public class DotNetPlatform implements Platform {
      */
 
     /*@Nullable*/
+    @Override
     public String getInstallationDirectory(String edition, Configuration config) {
         RegistryKey[] bases = {Registry.LocalMachine, Registry.CurrentUser};
         // See Saxon bug 3426425.
@@ -452,6 +469,7 @@ public class DotNetPlatform implements Platform {
      * @since 9.3
      */
 
+    @Override
     public void registerAllBuiltInObjectModels(Configuration config) {
         // No action for Saxon on .NET
     }
@@ -464,6 +482,7 @@ public class DotNetPlatform implements Platform {
      * @since 9.4
      */
 
+    @Override
     public void setDefaultSAXParserFactory(Configuration config) {
         String editionCode = "he";
 //#if PE==true
@@ -475,10 +494,12 @@ public class DotNetPlatform implements Platform {
         System.setProperty("javax.xml.parsers.SAXParserFactory", "org.apache.xerces.jaxp.SAXParserFactoryImpl, saxon9"+editionCode+", Version="+ Version.getProductVersion()+", Culture=neutral, PublicKeyToken=e1fdd002d5083fe6");
     }
 
+    @Override
     public boolean JAXPStaticContextCheck(RetainedStaticContext retainedStaticContext, StaticContext sc) {
         return false;
     }
 
+    @Override
     public ModuleURIResolver makeStandardModuleURIResolver(Configuration config) {
         return new DotNetStandardModuleURIResolver(new XmlUrlResolver());
     }
@@ -491,6 +512,7 @@ public class DotNetPlatform implements Platform {
      * @return the class loader object
      * @since 9.6.0.3
      */
+    @Override
     public ClassLoader makeGeneratedClassLoader(Configuration config, Class thisClass){
         ClassLoader parentClassLoader = config.getDynamicLoader().getClassLoader();
         if (parentClassLoader == null) {

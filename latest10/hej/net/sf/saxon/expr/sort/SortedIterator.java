@@ -112,6 +112,7 @@ public class SortedIterator implements SequenceIterator, LastPositionFinder, Loo
      * @return true if there are more items in the sequence
      */
 
+    @Override
     public boolean hasNext() {
         if (position < 0) {
             return false;
@@ -143,6 +144,7 @@ public class SortedIterator implements SequenceIterator, LastPositionFinder, Loo
      */
 
     /*@Nullable*/
+    @Override
     public Item next() throws XPathException {
         if (position < 0) {
             return null;
@@ -158,6 +160,7 @@ public class SortedIterator implements SequenceIterator, LastPositionFinder, Loo
         }
     }
 
+    @Override
     public int getLength() throws XPathException {
         if (count < 0) {
             doSort();
@@ -175,6 +178,7 @@ public class SortedIterator implements SequenceIterator, LastPositionFinder, Loo
      *         It is acceptable for the properties of the iterator to change depending on its state.
      */
 
+    @Override
     public EnumSet<Property> getProperties() {
         return EnumSet.of(Property.LAST_POSITION_FINDER);
     }

@@ -37,10 +37,12 @@ public class ErrorIterator implements SequenceIterator {
      * @since 8.4
      */
 
+    @Override
     public Item next() throws XPathException {
         throw exception;
     }
 
+    @Override
     public void close() {
 
     }

@@ -61,6 +61,7 @@ public class LocalVariableBinding implements LocalBinding {
      * @return the name of the variable
      */
 
+    @Override
     public StructuredQName getVariableQName() {
         return variableName;
     }
@@ -81,6 +82,7 @@ public class LocalVariableBinding implements LocalBinding {
      * @return the required type
      */
 
+    @Override
     public SequenceType getRequiredType() {
         return requiredType;
     }
@@ -89,6 +91,7 @@ public class LocalVariableBinding implements LocalBinding {
      * If the variable is bound to an integer, get the minimum and maximum possible values.
      * Return null if unknown or not applicable
      */
+    @Override
     public IntegerValue[] getIntegerBoundsForVariable() {
         return null;
     }
@@ -114,6 +117,7 @@ public class LocalVariableBinding implements LocalBinding {
      *                           of a filter expression
      */
 
+    @Override
     public void addReference(VariableReference ref, boolean isLoopingReference) {
         if (refCount != FilterExpression.FILTERED) {
             refCount += (isLoopingReference ? 10 : 1);
@@ -125,6 +129,7 @@ public class LocalVariableBinding implements LocalBinding {
      * (because it is used in an appropriate filter expression)
      */
 
+    @Override
     public void setIndexedVariable() {
         refCount = FilterExpression.FILTERED;
     }
@@ -159,6 +164,7 @@ public class LocalVariableBinding implements LocalBinding {
      * In other cases, return -1.
      */
 
+    @Override
     public int getLocalSlotNumber() {
         return slotNumber;
     }
@@ -167,6 +173,7 @@ public class LocalVariableBinding implements LocalBinding {
      * Get the value of the range variable
      */
 
+    @Override
     public Sequence evaluateVariable(XPathContext context) {
         return context.evaluateLocalVariable(slotNumber);
     }
@@ -179,6 +186,7 @@ public class LocalVariableBinding implements LocalBinding {
      * @return true if the binding is assignable
      */
 
+    @Override
     public boolean isAssignable() {
         return false;
     }
@@ -190,6 +198,7 @@ public class LocalVariableBinding implements LocalBinding {
      * @return true if the binding is global
      */
 
+    @Override
     public boolean isGlobal() {
         return false;
     }

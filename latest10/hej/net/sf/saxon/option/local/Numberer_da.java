@@ -43,6 +43,7 @@ public class Numberer_da extends AbstractNumberer {
      * Show an ordinal number as Danish words in a requested case (for example, Twentyfirst)
      */
 
+    @Override
     public String toOrdinalWords(String ordinalParam, long number, int wordCase) {
         String s;
         if (number == 1000000000) {
@@ -91,6 +92,7 @@ public class Numberer_da extends AbstractNumberer {
         }
     }
 
+    @Override
     public String toWords(long number) {
         if (number >= 1000000000) {
             long rem = number % 1000000000;
@@ -114,6 +116,7 @@ public class Numberer_da extends AbstractNumberer {
         }
     }
 
+    @Override
     public String toWords(long number, int wordCase) {
         String s;
         if (number == 0) {
@@ -145,6 +148,7 @@ public class Numberer_da extends AbstractNumberer {
      */
 
     //@Override
+    @Override
     public String monthName(int month, int minWidth, int maxWidth) {
         String name = swedishMonths[month - 1];
         if (maxWidth < 3) {
@@ -167,6 +171,7 @@ public class Numberer_da extends AbstractNumberer {
      * @param maxWidth The maximum number of characters
      */
 
+    @Override
     public String dayName(int day, int minWidth, int maxWidth) {
         String name = danishDays[day - 1];
         if (maxWidth < 2) {

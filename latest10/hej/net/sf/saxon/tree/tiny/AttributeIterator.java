@@ -81,6 +81,7 @@ final class AttributeIterator implements AxisIterator, AtomizedValueIterator {
      */
 
     /*@Nullable*/
+    @Override
     public NodeInfo next() {
         if (moveToNext()) {
             return tree.getAttributeNode(currentNodeNr);
@@ -96,6 +97,7 @@ final class AttributeIterator implements AxisIterator, AtomizedValueIterator {
      * @throws net.sf.saxon.trans.XPathException
      *          if a failure occurs reading or atomizing the next value
      */
+    @Override
     public AtomicSequence nextAtomizedValue() throws XPathException {
         if (moveToNext()) {
             return tree.getTypedValueOfAttribute(null, currentNodeNr);

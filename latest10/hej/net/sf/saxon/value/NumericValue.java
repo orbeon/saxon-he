@@ -90,6 +90,7 @@ public abstract class NumericValue extends AtomicValue
      * @return true, unless the value is boolean false, numeric zero, or
      * zero-length string
      */
+    @Override
     public abstract boolean effectiveBooleanValue();
 
     /**
@@ -220,6 +221,7 @@ public abstract class NumericValue extends AtomicValue
      */
 
     /*@NotNull*/
+    @Override
     public final AtomicMatchKey getXPathComparable(boolean ordered, StringCollator collator, int implicitTimezone) {
         return this;
     }
@@ -238,6 +240,7 @@ public abstract class NumericValue extends AtomicValue
 
     // This is the default implementation. Subclasses of number avoid the conversion to double
     // when comparing with another number of the same type.
+    @Override
     public int compareTo(/*@NotNull*/ NumericValue other) {
         double a = getDoubleValue();
         double b = other.getDoubleValue();

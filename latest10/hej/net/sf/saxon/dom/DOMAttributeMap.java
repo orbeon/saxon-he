@@ -63,6 +63,7 @@ class DOMAttributeMap implements NamedNodeMap {
      * Get named attribute (DOM NamedNodeMap method)
      */
 
+    @Override
     public Node getNamedItem(String name) {
         if (name.equals("xmlns")) {
             NamespaceBinding[] nsarray = getNamespaceBindings();
@@ -101,6 +102,7 @@ class DOMAttributeMap implements NamedNodeMap {
      * p+1..n "real" attribute declarations
      */
 
+    @Override
     public Node item(int index) {
         if (index < 0) {
             return null;
@@ -162,6 +164,7 @@ class DOMAttributeMap implements NamedNodeMap {
      * Get number of attributes and namespaces (DOM NamedNodeMap method).
      */
 
+    @Override
     public int getLength() {
         int length = 0;
         AxisIterator atts = element.iterateAxis(AxisInfo.ATTRIBUTE);
@@ -175,6 +178,7 @@ class DOMAttributeMap implements NamedNodeMap {
      * Get named attribute (DOM NamedNodeMap method)
      */
 
+    @Override
     public Node getNamedItemNS(String uri, String localName) {
         if (uri == null) {
             uri = "";
@@ -202,6 +206,7 @@ class DOMAttributeMap implements NamedNodeMap {
      * @throws org.w3c.dom.DOMException always, to indicate that update is not supported in this DOM implementation
      */
 
+    @Override
     public Node setNamedItem(Node arg) throws DOMException {
         NodeOverNodeInfo.disallowUpdate();
         return null;
@@ -212,6 +217,7 @@ class DOMAttributeMap implements NamedNodeMap {
      * @throws org.w3c.dom.DOMException always, to indicate that update is not supported in this DOM implementation
      */
 
+    @Override
     public Node removeNamedItem(String name) throws DOMException {
         NodeOverNodeInfo.disallowUpdate();
         return null;
@@ -222,6 +228,7 @@ class DOMAttributeMap implements NamedNodeMap {
      * @throws org.w3c.dom.DOMException always, to indicate that update is not supported in this DOM implementation
      */
 
+    @Override
     public Node setNamedItemNS(Node arg) throws DOMException {
         NodeOverNodeInfo.disallowUpdate();
         return null;
@@ -233,6 +240,7 @@ class DOMAttributeMap implements NamedNodeMap {
      */
 
     /*@Nullable*/
+    @Override
     public Node removeNamedItemNS(String uri, String localName) throws DOMException {
         NodeOverNodeInfo.disallowUpdate();
         return null;

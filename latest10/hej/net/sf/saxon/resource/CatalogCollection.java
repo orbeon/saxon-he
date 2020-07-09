@@ -48,12 +48,14 @@ public class CatalogCollection extends AbstractResourceCollection {
     }
 
 
+    @Override
     public Iterator<String> getResourceURIs(XPathContext context) throws XPathException {
         StandardCollectionFinder.checkNotNull(collectionURI, context);
         return catalogContents(collectionURI, context);
     }
 
 
+    @Override
     public Iterator<Resource> getResources(final XPathContext context) throws XPathException {
 
         StandardCollectionFinder.checkNotNull(collectionURI, context);

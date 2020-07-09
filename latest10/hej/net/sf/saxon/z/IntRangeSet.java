@@ -84,6 +84,7 @@ public class IntRangeSet implements IntSet {
         }
     }
 
+    @Override
     public void clear() {
         startPoints = new int[4];
         endPoints = new int[4];
@@ -91,6 +92,7 @@ public class IntRangeSet implements IntSet {
         hashCode = -1;
     }
 
+    @Override
     public IntSet copy() {
         IntRangeSet s = new IntRangeSet();
         s.startPoints = new int[startPoints.length];
@@ -104,22 +106,27 @@ public class IntRangeSet implements IntSet {
         return s;
     }
 
+    @Override
     public IntSet mutableCopy() {
         return copy();
     }
 
+    @Override
     public boolean isMutable() {
         return false;
     }
 
+    @Override
     public int size() {
         return size;
     }
 
+    @Override
     public boolean isEmpty() {
         return size == 0;
     }
 
+    @Override
     public boolean contains(int value) {
         if (used == 0) {
             return false;
@@ -145,6 +152,7 @@ public class IntRangeSet implements IntSet {
         return false;
     }
 
+    @Override
     public boolean remove(int value) {
         throw new UnsupportedOperationException("remove");
     }
@@ -156,6 +164,7 @@ public class IntRangeSet implements IntSet {
      * @return true if the integer was added, false if it was already present
      */
 
+    @Override
     public boolean add(int value) {
         hashCode = -1;
         if (used == 0) {
@@ -265,6 +274,7 @@ public class IntRangeSet implements IntSet {
      * Get an iterator over the values
      */
 
+    @Override
     public IntIterator iterator() {
         return new IntRangeSetIterator();
     }
@@ -404,6 +414,7 @@ public class IntRangeSet implements IntSet {
             current = Integer.MIN_VALUE;
         }
 
+        @Override
         public boolean hasNext() {
             if (i < 0) {
                 return size > 0;
@@ -412,6 +423,7 @@ public class IntRangeSet implements IntSet {
             }
         }
 
+        @Override
         public int next() {
             if (i < 0) {
                 i = 0;

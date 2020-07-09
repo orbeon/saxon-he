@@ -40,6 +40,7 @@ public class BlockIterator implements SequenceIterator {
      *          if an error occurs retrieving the next item
      */
 
+    @Override
     public Item next() throws XPathException {
         if (position < 0) {
             return null;
@@ -61,6 +62,7 @@ public class BlockIterator implements SequenceIterator {
         }
     }
 
+    @Override
     public void close() {
         if (currentIter != null) {
             currentIter.close();

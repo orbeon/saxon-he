@@ -34,6 +34,7 @@ public class NumericComparer implements AtomicComparer {
     }
 
     /*@Nullable*/
+    @Override
     public StringCollator getCollator() {
         return null;
     }
@@ -46,6 +47,7 @@ public class NumericComparer implements AtomicComparer {
      *         is known. The original AtomicComparer is not modified
      */
 
+    @Override
     public AtomicComparer provideContext(XPathContext context) {
         return this;
     }
@@ -61,6 +63,7 @@ public class NumericComparer implements AtomicComparer {
      * @throws ClassCastException if the objects are not Items
      */
 
+    @Override
     public int compareAtomicValues(AtomicValue a, AtomicValue b) {
         double d1, d2;
 
@@ -118,6 +121,7 @@ public class NumericComparer implements AtomicComparer {
      * @throws ClassCastException if the objects are not comparable
      */
 
+    @Override
     public boolean comparesEqual(AtomicValue a, AtomicValue b) {
         return compareAtomicValues(a, b) == 0;
     }
@@ -128,6 +132,7 @@ public class NumericComparer implements AtomicComparer {
      *
      * @return a string representation of the AtomicComparer
      */
+    @Override
     public String save() {
         return "NC";
     }

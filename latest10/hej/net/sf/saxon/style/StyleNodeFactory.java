@@ -91,6 +91,7 @@ public class StyleNodeFactory implements NodeFactory {
      * one error from a single compilation.
      */
 
+    @Override
     public ElementImpl makeElementNode(
             NodeInfo parent,
             NodeName elemName,
@@ -469,6 +470,7 @@ public class StyleNodeFactory implements NodeFactory {
      * @param content the content of the text node
      * @return the constructed text node
      */
+    @Override
     public TextImpl makeTextNode(NodeInfo parent, CharSequence content) {
         if (parent instanceof StyleElement && ((StyleElement) parent).isExpandingText()) {
             return new TextValueTemplateNode(content.toString());

@@ -24,6 +24,7 @@ public class XSLOutputCharacter extends StyleElement {
     // the character to be substituted, as a Unicode codepoint (may be > 65535)
     private String replacementString = null;
 
+    @Override
     public void prepareAttributes() {
 
         for (AttributeInfo att : attributes()) {
@@ -70,12 +71,14 @@ public class XSLOutputCharacter extends StyleElement {
 
     }
 
+    @Override
     public void validate(ComponentDeclaration decl) throws XPathException {
         if (!(getParent() instanceof XSLCharacterMap)) {
             compileError("xsl:output-character may appear only as a child of xsl:character-map", "XTSE0010");
         }
     }
 
+    @Override
     public Expression compile(Compilation exec, ComponentDeclaration decl) throws XPathException {
         return null;
     }

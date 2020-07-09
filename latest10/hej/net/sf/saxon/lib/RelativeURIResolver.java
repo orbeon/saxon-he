@@ -76,6 +76,7 @@ public interface RelativeURIResolver extends URIResolver {
      *          if an error occurs when trying to
      *          resolve the URI.
      */
+    @Override
     Source resolve(String href, String base)
             throws TransformerException;
 

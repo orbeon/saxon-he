@@ -29,10 +29,12 @@ public class XSLApplyImports extends StyleElement {
      * @return true - it is an instruction
      */
 
+    @Override
     public boolean isInstruction() {
         return true;
     }
 
+    @Override
     public void prepareAttributes() {
 
         for (AttributeInfo att : attributes()) {
@@ -41,6 +43,7 @@ public class XSLApplyImports extends StyleElement {
         }
     }
 
+    @Override
     public void validate(ComponentDeclaration decl) throws XPathException {
         //checkWithinTemplate();
         for (NodeInfo child : children()) {
@@ -67,6 +70,7 @@ public class XSLApplyImports extends StyleElement {
     }
 
     /*@NotNull*/
+    @Override
     public Expression compile(Compilation exec, ComponentDeclaration decl) throws XPathException {
         ApplyImports inst = new ApplyImports();
         WithParam[] nonTunnels = getWithParamInstructions(inst, exec, decl, false);

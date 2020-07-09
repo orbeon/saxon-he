@@ -38,6 +38,7 @@ public class UnknownResource implements Resource {
         this.details = details;
     }
 
+    @Override
     public String getResourceURI() {
         return details.resourceUri;
     }
@@ -50,6 +51,7 @@ public class UnknownResource implements Resource {
      * @throws XPathException if (for example) XML parsing fails
      */
 
+    @Override
     public Item getItem(XPathContext context) throws XPathException {
         InputStream stream;
         if (details.binaryContent != null) {
@@ -92,6 +94,7 @@ public class UnknownResource implements Resource {
      * @return the string "application/xml"
      */
 
+    @Override
     public String getContentType() {
         return "application/xml";
     }

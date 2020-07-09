@@ -86,6 +86,7 @@ public class XPathFactoryImpl extends XPathFactory implements Configuration.ApiP
      *         Saxon also allows user-defined external object models to be registered with the Configuration, and
      *         this method will return true in respect of any such model.
      */
+    @Override
     public boolean isObjectModelSupported(String model) {
         boolean debug = System.getProperty("jaxp.debug") != null;
         boolean result = silentIsObjectModelSupported(model);
@@ -118,6 +119,7 @@ public class XPathFactoryImpl extends XPathFactory implements Configuration.ApiP
      *          if the feature name is not recognized
      */
 
+    @Override
     public void setFeature(String feature, boolean b) throws XPathFactoryConfigurationException {
         if (feature.equals(FEATURE_SECURE_PROCESSING)) {
             config.setBooleanProperty(Feature.ALLOW_EXTERNAL_FUNCTIONS, !b);
@@ -149,6 +151,7 @@ public class XPathFactoryImpl extends XPathFactory implements Configuration.ApiP
      *          if the feature name is not recognized
      */
 
+    @Override
     public boolean getFeature(String feature) throws XPathFactoryConfigurationException {
         if (feature.equals(FEATURE_SECURE_PROCESSING)) {
             return !config.getBooleanProperty(Feature.ALLOW_EXTERNAL_FUNCTIONS);
@@ -177,6 +180,7 @@ public class XPathFactoryImpl extends XPathFactory implements Configuration.ApiP
      *
      * @param xPathVariableResolver The object used to resolve references to variables.
      */
+    @Override
     public void setXPathVariableResolver(XPathVariableResolver xPathVariableResolver) {
         variableResolver = xPathVariableResolver;
     }
@@ -190,6 +194,7 @@ public class XPathFactoryImpl extends XPathFactory implements Configuration.ApiP
      * @param xPathFunctionResolver The object used to resolve references to external functions.
      */
 
+    @Override
     public void setXPathFunctionResolver(XPathFunctionResolver xPathFunctionResolver) {
         functionResolver = xPathFunctionResolver;
     }
@@ -200,6 +205,7 @@ public class XPathFactoryImpl extends XPathFactory implements Configuration.ApiP
      * @return an XPath object, which can be used to compile and execute XPath expressions.
      */
     /*@NotNull*/
+    @Override
     public XPath newXPath() {
         XPathEvaluator xpath = new XPathEvaluator(config);
         xpath.setXPathFunctionResolver(functionResolver);

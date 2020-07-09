@@ -160,10 +160,12 @@ public abstract class Converter {
     public static class IdentityConverter extends Converter {
         public final static IdentityConverter INSTANCE = new IdentityConverter();
 
+        @Override
         public ConversionResult convert(AtomicValue input) {
             return input;
         }
 
+        @Override
         public boolean isAlwaysSuccessful() {
             return true;
         }
@@ -184,6 +186,7 @@ public abstract class Converter {
             this.newTypeAnnotation = annotation;
         }
 
+        @Override
         public AtomicValue convert(/*@NotNull*/ AtomicValue input) {
             return input.copyAsSubType(newTypeAnnotation);
         }
@@ -208,6 +211,7 @@ public abstract class Converter {
         }
 
         /*@NotNull*/
+        @Override
         public ConversionResult convert(/*@NotNull*/ AtomicValue input) {
             return convert(input, input.getCanonicalLexicalRepresentation());
         }
@@ -255,6 +259,7 @@ public abstract class Converter {
         }
 
         /*@NotNull*/
+        @Override
         public ConversionResult convert(AtomicValue input) {
             ConversionResult temp = phaseOne.convert(input);
             if (temp instanceof ValidationFailure) {
@@ -276,6 +281,7 @@ public abstract class Converter {
 
     public static class ToUntypedAtomicConverter extends UnfailingConverter {
         public static final ToUntypedAtomicConverter INSTANCE = new ToUntypedAtomicConverter();
+        @Override
         public UntypedAtomicValue convert(AtomicValue input) {
             return new UntypedAtomicValue(input.getStringValueCS());
         }
@@ -287,6 +293,7 @@ public abstract class Converter {
 
     public static class ToStringConverter extends UnfailingConverter {
         public static final ToStringConverter INSTANCE = new ToStringConverter();
+        @Override
         public StringValue convert(AtomicValue input) {
             return new StringValue(input.getStringValueCS());
         }
@@ -298,6 +305,7 @@ public abstract class Converter {
 
     public static class NumericToFloat extends UnfailingConverter {
         public final static NumericToFloat INSTANCE = new NumericToFloat();
+        @Override
         public FloatValue convert(AtomicValue input) {
             return new FloatValue(((NumericValue)input).getFloatValue());
         }
@@ -309,6 +317,7 @@ public abstract class Converter {
 
     public static class BooleanToFloat extends UnfailingConverter {
         public final static BooleanToFloat INSTANCE = new BooleanToFloat();
+        @Override
         public FloatValue convert(AtomicValue input) {
             return new FloatValue(((BooleanValue)input).getBooleanValue() ? 1.0f : 0.0f);
         }
@@ -320,6 +329,7 @@ public abstract class Converter {
 
     public static class NumericToDouble extends UnfailingConverter {
         public static final NumericToDouble INSTANCE = new NumericToDouble();
+        @Override
         public DoubleValue convert(AtomicValue input) {
             if (input instanceof DoubleValue) {
                 return (DoubleValue)input;
@@ -335,6 +345,7 @@ public abstract class Converter {
 
     public static class BooleanToDouble extends UnfailingConverter {
         public final static BooleanToDouble INSTANCE = new BooleanToDouble();
+        @Override
         public DoubleValue convert(AtomicValue input) {
             return new DoubleValue(((BooleanValue) input).getBooleanValue() ? 1.0e0 : 0.0e0);
         }
@@ -346,6 +357,7 @@ public abstract class Converter {
 
     public static class DoubleToDecimal extends Converter {
         public final static DoubleToDecimal INSTANCE = new DoubleToDecimal();
+        @Override
         public ConversionResult convert(AtomicValue input) {
             try {
                 return new BigDecimalValue(((DoubleValue) input).getDoubleValue());
@@ -361,6 +373,7 @@ public abstract class Converter {
 
     public static class FloatToDecimal extends Converter {
         public final static FloatToDecimal INSTANCE = new FloatToDecimal();
+        @Override
         public ConversionResult convert(AtomicValue input) {
             try {
                 return new BigDecimalValue(((FloatValue) input).getFloatValue());
@@ -376,6 +389,7 @@ public abstract class Converter {
 
     public static class IntegerToDecimal extends UnfailingConverter {
         public final static IntegerToDecimal INSTANCE = new IntegerToDecimal();
+        @Override
         public BigDecimalValue convert(AtomicValue input) {
             if (input instanceof Int64Value) {
                 return new BigDecimalValue(((Int64Value) input).longValue());
@@ -391,6 +405,7 @@ public abstract class Converter {
 
     public static class NumericToDecimal extends Converter {
         public final static NumericToDecimal INSTANCE = new NumericToDecimal();
+        @Override
         public ConversionResult convert(AtomicValue input) {
             try {
                 BigDecimal decimal = ((NumericValue) input).getDecimalValue();
@@ -407,6 +422,7 @@ public abstract class Converter {
 
     public static class BooleanToDecimal extends UnfailingConverter {
         public final static BooleanToDecimal INSTANCE = new BooleanToDecimal();
+        @Override
         public BigDecimalValue convert(AtomicValue input) {
             return ((BooleanValue) input).getBooleanValue() ? BigDecimalValue.ONE : BigDecimalValue.ZERO;
         }
@@ -419,6 +435,7 @@ public abstract class Converter {
 
     public static class DoubleToInteger extends Converter {
         public final static DoubleToInteger INSTANCE = new DoubleToInteger();
+        @Override
         public ConversionResult convert(AtomicValue input) {
             return IntegerValue.makeIntegerValue((DoubleValue)input);
         }
@@ -430,6 +447,7 @@ public abstract class Converter {
 
     public static class FloatToInteger extends Converter {
         public final static FloatToInteger INSTANCE = new FloatToInteger();
+        @Override
         public ConversionResult convert(AtomicValue input) {
             return IntegerValue.makeIntegerValue(new DoubleValue(((FloatValue) input).getDoubleValue()));
         }
@@ -442,6 +460,7 @@ public abstract class Converter {
 
     public static class DecimalToInteger extends UnfailingConverter {
         public final static DecimalToInteger INSTANCE = new DecimalToInteger();
+        @Override
         public IntegerValue convert(AtomicValue input) {
             if (input instanceof IntegerValue) {
                 return (IntegerValue)input;
@@ -456,6 +475,7 @@ public abstract class Converter {
 
     public static class NumericToInteger extends Converter {
         public final static NumericToInteger INSTANCE = new NumericToInteger();
+        @Override
         public ConversionResult convert(AtomicValue input) {
             NumericValue in = (NumericValue) input;
             try {
@@ -480,6 +500,7 @@ public abstract class Converter {
 
     public static class BooleanToInteger extends UnfailingConverter {
         public final static BooleanToInteger INSTANCE = new BooleanToInteger();
+        @Override
         public Int64Value convert(AtomicValue input) {
             return ((BooleanValue) input).getBooleanValue() ? Int64Value.PLUS_ONE : Int64Value.ZERO;
         }
@@ -491,6 +512,7 @@ public abstract class Converter {
 
     public static class DurationToDayTimeDuration extends UnfailingConverter {
         public final static DurationToDayTimeDuration INSTANCE = new DurationToDayTimeDuration();
+        @Override
         public DayTimeDurationValue convert(AtomicValue duration) {
             DurationValue d = (DurationValue)duration;
             if (d.signum() < 0) {
@@ -507,6 +529,7 @@ public abstract class Converter {
 
     public static class DurationToYearMonthDuration extends UnfailingConverter {
         public final static DurationToYearMonthDuration INSTANCE = new DurationToYearMonthDuration();
+        @Override
         public YearMonthDurationValue convert(AtomicValue input) {
             return YearMonthDurationValue.fromMonths(((DurationValue) input).getTotalMonths());
         }
@@ -518,6 +541,7 @@ public abstract class Converter {
 
     public static class DateToDateTime extends UnfailingConverter {
         public final static DateToDateTime INSTANCE = new DateToDateTime();
+        @Override
         public DateTimeValue convert(AtomicValue input) {
             return ((DateValue) input).toDateTime();
         }
@@ -529,6 +553,7 @@ public abstract class Converter {
 
     public static class DateTimeToDate extends UnfailingConverter {
         public final static DateTimeToDate INSTANCE = new DateTimeToDate();
+        @Override
         public DateValue convert(AtomicValue input) {
             DateTimeValue dt = (DateTimeValue)input;
             return new DateValue(dt.getYear(), dt.getMonth(), dt.getDay(), dt.getTimezoneInMinutes(), dt.isXsd10Rules());
@@ -541,6 +566,7 @@ public abstract class Converter {
 
     public static class DateTimeToGMonth extends UnfailingConverter {
         public static final DateTimeToGMonth INSTANCE = new DateTimeToGMonth();
+        @Override
         public GMonthValue convert(AtomicValue input) {
             DateTimeValue dt = (DateTimeValue) input;
             return new GMonthValue(dt.getMonth(), dt.getTimezoneInMinutes());
@@ -553,6 +579,7 @@ public abstract class Converter {
 
     public static class DateTimeToGYearMonth extends UnfailingConverter {
         public static final DateTimeToGYearMonth INSTANCE = new DateTimeToGYearMonth();
+        @Override
         public GYearMonthValue convert(AtomicValue input) {
             DateTimeValue dt = (DateTimeValue) input;
             return new GYearMonthValue(dt.getYear(), dt.getMonth(), dt.getTimezoneInMinutes(), dt.isXsd10Rules());
@@ -565,6 +592,7 @@ public abstract class Converter {
 
     public static class DateTimeToGYear extends UnfailingConverter {
         public static final DateTimeToGYear INSTANCE = new DateTimeToGYear();
+        @Override
         public GYearValue convert(AtomicValue input) {
             DateTimeValue dt = (DateTimeValue) input;
             return new GYearValue(dt.getYear(), dt.getTimezoneInMinutes(), dt.isXsd10Rules());
@@ -577,6 +605,7 @@ public abstract class Converter {
 
     public static class DateTimeToGMonthDay extends UnfailingConverter {
         public static final DateTimeToGMonthDay INSTANCE = new DateTimeToGMonthDay();
+        @Override
         public GMonthDayValue convert(AtomicValue input) {
             DateTimeValue dt = (DateTimeValue) input;
             return new GMonthDayValue(dt.getMonth(), dt.getDay(), dt.getTimezoneInMinutes());
@@ -589,6 +618,7 @@ public abstract class Converter {
 
     public static class DateTimeToGDay extends UnfailingConverter {
         public final static DateTimeToGDay INSTANCE = new DateTimeToGDay();
+        @Override
         public GDayValue convert(AtomicValue input) {
             DateTimeValue dt = (DateTimeValue) input;
             return new GDayValue(dt.getDay(), dt.getTimezoneInMinutes());
@@ -601,6 +631,7 @@ public abstract class Converter {
 
     public static class DateTimeToTime extends UnfailingConverter {
         public final static DateTimeToTime INSTANCE = new DateTimeToTime();
+        @Override
         public TimeValue convert(AtomicValue input) {
             DateTimeValue dt = (DateTimeValue) input;
             return new TimeValue(dt.getHour(), dt.getMinute(), dt.getSecond(), dt.getNanosecond(), dt.getTimezoneInMinutes(), "");
@@ -613,6 +644,7 @@ public abstract class Converter {
 
     public static class NumericToBoolean extends UnfailingConverter {
         public static final NumericToBoolean INSTANCE = new NumericToBoolean();
+        @Override
         public BooleanValue convert(AtomicValue input) {
             return BooleanValue.get(((NumericValue)input).effectiveBooleanValue());
         }
@@ -624,6 +656,7 @@ public abstract class Converter {
 
     public static class Base64BinaryToHexBinary extends UnfailingConverter {
         public static final Base64BinaryToHexBinary INSTANCE = new Base64BinaryToHexBinary();
+        @Override
         public HexBinaryValue convert(AtomicValue input) {
             return new HexBinaryValue(((Base64BinaryValue)input).getBinaryValue());
         }
@@ -636,6 +669,7 @@ public abstract class Converter {
 
     public static class HexBinaryToBase64Binary extends UnfailingConverter {
         public static final HexBinaryToBase64Binary INSTANCE = new HexBinaryToBase64Binary();
+        @Override
         public Base64BinaryValue convert(AtomicValue input) {
             return new Base64BinaryValue(((HexBinaryValue)input).getBinaryValue());
         }
@@ -647,6 +681,7 @@ public abstract class Converter {
 
     public static class NotationToQName extends UnfailingConverter {
         public static final NotationToQName INSTANCE = new NotationToQName();
+        @Override
         public QNameValue convert(AtomicValue input) {
             return new QNameValue(((NotationValue)input).getStructuredQName(), BuiltInAtomicType.QNAME);
         }
@@ -658,6 +693,7 @@ public abstract class Converter {
 
     public static class QNameToNotation extends UnfailingConverter {
         public static final QNameToNotation INSTANCE = new QNameToNotation();
+        @Override
         public NotationValue convert(AtomicValue input) {
             return new NotationValue(((QNameValue)input).getStructuredQName(), BuiltInAtomicType.NOTATION);
         }

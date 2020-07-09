@@ -75,6 +75,7 @@ public class SnapshotNode extends VirtualCopy implements NodeInfo {
      */
 
     /*@NotNull*/
+    @Override
     protected SnapshotNode wrap(NodeInfo node) {
         SnapshotNode vc = new SnapshotNode(node, pivot);
         vc.tree = tree;
@@ -88,6 +89,7 @@ public class SnapshotNode extends VirtualCopy implements NodeInfo {
      * as in the original tree.
      */
 
+    @Override
     public CharSequence getStringValueCS() {
         if (Navigator.isAncestorOrSelf(original, pivot)) {
             return pivot.getStringValueCS();
@@ -103,6 +105,7 @@ public class SnapshotNode extends VirtualCopy implements NodeInfo {
      */
 
     /*@Nullable*/
+    @Override
     public NodeInfo getParent() {
         if (parent == null) {
             NodeInfo basep = original.getParent();
@@ -132,6 +135,7 @@ public class SnapshotNode extends VirtualCopy implements NodeInfo {
      * @param locationId  Identifies the location of the instruction
      */
 
+    @Override
     public void copy(Receiver out, int copyOptions, Location locationId) throws XPathException {
         Navigator.copy(this, out, copyOptions, locationId);
     }
@@ -141,6 +145,7 @@ public class SnapshotNode extends VirtualCopy implements NodeInfo {
      * @return the typed value.
      */
 
+    @Override
     public AtomicSequence atomize() throws XPathException {
         switch (getNodeKind()) {
             case Type.ATTRIBUTE:
@@ -167,6 +172,7 @@ public class SnapshotNode extends VirtualCopy implements NodeInfo {
      * @return true if the node is an ID
      */
 
+    @Override
     public boolean isId() {
         return original.isId();
     }
@@ -177,6 +183,7 @@ public class SnapshotNode extends VirtualCopy implements NodeInfo {
      * @return true if the node is an IDREF or IDREFS element or attribute
      */
 
+    @Override
     public boolean isIdref() {
         return original.isIdref();
     }
@@ -187,6 +194,7 @@ public class SnapshotNode extends VirtualCopy implements NodeInfo {
      * @return true if the node has the is-nilled property
      */
 
+    @Override
     public boolean isNilled() {
         return original.isNilled();
     }
@@ -202,6 +210,7 @@ public class SnapshotNode extends VirtualCopy implements NodeInfo {
      * @see #getSystemId
      */
     /*@Nullable*/
+    @Override
     public String getPublicId() {
         return original != null ? original.getPublicId() : null;
     }
@@ -221,6 +230,7 @@ public class SnapshotNode extends VirtualCopy implements NodeInfo {
      * @see net.sf.saxon.om.AxisInfo
      */
 
+    @Override
     public AxisIterator iterateAxis(int axisNumber, Predicate<? super NodeInfo> nodeTest) {
         switch (getNodeKind()) {
             case Type.ATTRIBUTE:

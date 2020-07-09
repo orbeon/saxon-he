@@ -40,6 +40,7 @@ public abstract class AbstractXMLFilter implements XMLFilter {
      * @param parent The parent reader (the supplier of SAX events).
      */
 
+    @Override
     public void setParent(XMLReader parent) {
         parser = parent;
     }
@@ -54,6 +55,7 @@ public abstract class AbstractXMLFilter implements XMLFilter {
      * @return The parent filter, or null if none has been set.
      */
 
+    @Override
     public XMLReader getParent() {
         return parser;
     }
@@ -86,6 +88,7 @@ public abstract class AbstractXMLFilter implements XMLFilter {
      * @see #setFeature
      */
 
+    @Override
     public boolean getFeature(String name)
             throws SAXNotRecognizedException, SAXNotSupportedException {
         return parser.getFeature(name);
@@ -116,6 +119,7 @@ public abstract class AbstractXMLFilter implements XMLFilter {
      * @see #getFeature
      */
 
+    @Override
     public void setFeature(String name, boolean value)
             throws SAXNotRecognizedException, SAXNotSupportedException {
         parser.setFeature(name, value);
@@ -142,6 +146,7 @@ public abstract class AbstractXMLFilter implements XMLFilter {
      * @see #setProperty
      */
 
+    @Override
     public Object getProperty(String name)
             throws SAXNotRecognizedException {
         if (name.equals("http://xml.org/sax/properties/lexical-handler")) {
@@ -177,6 +182,7 @@ public abstract class AbstractXMLFilter implements XMLFilter {
      *          cannot set the requested value.
      */
 
+    @Override
     public void setProperty(String name, Object value)
             throws SAXNotRecognizedException, SAXNotSupportedException {
         if (name.equals("http://xml.org/sax/properties/lexical-handler")) {
@@ -197,6 +203,7 @@ public abstract class AbstractXMLFilter implements XMLFilter {
      * is separately registered, the ContentHandler will also act as the LexicalHandler
      */
 
+    @Override
     public void setContentHandler(ContentHandler handler) {
         contentHandler = handler;
         if (handler instanceof LexicalHandler && lexicalHandler == null) {
@@ -208,6 +215,7 @@ public abstract class AbstractXMLFilter implements XMLFilter {
      * Get the ContentHandler registered using setContentHandler()
      */
 
+    @Override
     public ContentHandler getContentHandler() {
         return contentHandler;
     }
@@ -227,6 +235,7 @@ public abstract class AbstractXMLFilter implements XMLFilter {
      * @see #getEntityResolver
      */
 
+    @Override
     public void setEntityResolver(EntityResolver resolver) {
         // XSLT output does not use entities, so the resolver is never used
     }
@@ -241,6 +250,7 @@ public abstract class AbstractXMLFilter implements XMLFilter {
      */
 
     /*@Nullable*/
+    @Override
     public EntityResolver getEntityResolver() {
         return null;
     }
@@ -260,6 +270,7 @@ public abstract class AbstractXMLFilter implements XMLFilter {
      * @see #getDTDHandler
      */
 
+    @Override
     public void setDTDHandler(DTDHandler handler) {
         // XSLT output does not include a DTD
     }
@@ -274,6 +285,7 @@ public abstract class AbstractXMLFilter implements XMLFilter {
      */
 
     /*@Nullable*/
+    @Override
     public DTDHandler getDTDHandler() {
         return null;
     }
@@ -296,6 +308,7 @@ public abstract class AbstractXMLFilter implements XMLFilter {
      * @see #getErrorHandler
      */
 
+    @Override
     public void setErrorHandler(ErrorHandler handler) {
         // No effect
     }
@@ -308,6 +321,7 @@ public abstract class AbstractXMLFilter implements XMLFilter {
      * @see #setErrorHandler
      */
     /*@Nullable*/
+    @Override
     public ErrorHandler getErrorHandler() {
         return null;
     }
@@ -332,6 +346,7 @@ public abstract class AbstractXMLFilter implements XMLFilter {
      * @see #parse(InputSource)
      */
 
+    @Override
     public void parse(String systemId) throws IOException, SAXException {
         InputSource input = new InputSource(systemId);
         parse(input);

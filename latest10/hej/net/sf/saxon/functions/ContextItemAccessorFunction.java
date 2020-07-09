@@ -38,6 +38,7 @@ public class ContextItemAccessorFunction extends ContextAccessorFunction {
      * @param context the context to which the function applies. Must not be null.
      */
 
+    @Override
     public Function bindContext(XPathContext context) throws XPathException {
         final Item ci = context.getContextItem();
         if (ci == null) {
@@ -77,6 +78,7 @@ public class ContextItemAccessorFunction extends ContextAccessorFunction {
      * @return the result of the evaluation, in the form of a Sequence
      * @throws net.sf.saxon.trans.XPathException if a dynamic error occurs during the evaluation of the expression
      */
+    @Override
     public Sequence call(XPathContext context, Sequence[] arguments) throws XPathException {
         // Shouldn't be called; but we handle it if it is
         return evaluate(context.getContextItem(), context);

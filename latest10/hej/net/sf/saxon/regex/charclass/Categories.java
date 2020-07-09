@@ -53,10 +53,12 @@ public class Categories {
             this.predicate = predicate;
         }
 
+        @Override
         public boolean test(int value) {
             return predicate.test(value);
         }
 
+        @Override
         public boolean isDisjoint(CharacterClass other) {
             if (other instanceof Category) {
                 char majorCat0 = label.charAt(0);
@@ -87,6 +89,7 @@ public class Categories {
             }
         }
 
+        @Override
         public IntSet getIntSet() {
             return extent(predicate);
         }

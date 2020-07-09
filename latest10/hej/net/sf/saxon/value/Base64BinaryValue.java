@@ -64,6 +64,7 @@ public class Base64BinaryValue extends AtomicValue implements AtomicMatchKey, Co
      */
 
     /*@NotNull*/
+    @Override
     public AtomicValue copyAsSubType(AtomicType typeLabel) {
         Base64BinaryValue v = new Base64BinaryValue(binaryValue);
         v.typeLabel = typeLabel;
@@ -81,6 +82,7 @@ public class Base64BinaryValue extends AtomicValue implements AtomicMatchKey, Co
     }
 
     /*@NotNull*/
+    @Override
     public BuiltInAtomicType getPrimitiveType() {
         return BuiltInAtomicType.BASE64_BINARY;
     }
@@ -92,6 +94,7 @@ public class Base64BinaryValue extends AtomicValue implements AtomicMatchKey, Co
      */
 
     /*@NotNull*/
+    @Override
     public String getPrimitiveStringValue() {
         return encode(binaryValue).toString();
     }
@@ -111,6 +114,7 @@ public class Base64BinaryValue extends AtomicValue implements AtomicMatchKey, Co
      */
 
     /*@NotNull*/
+    @Override
     public Comparable getSchemaComparable() {
         return new Base64BinaryComparable();
     }
@@ -126,6 +130,7 @@ public class Base64BinaryValue extends AtomicValue implements AtomicMatchKey, Co
             return Base64BinaryValue.this;
         }
 
+        @Override
         public int compareTo(/*@NotNull*/ Object o) {
             if (o instanceof Base64BinaryComparable &&
                     Arrays.equals(getBase64BinaryValue().binaryValue,
@@ -164,6 +169,7 @@ public class Base64BinaryValue extends AtomicValue implements AtomicMatchKey, Co
      */
 
     /*@Nullable*/
+    @Override
     public AtomicMatchKey getXPathComparable(boolean ordered, StringCollator collator, int implicitTimezone) {
         return this;
     }
@@ -357,6 +363,7 @@ public class Base64BinaryValue extends AtomicValue implements AtomicMatchKey, Co
         return d;
     }
 
+    @Override
     public int compareTo(Object o) {
         byte[] other = ((Base64BinaryValue)o).binaryValue;
         int len0 = binaryValue.length;

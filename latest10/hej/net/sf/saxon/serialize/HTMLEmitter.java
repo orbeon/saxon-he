@@ -179,6 +179,7 @@ public abstract class HTMLEmitter extends XMLEmitter {
      * @param escape true if all non ASCII characters should be escaped
      */
 
+    @Override
     public void setEscapeNonAscii(Boolean escape) {
         escapeNonAscii = escape;
     }
@@ -195,9 +196,11 @@ public abstract class HTMLEmitter extends XMLEmitter {
      * Output start of document
      */
 
+    @Override
     public void open() throws XPathException {
     }
 
+    @Override
     protected void openDocument() throws XPathException {
         if (writer == null) {
             makeWriter();
@@ -230,6 +233,7 @@ public abstract class HTMLEmitter extends XMLEmitter {
      * @param publicId    The DOCTYPE public identifier
      */
 
+    @Override
     protected void writeDocType(NodeName name, String displayName, String systemId, String publicId) throws XPathException {
         super.writeDocType(name, displayName, systemId, publicId);
     }
@@ -238,6 +242,7 @@ public abstract class HTMLEmitter extends XMLEmitter {
      * Output element start tag
      */
 
+    @Override
     public void startElement(NodeName elemName, SchemaType type,
                              AttributeMap attributes, NamespaceMap namespaces,
                              Location location, int properties) throws XPathException {
@@ -263,6 +268,7 @@ public abstract class HTMLEmitter extends XMLEmitter {
      * a URL.
      */
 
+    @Override
     protected void writeAttribute(NodeName elCode, String attname, CharSequence value, int properties) throws XPathException {
         try {
             if (uri.isEmpty()) {
@@ -282,6 +288,7 @@ public abstract class HTMLEmitter extends XMLEmitter {
      * Escape characters. Overrides the XML behaviour
      */
 
+    @Override
     protected void writeEscape(final CharSequence chars, final boolean inAttribute)
             throws java.io.IOException, XPathException {
 
@@ -424,6 +431,7 @@ public abstract class HTMLEmitter extends XMLEmitter {
      * @return the string used to close an empty element tag.
      */
 
+    @Override
     protected String emptyElementTagCloser(String displayName, NodeName nameCode) {
         return "></" + displayName + ">";
     }
@@ -432,6 +440,7 @@ public abstract class HTMLEmitter extends XMLEmitter {
      * Output an element end tag.
      */
 
+    @Override
     public void endElement() throws XPathException {
         NodeName nodeName = nodeNameStack.pop();
         String name = elementStack.peek();
@@ -453,6 +462,7 @@ public abstract class HTMLEmitter extends XMLEmitter {
      * Character data.
      */
 
+    @Override
     public void characters(CharSequence chars, Location locationId, int properties)
             throws XPathException {
         if (inScript > 0) {
@@ -465,6 +475,7 @@ public abstract class HTMLEmitter extends XMLEmitter {
      * Handle a processing instruction.
      */
 
+    @Override
     public void processingInstruction(String target, CharSequence data, Location locationId, int properties)
             throws XPathException {
         if (!started) {

@@ -55,6 +55,7 @@ public abstract class ParentNodeImpl extends NodeImpl {
      * @return the sequence number if there is one, or -1L otherwise.
      */
 
+    @Override
     protected final long getSequenceNumber() {
         return getRawSequenceNumber() == -1 ? -1L : (long) getRawSequenceNumber() << 32;
     }
@@ -82,6 +83,7 @@ public abstract class ParentNodeImpl extends NodeImpl {
      * Determine if the node has any children.
      */
 
+    @Override
     public final boolean hasChildNodes() {
         return children != null;
     }
@@ -156,6 +158,7 @@ public abstract class ParentNodeImpl extends NodeImpl {
      */
 
     /*@Nullable*/
+    @Override
     public final NodeImpl getFirstChild() {
         if (children == null) {
             return null;
@@ -173,6 +176,7 @@ public abstract class ParentNodeImpl extends NodeImpl {
      */
 
     /*@Nullable*/
+    @Override
     public final NodeImpl getLastChild() {
         if (children == null) {
             return null;
@@ -284,11 +288,13 @@ public abstract class ParentNodeImpl extends NodeImpl {
      * @return the accumulated character content of the element, including descendant elements.
      */
 
+    @Override
     public String getStringValue() {
         return getStringValueCS().toString();
     }
 
 
+    @Override
     public CharSequence getStringValueCS() {
         FastStringBuffer sb = null;
 
@@ -363,6 +369,7 @@ public abstract class ParentNodeImpl extends NodeImpl {
      *                                  implementation does not accept.
      */
 
+    @Override
     public void insertChildren(/*@NotNull*/ NodeInfo[] source, boolean atStart, boolean inherit) {
         if (atStart) {
             insertChildrenAt(source, 0, inherit);

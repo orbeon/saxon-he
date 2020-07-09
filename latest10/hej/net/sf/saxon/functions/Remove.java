@@ -51,6 +51,7 @@ public class Remove extends SystemFunction {
      * @return the result of the evaluation, in the form of a SequenceIterator
      * @throws net.sf.saxon.trans.XPathException if a dynamic error occurs during the evaluation of the expression
      */
+    @Override
     public Sequence call(XPathContext context, Sequence[] arguments) throws XPathException {
         NumericValue n = (NumericValue) arguments[1].head();
         int pos = (int) n.longValue();
@@ -77,6 +78,7 @@ public class Remove extends SystemFunction {
             this.removePosition = removePosition;
         }
 
+        @Override
         public Item next() throws XPathException {
             current = base.next();
             basePosition++;
@@ -87,6 +89,7 @@ public class Remove extends SystemFunction {
             return current;
         }
 
+        @Override
         public void close() {
             base.close();
         }
@@ -97,6 +100,7 @@ public class Remove extends SystemFunction {
          * The result is undefined if the next() method of the iterator has already returned null.
          */
 
+        @Override
         public int getLength() throws XPathException {
             if (base instanceof LastPositionFinder) {
                 int x = ((LastPositionFinder) base).getLength();
@@ -122,11 +126,13 @@ public class Remove extends SystemFunction {
          * It is acceptable for the properties of the iterator to change depending on its state.
          */
 
+        @Override
         public EnumSet<Property> getProperties() {
             return EnumSetTool.intersect(base.getProperties(), EnumSet.of(Property.LAST_POSITION_FINDER));
         }
     }
 
+    @Override
     public String getStreamerName() {
         return "Remove";
     }

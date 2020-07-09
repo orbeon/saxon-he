@@ -34,6 +34,7 @@ public class EqualityComparer implements AtomicComparer {
     }
 
     /*@Nullable*/
+    @Override
     public StringCollator getCollator() {
         return null;
     }
@@ -46,6 +47,7 @@ public class EqualityComparer implements AtomicComparer {
      *         is known. The original AtomicComparer is not modified
      */
 
+    @Override
     public AtomicComparer provideContext(XPathContext context) {
         return this;
     }
@@ -65,6 +67,7 @@ public class EqualityComparer implements AtomicComparer {
      * @throws ClassCastException if the objects are not comparable
      */
 
+    @Override
     public int compareAtomicValues(AtomicValue a, AtomicValue b) {
         throw new ClassCastException("Values are not comparable");
     }
@@ -81,6 +84,7 @@ public class EqualityComparer implements AtomicComparer {
      * @throws ClassCastException if the objects are not comparable
      */
 
+    @Override
     public boolean comparesEqual(AtomicValue a, AtomicValue b) {
         return a.equals(b);
     }
@@ -91,6 +95,7 @@ public class EqualityComparer implements AtomicComparer {
      *
      * @return a string representation of the AtomicComparer
      */
+    @Override
     public String save() {
         return "EQC";
     }

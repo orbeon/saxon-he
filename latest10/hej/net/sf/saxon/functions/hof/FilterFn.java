@@ -30,6 +30,7 @@ public class FilterFn extends SystemFunction {
      * @throws net.sf.saxon.trans.XPathException
      *          if a dynamic error occurs during the evaluation of the expression
      */
+    @Override
     public Sequence call(XPathContext context, Sequence[] arguments) throws XPathException {
         return SequenceTool.toLazySequence(
                 evalFilter((Function) arguments[1].head(),
@@ -41,6 +42,7 @@ public class FilterFn extends SystemFunction {
         ItemMappingFunction map = new ItemMappingFunction() {
             private final Sequence[] args = new Sequence[1];
 
+            @Override
             public Item mapItem(Item item) throws XPathException {
                 args[0] = item;
                 BooleanValue result = (BooleanValue) dynamicCall(function, context, args).head();
@@ -50,6 +52,7 @@ public class FilterFn extends SystemFunction {
         return new ItemMappingIterator(base, map);
     }
 
+    @Override
     public String getStreamerName() {
         return "FilterFn";
     }

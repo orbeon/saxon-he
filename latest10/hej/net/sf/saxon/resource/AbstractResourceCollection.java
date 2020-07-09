@@ -40,6 +40,7 @@ public abstract class AbstractResourceCollection implements ResourceCollection {
         this.config = config;
     }
 
+    @Override
     public String getCollectionURI() {
         return collectionURI;
     }
@@ -55,6 +56,7 @@ public abstract class AbstractResourceCollection implements ResourceCollection {
      * {@link FeatureKeys#STABLE_COLLECTION_URI} is set.
      */
 
+    @Override
     public boolean isStable(XPathContext context) {
         if (params == null) {
             return false;
@@ -371,6 +373,7 @@ public abstract class AbstractResourceCollection implements ResourceCollection {
      * default (returned by this method if not overridden) is false.
      */
 
+    @Override
     public boolean stripWhitespace(SpaceStrippingRule rules) {
         return false;
     }

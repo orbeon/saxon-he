@@ -97,6 +97,7 @@ public class SimpleMode extends Mode {
      * been supplied
      */
 
+    @Override
     public BuiltInRuleSet getBuiltInRuleSet() {
         return this.builtInRuleSet;
     }
@@ -943,6 +944,7 @@ public class SimpleMode extends Mode {
      * @param pack the containing package
      */
 
+    @Override
     public void allocateAllBindingSlots(final StylesheetPackage pack) {
         if (getDeclaringComponent().getDeclaringPackage() == pack && !bindingSlotsAllocated) {
             forceAllocateAllBindingSlots(pack, this, getDeclaringComponent().getComponentBindings());
@@ -1003,25 +1005,30 @@ public class SimpleMode extends Mode {
      * @param out used to display the expression tree
      */
 
+    @Override
     public void explainTemplateRules(final ExpressionPresenter out) throws XPathException {
         RuleAction action = r -> r.export(out, isDeclaredStreamable());
         RuleGroupAction group = new RuleGroupAction() {
             String type;
 
+            @Override
             public void start() {
                 out.startElement("ruleSet");
                 out.emitAttribute("type", type);
             }
 
+            @Override
             public void setString(String type) {
                 this.type = type;
             }
 
+            @Override
             public void start(int i) {
                 out.startElement("ruleChain");
                 out.emitAttribute("key", out.getNamePool().getClarkName(i));
             }
 
+            @Override
             public void end() {
                 out.endElement();
             }
@@ -1063,6 +1070,7 @@ public class SimpleMode extends Mode {
      * @param action an action that is to be applied to all the rules in this Mode
      * @throws XPathException if an error occurs processing any of the rules
      */
+    @Override
     public void processRules(RuleAction action) throws XPathException {
         processRules(action, null);
     }
@@ -1166,6 +1174,7 @@ public class SimpleMode extends Mode {
     public void optimizeRules() {
     }
 
+    @Override
     public int getMaxPrecedence() {
         try {
             MaxPrecedenceAction action = new MaxPrecedenceAction();
@@ -1179,6 +1188,7 @@ public class SimpleMode extends Mode {
     private static class MaxPrecedenceAction implements RuleAction {
         public int max = 0;
 
+        @Override
         public void processRule(Rule r) {
             if (r.getPrecedence() > max) {
                 max = r.getPrecedence();
@@ -1195,6 +1205,7 @@ public class SimpleMode extends Mode {
      * @throws XPathException if an error occurs processing the rules
      */
 
+    @Override
     public void computeRankings(int start) throws XPathException {
         // Now sort the rules into ranking order
         final RuleSorter sorter = new RuleSorter(start);
@@ -1205,6 +1216,7 @@ public class SimpleMode extends Mode {
         highestRank = start + sorter.getNumberOfRules();
     }
 
+    @Override
     public int getMaxRank() {
         return highestRank;
     }

@@ -51,6 +51,7 @@ public class UserFunctionReference extends Expression
         this.functionName = name;
     }
 
+    @Override
     public void setFunction(UserFunction function) {
         if (!function.getSymbolicName().equals(functionName)) {
             throw new IllegalArgumentException("Function name does not match");
@@ -127,6 +128,7 @@ public class UserFunctionReference extends Expression
      * @return the offset in the binding vector of the containing package where the target component
      * can be found.
      */
+    @Override
     public int getBindingSlot() {
         return bindingSlot;
     }
@@ -137,6 +139,7 @@ public class UserFunctionReference extends Expression
      *
      * @return the bound component if the binding has been fixed
      */
+    @Override
     public Component getFixedTarget() {
         return nominalTarget.getDeclaringComponent();
     }
@@ -149,6 +152,7 @@ public class UserFunctionReference extends Expression
      * @param slot the offset in the binding vector of the containing package where the target component
      *             can be found.
      */
+    @Override
     public void setBindingSlot(int slot) {
         bindingSlot = slot;
     }
@@ -158,6 +162,7 @@ public class UserFunctionReference extends Expression
      *
      * @return the symbolic name of the target component
      */
+    @Override
     public SymbolicName getSymbolicName() {
         return functionName;
     }
@@ -307,6 +312,7 @@ public class UserFunctionReference extends Expression
         return evaluateItem(context);
     }
 
+    @Override
     public String getExpressionName() {
         return "UserFunctionReference";
     }
@@ -315,10 +321,12 @@ public class UserFunctionReference extends Expression
         return getFunctionName().getEQName() + "#" + getArity();
     }
 
+    @Override
     public String toShortString() {
         return getFunctionName().getDisplayName() + "#" + getArity();
     }
 
+    @Override
     public void export(ExpressionPresenter out) throws XPathException {
         ExpressionPresenter.ExportOptions options = (ExpressionPresenter.ExportOptions) out.getOptions();
         if ("JS".equals(options.target) && options.targetVersion == 1){
@@ -378,6 +386,7 @@ public class UserFunctionReference extends Expression
             return controller;
         }
 
+        @Override
         public XPathContext makeNewContext(XPathContext oldContext, ContextOriginator originator) {
             if (controller.getConfiguration() != oldContext.getConfiguration()) {
                 throw new IllegalStateException("A function created under one Configuration cannot be called under a different Configuration");
@@ -393,6 +402,7 @@ public class UserFunctionReference extends Expression
         }
 
 
+        @Override
         public Sequence call(XPathContext context, Sequence[] args) throws XPathException {
             XPathContext c2 = function.makeNewContext(context, this);
             if (c2 instanceof XPathContextMajor && component != null) {
@@ -401,6 +411,7 @@ public class UserFunctionReference extends Expression
             return function.call(c2, args);
         }
 
+        @Override
         public FunctionItemType getFunctionItemType() {
             return function.getFunctionItemType();
         }
@@ -410,14 +421,17 @@ public class UserFunctionReference extends Expression
             return function.getAnnotations();
         }
 
+        @Override
         public StructuredQName getFunctionName() {
             return function.getFunctionName();
         }
 
+        @Override
         public int getArity() {
             return function.getArity();
         }
 
+        @Override
         public String getDescription() {
             return function.getDescription();
         }

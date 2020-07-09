@@ -38,6 +38,7 @@ public class HomogeneityCheckerIterator implements SequenceIterator {
         state = 0;
     }
 
+    @Override
     public void close() {
         base.close();
     }
@@ -52,6 +53,7 @@ public class HomogeneityCheckerIterator implements SequenceIterator {
 
 
     /*@Nullable*/
+    @Override
     public Item next() throws XPathException {
         Item item = base.next();
         if (item == null) {

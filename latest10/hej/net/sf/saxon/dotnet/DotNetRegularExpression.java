@@ -59,6 +59,7 @@ public class DotNetRegularExpression implements RegularExpression {
      * to matched subgroups.
      */
 
+    @Override
     public RegexIterator analyze(CharSequence input) {
         return new DotNetRegexIterator(input.toString(), pattern);
     }
@@ -70,6 +71,7 @@ public class DotNetRegularExpression implements RegularExpression {
      * @return true if the string matches, false otherwise
      */
 
+    @Override
     public boolean containsMatch(CharSequence input) {
         return pattern.IsMatch(input.toString());
     }
@@ -81,6 +83,7 @@ public class DotNetRegularExpression implements RegularExpression {
      * @return true if the string matches, false otherwise
      */
 
+    @Override
     public boolean matches(CharSequence input) {
         Match m = pattern.Match(input.toString());
         return (m.get_Success() && m.get_Length() == input.length());
@@ -97,6 +100,7 @@ public class DotNetRegularExpression implements RegularExpression {
      *          if the replacement string is invalid
      */
 
+    @Override
     public CharSequence replace(CharSequence input, CharSequence replacement) throws XPathException {
         // preprocess the replacement string: .NET uses $$ to represent $, and doesn't treat \ specially
         // The calling code will already have validated the replacement string, so we can assume for example
@@ -184,6 +188,7 @@ public class DotNetRegularExpression implements RegularExpression {
      * @return a SequenceIterator containing the resulting tokens, as objects of type StringValue
      */
 
+    @Override
     public AtomicIterator tokenize(CharSequence input) {
         return new DotNetTokenIterator(input, pattern);
     }

@@ -50,11 +50,13 @@ public class XSLNumber extends StyleElement {
      * @return true - it is an instruction
      */
 
+    @Override
     public boolean isInstruction() {
         return true;
     }
 
 
+    @Override
     public void prepareAttributes() {
 
         String selectAtt = null;
@@ -191,6 +193,7 @@ public class XSLNumber extends StyleElement {
 
     }
 
+    @Override
     public void validate(ComponentDeclaration decl) throws XPathException {
         checkEmpty();
 
@@ -229,6 +232,7 @@ public class XSLNumber extends StyleElement {
         }
     }
 
+    @Override
     public Expression compile(Compilation exec, ComponentDeclaration decl) throws XPathException {
         boolean valueSpecified = value != null;
         if (value == null) {

@@ -31,6 +31,7 @@ public class XSLText extends XSLLeafNodeConstructor {
     private StringValue value;
 
 
+    @Override
     public void prepareAttributes() {
 
         String disableAtt = null;
@@ -51,6 +52,7 @@ public class XSLText extends XSLLeafNodeConstructor {
         }
     }
 
+    @Override
     public void validate(ComponentDeclaration decl) throws XPathException {
 
         value = StringValue.EMPTY_STRING;
@@ -73,10 +75,12 @@ public class XSLText extends XSLLeafNodeConstructor {
      */
 
     /*@Nullable*/
+    @Override
     protected String getErrorCodeForSelectPlusContent() {
         return null;     // not applicable
     }
 
+    @Override
     public Expression compile(Compilation exec, ComponentDeclaration decl) throws XPathException {
         if (isExpandingText()) {
             TextImpl child = (TextImpl)iterateAxis(AxisInfo.CHILD).next();

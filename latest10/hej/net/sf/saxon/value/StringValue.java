@@ -92,6 +92,7 @@ public class StringValue extends AtomicValue {
      *                  the value actually conforms to this type.
      */
 
+    @Override
     public AtomicValue copyAsSubType(AtomicType typeLabel) {
         StringValue v = new StringValue(value);
         v.typeLabel = typeLabel;
@@ -105,6 +106,7 @@ public class StringValue extends AtomicValue {
      * and xs:untypedAtomic. For external objects, the result is AnyAtomicType.
      */
 
+    @Override
     public BuiltInAtomicType getPrimitiveType() {
         return BuiltInAtomicType.STRING;
     }
@@ -146,6 +148,7 @@ public class StringValue extends AtomicValue {
      * Get the string value as a CharSequence
      */
 
+    @Override
     public final CharSequence getPrimitiveStringValue() {
         return value;
     }
@@ -348,6 +351,7 @@ public class StringValue extends AtomicValue {
      *         no ordering is defined, or will be a Comparable
      */
 
+    @Override
     public AtomicMatchKey getXPathComparable(boolean ordered, /*@NotNull*/ StringCollator collator, int implicitTimezone) {
         return collator.getCollationKey(value);
     }
@@ -397,6 +401,7 @@ public class StringValue extends AtomicValue {
      * @return true if the string has length greater than zero
      */
 
+    @Override
     public boolean effectiveBooleanValue() {
         return !isZeroLength();
     }
@@ -407,6 +412,7 @@ public class StringValue extends AtomicValue {
         return "\"" + value + '\"';
     }
 
+    @Override
     public String toShortString() {
         String s = value.toString();
         if (s.length() > 40) {
@@ -422,6 +428,7 @@ public class StringValue extends AtomicValue {
      * equality, not for ordering, and the equality rules for strings in XML schema are the same as in Java.
      */
 
+    @Override
     public Comparable getSchemaComparable() {
         return getStringValue();
     }
@@ -439,6 +446,7 @@ public class StringValue extends AtomicValue {
      * @return true if the two values are identical, false otherwise.
      */
 
+    @Override
     public boolean isIdentical(/*@NotNull*/ AtomicValue v) {
         return v instanceof StringValue &&
                 (this instanceof AnyURIValue == v instanceof AnyURIValue) &&
@@ -490,6 +498,7 @@ public class StringValue extends AtomicValue {
         }
 
         /*@Nullable*/
+        @Override
         public Int64Value next() {
             if (inpos < value.length()) {
                 int c = value.charAt(inpos++);
@@ -529,6 +538,7 @@ public class StringValue extends AtomicValue {
         }
 
         /*@Nullable*/
+        @Override
         public Int64Value next() {
             if (inpos < uValue.uLength()) {
                 return new Int64Value(uValue.uCharAt(inpos++));

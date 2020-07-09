@@ -22,11 +22,13 @@ public class ISO88591CharacterSet implements CharacterSet {
         return theInstance;
     }
 
+    @Override
     public final boolean inCharset(int c) {
         return c <= 0xff;
     }
 
     /*@NotNull*/
+    @Override
     public String getCanonicalName() {
         return "ISO-8859-1";
     }

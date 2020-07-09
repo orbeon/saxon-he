@@ -71,6 +71,7 @@ public class JRegexIterator implements RegexIterator, LastPositionFinder {
      * @return the next item in the sequence
      */
 
+    @Override
     public StringValue next() {
         if (next == null && prevEnd >= 0) {
             // we've returned a match (or we're at the start), so find the next match
@@ -124,6 +125,7 @@ public class JRegexIterator implements RegexIterator, LastPositionFinder {
      *         It is acceptable for the properties of the iterator to change depending on its state.
      */
 
+    @Override
     public EnumSet<Property> getProperties() {
         return EnumSet.of(Property.LAST_POSITION_FINDER);
     }
@@ -136,6 +138,7 @@ public class JRegexIterator implements RegexIterator, LastPositionFinder {
      *         does not match
      */
 
+    @Override
     public boolean isMatching() {
         return next == null && prevEnd >= 0;
     }
@@ -148,6 +151,7 @@ public class JRegexIterator implements RegexIterator, LastPositionFinder {
      *         within the regular expression
      */
 
+    @Override
     public String getRegexGroup(int number) {
         if (!isMatching()) return null;
         if (number > matcher.groupCount() || number < 0) return "";
@@ -159,6 +163,7 @@ public class JRegexIterator implements RegexIterator, LastPositionFinder {
     /**
      * Get the number of captured groups
      */
+    @Override
     public int getNumberOfGroups() {
         return matcher.groupCount();
     }
@@ -172,6 +177,7 @@ public class JRegexIterator implements RegexIterator, LastPositionFinder {
      * @param action  defines the processing to be performed at the start and end of a group
      */
 
+    @Override
     public void processMatchingSubstring(MatchHandler action) throws XPathException {
         int c = matcher.groupCount();
         if (c == 0) {

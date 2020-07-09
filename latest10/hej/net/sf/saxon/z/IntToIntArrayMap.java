@@ -45,6 +45,7 @@ public class IntToIntArrayMap implements IntToIntMap {
     /**
      * Clear the map.
      */
+    @Override
     public void clear() {
         used = 0;
     }
@@ -55,6 +56,7 @@ public class IntToIntArrayMap implements IntToIntMap {
      * @param key Key
      * @return true if the key is mapped
      */
+    @Override
     public boolean find(int key) {
         for (int i = 0; i < used; i++) {
             if (keys[i] == key) {
@@ -70,6 +72,7 @@ public class IntToIntArrayMap implements IntToIntMap {
      * @param key Key
      * @return the value, or the default value if not found.
      */
+    @Override
     public int get(int key) {
         for (int i = 0; i < used; i++) {
             if (keys[i] == key) {
@@ -86,6 +89,7 @@ public class IntToIntArrayMap implements IntToIntMap {
      *         exists for the supplied key
      */
 
+    @Override
     public int getDefaultValue() {
         return defaultValue;
     }
@@ -98,6 +102,7 @@ public class IntToIntArrayMap implements IntToIntMap {
      */
 
     /*@NotNull*/
+    @Override
     public IntIterator keyIterator() {
         return new KeyIterator();
     }
@@ -108,6 +113,7 @@ public class IntToIntArrayMap implements IntToIntMap {
      * @param key   Key
      * @param value Value
      */
+    @Override
     public void put(int key, int value) {
         for (int i = 0; i < used; i++) {
             if (keys[i] == key) {
@@ -133,6 +139,7 @@ public class IntToIntArrayMap implements IntToIntMap {
      * @param key Key to remove
      * @return true if the value was removed
      */
+    @Override
     public boolean remove(int key) {
         for (int i = 0; i < used; i++) {
             if (keys[i] == key) {
@@ -149,6 +156,7 @@ public class IntToIntArrayMap implements IntToIntMap {
      * @param defaultValue the value to be returned by {@link #get(int)} if no entry
      *                     exists for the supplied key
      */
+    @Override
     public void setDefaultValue(int defaultValue) {
         this.defaultValue = defaultValue;
     }
@@ -158,6 +166,7 @@ public class IntToIntArrayMap implements IntToIntMap {
      *
      * @return the size
      */
+    @Override
     public int size() {
         return used;
     }
@@ -171,10 +180,12 @@ public class IntToIntArrayMap implements IntToIntMap {
             i = 0;
         }
 
+        @Override
         public boolean hasNext() {
             return i < used;
         }
 
+        @Override
         public int next() {
             return keys[i++];
         }

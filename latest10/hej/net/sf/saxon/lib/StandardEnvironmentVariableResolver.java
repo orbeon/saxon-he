@@ -24,6 +24,7 @@ public class StandardEnvironmentVariableResolver implements EnvironmentVariableR
      * @return a set of strings; each such string should be an acceptable argument to the
      *         method {@link #getEnvironmentVariable(String)}
      */
+    @Override
     public Set<String> getAvailableEnvironmentVariables() {
         Map<String, String> vars = System.getenv();
         return vars.keySet();
@@ -37,6 +38,7 @@ public class StandardEnvironmentVariableResolver implements EnvironmentVariableR
      *         not defined. The method must not return null if the name is in the list of variables
      *         returned by the method {@link #getAvailableEnvironmentVariables()}
      */
+    @Override
     public String getEnvironmentVariable(String name) {
         return System.getenv(name);
     }

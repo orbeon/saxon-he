@@ -1035,6 +1035,7 @@ public abstract class Expression implements IdentityComparable, ExportAgent, Loc
      * in the target environment.
      */
 
+    @Override
     public abstract void export(ExpressionPresenter out) throws XPathException;
 
     /**
@@ -1135,6 +1136,7 @@ public abstract class Expression implements IdentityComparable, ExportAgent, Loc
      *         location information by reference to a location provider
      */
 
+    @Override
     public final Location getLocation() {
         int limit = 0;
         Expression exp = this;
@@ -1480,6 +1482,7 @@ public abstract class Expression implements IdentityComparable, ExportAgent, Loc
     }
 
     /*@Nullable*/
+    @Override
     public StructuredQName getObjectName() {
         return null;
     }
@@ -1680,6 +1683,7 @@ public abstract class Expression implements IdentityComparable, ExportAgent, Loc
      * @param other the value to be compared with
      * @return true if the two values are indentical, false otherwise
      */
+    @Override
     public boolean isIdentical(IdentityComparable other) {
         return this == other;
     }
@@ -1689,6 +1693,7 @@ public abstract class Expression implements IdentityComparable, ExportAgent, Loc
      *
      * @return a hashCode suitable for use when testing for identity.
      */
+    @Override
     public int identityHashCode() {
         return System.identityHashCode(Expression.this.getLocation());
     }

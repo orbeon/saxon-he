@@ -92,6 +92,7 @@ public abstract class NodeOverNodeInfo implements Node {
      *         same node in the tree.
      */
 
+    @Override
     public final boolean isSameNode(Node other) {
         return other instanceof NodeOverNodeInfo &&
                 node.equals(((NodeOverNodeInfo) other).node);
@@ -129,6 +130,7 @@ public abstract class NodeOverNodeInfo implements Node {
      * the base URI of the parent node.
      */
 
+    @Override
     public String getBaseURI() {
         return node.getBaseURI();
     }
@@ -141,6 +143,7 @@ public abstract class NodeOverNodeInfo implements Node {
      *         as "#text" or "#comment"
      */
 
+    @Override
     public String getNodeName() {
         switch (node.getNodeKind()) {
             case Type.DOCUMENT:
@@ -173,6 +176,7 @@ public abstract class NodeOverNodeInfo implements Node {
      *         for an attribute it is the local part of the attribute name. Other node types return null.
      */
 
+    @Override
     public String getLocalName() {
         switch (node.getNodeKind()) {
             case Type.ELEMENT:
@@ -202,6 +206,7 @@ public abstract class NodeOverNodeInfo implements Node {
      *         <code>false</code> otherwise.
      */
 
+    @Override
     public boolean hasChildNodes() {
         return node.hasChildNodes();
     }
@@ -216,6 +221,7 @@ public abstract class NodeOverNodeInfo implements Node {
      * @since DOM Level 2
      */
 
+    @Override
     public boolean hasAttributes() {
         return true;
     }
@@ -226,6 +232,7 @@ public abstract class NodeOverNodeInfo implements Node {
      * in Saxon (see {@link Type}) are the same as those assigned in the DOM
      */
 
+    @Override
     public short getNodeType() {
         short kind = (short) node.getNodeKind();
         if (kind == Type.NAMESPACE) {
@@ -241,6 +248,7 @@ public abstract class NodeOverNodeInfo implements Node {
      * @return The Node object describing the containing element or root node.
      */
 
+    @Override
     public Node getParentNode() {
         return wrap(node.getParent());
     }
@@ -252,6 +260,7 @@ public abstract class NodeOverNodeInfo implements Node {
      *         child of its parent.
      */
 
+    @Override
     public Node getPreviousSibling() {
         return wrap(node.iterateAxis(AxisInfo.PRECEDING_SIBLING).next());
     }
@@ -263,6 +272,7 @@ public abstract class NodeOverNodeInfo implements Node {
      *         child of its parent.
      */
 
+    @Override
     public Node getNextSibling() {
         return wrap(node.iterateAxis(AxisInfo.FOLLOWING_SIBLING).next());
     }
@@ -273,6 +283,7 @@ public abstract class NodeOverNodeInfo implements Node {
      * @return the first child node of this node, or null if it has no children
      */
 
+    @Override
     public Node getFirstChild() {
         return wrap(node.iterateAxis(AxisInfo.CHILD).next());
     }
@@ -283,6 +294,7 @@ public abstract class NodeOverNodeInfo implements Node {
      * @return last child of this node, or null if it has no children
      */
 
+    @Override
     public Node getLastChild() {
         AxisIterator children = node.iterateAxis(AxisInfo.CHILD);
         NodeInfo last = null;
@@ -302,6 +314,7 @@ public abstract class NodeOverNodeInfo implements Node {
      * node value of an element node is null.
      */
 
+    @Override
     public String getNodeValue() {
         switch (node.getNodeKind()) {
             case Type.DOCUMENT:
@@ -322,6 +335,7 @@ public abstract class NodeOverNodeInfo implements Node {
      * Set the node value. Always fails
      */
 
+    @Override
     public void setNodeValue(String nodeValue) throws DOMException {
         disallowUpdate();
     }
@@ -332,6 +346,7 @@ public abstract class NodeOverNodeInfo implements Node {
      * nodes.
      */
 
+    @Override
     public NodeList getChildNodes() {
         List<Node> nodes = new ArrayList<>(10);
         for (NodeInfo child : node.children()) {
@@ -345,6 +360,7 @@ public abstract class NodeOverNodeInfo implements Node {
      * it is an <code>Element</code>) or <code>null</code> otherwise.
      */
 
+    @Override
     public NamedNodeMap getAttributes() {
         return null;
     }
@@ -353,6 +369,7 @@ public abstract class NodeOverNodeInfo implements Node {
      * Return the <code>Document</code> object associated with this node.
      */
 
+    @Override
     public Document getOwnerDocument() {
         return (Document) wrap(node.getRoot());
     }
@@ -368,6 +385,7 @@ public abstract class NodeOverNodeInfo implements Node {
      * @throws org.w3c.dom.DOMException NO_MODIFICATION_ALLOWED_ERR: Always raised.
      */
 
+    @Override
     public Node insertBefore(Node newChild,
                              Node refChild)
             throws DOMException {
@@ -386,6 +404,7 @@ public abstract class NodeOverNodeInfo implements Node {
      * @throws org.w3c.dom.DOMException NO_MODIFICATION_ALLOWED_ERR: Always raised.
      */
 
+    @Override
     public Node replaceChild(Node newChild,
                              Node oldChild)
             throws DOMException {
@@ -402,6 +421,7 @@ public abstract class NodeOverNodeInfo implements Node {
      * @throws org.w3c.dom.DOMException NO_MODIFICATION_ALLOWED_ERR: Always raised.
      */
 
+    @Override
     public Node removeChild(Node oldChild) throws DOMException {
         disallowUpdate();
         return null;
@@ -416,6 +436,7 @@ public abstract class NodeOverNodeInfo implements Node {
      * @throws org.w3c.dom.DOMException <br> NO_MODIFICATION_ALLOWED_ERR: Always raised.
      */
 
+    @Override
     public Node appendChild(Node newChild) throws DOMException {
         disallowUpdate();
         return null;
@@ -431,6 +452,7 @@ public abstract class NodeOverNodeInfo implements Node {
      * @return The duplicate node.
      */
 
+    @Override
     public Node cloneNode(boolean deep) {
         disallowUpdate();
         return null;
@@ -447,6 +469,7 @@ public abstract class NodeOverNodeInfo implements Node {
      * @since DOM Level 2
      */
 
+    @Override
     public void normalize() {
         // null operation; nodes are always normalized
     }
@@ -467,6 +490,7 @@ public abstract class NodeOverNodeInfo implements Node {
      * @since DOM Level 2
      */
 
+    @Override
     public boolean isSupported(String feature,
                                String version) {
         return (feature.equalsIgnoreCase("XML") || feature.equalsIgnoreCase("Core")) &&
@@ -492,6 +516,7 @@ public abstract class NodeOverNodeInfo implements Node {
      * @since DOM Level 2
      */
 
+    @Override
     public String getNamespaceURI() {
         if (node.getNodeKind() == Type.NAMESPACE) {
             return NamespaceConstant.XMLNS;
@@ -511,6 +536,7 @@ public abstract class NodeOverNodeInfo implements Node {
      * @since DOM Level 2
      */
 
+    @Override
     public String getPrefix() {
         if (node.getNodeKind() == Type.NAMESPACE) {
             if (node.getLocalPart().isEmpty()) {
@@ -527,6 +553,7 @@ public abstract class NodeOverNodeInfo implements Node {
      * Set the namespace prefix of this node. Always fails.
      */
 
+    @Override
     public void setPrefix(String prefix)
             throws DOMException {
         disallowUpdate();
@@ -542,6 +569,7 @@ public abstract class NodeOverNodeInfo implements Node {
      * @throws org.w3c.dom.DOMException if an error occurs
      */
 
+    @Override
     public short compareDocumentPosition(Node other) throws DOMException {
         final short DOCUMENT_POSITION_DISCONNECTED = 0x01;
         final short DOCUMENT_POSITION_PRECEDING = 0x02;
@@ -582,6 +610,7 @@ public abstract class NodeOverNodeInfo implements Node {
      * @throws org.w3c.dom.DOMException if a dynamic error occurs
      */
 
+    @Override
     public String getTextContent() throws DOMException {
         if (node.getNodeKind() == Type.DOCUMENT) {
             return null;
@@ -597,6 +626,7 @@ public abstract class NodeOverNodeInfo implements Node {
      * @throws UnsupportedOperationException always
      */
 
+    @Override
     public void setTextContent(String textContent) throws UnsupportedOperationException {
         disallowUpdate();
     }
@@ -609,6 +639,7 @@ public abstract class NodeOverNodeInfo implements Node {
      * @return the corresponding prefix, if there is one, or null if not.
      */
 
+    @Override
     public String lookupPrefix(String namespaceURI) {
         if (node.getNodeKind() == Type.DOCUMENT) {
             return null;
@@ -634,6 +665,7 @@ public abstract class NodeOverNodeInfo implements Node {
      * @return true if this is the default namespace
      */
 
+    @Override
     public boolean isDefaultNamespace(String namespaceURI) {
         return namespaceURI.equals(lookupNamespaceURI(""));
     }
@@ -646,6 +678,7 @@ public abstract class NodeOverNodeInfo implements Node {
      *         not declared.
      */
 
+    @Override
     public String lookupNamespaceURI(String prefix) {
         if (node.getNodeKind() == Type.DOCUMENT) {
             return null;
@@ -670,6 +703,7 @@ public abstract class NodeOverNodeInfo implements Node {
      * @return true if the two nodes are deep-equal.
      */
 
+    @Override
     public boolean isEqualNode(Node arg) {
         if (!(arg instanceof NodeOverNodeInfo)) {
             throw new IllegalArgumentException("Other Node must wrap a Saxon NodeInfo");
@@ -700,6 +734,7 @@ public abstract class NodeOverNodeInfo implements Node {
      * @return the value of the feature. Always null in this implementation
      */
 
+    @Override
     public Object getFeature(String feature, String version) {
         return null;
     }
@@ -713,6 +748,7 @@ public abstract class NodeOverNodeInfo implements Node {
      * @return This implementation always throws an exception
      */
 
+    @Override
     public Object setUserData(String key, Object data, UserDataHandler handler) {
         disallowUpdate();
         return null;
@@ -725,6 +761,7 @@ public abstract class NodeOverNodeInfo implements Node {
      * @param key identifies the user data required
      * @return always null in this implementation
      */
+    @Override
     public Object getUserData(String key) {
         return null;
     }

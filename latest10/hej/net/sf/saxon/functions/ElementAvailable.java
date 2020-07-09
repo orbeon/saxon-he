@@ -194,6 +194,7 @@ public class ElementAvailable extends SystemFunction {
      * @throws net.sf.saxon.trans.XPathException
      *          if a dynamic error occurs during the evaluation of the expression
      */
+    @Override
     public BooleanValue call(XPathContext context, Sequence[] arguments) throws XPathException {
         String lexicalQName = arguments[0].head().getStringValue();
         boolean b = isElementAvailable(lexicalQName, getRetainedStaticContext().getPackageData().getTargetEdition(), context);

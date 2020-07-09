@@ -805,6 +805,7 @@ public class FormatDate extends SystemFunction implements Callable {
     }
 
 
+    @Override
     public ZeroOrOne call(XPathContext context, Sequence[] arguments) throws XPathException {
         CalendarValue value = (CalendarValue) arguments[0].head();
         if (value == null) {

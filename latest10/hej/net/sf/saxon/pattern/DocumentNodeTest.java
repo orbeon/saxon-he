@@ -40,6 +40,7 @@ public class DocumentNodeTest extends NodeTest {
      *
      * @return the smallest UType that subsumes this item type
      */
+    @Override
     public UType getUType() {
         return UType.DOCUMENT;
     }
@@ -75,6 +76,7 @@ public class DocumentNodeTest extends NodeTest {
      * @return true if the node matches the Pattern, false otherwise
      */
 
+    @Override
     public boolean test(NodeInfo node) {
         if (node.getNodeKind() != Type.DOCUMENT) {
             return false;
@@ -106,6 +108,7 @@ public class DocumentNodeTest extends NodeTest {
      * Determine the default priority of this node test when used on its own as a Pattern
      */
 
+    @Override
     public final double getDefaultPriority() {
         return elementTest.getDefaultPriority();
     }
@@ -116,6 +119,7 @@ public class DocumentNodeTest extends NodeTest {
      * @return the type of node matched by this pattern. e.g. Type.ELEMENT or Type.TEXT
      */
 
+    @Override
     public int getPrimitiveType() {
         return Type.DOCUMENT;
     }

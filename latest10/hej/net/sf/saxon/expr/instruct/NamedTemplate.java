@@ -87,6 +87,7 @@ public class NamedTemplate extends Actor implements TraceableComponent {
         this.absentFocus = absentFocus;
     }
 
+    @Override
     public SymbolicName getSymbolicName() {
         if (getTemplateName() == null) {
             return null;
@@ -118,6 +119,7 @@ public class NamedTemplate extends Actor implements TraceableComponent {
      * @param body the body of the template
      */
 
+    @Override
     public void setBody(Expression body) {
         super.setBody(body);
         bodyIsTailCallReturner = (body instanceof TailCallReturner);
@@ -138,6 +140,7 @@ public class NamedTemplate extends Actor implements TraceableComponent {
      * variable name, key name, element name, etc. This is used only where the name is known statically.
      */
 
+    @Override
     public StructuredQName getObjectName() {
         return templateName;
     }
@@ -270,6 +273,7 @@ public class NamedTemplate extends Actor implements TraceableComponent {
      * Output diagnostic explanation to an ExpressionPresenter
      */
 
+    @Override
     public void export(ExpressionPresenter presenter) throws XPathException {
         presenter.startElement("template");
         presenter.emitAttribute("name", getTemplateName());

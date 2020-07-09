@@ -41,6 +41,7 @@ public class UntypedAtomicValue extends StringValue {
      */
 
     /*@NotNull*/
+    @Override
     public AtomicValue copyAsSubType(AtomicType typeLabel) {
         if (!typeLabel.equals(BuiltInAtomicType.UNTYPED_ATOMIC)) {
             throw new UnsupportedOperationException();
@@ -56,6 +57,7 @@ public class UntypedAtomicValue extends StringValue {
      */
 
     /*@NotNull*/
+    @Override
     public BuiltInAtomicType getPrimitiveType() {
         return BuiltInAtomicType.UNTYPED_ATOMIC;
     }
@@ -65,6 +67,7 @@ public class UntypedAtomicValue extends StringValue {
      * the version of the method that returns a String.
      */
 
+    @Override
     public final CharSequence getStringValueCS() {
         return value;
     }
@@ -75,6 +78,7 @@ public class UntypedAtomicValue extends StringValue {
      * @return a short depiction of the string for use in error messages
      */
 
+    @Override
     public String toShortString() {
         return "u" + super.toShortString();
     }

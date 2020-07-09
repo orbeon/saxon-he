@@ -165,6 +165,7 @@ public interface MapItem extends Function {
      *
      * @return false (it is not an array)
      */
+    @Override
     default boolean isArray() {
         return false;
     }
@@ -174,6 +175,7 @@ public interface MapItem extends Function {
      *
      * @return true (it is a map)
      */
+    @Override
     default boolean isMap() {
         return true;
     }
@@ -196,6 +198,7 @@ public interface MapItem extends Function {
      * @return the result of atomization
      * @throws XPathException if atomization is not allowed for this kind of item
      */
+    @Override
     default AtomicSequence atomize() throws XPathException {
         throw new XPathException("Cannot atomize a map (" + toShortString() + ")", "FOTY0013");
     }
@@ -283,6 +286,7 @@ public interface MapItem extends Function {
      *
      * @return an array of OperandRole objects, one for each argument
      */
+    @Override
     default OperandRole[] getOperandRoles() {
         return new OperandRole[]{OperandRole.SINGLE_ATOMIC};
     }
@@ -294,6 +298,7 @@ public interface MapItem extends Function {
      *
      * @return the function item's type
      */
+    @Override
     default FunctionItemType getFunctionItemType(/*@Nullable*/) {
         return MapType.ANY_MAP_TYPE;
     }
@@ -303,6 +308,7 @@ public interface MapItem extends Function {
      *
      * @return the function name, or null for an anonymous inline function
      */
+    @Override
     default StructuredQName getFunctionName() {
         return null;
     }
@@ -314,6 +320,7 @@ public interface MapItem extends Function {
      *
      * @return a description of the function for use in error messages
      */
+    @Override
     default String getDescription() {
         return "map";
     }
@@ -323,6 +330,7 @@ public interface MapItem extends Function {
      *
      * @return the number of arguments in the function signature
      */
+    @Override
     default int getArity() {
         return 1;
     }
@@ -335,6 +343,7 @@ public interface MapItem extends Function {
      * @return a suitable context for evaluating the function (which may or may
      * not be the same as the caller's context)
      */
+    @Override
     default XPathContext makeNewContext(XPathContext callingContext, ContextOriginator originator) {
         return callingContext;
     }
@@ -348,6 +357,7 @@ public interface MapItem extends Function {
      * @throws XPathException if an error occurs evaluating
      *                        the supplied argument
      */
+    @Override
     default Sequence call(XPathContext context, Sequence[] args) throws XPathException {
         AtomicValue key = (AtomicValue) args[0].head();
         Sequence value = get(key);
@@ -373,6 +383,7 @@ public interface MapItem extends Function {
      * @see #getStringValueCS
      * @since 8.4
      */
+    @Override
     default String getStringValue() {
         throw new UnsupportedOperationException("A map has no string value");
     }
@@ -394,6 +405,7 @@ public interface MapItem extends Function {
      * @see #getStringValue
      * @since 8.4
      */
+    @Override
     default CharSequence getStringValueCS() {
         throw new UnsupportedOperationException("A map has no string value");
     }
@@ -425,6 +437,7 @@ public interface MapItem extends Function {
      *
      * @param other the other function item
      */
+    @Override
     default boolean deepEquals(Function other, XPathContext context, AtomicComparer comparer, int flags) throws XPathException {
         if (other instanceof MapItem &&
                 ((MapItem) other).size() == size()) {
@@ -447,10 +460,12 @@ public interface MapItem extends Function {
     }
 
     /*@Nullable*/
+    @Override
     default MapItem itemAt(int n) {
         return n == 0 ? this : null;
     }
 
+    @Override
     default boolean effectiveBooleanValue() throws XPathException {
         throw new XPathException("A map item has no effective boolean value");
     }
@@ -479,6 +494,7 @@ public interface MapItem extends Function {
     /**
      * Export information about this function item to the export() or explain() output
      */
+    @Override
     default void export(ExpressionPresenter out) throws XPathException {
         out.startElement("map");
         out.emitAttribute("size", "" + size());
@@ -489,6 +505,7 @@ public interface MapItem extends Function {
         out.endElement();
     }
 
+    @Override
     default boolean isTrustedResultType() {
         return true;
     }

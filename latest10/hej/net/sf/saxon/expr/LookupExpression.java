@@ -74,6 +74,7 @@ public class LookupExpression extends BinaryExpression {
      */
 
     /*@NotNull*/
+    @Override
     public ItemType getItemType() {
         if (isClassified) {
             if (isArrayLookup) {
@@ -117,6 +118,7 @@ public class LookupExpression extends BinaryExpression {
      */
 
     /*@NotNull*/
+    @Override
     public Expression typeCheck(ExpressionVisitor visitor, ContextItemStaticInfo contextInfo) throws XPathException {
 
         Configuration config = visitor.getConfiguration();
@@ -180,6 +182,7 @@ public class LookupExpression extends BinaryExpression {
         return this;
     }
 
+    @Override
     public Expression optimize(ExpressionVisitor visitor, ContextItemStaticInfo contextInfo) throws XPathException {
         getLhs().optimize(visitor, contextInfo);
         getRhs().optimize(visitor, contextInfo);
@@ -225,6 +228,7 @@ public class LookupExpression extends BinaryExpression {
      */
 
     /*@NotNull*/
+    @Override
     public LookupExpression copy(RebindingMap rebindings) {
         LookupExpression exp = new LookupExpression(getLhsExpression().copy(rebindings), getRhsExpression().copy(rebindings));
         ExpressionTool.copyLocationInfo(this, exp);
@@ -240,6 +244,7 @@ public class LookupExpression extends BinaryExpression {
      * Determine the static cardinality of the expression
      */
 
+    @Override
     public int computeCardinality() {
         if (isSingleContainer && isSingleEntry) {
             if (isArrayLookup) {
@@ -282,6 +287,7 @@ public class LookupExpression extends BinaryExpression {
      * get HashCode for comparing two expressions
      */
 
+    @Override
     public int computeHashCode() {
         return "LookupExpression".hashCode() ^ getLhsExpression().hashCode() ^ getRhsExpression().hashCode();
     }
@@ -293,6 +299,7 @@ public class LookupExpression extends BinaryExpression {
      */
 
     /*@NotNull*/
+    @Override
     public SequenceIterator iterate(final XPathContext context) throws XPathException {
         Configuration config = context.getConfiguration();
         if (isArrayLookup) {
@@ -413,6 +420,7 @@ public class LookupExpression extends BinaryExpression {
      * is written to the supplied output destination.
      */
 
+    @Override
     public void export(ExpressionPresenter destination) throws XPathException {
         destination.startElement("lookup", this);
         getLhsExpression().export(destination);

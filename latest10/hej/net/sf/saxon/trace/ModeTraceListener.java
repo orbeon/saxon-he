@@ -27,6 +27,7 @@ public class ModeTraceListener extends AbstractTraceListener {
      * Generate attributes to be included in the opening trace element
      */
 
+    @Override
     protected String getOpeningAttributes() {
         return "xmlns:xsl=\"" + NamespaceConstant.XSLT + '\"';
     }

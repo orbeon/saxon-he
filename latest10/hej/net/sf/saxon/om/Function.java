@@ -97,6 +97,7 @@ public interface Function extends Item, Callable, GroundedValue {
      * @throws XPathException if a dynamic error occurs within the function
      */
 
+    @Override
     Sequence call(XPathContext context, Sequence[] args) throws XPathException;
 
     /**

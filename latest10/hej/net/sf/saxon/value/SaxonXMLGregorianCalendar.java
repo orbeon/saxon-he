@@ -101,6 +101,7 @@ public class SaxonXMLGregorianCalendar extends XMLGregorianCalendar {
      * <p>Set all int fields to {@link javax.xml.datatype.DatatypeConstants#FIELD_UNDEFINED} and reference fields
      * to null.</p>
      */
+    @Override
     public void clear() {
         year = null;
         month = DatatypeConstants.FIELD_UNDEFINED;
@@ -118,6 +119,7 @@ public class SaxonXMLGregorianCalendar extends XMLGregorianCalendar {
      * the superclass, because it cannot distinguish the initial setting from subsequent changes.
      * This method is therefore synonymous with {@link #clear()}</p>
      */
+    @Override
     public void reset() {
         clear();
     }
@@ -131,6 +133,7 @@ public class SaxonXMLGregorianCalendar extends XMLGregorianCalendar {
      *                                  outside value constraints for the field as specified in
      *                                  <a href="#datetimefieldmapping">date/time field mapping table</a>.
      */
+    @Override
     public void setYear(BigInteger year) {
         calendarValue = null;
         this.year = year;
@@ -147,6 +150,7 @@ public class SaxonXMLGregorianCalendar extends XMLGregorianCalendar {
      * @param year value constraints are summarized in <a href="#datetimefield-year">year field of date/time field mapping table</a>.
      *             If year is {@link javax.xml.datatype.DatatypeConstants#FIELD_UNDEFINED}, then eon is set to <code>null</code>.
      */
+    @Override
     public void setYear(int year) {
         calendarValue = null;
         this.year = BigInteger.valueOf(year);
@@ -161,6 +165,7 @@ public class SaxonXMLGregorianCalendar extends XMLGregorianCalendar {
      *                                  outside value constraints for the field as specified in
      *                                  <a href="#datetimefieldmapping">date/time field mapping table</a>.
      */
+    @Override
     public void setMonth(int month) {
         calendarValue = null;
         this.month = month;
@@ -175,6 +180,7 @@ public class SaxonXMLGregorianCalendar extends XMLGregorianCalendar {
      *                                  outside value constraints for the field as specified in
      *                                  <a href="#datetimefieldmapping">date/time field mapping table</a>.
      */
+    @Override
     public void setDay(int day) {
         calendarValue = null;
         this.day = day;
@@ -190,6 +196,7 @@ public class SaxonXMLGregorianCalendar extends XMLGregorianCalendar {
      *                                  outside value constraints for the field as specified in
      *                                  <a href="#datetimefieldmapping">date/time field mapping table</a>.
      */
+    @Override
     public void setTimezone(int offset) {
         calendarValue = null;
         tzOffset = offset;
@@ -203,6 +210,7 @@ public class SaxonXMLGregorianCalendar extends XMLGregorianCalendar {
      * @throws IllegalArgumentException if <code>hour</code> parameter is outside value constraints for the field as specified in
      *                                  <a href="#datetimefieldmapping">date/time field mapping table</a>.
      */
+    @Override
     public void setHour(int hour) {
         calendarValue = null;
         this.hour = hour;
@@ -216,6 +224,7 @@ public class SaxonXMLGregorianCalendar extends XMLGregorianCalendar {
      * @throws IllegalArgumentException if <code>minute</code> parameter is outside value constraints for the field as specified in
      *                                  <a href="#datetimefieldmapping">date/time field mapping table</a>.
      */
+    @Override
     public void setMinute(int minute) {
         calendarValue = null;
         this.minute = minute;
@@ -229,6 +238,7 @@ public class SaxonXMLGregorianCalendar extends XMLGregorianCalendar {
      * @throws IllegalArgumentException if <code>second</code> parameter is outside value constraints for the field as specified in
      *                                  <a href="#datetimefieldmapping">date/time field mapping table</a>.
      */
+    @Override
     public void setSecond(int second) {
         calendarValue = null;
         this.second = second;
@@ -243,6 +253,7 @@ public class SaxonXMLGregorianCalendar extends XMLGregorianCalendar {
      * @throws IllegalArgumentException if <code>millisecond</code> parameter is outside value constraints for the field as specified
      *                                  in <a href="#datetimefieldmapping">date/time field mapping table</a>.
      */
+    @Override
     public void setMillisecond(int millisecond) {
         calendarValue = null;
         microsecond = millisecond * 1000;
@@ -257,6 +268,7 @@ public class SaxonXMLGregorianCalendar extends XMLGregorianCalendar {
      * @throws IllegalArgumentException if <code>fractional</code> parameter is outside value constraints for the field as specified
      *                                  in <a href="#datetimefieldmapping">date/time field mapping table</a>.
      */
+    @Override
     public void setFractionalSecond(/*@NotNull*/ BigDecimal fractional) {
         calendarValue = null;
         second = fractional.intValue();
@@ -277,6 +289,7 @@ public class SaxonXMLGregorianCalendar extends XMLGregorianCalendar {
      * @see #getYear()
      * @see #getEonAndYear()
      */
+    @Override
     public BigInteger getEon() {
         return year.divide(BigInteger.valueOf(1000000000));
     }
@@ -291,6 +304,7 @@ public class SaxonXMLGregorianCalendar extends XMLGregorianCalendar {
      * @see #getEon()
      * @see #getEonAndYear()
      */
+    @Override
     public int getYear() {
         return year.intValue();
     }
@@ -309,6 +323,7 @@ public class SaxonXMLGregorianCalendar extends XMLGregorianCalendar {
      * @see #getYear()
      */
     /*@Nullable*/
+    @Override
     public BigInteger getEonAndYear() {
         return year;
     }
@@ -320,6 +335,7 @@ public class SaxonXMLGregorianCalendar extends XMLGregorianCalendar {
      *
      * @return year  of this <code>XMLGregorianCalendar</code>.
      */
+    @Override
     public int getMonth() {
         return month;
     }
@@ -331,6 +347,7 @@ public class SaxonXMLGregorianCalendar extends XMLGregorianCalendar {
      *
      * @see #setDay(int)
      */
+    @Override
     public int getDay() {
         return day;
     }
@@ -343,6 +360,7 @@ public class SaxonXMLGregorianCalendar extends XMLGregorianCalendar {
      *
      * @see #setTimezone(int)
      */
+    @Override
     public int getTimezone() {
         return tzOffset;
     }
@@ -355,6 +373,7 @@ public class SaxonXMLGregorianCalendar extends XMLGregorianCalendar {
      *
      * @see #setTime(int, int, int)
      */
+    @Override
     public int getHour() {
         return hour;
     }
@@ -367,6 +386,7 @@ public class SaxonXMLGregorianCalendar extends XMLGregorianCalendar {
      *
      * @see #setTime(int, int, int)
      */
+    @Override
     public int getMinute() {
         return minute;
     }
@@ -386,6 +406,7 @@ public class SaxonXMLGregorianCalendar extends XMLGregorianCalendar {
      * @see #getMillisecond()
      * @see #setTime(int, int, int)
      */
+    @Override
     public int getSecond() {
         return second;
     }
@@ -433,6 +454,7 @@ public class SaxonXMLGregorianCalendar extends XMLGregorianCalendar {
      * @see #setTime(int, int, int, java.math.BigDecimal)
      */
     /*@Nullable*/
+    @Override
     public BigDecimal getFractionalSecond() {
         if (second == DatatypeConstants.FIELD_UNDEFINED) {
             return null;
@@ -458,6 +480,7 @@ public class SaxonXMLGregorianCalendar extends XMLGregorianCalendar {
      *         {@link javax.xml.datatype.DatatypeConstants#INDETERMINATE}.
      * @throws NullPointerException if <code>xmlGregorianCalendar</code> is null.
      */
+    @Override
     public int compare(/*@NotNull*/ XMLGregorianCalendar xmlGregorianCalendar) {
         return toCalendarValue().getSchemaComparable().compareTo(
                 ((SaxonXMLGregorianCalendar) xmlGregorianCalendar).toCalendarValue().getSchemaComparable());
@@ -471,6 +494,7 @@ public class SaxonXMLGregorianCalendar extends XMLGregorianCalendar {
      * @return a copy of this <code>XMLGregorianCalendar</code> normalized to UTC.
      */
     /*@NotNull*/
+    @Override
     public XMLGregorianCalendar normalize() {
         return new SaxonXMLGregorianCalendar(toCalendarValue().adjustTimezone(0));
     }
@@ -487,6 +511,7 @@ public class SaxonXMLGregorianCalendar extends XMLGregorianCalendar {
      * @throws IllegalStateException if the combination of set fields
      *                               does not match one of the eight defined XML Schema builtin date/time datatypes.
      */
+    @Override
     public String toXMLFormat() {
         return toCalendarValue().getStringValue();
     }
@@ -508,6 +533,7 @@ public class SaxonXMLGregorianCalendar extends XMLGregorianCalendar {
      *                               does not match one of the eight defined XML Schema builtin
      *                               date/time datatypes.
      */
+    @Override
     public QName getXMLSchemaType() {
         if (second == DatatypeConstants.FIELD_UNDEFINED) {
             if (year == null) {
@@ -538,6 +564,7 @@ public class SaxonXMLGregorianCalendar extends XMLGregorianCalendar {
      *
      * @return true if data values are valid.
      */
+    @Override
     public boolean isValid() {
         return true;
     }
@@ -554,6 +581,7 @@ public class SaxonXMLGregorianCalendar extends XMLGregorianCalendar {
      * @param duration Duration to add to this <code>XMLGregorianCalendar</code>.
      * @throws NullPointerException when <code>duration</code> parameter is <code>null</code>.
      */
+    @Override
     public void add(/*@NotNull*/ Duration duration) {
         try {
             CalendarValue cv = toCalendarValue().add(((SaxonDuration) duration).getDurationValue());
@@ -578,6 +606,7 @@ public class SaxonXMLGregorianCalendar extends XMLGregorianCalendar {
      *
      * @see #toGregorianCalendar(java.util.TimeZone, java.util.Locale, javax.xml.datatype.XMLGregorianCalendar)
      */
+    @Override
     public GregorianCalendar toGregorianCalendar() {
         return toCalendarValue().getCalendar();
     }
@@ -629,6 +658,7 @@ public class SaxonXMLGregorianCalendar extends XMLGregorianCalendar {
      * @return a java.util.GregorianCalendar conversion of this instance.
      */
     /*@NotNull*/
+    @Override
     public GregorianCalendar toGregorianCalendar(TimeZone timezone, Locale aLocale, /*@NotNull*/ XMLGregorianCalendar defaults) {
         GregorianCalendar gc = new GregorianCalendar(timezone, aLocale);
         gc.setGregorianChange(new Date(Long.MIN_VALUE));
@@ -658,6 +688,7 @@ public class SaxonXMLGregorianCalendar extends XMLGregorianCalendar {
      *                          {@link javax.xml.datatype.DatatypeConstants#FIELD_UNDEFINED}.
      * @return TimeZone for this.
      */
+    @Override
     public TimeZone getTimeZone(int defaultZoneoffset) {
         if (tzOffset == DatatypeConstants.FIELD_UNDEFINED) {
             if (defaultZoneoffset == DatatypeConstants.FIELD_UNDEFINED) {
@@ -676,6 +707,7 @@ public class SaxonXMLGregorianCalendar extends XMLGregorianCalendar {
      * @return copy of this <code>Object</code>
      */
     /*@NotNull*/
+    @Override
     @SuppressWarnings({"CloneDoesntCallSuperClone"})
     public Object clone() {
         SaxonXMLGregorianCalendar s = new SaxonXMLGregorianCalendar();

@@ -44,6 +44,7 @@ public class UriCollection extends SystemFunction {
         final Iterator<String> sources = rCollection.getResourceURIs(context);
         return new SequenceIterator() {
 
+            @Override
             public AnyURIValue next() {
                 if (sources.hasNext()) {
                     return new AnyURIValue(sources.next());
@@ -52,6 +53,7 @@ public class UriCollection extends SystemFunction {
                 }
             }
 
+            @Override
             public void close() {
                 if (sources instanceof Closeable) {
                     try {
@@ -74,6 +76,7 @@ public class UriCollection extends SystemFunction {
      * @throws net.sf.saxon.trans.XPathException
      *          if a dynamic error occurs during the evaluation of the expression
      */
+    @Override
     public Sequence call(XPathContext context, Sequence[] arguments) throws XPathException {
         if (arguments.length == 0) {
             return getDefaultUriCollection(context);

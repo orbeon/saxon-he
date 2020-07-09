@@ -49,6 +49,7 @@ public class ContextItemExpression extends Expression {
      *         in explain() output displaying the expression.
      */
 
+    @Override
     public String getExpressionName() {
         return "dot";
     }
@@ -61,6 +62,7 @@ public class ContextItemExpression extends Expression {
      */
 
     /*@NotNull*/
+    @Override
     public Expression copy(RebindingMap rebindings) {
         ContextItemExpression cie2 = new ContextItemExpression();
         cie2.staticInfo = staticInfo;
@@ -92,6 +94,7 @@ public class ContextItemExpression extends Expression {
      */
 
     /*@NotNull*/
+    @Override
     public Expression typeCheck(ExpressionVisitor visitor, /*@Nullable*/ ContextItemStaticInfo contextInfo) throws XPathException {
         if (contextInfo.getItemType() == ErrorType.getInstance()) {
             visitor.issueWarning("Evaluation will always fail: there is no context item", getLocation());
@@ -124,6 +127,7 @@ public class ContextItemExpression extends Expression {
      */
 
     /*@NotNull*/
+    @Override
     public Expression optimize(ExpressionVisitor visitor, ContextItemStaticInfo contextItemType) throws XPathException {
         // In XSLT, we don't catch this error at the typeCheck() phase because it's done one XPath expression
         // at a time. So we repeat the check here.
@@ -142,6 +146,7 @@ public class ContextItemExpression extends Expression {
      */
 
     /*@NotNull*/
+    @Override
     public ItemType getItemType() {
         return staticInfo.getItemType();
     }
@@ -154,6 +159,7 @@ public class ContextItemExpression extends Expression {
      * @return the static item type of the expression according to the XSLT 3.0 defined rules
      */
 
+    @Override
     public UType getStaticUType(UType contextItemType) {
         return contextItemType;
     }
@@ -173,6 +179,7 @@ public class ContextItemExpression extends Expression {
      * Get the static cardinality
      */
 
+    @Override
     public int computeCardinality() {
         return StaticProperty.EXACTLY_ONE;
     }
@@ -183,6 +190,7 @@ public class ContextItemExpression extends Expression {
      * @return the value {@link StaticProperty#NO_NODES_NEWLY_CREATED}
      */
 
+    @Override
     public int computeSpecialProperties() {
         int p = super.computeSpecialProperties();
         return p | StaticProperty.NO_NODES_NEWLY_CREATED | StaticProperty.CONTEXT_DOCUMENT_NODESET;
@@ -205,10 +213,12 @@ public class ContextItemExpression extends Expression {
      * get HashCode for comparing two expressions
      */
 
+    @Override
     public int computeHashCode() {
         return "ContextItemExpression".hashCode();
     }
 
+    @Override
     public int getIntrinsicDependencies() {
         return StaticProperty.DEPENDS_ON_CONTEXT_ITEM;
     }
@@ -234,6 +244,7 @@ public class ContextItemExpression extends Expression {
      *         expressions, it is the same as the input pathMapNode.
      */
 
+    @Override
     public PathMap.PathMapNodeSet addToPathMap(PathMap pathMap, PathMap.PathMapNodeSet pathMapNodeSet) {
         if (pathMapNodeSet == null) {
             pathMapNodeSet = new PathMap.PathMapNodeSet(pathMap.makeNewRoot(this));
@@ -250,6 +261,7 @@ public class ContextItemExpression extends Expression {
      *         axes.
      */
 
+    @Override
     public boolean isSubtreeExpression() {
         return true;
     }
@@ -288,6 +300,7 @@ public class ContextItemExpression extends Expression {
      */
 
     /*@NotNull*/
+    @Override
     public SequenceIterator iterate(XPathContext context) throws XPathException {
         Item item = context.getContextItem();
         if (item == null) {
@@ -300,6 +313,7 @@ public class ContextItemExpression extends Expression {
      * Evaluate the expression
      */
 
+    @Override
     public Item evaluateItem(XPathContext context) throws XPathException {
         Item item = context.getContextItem();
         if (item == null) {
@@ -331,6 +345,7 @@ public class ContextItemExpression extends Expression {
      * is written to the supplied output destination.
      */
 
+    @Override
     public void export(ExpressionPresenter destination) throws XPathException {
         destination.startElement("dot", this);
         ItemType type = getItemType();

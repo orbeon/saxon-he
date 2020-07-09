@@ -220,6 +220,7 @@ public class XdmMap extends XdmFunctionItem {
      * @since 9.6.
      */
 
+    @Override
     public Map<XdmAtomicValue, XdmValue> asMap() {
         return new HashMap<>(asImmutableMap());
     }
@@ -240,6 +241,7 @@ public class XdmMap extends XdmFunctionItem {
      *
      * @return <tt>true</tt> if this map contains no key-value mappings
      */
+    @Override
     public boolean isEmpty() {
         return getUnderlyingValue().isEmpty();
     }

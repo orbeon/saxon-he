@@ -46,10 +46,12 @@ public class JSONResource implements Resource {
     }
 
 
+    @Override
     public String getResourceURI() {
         return href;
     }
 
+    @Override
     public Item getItem(XPathContext context) throws XPathException {
         if (jsonStr == null) {
             jsonStr = details.obtainCharacterContent();
@@ -67,6 +69,7 @@ public class JSONResource implements Resource {
      * @return the string "application/json"
      */
 
+    @Override
     public String getContentType() {
         return "application/json";
     }

@@ -70,6 +70,7 @@ public final class ComputedAttribute extends AttributeCreator {
      * (This option is set in XQuery, but not in XSLT)
      */
 
+    @Override
     public void setRejectDuplicates() {
         setOptions(getOptions() | ReceiverOption.REJECT_DUPLICATES);
     }
@@ -78,6 +79,7 @@ public final class ComputedAttribute extends AttributeCreator {
      * Get the name of this instruction
      */
 
+    @Override
     public int getInstructionNameCode() {
         return StandardNames.XSL_ATTRIBUTE;
     }
@@ -138,6 +140,7 @@ public final class ComputedAttribute extends AttributeCreator {
      */
 
     /*@NotNull*/
+    @Override
     public ItemType getItemType() {
         return NodeKindTest.ATTRIBUTE;
     }
@@ -148,6 +151,7 @@ public final class ComputedAttribute extends AttributeCreator {
      * @return the static cardinality (exactly one)
      */
 
+    @Override
     public int getCardinality() {
         return StaticProperty.ALLOWS_ZERO_OR_ONE;
     }
@@ -169,12 +173,14 @@ public final class ComputedAttribute extends AttributeCreator {
      * @return a set of flags indicating static properties of this expression
      */
 
+    @Override
     public int computeSpecialProperties() {
         return super.computeSpecialProperties() |
                 StaticProperty.SINGLE_DOCUMENT_NODESET;
     }
 
 
+    @Override
     public void localTypeCheck(ExpressionVisitor visitor, ContextItemStaticInfo contextItemType) throws XPathException {
         nameOp.typeCheck(visitor, contextItemType);
 
@@ -244,6 +250,7 @@ public final class ComputedAttribute extends AttributeCreator {
 
 
     /*@NotNull*/
+    @Override
     public Expression optimize(ExpressionVisitor visitor, ContextItemStaticInfo contextItemType) throws XPathException {
         Expression exp = super.optimize(visitor, contextItemType);
         if (exp != this) {
@@ -270,6 +277,7 @@ public final class ComputedAttribute extends AttributeCreator {
      */
 
     /*@NotNull*/
+    @Override
     public Expression copy(RebindingMap rebindings) {
         ComputedAttribute exp = new ComputedAttribute(
                 getNameExp() == null ? null : getNameExp().copy(rebindings),
@@ -290,6 +298,7 @@ public final class ComputedAttribute extends AttributeCreator {
      * static validation can continue recursively.
      */
 
+    @Override
     public void checkPermittedContents(SchemaType parentType, boolean whole) throws XPathException {
         if (parentType instanceof SimpleType) {
             String msg = "Attributes are not permitted here: ";
@@ -314,6 +323,7 @@ public final class ComputedAttribute extends AttributeCreator {
      * @throws XPathException if a dynamic error occurs (for example, if the attribute name is invalid)
      */
 
+    @Override
     public NodeName evaluateNodeName(XPathContext context) throws XPathException {
         NamePool pool = context.getNamePool();
 
@@ -462,6 +472,7 @@ public final class ComputedAttribute extends AttributeCreator {
      * is written to the supplied output destination.
      */
 
+    @Override
     public void export(ExpressionPresenter out) throws XPathException {
         out.startElement("compAtt", this);
         if (getValidationAction() != Validation.SKIP) {

@@ -54,10 +54,12 @@ public class MergeIterator implements
         nextItem2 = (ObjectValue<ItemWithMergeKeys>)e2.next();
     }
 
+    @Override
     public boolean hasNext() {
         return nextItem1 != null || nextItem2 != null;
     }
 
+    @Override
     public ObjectValue<ItemWithMergeKeys> next() throws XPathException {
 
         // main merge loop: take an item from whichever set has the lower value otherwise take value from first and move iterator on by one.
@@ -104,6 +106,7 @@ public class MergeIterator implements
         return null;
     }
 
+    @Override
     public void close() {
         e1.close();
         e2.close();
@@ -119,6 +122,7 @@ public class MergeIterator implements
      *         It is acceptable for the properties of the iterator to change depending on its state.
      */
 
+    @Override
     public EnumSet<Property> getProperties() {
         return EnumSet.of(Property.LOOKAHEAD);
     }

@@ -105,6 +105,7 @@ public final class ValueOf extends SimpleNodeConstructor {
         return noNodeIfEmpty;
     }
 
+    @Override
     public String toShortString() {
         if (getSelect() instanceof StringLiteral) {
             return "text{" + Err.depict(((StringLiteral)getSelect()).getValue()) + "}";
@@ -134,6 +135,7 @@ public final class ValueOf extends SimpleNodeConstructor {
      * @return the namecode of the instruction name
      */
 
+    @Override
     public int getInstructionNameCode() {
         if (isNumberingInstruction) {
             return StandardNames.XSL_NUMBER;
@@ -165,10 +167,12 @@ public final class ValueOf extends SimpleNodeConstructor {
     }
 
     /*@NotNull*/
+    @Override
     public ItemType getItemType() {
         return NodeKindTest.TEXT;
     }
 
+    @Override
     public int computeCardinality() {
         if (noNodeIfEmpty) {
             return StaticProperty.ALLOWS_ZERO_OR_ONE;
@@ -177,6 +181,7 @@ public final class ValueOf extends SimpleNodeConstructor {
         }
     }
 
+    @Override
     public void localTypeCheck(ExpressionVisitor visitor, ContextItemStaticInfo contextItemType) {
         //
     }
@@ -208,6 +213,7 @@ public final class ValueOf extends SimpleNodeConstructor {
      */
 
     /*@NotNull*/
+    @Override
     public Expression copy(RebindingMap rebindings) {
         ValueOf exp = new ValueOf(getSelect().copy(rebindings),
                                   ReceiverOption.contains(options, ReceiverOption.DISABLE_ESCAPING), noNodeIfEmpty);
@@ -228,6 +234,7 @@ public final class ValueOf extends SimpleNodeConstructor {
      *          if the expression doesn't match the required content type
      */
 
+    @Override
     public void checkPermittedContents(SchemaType parentType, boolean whole) throws XPathException {
         // if the expression is a constant value, check that it is valid for the type
         if (getSelect() instanceof Literal) {
@@ -300,6 +307,7 @@ public final class ValueOf extends SimpleNodeConstructor {
      */
 
     /*@Nullable*/
+    @Override
     public TailCall processLeavingTail(Outputter output, XPathContext context) throws XPathException {
         if (noNodeIfEmpty) {
             StringValue value = (StringValue) getSelect().evaluateItem(context);
@@ -348,6 +356,7 @@ public final class ValueOf extends SimpleNodeConstructor {
      *
      */
 
+    @Override
     public void processValue(CharSequence value, Outputter output, XPathContext context) throws XPathException {
         output.characters(value, getLocation(), options);
     }
@@ -361,6 +370,7 @@ public final class ValueOf extends SimpleNodeConstructor {
      * @throws XPathException if a dynamic error occurs
      */
 
+    @Override
     public NodeInfo evaluateItem(XPathContext context) throws XPathException {
         try {
             CharSequence val;
@@ -395,6 +405,7 @@ public final class ValueOf extends SimpleNodeConstructor {
      * is written to the supplied output destination.
      */
 
+    @Override
     public void export(ExpressionPresenter out) throws XPathException {
         out.startElement("valueOf", this);
         String flags = "";

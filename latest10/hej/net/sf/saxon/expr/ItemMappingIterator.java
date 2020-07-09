@@ -99,12 +99,14 @@ public class ItemMappingIterator
         return action;
     }
 
+    @Override
     public boolean hasNext() {
         // Must only be called if this is a lookahead iterator, which will only be true if the base iterator
         // is a lookahead iterator and one-to-one is true
         return ((LookaheadIterator) base).hasNext();
     }
 
+    @Override
     public Item next() throws XPathException {
         while (true) {
             Item nextSource = base.next();
@@ -120,10 +122,12 @@ public class ItemMappingIterator
         }
     }
 
+    @Override
     public void close() {
         base.close();
     }
 
+    @Override
     public int getLength() throws XPathException {
         // Must only be called if this is a last-position-finder iterator, which will only be true if the base iterator
         // is a last-position-finder iterator and one-to-one is true
@@ -141,6 +145,7 @@ public class ItemMappingIterator
      *         It is acceptable for the properties of the iterator to change depending on its state.
      */
 
+    @Override
     public EnumSet<Property> getProperties() {
         if (oneToOne) {
             return EnumSetTool.intersect(

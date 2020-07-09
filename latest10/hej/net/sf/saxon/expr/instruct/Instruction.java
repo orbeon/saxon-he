@@ -47,6 +47,7 @@ public abstract class Instruction extends Expression implements TailCallReturner
      * This method indicates which of these methods is prefered. For instructions this is the process() method.
      */
 
+    @Override
     public int getImplementationMethod() {
         return Expression.PROCESS_METHOD;
     }
@@ -75,6 +76,7 @@ public abstract class Instruction extends Expression implements TailCallReturner
      *         in explain() output displaying the expression.
      */
 
+    @Override
     public String getExpressionName() {
         int code = getInstructionNameCode();
         if (code >= 0 & code < 1024) {
@@ -91,6 +93,7 @@ public abstract class Instruction extends Expression implements TailCallReturner
      */
 
     /*@NotNull*/
+    @Override
     public ItemType getItemType() {
         return Type.ITEM_TYPE;
     }
@@ -101,6 +104,7 @@ public abstract class Instruction extends Expression implements TailCallReturner
      * @return the static cardinality
      */
 
+    @Override
     public int computeCardinality() {
         return StaticProperty.ALLOWS_ZERO_OR_MORE;
     }
@@ -122,6 +126,7 @@ public abstract class Instruction extends Expression implements TailCallReturner
      *         been unwound so as to save stack space.
      */
 
+    @Override
     public abstract TailCall processLeavingTail(Outputter output, XPathContext context) throws XPathException;
 
     /**
@@ -131,6 +136,7 @@ public abstract class Instruction extends Expression implements TailCallReturner
      * @param context The dynamic context, giving access to the current node,
      */
 
+    @Override
     public void process(Outputter output, XPathContext context) throws XPathException {
         try {
             TailCall tc = processLeavingTail(output, context);
@@ -241,6 +247,7 @@ public abstract class Instruction extends Expression implements TailCallReturner
      * @return a set of flags indicating static properties of this expression
      */
 
+    @Override
     public int computeSpecialProperties() {
         int p = super.computeSpecialProperties();
         if (alwaysCreatesNewNodes()) {
@@ -323,6 +330,7 @@ public abstract class Instruction extends Expression implements TailCallReturner
      *                        expression
      */
 
+    @Override
     public Item evaluateItem(XPathContext context) throws XPathException {
         int m = getImplementationMethod();
         if ((m & EVALUATE_METHOD) != 0) {
@@ -350,6 +358,7 @@ public abstract class Instruction extends Expression implements TailCallReturner
      */
 
     /*@NotNull*/
+    @Override
     public SequenceIterator iterate(XPathContext context) throws XPathException {
         int m = getImplementationMethod();
         if ((m & EVALUATE_METHOD) != 0) {
@@ -384,6 +393,7 @@ public abstract class Instruction extends Expression implements TailCallReturner
      *                                      expression is not xs:string?
      */
 
+    @Override
     public final CharSequence evaluateAsString(XPathContext context) throws XPathException {
         Item item = evaluateItem(context);
         if (item == null) {

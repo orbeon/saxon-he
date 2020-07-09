@@ -24,6 +24,7 @@ public class CollationMatchKey implements AtomicMatchKey, Comparable {
         this.key = key;
     }
 
+    @Override
     public int compareTo(Object o) {
         if (o instanceof CollationMatchKey) {
             return key.compareTo(((CollationMatchKey) o).key);
@@ -47,6 +48,7 @@ public class CollationMatchKey implements AtomicMatchKey, Comparable {
      *
      * @return an atomic value that encapsulates this match key
      */
+    @Override
     public AtomicValue asAtomic() {
         return new Base64BinaryValue(key.toByteArray());
     }

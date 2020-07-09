@@ -342,6 +342,7 @@ public abstract class IntegerValue extends DecimalValue {
      */
 
     /*@NotNull*/
+    @Override
     public BuiltInAtomicType getPrimitiveType() {
         return BuiltInAtomicType.INTEGER;
     }
@@ -352,6 +353,7 @@ public abstract class IntegerValue extends DecimalValue {
      * @return a decimal representing this numeric value;
      */
 
+    @Override
     public abstract BigDecimal getDecimalValue();
 
     /**
@@ -361,6 +363,7 @@ public abstract class IntegerValue extends DecimalValue {
      * @return always true for this implementation
      */
 
+    @Override
     public boolean isWholeNumber() {
         return true;
     }
@@ -508,6 +511,7 @@ public abstract class IntegerValue extends DecimalValue {
      * @return true if the two values are identical, false otherwise.
      */
 
+    @Override
     public boolean isIdentical(/*@NotNull*/ AtomicValue v) {
         return (v instanceof IntegerValue) && equals(v);
     }

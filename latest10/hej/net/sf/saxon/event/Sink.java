@@ -26,6 +26,7 @@ public class Sink extends SequenceReceiver {
      * Start of event stream
      */
 
+    @Override
     public void open() {
     }
 
@@ -33,6 +34,7 @@ public class Sink extends SequenceReceiver {
      * End of event stream
      */
 
+    @Override
     public void close() {
     }
 
@@ -40,6 +42,7 @@ public class Sink extends SequenceReceiver {
      * Start of a document node.
      */
 
+    @Override
     public void startDocument(int properties) {
     }
 
@@ -47,6 +50,7 @@ public class Sink extends SequenceReceiver {
      * Notify the end of a document node
      */
 
+    @Override
     public void endDocument() {
     }
 
@@ -54,6 +58,7 @@ public class Sink extends SequenceReceiver {
      * Notify the start of an element
      */
 
+    @Override
     public void startElement(NodeName elemName, SchemaType type,
                              AttributeMap attributes, NamespaceMap namespaces,
                              Location location, int properties)
@@ -64,6 +69,7 @@ public class Sink extends SequenceReceiver {
      * End of element
      */
 
+    @Override
     public void endElement() {
     }
 
@@ -71,6 +77,7 @@ public class Sink extends SequenceReceiver {
      * Character data
      */
 
+    @Override
     public void characters(CharSequence chars, Location locationId, int properties) {
     }
 
@@ -79,6 +86,7 @@ public class Sink extends SequenceReceiver {
      * Processing Instruction
      */
 
+    @Override
     public void processingInstruction(String target, CharSequence data, Location locationId, int properties) {
     }
 
@@ -86,6 +94,7 @@ public class Sink extends SequenceReceiver {
      * Output a comment
      */
 
+    @Override
     public void comment(CharSequence chars, Location locationId, int properties) {
     }
 
@@ -98,6 +107,7 @@ public class Sink extends SequenceReceiver {
 *                       need to be copied. Values are {@link ReceiverOption#ALL_NAMESPACES}; the default (0) means
      */
 
+    @Override
     public void append(Item item, Location locationId, int copyNamespaces) {
     }
 
@@ -105,6 +115,7 @@ public class Sink extends SequenceReceiver {
      * Set the URI for an unparsed entity in the document.
      */
 
+    @Override
     public void setUnparsedEntity(String name, String uri, String publicId) {
     }
 
@@ -116,6 +127,7 @@ public class Sink extends SequenceReceiver {
      *         may supply untyped nodes instead of supplying the type annotation
      */
 
+    @Override
     public boolean usesTypeAnnotations() {
         return false;
     }

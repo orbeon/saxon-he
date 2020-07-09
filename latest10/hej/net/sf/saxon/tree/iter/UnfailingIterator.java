@@ -28,6 +28,7 @@ public interface UnfailingIterator extends SequenceIterator {
      * @return the next Item. If there are no more items, return null.
      */
 
+    @Override
     Item next();
 
     /**

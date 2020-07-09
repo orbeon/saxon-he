@@ -104,14 +104,17 @@ public abstract class ImmutableList<T> implements Iterable<T> {
      * @return an iterator over the list
      */
 
+    @Override
     public Iterator<T> iterator() {
         return new Iterator<T>() {
             private ImmutableList<T> list = ImmutableList.this;
 
+            @Override
             public boolean hasNext() {
                 return !list.isEmpty();
             }
 
+            @Override
             public T next() {
                 T element = list.head();
                 list = list.tail();

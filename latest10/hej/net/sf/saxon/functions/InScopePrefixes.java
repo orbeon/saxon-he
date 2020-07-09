@@ -43,6 +43,7 @@ public class InScopePrefixes extends SystemFunction {
      * @throws XPathException if a dynamic error occurs
      */
 
+    @Override
     public Sequence call(final XPathContext context, Sequence[] arguments) throws XPathException {
         final NodeInfo element = (NodeInfo) arguments[0].head();
         String[] prefixes = element.getAllNamespaces().getPrefixArray();

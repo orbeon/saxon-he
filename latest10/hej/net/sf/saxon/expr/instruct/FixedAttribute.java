@@ -63,6 +63,7 @@ public final class FixedAttribute extends AttributeCreator {
      * Get the name of this instruction (return 'xsl:attribute')
      */
 
+    @Override
     public int getInstructionNameCode() {
         return StandardNames.XSL_ATTRIBUTE;
     }
@@ -95,6 +96,7 @@ public final class FixedAttribute extends AttributeCreator {
         consumer.accept("name", getAttributeName());
     }
 
+    @Override
     public void localTypeCheck(ExpressionVisitor visitor, ContextItemStaticInfo contextItemType) throws XPathException {
         // If attribute name is xml:id, add whitespace normalization
         if (nodeName.equals(StandardNames.XML_ID_NAME) && !getSelect().isCallOn(NormalizeSpace_1.class)) {
@@ -179,6 +181,7 @@ public final class FixedAttribute extends AttributeCreator {
     }
 
 
+    @Override
     public int getCardinality() {
         return StaticProperty.EXACTLY_ONE;
     }
@@ -193,6 +196,7 @@ public final class FixedAttribute extends AttributeCreator {
      */
 
     /*@NotNull*/
+    @Override
     public Expression copy(RebindingMap rebindings) {
         FixedAttribute exp = new FixedAttribute(nodeName, getValidationAction(), getSchemaType());
         ExpressionTool.copyLocationInfo(this, exp);
@@ -201,6 +205,7 @@ public final class FixedAttribute extends AttributeCreator {
         return exp;
     }
 
+    @Override
     public NodeName evaluateNodeName(XPathContext context) {
         return nodeName;
     }
@@ -213,6 +218,7 @@ public final class FixedAttribute extends AttributeCreator {
      * static validation can continue recursively.
      */
 
+    @Override
     public void checkPermittedContents(SchemaType parentType, boolean whole) throws XPathException {
         int fp = nodeName.getFingerprint();
         if (fp == StandardNames.XSI_TYPE ||
@@ -254,6 +260,7 @@ public final class FixedAttribute extends AttributeCreator {
     }
 
 
+    @Override
     public NodeInfo evaluateItem(XPathContext context) throws XPathException {
         Orphan o = (Orphan) super.evaluateItem(context);
         assert o != null;
@@ -267,6 +274,7 @@ public final class FixedAttribute extends AttributeCreator {
      * is written to the supplied output destination.
      */
 
+    @Override
     public void export(ExpressionPresenter out) throws XPathException {
         out.startElement("att", this);
         out.emitAttribute("name", nodeName.getDisplayName());

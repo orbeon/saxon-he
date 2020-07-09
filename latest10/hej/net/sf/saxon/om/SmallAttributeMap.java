@@ -38,6 +38,7 @@ public class SmallAttributeMap implements AttributeMap {
      * @return The number of attributes in the map.
      */
 
+    @Override
     public int size() {
         return attributes.size();
     }
@@ -63,6 +64,7 @@ public class SmallAttributeMap implements AttributeMap {
         return null;
     }
 
+    @Override
     public AttributeInfo getByFingerprint(int fingerprint, NamePool namePool) {
         for (AttributeInfo info : attributes) {
             NodeName name = info.getNodeName();

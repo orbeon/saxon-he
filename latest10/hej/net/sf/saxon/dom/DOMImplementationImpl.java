@@ -30,6 +30,7 @@ class DOMImplementationImpl implements DOMImplementation {
      *         "", "3.0", "2.0", or "1.0".
      */
 
+    @Override
     public boolean hasFeature(String feature, String version) {
         return (feature.equalsIgnoreCase("XML") || feature.equalsIgnoreCase("Core")) &&
                 (version == null || version.isEmpty() ||
@@ -47,6 +48,7 @@ class DOMImplementationImpl implements DOMImplementation {
      * @since DOM Level 3
      */
 
+    @Override
     public Object getFeature(String feature,
                              String version) {
         return null;
@@ -69,6 +71,7 @@ class DOMImplementationImpl implements DOMImplementation {
      * @since DOM Level 2
      */
 
+    @Override
     public DocumentType createDocumentType(String qualifiedName,
                                            String publicId,
                                            String systemId)
@@ -91,6 +94,7 @@ class DOMImplementationImpl implements DOMImplementation {
      * @since DOM Level 2
      */
 /*@Nullable*/
+    @Override
     public Document createDocument(String namespaceURI,
                                    String qualifiedName,
                                    DocumentType doctype)

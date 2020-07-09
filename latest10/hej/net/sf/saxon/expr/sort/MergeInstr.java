@@ -250,6 +250,7 @@ public class MergeInstr extends Instruction {
      * static validation can continue recursively.
      */
 
+    @Override
     public void checkPermittedContents(SchemaType parentType, boolean whole) throws XPathException {
         getAction().checkPermittedContents(parentType, false);
     }
@@ -274,12 +275,14 @@ public class MergeInstr extends Instruction {
      */
 
     /*@NotNull*/
+    @Override
     public ItemType getItemType() {
         return getAction().getItemType();
     }
 
 
     /*@NotNull*/
+    @Override
     public Expression typeCheck(ExpressionVisitor visitor, ContextItemStaticInfo contextInfo) throws XPathException {
 
         final Configuration config = visitor.getConfiguration();
@@ -419,6 +422,7 @@ public class MergeInstr extends Instruction {
      * (Nodes created by the condition can't contribute to the result).
      */
 
+    @Override
     public final boolean mayCreateNewNodes() {
         int props = getAction().getSpecialProperties();
         return (props & StaticProperty.NO_NODES_NEWLY_CREATED) == 0;
@@ -426,6 +430,7 @@ public class MergeInstr extends Instruction {
 
 
     /*@NotNull*/
+    @Override
     public Expression optimize(ExpressionVisitor visitor, ContextItemStaticInfo contextInfo) throws XPathException {
         final Configuration config = visitor.getConfiguration();
         final TypeHierarchy th = config.getTypeHierarchy();
@@ -523,6 +528,7 @@ public class MergeInstr extends Instruction {
 
 
     /*@NotNull*/
+    @Override
     public SequenceIterator iterate(XPathContext context) throws XPathException {
 
         try {
@@ -756,6 +762,7 @@ public class MergeInstr extends Instruction {
      */
 
     /*@NotNull*/
+    @Override
     public Expression copy(RebindingMap rebindings) {
         MergeInstr newMerge = new MergeInstr();
         MergeSource[] c2 = new MergeSource[mergeSources.length];
@@ -771,6 +778,7 @@ public class MergeInstr extends Instruction {
      * is written to the supplied output destination.
      */
 
+    @Override
     public void export(ExpressionPresenter out) throws XPathException {
         out.startElement("merge", this);
         for (MergeSource mergeSource : mergeSources) {
@@ -866,6 +874,7 @@ public class MergeInstr extends Instruction {
             manualIterator.setPosition(1);
             keyContext.setCurrentIterator(manualIterator);
         }
+        @Override
         public SequenceIterator map(XPathContext context) throws XPathException {
             Item currentItem = context.getContextItem();
             manualIterator.setContextItem(currentItem);

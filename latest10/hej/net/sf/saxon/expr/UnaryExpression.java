@@ -63,6 +63,7 @@ public abstract class UnaryExpression extends Expression {
      */
 
     /*@NotNull*/
+    @Override
     public Expression typeCheck(ExpressionVisitor visitor, ContextItemStaticInfo contextInfo) throws XPathException {
         operand.typeCheck(visitor, contextInfo);
 
@@ -98,6 +99,7 @@ public abstract class UnaryExpression extends Expression {
      */
 
     /*@NotNull*/
+    @Override
     public Expression optimize(ExpressionVisitor visitor, ContextItemStaticInfo contextInfo) throws XPathException {
         operand.optimize(visitor, contextInfo);
         // if the operand value is known, pre-evaluate the expression
@@ -120,6 +122,7 @@ public abstract class UnaryExpression extends Expression {
      * property bit is set, it is true, but if it is unset, the value is unknown.
      */
 
+    @Override
     public int computeSpecialProperties() {
         return getBaseExpression().getSpecialProperties();
     }
@@ -128,6 +131,7 @@ public abstract class UnaryExpression extends Expression {
      * Determine the static cardinality. Default implementation returns the cardinality of the operand
      */
 
+    @Override
     public int computeCardinality() {
         return getBaseExpression().getCardinality();
     }
@@ -141,6 +145,7 @@ public abstract class UnaryExpression extends Expression {
      */
 
     /*@NotNull*/
+    @Override
     public ItemType getItemType() {
         return getBaseExpression().getItemType();
     }
@@ -159,6 +164,7 @@ public abstract class UnaryExpression extends Expression {
      * result for (A op B) and for (B op A), whether or not the operator is commutative.
      */
 
+    @Override
     public int computeHashCode() {
         return ("UnaryExpression " + getClass()).hashCode() ^ getBaseExpression().hashCode();
     }
@@ -183,6 +189,7 @@ public abstract class UnaryExpression extends Expression {
      * is written to the supplied output destination.
      */
 
+    @Override
     public void export(ExpressionPresenter out) throws XPathException {
         String name = getExpressionName();
         if (name == null) {

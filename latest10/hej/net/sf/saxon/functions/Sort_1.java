@@ -39,6 +39,7 @@ public class Sort_1 extends SystemFunction {
      * @return the result of the evaluation, in the form of a SequenceIterator
      * @throws XPathException if a dynamic error occurs during the evaluation of the expression
      */
+    @Override
     public Sequence call(XPathContext context, Sequence[] arguments) throws XPathException {
         final List<ItemToBeSorted> inputList = getItemsToBeSorted(arguments[0]);
         StringCollator collation = context.getConfiguration().getCollation(getRetainedStaticContext().getDefaultCollationName());

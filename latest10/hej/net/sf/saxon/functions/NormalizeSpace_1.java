@@ -45,6 +45,7 @@ public class NormalizeSpace_1 extends ScalarSystemFunction {
     @Override
     public Expression makeFunctionCall(Expression[] arguments) {
         return new SystemFunctionCall(this, arguments) {
+            @Override
             public boolean effectiveBooleanValue(XPathContext c) throws XPathException {
                 AtomicValue sv = (AtomicValue) getArg(0).evaluateItem(c);
                 if (sv == null) {
@@ -56,6 +57,7 @@ public class NormalizeSpace_1 extends ScalarSystemFunction {
         };
     }
 
+    @Override
     public String getCompilerName() {
         return "NormalizeSpaceCompiler";
     }

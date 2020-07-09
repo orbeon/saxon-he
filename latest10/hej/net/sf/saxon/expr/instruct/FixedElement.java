@@ -79,6 +79,7 @@ public class FixedElement extends ElementCreator {
      */
 
     /*@NotNull*/
+    @Override
     public Expression simplify() throws XPathException {
         preservingTypes |= !getPackageData().isSchemaAware();
         return super.simplify();
@@ -93,6 +94,7 @@ public class FixedElement extends ElementCreator {
      *
      */
 
+    @Override
     protected void checkContentSequence(StaticContext env) throws XPathException {
         super.checkContentSequence(env);
         itemType = computeFixedElementItemType(this, env,
@@ -100,6 +102,7 @@ public class FixedElement extends ElementCreator {
     }
 
     /*@NotNull*/
+    @Override
     public Expression optimize(ExpressionVisitor visitor, ContextItemStaticInfo contextItemType) throws XPathException {
         Expression e = super.optimize(visitor, contextItemType);
         if (e != this) {
@@ -198,6 +201,7 @@ public class FixedElement extends ElementCreator {
      */
 
     /*@NotNull*/
+    @Override
     public Expression copy(RebindingMap rebindings) {
         FixedElement fe = new FixedElement(elementName, namespaceBindings, bequeathNamespacesToChildren,
                                            inheritNamespacesFromParent, getSchemaType(), getValidationAction());
@@ -337,6 +341,7 @@ public class FixedElement extends ElementCreator {
      * @return the item type
      */
     /*@NotNull*/
+    @Override
     public ItemType getItemType() {
         if (itemType == null) {
             return super.getItemType();
@@ -353,6 +358,7 @@ public class FixedElement extends ElementCreator {
      * @return the name code for the element name
      */
 
+    @Override
     public NodeName getElementName(XPathContext context, NodeInfo copiedNode) {
         return elementName;
     }
@@ -376,6 +382,7 @@ public class FixedElement extends ElementCreator {
 
 
 
+    @Override
     public String getNewBaseURI(XPathContext context, NodeInfo copiedNode) {
         return getStaticBaseURIString();
     }
@@ -455,6 +462,7 @@ public class FixedElement extends ElementCreator {
      * static validation can continue recursively.
      */
 
+    @Override
     public void checkPermittedContents(SchemaType parentType, boolean whole) throws XPathException {
         if (parentType instanceof SimpleType) {
             XPathException err = new XPathException("Element " + elementName.getDisplayName() +
@@ -513,6 +521,7 @@ public class FixedElement extends ElementCreator {
      * @param copiedNode in the case of xsl:copy, the node being copied
      */
 
+    @Override
     public void outputNamespaceNodes(Outputter out, NodeName nodeName, NodeInfo copiedNode)
             throws XPathException {
         for (NamespaceBinding ns : namespaceBindings) {
@@ -534,6 +543,7 @@ public class FixedElement extends ElementCreator {
      * is written to the supplied output destination.
      */
 
+    @Override
     public void export(ExpressionPresenter out) throws XPathException {
         out.startElement("elem", this);
         out.emitAttribute("name", elementName.getDisplayName());

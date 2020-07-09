@@ -56,6 +56,7 @@ public class XSLGlobalVariable extends StyleElement implements StylesheetCompone
         return sourceBinding.getVariableQName();
     }
 
+    @Override
     public StructuredQName getObjectName() {
         return sourceBinding.getVariableQName();
     }
@@ -66,6 +67,7 @@ public class XSLGlobalVariable extends StyleElement implements StylesheetCompone
      * @return true: yes, it may contain a template-body
      */
 
+    @Override
     public boolean mayContainSequenceConstructor() {
         return true;
     }
@@ -86,6 +88,7 @@ public class XSLGlobalVariable extends StyleElement implements StylesheetCompone
      * children have been validated.
      */
 
+    @Override
     public void postValidate() throws XPathException {
         sourceBinding.postValidate();
     }
@@ -119,6 +122,7 @@ public class XSLGlobalVariable extends StyleElement implements StylesheetCompone
      * Get the corresponding Procedure object that results from the compilation of this
      * StylesheetProcedure
      */
+    @Override
     public Actor getActor() throws XPathException {
         GlobalVariable gv = getCompiledVariable();
         if (gv == null) {
@@ -140,10 +144,12 @@ public class XSLGlobalVariable extends StyleElement implements StylesheetCompone
         return gv;
     }
 
+    @Override
     public SymbolicName getSymbolicName() {
         return new SymbolicName(StandardNames.XSL_VARIABLE, getObjectName());
     }
 
+    @Override
     public void checkCompatibility(Component component) {
         SequenceType st1 = getSourceBinding().getDeclaredType();
         if (st1 == null) {
@@ -168,6 +174,7 @@ public class XSLGlobalVariable extends StyleElement implements StylesheetCompone
      * @return the binding information if this element binds a variable of this name; otherwise null
      */
 
+    @Override
     public SourceBinding getBindingInformation(StructuredQName name) {
         if (name.equals(sourceBinding.getVariableQName())) {
             return sourceBinding;
@@ -176,6 +183,7 @@ public class XSLGlobalVariable extends StyleElement implements StylesheetCompone
         }
     }
 
+    @Override
     public void prepareAttributes() {
         if (state == 2) {
             return;
@@ -228,6 +236,7 @@ public class XSLGlobalVariable extends StyleElement implements StylesheetCompone
      * @return false - a global variable is not an instruction
      */
 
+    @Override
     public boolean isInstruction() {
         return false;
     }
@@ -254,6 +263,7 @@ public class XSLGlobalVariable extends StyleElement implements StylesheetCompone
      * this global variable
      */
 
+    @Override
     public void compileDeclaration(Compilation compilation, ComponentDeclaration decl) throws XPathException {
 
         // Commented out: Can't eliminate unused variables at this stage because they might be xsl:expose'd as public
@@ -352,6 +362,7 @@ public class XSLGlobalVariable extends StyleElement implements StylesheetCompone
      * @return the associated SlotManager object
      */
 
+    @Override
     public SlotManager getSlotManager() {
         return slotManager;
     }
@@ -362,6 +373,7 @@ public class XSLGlobalVariable extends StyleElement implements StylesheetCompone
      * @param declaration the declaration of this variable
      */
 
+    @Override
     public void optimize(ComponentDeclaration declaration) throws XPathException {
         if (!redundant && compiledVariable.getBody() != null) {
             Expression exp2 = compiledVariable.getBody();
@@ -400,6 +412,7 @@ public class XSLGlobalVariable extends StyleElement implements StylesheetCompone
      * @param opt the optimizer
      *
      */
+    @Override
     public void generateByteCode(Optimizer opt) {}
 
 

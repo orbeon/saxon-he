@@ -90,6 +90,7 @@ public class AttributeLocation implements Location {
      *
      * @return the column number, or -1 if the information is not available.
      */
+    @Override
     public int getColumnNumber() {
         return columnNumber;
     }
@@ -105,6 +106,7 @@ public class AttributeLocation implements Location {
      *
      * @return the system ID, or null if the information is not available.
      */
+    @Override
     public String getSystemId() {
         return systemId;
     }
@@ -114,6 +116,7 @@ public class AttributeLocation implements Location {
      *
      * @return usually null
      */
+    @Override
     public String getPublicId() {
         return null;
     }
@@ -125,6 +128,7 @@ public class AttributeLocation implements Location {
      *
      * @return the line number, or -1 if the information is not available.
      */
+    @Override
     public int getLineNumber() {
         return lineNumber;
     }
@@ -134,6 +138,7 @@ public class AttributeLocation implements Location {
      * should not be saved for later use. The result of this operation holds the same location information,
      * but in an immutable form.
      */
+    @Override
     public Location saveLocation() {
         return this;
     }

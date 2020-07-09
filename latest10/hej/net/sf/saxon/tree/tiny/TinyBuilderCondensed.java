@@ -36,6 +36,7 @@ public class TinyBuilderCondensed extends TinyBuilder {
 
     public IntHashMap<int[]> textValues = new IntHashMap<>(100);
 
+    @Override
     public void endElement() throws XPathException {
         // When ending an element, consider whether the just-completed text node can be commoned-up with
         // any other text nodes. (Don't bother if its more than 256 chars, as it's then likely to be unique)

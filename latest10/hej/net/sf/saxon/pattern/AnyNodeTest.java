@@ -50,6 +50,7 @@ public final class AnyNodeTest extends NodeTest implements QNameTest {
      *
      * @return the smallest UType that subsumes this item type
      */
+    @Override
     public UType getUType() {
         return UType.ANY_NODE;
     }
@@ -88,6 +89,7 @@ public final class AnyNodeTest extends NodeTest implements QNameTest {
      * @param node the node to be matched
      */
 
+    @Override
     public boolean test(NodeInfo node) {
         return true;
     }
@@ -99,6 +101,7 @@ public final class AnyNodeTest extends NodeTest implements QNameTest {
      * @return true if the name matches, false if not
      */
 
+    @Override
     public boolean matches(StructuredQName qname) {
         return true;
     }
@@ -107,6 +110,7 @@ public final class AnyNodeTest extends NodeTest implements QNameTest {
      * Determine the default priority of this node test when used on its own as a Pattern
      */
 
+    @Override
     public final double getDefaultPriority() {
         return -0.5;
     }
@@ -137,6 +141,7 @@ public final class AnyNodeTest extends NodeTest implements QNameTest {
      * uri and local.
      * @param targetVersion The version of Saxon-JS being targeted
      */
+    @Override
     public String generateJavaScriptNameTest(int targetVersion) {
         return "true";
     }

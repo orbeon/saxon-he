@@ -44,6 +44,7 @@ public class CallableWithBoundFocus implements Callable {
      * @throws net.sf.saxon.trans.XPathException
      *          if a dynamic error occurs during the evaluation of the expression
      */
+    @Override
     public Sequence call(XPathContext context, Sequence[] arguments) throws XPathException {
         return target.call(boundContext, arguments);
     }

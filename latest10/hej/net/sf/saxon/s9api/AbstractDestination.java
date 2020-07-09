@@ -24,6 +24,7 @@ abstract public class AbstractDestination implements Destination {
      * @param baseURI the base URI to be used
      */
 
+    @Override
     public void setDestinationBaseURI(URI baseURI) {
         this.baseURI = baseURI;
     }
@@ -34,6 +35,7 @@ abstract public class AbstractDestination implements Destination {
      * @return the baseURI, or null if none is known
      */
 
+    @Override
     public URI getDestinationBaseURI() {
         return baseURI;
     }
@@ -44,6 +46,7 @@ abstract public class AbstractDestination implements Destination {
      *                 is successfully completed
      */
 
+    @Override
     final public void onClose(Action listener) {
         helper.onClose(listener);
     }
@@ -56,6 +59,7 @@ abstract public class AbstractDestination implements Destination {
      * @throws SaxonApiException if the close() method throws {@code SaxonApiException}.
      */
 
+    @Override
     public void closeAndNotify() throws SaxonApiException {
         helper.closeAndNotify();
     }

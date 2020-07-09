@@ -49,11 +49,13 @@ public class ReverseListIterator<T extends Item> implements UnfailingIterator,
      * @return true if there are more items in the sequence
      */
 
+    @Override
     public boolean hasNext() {
         return index >= 0;
     }
 
     /*@Nullable*/
+    @Override
     public T next() {
         if (index >= 0) {
             return items.get(index--);
@@ -62,6 +64,7 @@ public class ReverseListIterator<T extends Item> implements UnfailingIterator,
         }
     }
 
+    @Override
     public int getLength() {
         return items.size();
     }
@@ -76,6 +79,7 @@ public class ReverseListIterator<T extends Item> implements UnfailingIterator,
      *         It is acceptable for the properties of the iterator to change depending on its state.
      */
 
+    @Override
     public EnumSet<Property> getProperties() {
         return EnumSet.of(Property.LAST_POSITION_FINDER);
     }
@@ -88,6 +92,7 @@ public class ReverseListIterator<T extends Item> implements UnfailingIterator,
      * @return a new ArrayIterator
      */
 
+    @Override
     public SequenceIterator getReverseIterator() {
         return new ListIterator<>(items);
     }

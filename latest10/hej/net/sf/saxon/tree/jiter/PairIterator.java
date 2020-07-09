@@ -39,6 +39,7 @@ public class PairIterator<T> implements Iterator<T> {
      * @return <tt>true</tt> if the iterator has more elements.
      */
 
+    @Override
     public boolean hasNext() {
         return pos < 2;
     }
@@ -49,6 +50,7 @@ public class PairIterator<T> implements Iterator<T> {
      * @return the next element in the iteration.
      * @throws NoSuchElementException iteration has no more elements.
      */
+    @Override
     public T next() {
         switch (pos++) {
             case 0:

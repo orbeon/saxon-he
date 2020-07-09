@@ -44,6 +44,7 @@ public final class CastableExpression extends CastingExpression {
      */
 
     /*@NotNull*/
+    @Override
     public Expression typeCheck(ExpressionVisitor visitor, ContextItemStaticInfo contextInfo) throws XPathException {
         getOperand().typeCheck(visitor, contextInfo);
 
@@ -102,6 +103,7 @@ public final class CastableExpression extends CastingExpression {
      */
 
     /*@NotNull*/
+    @Override
     public Expression optimize(ExpressionVisitor visitor, ContextItemStaticInfo contextInfo) throws XPathException {
         optimizeChildren(visitor, contextInfo);
         if (getBaseExpression() instanceof Literal) {
@@ -149,6 +151,7 @@ public final class CastableExpression extends CastingExpression {
      */
 
     /*@NotNull*/
+    @Override
     public ItemType getItemType() {
         return BuiltInAtomicType.BOOLEAN;
     }
@@ -166,11 +169,13 @@ public final class CastableExpression extends CastingExpression {
     }
 
 
+    @Override
     public int computeCardinality() {
         return StaticProperty.EXACTLY_ONE;
     }
 
     /*@NotNull*/
+    @Override
     public Expression copy(RebindingMap rebindings) {
         CastableExpression ce = new CastableExpression(getBaseExpression().copy(rebindings), getTargetType(), allowsEmpty());
         ExpressionTool.copyLocationInfo(this, ce);
@@ -183,10 +188,12 @@ public final class CastableExpression extends CastingExpression {
      * Evaluate the expression
      */
 
+    @Override
     public BooleanValue evaluateItem(XPathContext context) throws XPathException {
         return BooleanValue.get(effectiveBooleanValue(context));
     }
 
+    @Override
     public boolean effectiveBooleanValue(XPathContext context) throws XPathException {
         // This method does its own atomization so that it can distinguish between atomization
         // failures and casting failures
@@ -249,6 +256,7 @@ public final class CastableExpression extends CastingExpression {
         return !(converter.convert(value) instanceof ValidationFailure);
     }
 
+    @Override
     public String getExpressionName() {
         return "castable";
     }
@@ -269,6 +277,7 @@ public final class CastableExpression extends CastingExpression {
      * is written to the supplied output destination.
      */
 
+    @Override
     public void export(ExpressionPresenter out) throws XPathException {
         export(out, "castable");
 //        out.startElement("castable", this);

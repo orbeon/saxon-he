@@ -35,6 +35,7 @@ import java.util.function.IntPredicate;
 
 public abstract class UnparsedTextFunction extends SystemFunction {
 
+    @Override
     public int getSpecialProperties(Expression[] arguments) {
         int p = super.getSpecialProperties(arguments);
         if (getRetainedStaticContext().getConfiguration().getBooleanProperty(Feature.STABLE_UNPARSED_TEXT)) {

@@ -64,6 +64,7 @@ public class StandardCollectionFinder implements CollectionFinder {
      * @throws XPathException if the collection URI cannot be resolved to a collection
      */
 
+    @Override
     public ResourceCollection findCollection(XPathContext context, String collectionURI) throws XPathException {
         checkNotNull(collectionURI, context);
 

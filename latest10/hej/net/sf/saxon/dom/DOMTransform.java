@@ -31,6 +31,7 @@ import java.util.List;
 
 public class DOMTransform extends Transform {
 
+    @Override
     public List<Source> preprocess(List<Source> sources) throws XPathException {
         try {
             ArrayList<Source> domSources = new ArrayList<>(sources.size());

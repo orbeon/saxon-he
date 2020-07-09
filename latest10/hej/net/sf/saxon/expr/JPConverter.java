@@ -254,6 +254,7 @@ public abstract class JPConverter {
     public static class FromObject extends JPConverter {
         public static final FromObject INSTANCE = new FromObject();
 
+        @Override
         public Sequence convert(Object object, XPathContext context) throws XPathException {
             Class theClass = object.getClass();
             JPConverter instanceConverter = allocate(theClass, null, context.getConfiguration());
@@ -264,10 +265,12 @@ public abstract class JPConverter {
             return instanceConverter.convert(object, context);
         }
 
+        @Override
         public ItemType getItemType() {
             return AnyItemType.getInstance();
         }
 
+        @Override
         public int getCardinality() {
             return StaticProperty.ALLOWS_ZERO_OR_MORE;
         }
@@ -276,14 +279,17 @@ public abstract class JPConverter {
     public static class FromSequenceIterator extends JPConverter {
         public static final FromSequenceIterator INSTANCE = new FromSequenceIterator();
 
+        @Override
         public Sequence convert(Object object, XPathContext context) throws XPathException {
             return ((SequenceIterator)object).materialize();
         }
 
+        @Override
         public ItemType getItemType() {
             return AnyItemType.getInstance();
         }
 
+        @Override
         public int getCardinality() {
             return StaticProperty.ALLOWS_ZERO_OR_MORE;
         }
@@ -299,14 +305,17 @@ public abstract class JPConverter {
             this.cardinality = cardinality;
         }
 
+        @Override
         public Sequence convert(Object object, XPathContext context) throws XPathException {
             return ((XdmValue)object).getUnderlyingValue();
         }
 
+        @Override
         public ItemType getItemType() {
             return resultType;
         }
 
+        @Override
         public int getCardinality() {
             return cardinality;
         }
@@ -326,16 +335,19 @@ public abstract class JPConverter {
             this.cardinality = cardinality;
         }
 
+        @Override
         public Sequence convert(Object object, XPathContext context) throws XPathException {
             return object instanceof Closure ?
                     ((Closure) object).iterate().materialize() :
                     (Sequence) object;
         }
 
+        @Override
         public ItemType getItemType() {
             return resultType;
         }
 
+        @Override
         public int getCardinality() {
             return cardinality;
         }
@@ -345,10 +357,12 @@ public abstract class JPConverter {
     public static class FromString extends JPConverter {
         public static final FromString INSTANCE = new FromString();
 
+        @Override
         public StringValue convert(Object object, XPathContext context) throws XPathException {
             return new StringValue((String) object);
         }
 
+        @Override
         public ItemType getItemType() {
             return BuiltInAtomicType.STRING;
         }
@@ -358,10 +372,12 @@ public abstract class JPConverter {
     public static class FromBoolean extends JPConverter {
         public static final FromBoolean INSTANCE = new FromBoolean();
 
+        @Override
         public BooleanValue convert(Object object, XPathContext context) throws XPathException {
             return BooleanValue.get((Boolean) object);
         }
 
+        @Override
         public ItemType getItemType() {
             return BuiltInAtomicType.BOOLEAN;
         }
@@ -371,10 +387,12 @@ public abstract class JPConverter {
     public static class FromDouble extends JPConverter {
         public static final FromDouble INSTANCE = new FromDouble();
 
+        @Override
         public DoubleValue convert(Object object, XPathContext context) throws XPathException {
             return new DoubleValue((Double) object);
         }
 
+        @Override
         public ItemType getItemType() {
             return BuiltInAtomicType.DOUBLE;
         }
@@ -383,10 +401,12 @@ public abstract class JPConverter {
     public static class FromFloat extends JPConverter {
         public static final FromFloat INSTANCE = new FromFloat();
 
+        @Override
         public FloatValue convert(Object object, XPathContext context) throws XPathException {
             return new FloatValue((Float) object);
         }
 
+        @Override
         public ItemType getItemType() {
             return BuiltInAtomicType.FLOAT;
         }
@@ -395,10 +415,12 @@ public abstract class JPConverter {
     public static class FromBigDecimal extends JPConverter {
         public static final FromBigDecimal INSTANCE = new FromBigDecimal();
 
+        @Override
         public BigDecimalValue convert(Object object, XPathContext context) throws XPathException {
             return new BigDecimalValue((BigDecimal) object);
         }
 
+        @Override
         public ItemType getItemType() {
             return BuiltInAtomicType.DECIMAL;
         }
@@ -407,10 +429,12 @@ public abstract class JPConverter {
     public static class FromBigInteger extends JPConverter {
         public static final FromBigInteger INSTANCE = new FromBigInteger();
 
+        @Override
         public IntegerValue convert(Object object, XPathContext context) throws XPathException {
             return IntegerValue.makeIntegerValue((BigInteger) object);
         }
 
+        @Override
         public ItemType getItemType() {
             return BuiltInAtomicType.INTEGER;
         }
@@ -419,10 +443,12 @@ public abstract class JPConverter {
     public static class FromLong extends JPConverter {
         public static final FromLong INSTANCE = new FromLong();
 
+        @Override
         public Int64Value convert(Object object, XPathContext context) throws XPathException {
             return new Int64Value((Long) object);
         }
 
+        @Override
         public ItemType getItemType() {
             return BuiltInAtomicType.INTEGER;
         }
@@ -431,10 +457,12 @@ public abstract class JPConverter {
     public static class FromInt extends JPConverter {
         public static final FromInt INSTANCE = new FromInt();
 
+        @Override
         public Int64Value convert(Object object, XPathContext context) throws XPathException {
             return new Int64Value((Integer) object);
         }
 
+        @Override
         public ItemType getItemType() {
             return BuiltInAtomicType.INTEGER;
         }
@@ -443,10 +471,12 @@ public abstract class JPConverter {
     public static class FromShort extends JPConverter {
         public static final FromShort INSTANCE = new FromShort();
 
+        @Override
         public Int64Value convert(Object object, XPathContext context) throws XPathException {
             return new Int64Value(((Short) object).intValue());
         }
 
+        @Override
         public ItemType getItemType() {
             return BuiltInAtomicType.INTEGER;
         }
@@ -455,10 +485,12 @@ public abstract class JPConverter {
     public static class FromByte extends JPConverter {
         public static final FromByte INSTANCE = new FromByte();
 
+        @Override
         public Int64Value convert(Object object, XPathContext context) throws XPathException {
             return new Int64Value(((Byte) object).intValue());
         }
 
+        @Override
         public ItemType getItemType() {
             return BuiltInAtomicType.INTEGER;
         }
@@ -467,10 +499,12 @@ public abstract class JPConverter {
     public static class FromCharacter extends JPConverter {
         public static final FromCharacter INSTANCE = new FromCharacter();
 
+        @Override
         public StringValue convert(Object object, XPathContext context) throws XPathException {
             return new StringValue(object.toString());
         }
 
+        @Override
         public ItemType getItemType() {
             return BuiltInAtomicType.STRING;
         }
@@ -479,11 +513,13 @@ public abstract class JPConverter {
     public static class FromQName extends JPConverter {
         public static final FromQName INSTANCE = new FromQName();
 
+        @Override
         public QNameValue convert(Object object, XPathContext context) throws XPathException {
             javax.xml.namespace.QName qn = (javax.xml.namespace.QName) object;
             return new QNameValue(qn.getPrefix(), qn.getNamespaceURI(), qn.getLocalPart());
         }
 
+        @Override
         public ItemType getItemType() {
             return BuiltInAtomicType.QNAME;
         }
@@ -494,10 +530,12 @@ public abstract class JPConverter {
         // also used for URL
         public static final FromURI INSTANCE = new FromURI();
 
+        @Override
         public AnyURIValue convert(Object object, XPathContext context) throws XPathException {
             return new AnyURIValue(object.toString());
         }
 
+        @Override
         public ItemType getItemType() {
             return BuiltInAtomicType.ANY_URI;
         }
@@ -506,10 +544,12 @@ public abstract class JPConverter {
     public static class FromDate extends JPConverter {
         public static final FromDate INSTANCE = new FromDate();
 
+        @Override
         public DateTimeValue convert(Object object, XPathContext context) throws XPathException {
             return DateTimeValue.fromJavaDate((Date) object);
         }
 
+        @Override
         public ItemType getItemType() {
             return BuiltInAtomicType.DATE_TIME;
         }
@@ -518,10 +558,12 @@ public abstract class JPConverter {
     public static class FromInstant extends JPConverter {
         public static final FromInstant INSTANCE = new FromInstant();
 
+        @Override
         public DateTimeValue convert(Object object, XPathContext context) throws XPathException {
             return DateTimeValue.fromJavaInstant((Instant) object);
         }
 
+        @Override
         public ItemType getItemType() {
             return BuiltInAtomicType.DATE_TIME;
         }
@@ -530,10 +572,12 @@ public abstract class JPConverter {
     public static class FromZonedDateTime extends JPConverter {
         public static final FromZonedDateTime INSTANCE = new FromZonedDateTime();
 
+        @Override
         public DateTimeValue convert(Object object, XPathContext context) throws XPathException {
             return DateTimeValue.fromZonedDateTime((ZonedDateTime) object);
         }
 
+        @Override
         public ItemType getItemType() {
             return BuiltInAtomicType.DATE_TIME;
         }
@@ -542,10 +586,12 @@ public abstract class JPConverter {
     public static class FromOffsetDateTime extends JPConverter {
         public static final FromOffsetDateTime INSTANCE = new FromOffsetDateTime();
 
+        @Override
         public DateTimeValue convert(Object object, XPathContext context) throws XPathException {
             return DateTimeValue.fromOffsetDateTime((OffsetDateTime) object);
         }
 
+        @Override
         public ItemType getItemType() {
             return BuiltInAtomicType.DATE_TIME;
         }
@@ -554,10 +600,12 @@ public abstract class JPConverter {
     public static class FromLocalDateTime extends JPConverter {
         public static final FromLocalDateTime INSTANCE = new FromLocalDateTime();
 
+        @Override
         public DateTimeValue convert(Object object, XPathContext context) throws XPathException {
             return DateTimeValue.fromLocalDateTime((LocalDateTime) object);
         }
 
+        @Override
         public ItemType getItemType() {
             return BuiltInAtomicType.DATE_TIME;
         }
@@ -566,10 +614,12 @@ public abstract class JPConverter {
     public static class FromLocalDate extends JPConverter {
         public static final FromLocalDate INSTANCE = new FromLocalDate();
 
+        @Override
         public DateValue convert(Object object, XPathContext context) throws XPathException {
             return new DateValue((LocalDate) object);
         }
 
+        @Override
         public ItemType getItemType() {
             return BuiltInAtomicType.DATE_TIME;
         }
@@ -583,6 +633,7 @@ public abstract class JPConverter {
             this.resultType = resultType;
         }
 
+        @Override
         public ExternalObject<Object> convert(Object object, XPathContext context) throws XPathException {
             if (object == null) {
                 return null;
@@ -594,6 +645,7 @@ public abstract class JPConverter {
             }
         }
 
+        @Override
         public JavaExternalObjectType getItemType() {
             return resultType;
         }
@@ -608,6 +660,7 @@ public abstract class JPConverter {
 
         }
 
+        @Override
         public EmptySequence convert(Object object, XPathContext context) throws XPathException {
             return EmptySequence.getInstance();
         }
@@ -615,6 +668,7 @@ public abstract class JPConverter {
         /**
          * Deliberately avoid giving type information
          */
+        @Override
         public ItemType getItemType() {
             return AnyItemType.getInstance();
         }
@@ -624,6 +678,7 @@ public abstract class JPConverter {
 
         public static final FromCollection INSTANCE = new FromCollection();
 
+        @Override
         public Sequence convert(Object object, XPathContext context) throws XPathException {
             List<Item> list = new ArrayList<>(((Collection) object).size());
             int a = 0;
@@ -644,6 +699,7 @@ public abstract class JPConverter {
             return new SequenceExtent(list);
         }
 
+        @Override
         public ItemType getItemType() {
             return AnyItemType.getInstance();
         }
@@ -654,6 +710,7 @@ public abstract class JPConverter {
          * @return the cardinality of the result
          */
 
+        @Override
         public int getCardinality() {
             return StaticProperty.ALLOWS_ZERO_OR_MORE;
         }
@@ -665,6 +722,7 @@ public abstract class JPConverter {
 
         public static final FromSource INSTANCE = new FromSource();
 
+        @Override
         public NodeInfo convert(Object object, XPathContext context) throws XPathException {
             ParseOptions options = new ParseOptions();
             Controller controller = context.getController();
@@ -674,6 +732,7 @@ public abstract class JPConverter {
             return context.getConfiguration().buildDocumentTree((Source) object, options).getRootNode();
         }
 
+        @Override
         public ItemType getItemType() {
             return AnyNodeTest.getInstance();
         }
@@ -684,6 +743,7 @@ public abstract class JPConverter {
 
         public static final FromLongArray INSTANCE = new FromLongArray();
 
+        @Override
         public Sequence convert(Object object, XPathContext context) throws XPathException {
             Item[] array = new Item[((long[]) object).length];
             for (int i = 0; i < array.length; i++) {
@@ -692,10 +752,12 @@ public abstract class JPConverter {
             return new SequenceExtent(array);
         }
 
+        @Override
         public ItemType getItemType() {
             return BuiltInAtomicType.LONG;
         }
 
+        @Override
         public int getCardinality() {
             return StaticProperty.ALLOWS_ZERO_OR_MORE;
         }
@@ -706,6 +768,7 @@ public abstract class JPConverter {
 
         public static final FromIntArray INSTANCE = new FromIntArray();
 
+        @Override
         public Sequence convert(Object object, XPathContext context) throws XPathException {
             Item[] array = new Item[((int[]) object).length];
             for (int i = 0; i < array.length; i++) {
@@ -714,10 +777,12 @@ public abstract class JPConverter {
             return new SequenceExtent(array);
         }
 
+        @Override
         public ItemType getItemType() {
             return BuiltInAtomicType.INT;
         }
 
+        @Override
         public int getCardinality() {
             return StaticProperty.ALLOWS_ZERO_OR_MORE;
         }
@@ -728,6 +793,7 @@ public abstract class JPConverter {
 
         public static final FromShortArray INSTANCE = new FromShortArray();
 
+        @Override
         public Sequence convert(Object object, XPathContext context) throws XPathException {
             Item[] array = new Item[((short[]) object).length];
             for (int i = 0; i < array.length; i++) {
@@ -736,10 +802,12 @@ public abstract class JPConverter {
             return new SequenceExtent(array);
         }
 
+        @Override
         public ItemType getItemType() {
             return BuiltInAtomicType.SHORT;
         }
 
+        @Override
         public int getCardinality() {
             return StaticProperty.ALLOWS_ZERO_OR_MORE;
         }
@@ -752,6 +820,7 @@ public abstract class JPConverter {
 
         public static final FromByteArray INSTANCE = new FromByteArray();
 
+        @Override
         public Sequence convert(Object object, XPathContext context) throws XPathException {
             Item[] array = new Item[((byte[]) object).length];
             for (int i = 0; i < array.length; i++) {
@@ -760,10 +829,12 @@ public abstract class JPConverter {
             return new SequenceExtent(array);
         }
 
+        @Override
         public ItemType getItemType() {
             return BuiltInAtomicType.UNSIGNED_BYTE;
         }
 
+        @Override
         public int getCardinality() {
             return StaticProperty.ALLOWS_ZERO_OR_MORE;
         }
@@ -774,10 +845,12 @@ public abstract class JPConverter {
 
         public static final FromCharArray INSTANCE = new FromCharArray();
 
+        @Override
         public StringValue convert(Object object, XPathContext context) throws XPathException {
             return StringValue.makeStringValue(new String((char[]) object));
         }
 
+        @Override
         public ItemType getItemType() {
             return BuiltInAtomicType.STRING;
         }
@@ -788,6 +861,7 @@ public abstract class JPConverter {
 
         public static final FromDoubleArray INSTANCE = new FromDoubleArray();
 
+        @Override
         public Sequence convert(Object object, XPathContext context) throws XPathException {
             Item[] array = new Item[((double[]) object).length];
             for (int i = 0; i < array.length; i++) {
@@ -796,10 +870,12 @@ public abstract class JPConverter {
             return new SequenceExtent(array);
         }
 
+        @Override
         public ItemType getItemType() {
             return BuiltInAtomicType.DOUBLE;
         }
 
+        @Override
         public int getCardinality() {
             return StaticProperty.ALLOWS_ZERO_OR_MORE;
         }
@@ -810,6 +886,7 @@ public abstract class JPConverter {
 
         public static final FromFloatArray INSTANCE = new FromFloatArray();
 
+        @Override
         public Sequence convert(Object object, XPathContext context) throws XPathException {
             Item[] array = new Item[((float[]) object).length];
             for (int i = 0; i < array.length; i++) {
@@ -818,10 +895,12 @@ public abstract class JPConverter {
             return new SequenceExtent(array);
         }
 
+        @Override
         public ItemType getItemType() {
             return BuiltInAtomicType.FLOAT;
         }
 
+        @Override
         public int getCardinality() {
             return StaticProperty.ALLOWS_ZERO_OR_MORE;
         }
@@ -832,6 +911,7 @@ public abstract class JPConverter {
 
         public static final FromBooleanArray INSTANCE = new FromBooleanArray();
 
+        @Override
         public Sequence convert(Object object, XPathContext context) throws XPathException {
             Item[] array = new Item[((boolean[]) object).length];
             for (int i = 0; i < array.length; i++) {
@@ -840,10 +920,12 @@ public abstract class JPConverter {
             return new SequenceExtent(array);
         }
 
+        @Override
         public ItemType getItemType() {
             return BuiltInAtomicType.BOOLEAN;
         }
 
+        @Override
         public int getCardinality() {
             return StaticProperty.ALLOWS_ZERO_OR_MORE;
         }
@@ -858,6 +940,7 @@ public abstract class JPConverter {
             this.itemConverter = itemConverter;
         }
 
+        @Override
         public Sequence convert(Object object, XPathContext context) throws XPathException {
             Object[] arrayObject = (Object[]) object;
             List<Item> newArray = new ArrayList<>(arrayObject.length);
@@ -882,10 +965,12 @@ public abstract class JPConverter {
             return new SequenceExtent(newArray);
         }
 
+        @Override
         public ItemType getItemType() {
             return itemConverter.getItemType();
         }
 
+        @Override
         public int getCardinality() {
             return StaticProperty.ALLOWS_ZERO_OR_MORE;
         }

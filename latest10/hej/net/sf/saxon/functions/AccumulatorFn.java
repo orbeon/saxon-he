@@ -92,6 +92,7 @@ public abstract class AccumulatorFn extends SystemFunction {
      * @return the best available item type that the function will return
      */
 
+    @Override
     public ItemType getResultItemType(Expression[] args) {
         try {
             if (args[0] instanceof StringLiteral) {
@@ -147,6 +148,7 @@ public abstract class AccumulatorFn extends SystemFunction {
      * @throws net.sf.saxon.trans.XPathException
      *          if a dynamic error occurs during the evaluation of the expression
      */
+    @Override
     public Sequence call(XPathContext context, Sequence[] arguments) throws XPathException {
         String name = arguments[0].head().getStringValue();
         return getAccumulatorValue(name, getPhase(), context);
@@ -169,6 +171,7 @@ public abstract class AccumulatorFn extends SystemFunction {
             return Phase.AFTER;
         }
 
+        @Override
         public String getStreamerName() {
             return "AccumulatorAfter";
         }

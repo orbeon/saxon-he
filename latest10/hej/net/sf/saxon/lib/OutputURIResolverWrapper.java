@@ -48,6 +48,7 @@ public class OutputURIResolverWrapper implements ResultDocumentResolver {
      * which Saxon will then call for further information.
      */
 
+    @Override
     public Receiver resolve(
             XPathContext context, String href, String baseUri, SerializationProperties properties)
             throws XPathException {

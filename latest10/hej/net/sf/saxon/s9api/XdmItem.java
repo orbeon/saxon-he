@@ -144,6 +144,7 @@ public abstract class XdmItem extends XdmValue {
      * @return a Stream over the items in this value
      * @since 9.9
      */
+    @Override
     public XdmStream<? extends XdmItem> stream() {
         return new XdmStream<>(Stream.of(this));
     }

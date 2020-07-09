@@ -52,6 +52,7 @@ class MessageListener2Proxy extends SequenceWriter {
      * @param properties
      */
 
+    @Override
     public void startDocument(int properties) throws XPathException {
         terminate = ReceiverOption.contains(properties, ReceiverOption.TERMINATE);
         locationId = null;
@@ -64,6 +65,7 @@ class MessageListener2Proxy extends SequenceWriter {
      * Output an element start tag.
      */
 
+    @Override
     public void startElement(NodeName elemName, SchemaType type,
                              AttributeMap attributes, NamespaceMap namespaces,
                              Location location, int properties) throws XPathException {
@@ -80,6 +82,7 @@ class MessageListener2Proxy extends SequenceWriter {
      * @param properties bit-significant flags for extra information, e.g. disable-output-escaping  @throws net.sf.saxon.trans.XPathException
      */
 
+    @Override
     public void characters(CharSequence s, Location locationId, int properties) throws XPathException {
         if (this.locationId == null) {
             this.locationId = locationId;
@@ -100,6 +103,7 @@ class MessageListener2Proxy extends SequenceWriter {
      * Append an item to the sequence, performing any necessary type-checking and conversion
      */
 
+    @Override
     public void append(Item item, Location locationId, int copyNamespaces) throws XPathException {
         if (this.locationId == null) {
             this.locationId = locationId;
@@ -113,6 +117,7 @@ class MessageListener2Proxy extends SequenceWriter {
      * @param item the item to be written to the sequence
      */
 
+    @Override
     public void write(Item item) throws XPathException {
         Location loc;
         if (locationId == null) {

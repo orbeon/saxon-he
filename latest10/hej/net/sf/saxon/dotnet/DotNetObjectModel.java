@@ -43,6 +43,7 @@ public abstract class DotNetObjectModel implements ExternalObjectModel {
      * @return by convention (but not necessarily) the class that implements a document node in the relevant
      * external model
      */
+    @Override
     public String getDocumentClassName() {
         return "cli.System.Xml.XmlDocument";
     }
@@ -52,13 +53,16 @@ public abstract class DotNetObjectModel implements ExternalObjectModel {
      * an XPath implementation
      */
 
+    @Override
     public String getIdentifyingURI() {
         return NamespaceConstant.OBJECT_MODEL_DOT_NET_DOM;
     }
 
+    @Override
     public PJConverter getPJConverter(Class<?> targetClass) {
         if (isRecognizedNodeClass(targetClass)) {
             return new PJConverter() {
+                @Override
                 public Object convert(Sequence value, Class<?> targetClass, XPathContext context) throws XPathException {
                     if (value instanceof ZeroOrOne) {
                         NodeInfo node = (NodeInfo) ((ZeroOrOne) value).head();
@@ -82,13 +86,16 @@ public abstract class DotNetObjectModel implements ExternalObjectModel {
         }
     }
 
+    @Override
     public JPConverter getJPConverter(Class sourceClass, Configuration config) {
         if (isRecognizedNodeClass(sourceClass)) {
             return new JPConverter() {
+                @Override
                 public Sequence convert(Object object, XPathContext context) throws XPathException {
                     return unwrapXdmValue(object);
                 }
 
+                @Override
                 public ItemType getItemType() {
                     return AnyNodeTest.getInstance();
                 }
@@ -108,6 +115,7 @@ public abstract class DotNetObjectModel implements ExternalObjectModel {
      *         returns a collection of nodes in this object model
      */
 
+    @Override
     public PJConverter getNodeListCreator(Object node) {
         return null;
     }
@@ -242,6 +250,7 @@ public abstract class DotNetObjectModel implements ExternalObjectModel {
      * @return a Receiver that writes to that result, if available; or null otherwise
      */
 
+    @Override
     public Receiver getDocumentBuilder(Result result) throws XPathException {
         return null;
     }
@@ -281,6 +290,7 @@ public abstract class DotNetObjectModel implements ExternalObjectModel {
      * @return true if the data from the Source has been sent to the Receiver, false otherwise
      */
 
+    @Override
     public boolean sendSource(Source source, Receiver receiver) throws XPathException {
         return false;
     }
@@ -294,6 +304,7 @@ public abstract class DotNetObjectModel implements ExternalObjectModel {
      * @return a NodeInfo corresponding to the Source, if this can be constructed; otherwise null
      */
 
+    @Override
     public NodeInfo unravel(Source source, Configuration config) {
         return null;
     }

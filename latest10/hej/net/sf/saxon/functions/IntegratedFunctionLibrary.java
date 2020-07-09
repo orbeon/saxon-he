@@ -63,6 +63,7 @@ public class IntegratedFunctionLibrary implements FunctionLibrary {
      *         null if no function was found matching the required name and arity.
      */
 
+    @Override
     public Expression bind(SymbolicName.F functionName, Expression[] staticArgs, StaticContext env, List<String> reasons) {
         ExtensionFunctionDefinition defn = functions.get(functionName.getComponentName());
         if (defn == null) {
@@ -93,6 +94,7 @@ public class IntegratedFunctionLibrary implements FunctionLibrary {
      *          in the event of certain errors, for example attempting to get a function
      *          that is private
      */
+    @Override
     public Function getFunctionItem(SymbolicName.F functionName, StaticContext staticContext) throws XPathException {
         ExtensionFunctionDefinition defn = functions.get(functionName.getComponentName());
         if (defn == null) {
@@ -118,6 +120,7 @@ public class IntegratedFunctionLibrary implements FunctionLibrary {
      * @param functionName the qualified name of the function being called
      * @return true if a function of this name and arity is available for calling
      */
+    @Override
     public boolean isAvailable(SymbolicName.F functionName) {
         ExtensionFunctionDefinition defn = functions.get(functionName.getComponentName());
         int arity = functionName.getArity();
@@ -132,6 +135,7 @@ public class IntegratedFunctionLibrary implements FunctionLibrary {
      * @return a copy of this function library. This must be an instance of the original class.
      */
 
+    @Override
     public FunctionLibrary copy() {
         IntegratedFunctionLibrary lib = new IntegratedFunctionLibrary();
         lib.functions = new HashMap<>(functions);

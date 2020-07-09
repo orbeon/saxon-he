@@ -45,6 +45,7 @@ public class DotNetComparator implements SubstringMatcher {
      *
      * @return a collation URI that can be used to reconstruct the collation when an XSLT package is reloaded.
      */
+    @Override
     public String getCollationURI() {
         return collationURI;
     }
@@ -77,6 +78,7 @@ public class DotNetComparator implements SubstringMatcher {
      * @throws ClassCastException if the arguments' types prevent them from
      *                            being compared by this Comparator.
      */
+    @Override
     public int compareStrings(CharSequence o1, CharSequence o2) {
         return comparer.Compare(o1.toString(), o2.toString(), options);
     }
@@ -92,6 +94,7 @@ public class DotNetComparator implements SubstringMatcher {
      * @return true iff s1 equals s2
      */
 
+    @Override
     public boolean comparesEqual(CharSequence s1, CharSequence s2) {
         return comparer.Compare(s1.toString(), s2.toString(), options) == 0;
     }
@@ -105,6 +108,7 @@ public class DotNetComparator implements SubstringMatcher {
      * @return true iff s1 contains s2
      */
 
+    @Override
     public boolean contains(String s1, String s2) {
         return comparer.IndexOf(s1, s2, options) >= 0;
     }
@@ -118,6 +122,7 @@ public class DotNetComparator implements SubstringMatcher {
      * @return true iff s1 ends with s2
      */
 
+    @Override
     public boolean endsWith(String s1, String s2) {
         return comparer.IsSuffix(s1, s2, options);
     }
@@ -131,6 +136,7 @@ public class DotNetComparator implements SubstringMatcher {
      * @return true iff s1 starts with s2
      */
 
+    @Override
     public boolean startsWith(String s1, String s2) {
         return comparer.IsPrefix(s1, s2, options);
     }
@@ -144,6 +150,7 @@ public class DotNetComparator implements SubstringMatcher {
      * @return the part of s1 that follows the first occurrence of s2
      */
 
+    @Override
     public String substringAfter(String s1, String s2) {
         int i = comparer.IndexOf(s1, s2, options);
         if (i < 0) {
@@ -187,6 +194,7 @@ public class DotNetComparator implements SubstringMatcher {
      * @return the part of s1 that precedes the first occurrence of s2
      */
 
+    @Override
     public String substringBefore(String s1, String s2) {
         int j = comparer.IndexOf(s1, s2, options);
         if (j < 0) {
@@ -201,6 +209,7 @@ public class DotNetComparator implements SubstringMatcher {
      * @param value
      */
 
+    @Override
     public AtomicMatchKey getCollationKey(CharSequence value) {
         final SortKey sortKey = comparer.GetSortKey(value.toString(), options);
         return new SortKeyWrapper(sortKey);
@@ -256,6 +265,7 @@ public class DotNetComparator implements SubstringMatcher {
          *
          * @return an atomic value that encapsulates this match key
          */
+        @Override
         public AtomicValue asAtomic() {
             return new Base64BinaryValue(key.get_KeyData());
         }

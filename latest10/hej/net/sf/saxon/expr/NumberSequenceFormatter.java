@@ -186,6 +186,7 @@ public class NumberSequenceFormatter extends Expression {
      */
 
     /*@NotNull*/
+    @Override
     public Expression copy(RebindingMap rebindings) {
         NumberSequenceFormatter exp = new NumberSequenceFormatter(
                 copy(valueOp, rebindings), copy(formatOp, rebindings),
@@ -201,10 +202,12 @@ public class NumberSequenceFormatter extends Expression {
     }
 
     /*@NotNull*/
+    @Override
     public ItemType getItemType() {
         return BuiltInAtomicType.STRING;
     }
 
+    @Override
     public int computeCardinality() {
         return StaticProperty.EXACTLY_ONE;
     }
@@ -222,6 +225,7 @@ public class NumberSequenceFormatter extends Expression {
         return EVALUATE_METHOD;
     }
 
+    @Override
     public StringValue evaluateItem(XPathContext context) throws XPathException {
         long value = -1;
         List<Object> vec = new ArrayList<>(4);    // a list whose items may be of type either Long or
@@ -379,6 +383,7 @@ public class NumberSequenceFormatter extends Expression {
      * is written to the supplied output destination.
      */
 
+    @Override
     public void export(ExpressionPresenter out) throws XPathException {
         out.startElement("numSeqFmt", this);
         String flags = "";

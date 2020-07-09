@@ -24,6 +24,7 @@ public interface SimpleType extends SchemaType {
      * @return true if this is an atomic type
      */
 
+    @Override
     boolean isAtomicType();
 
     /**

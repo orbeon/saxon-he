@@ -4063,6 +4063,7 @@ public class XPathParser {
          * which replaces newlines by spaces and expands entity references.
          */
 
+        @Override
         public int getColumnNumber() {
             return localColumnNumber;
         }
@@ -4074,6 +4075,7 @@ public class XPathParser {
          * @return the system identifier of the expression's container, or null if not known
          */
 
+        @Override
         public String getSystemId() {
             return containingLocation.getSystemId();
         }
@@ -4085,6 +4087,7 @@ public class XPathParser {
          * @return the public identifier - usually null
          */
 
+        @Override
         public String getPublicId() {
             return containingLocation.getPublicId();
         }
@@ -4111,6 +4114,7 @@ public class XPathParser {
          * @return the line number within the containing entity, or -1 if unknown.
          */
 
+        @Override
         public int getLineNumber() {
             return containingLocation.getLineNumber() + localLineNumber;
         }
@@ -4133,6 +4137,7 @@ public class XPathParser {
          * @return immutable location information.
          */
 
+        @Override
         public Location saveLocation() {
             return this;
         }

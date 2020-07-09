@@ -57,6 +57,7 @@ public class XSLEvaluate extends StyleElement {
      * @return true - it is an instruction
      */
 
+    @Override
     public boolean isInstruction() {
         return true;
     }
@@ -65,6 +66,7 @@ public class XSLEvaluate extends StyleElement {
      * Specify that xsl:sort is a permitted child
      */
 
+    @Override
     protected boolean isPermittedChild(StyleElement child) {
         return child instanceof XSLLocalParam;
     }
@@ -86,11 +88,13 @@ public class XSLEvaluate extends StyleElement {
      * @return false: no, it may not contain a sequence constructor
      */
 
+    @Override
     public boolean mayContainSequenceConstructor() {
         return false;
     }
 
 
+    @Override
     public void prepareAttributes() {
 
         AttributeMap atts = attributes();
@@ -179,6 +183,7 @@ public class XSLEvaluate extends StyleElement {
     }
 
 
+    @Override
     public void validate(ComponentDeclaration decl) throws XPathException {
         getContainingPackage().setRetainUnusedFunctions();
         if (xpath == null) {
@@ -271,6 +276,7 @@ public class XSLEvaluate extends StyleElement {
     }
 
     /*@Nullable*/
+    @Override
     public Expression compile(Compilation exec, ComponentDeclaration decl) throws XPathException {
         if (getConfiguration().getBooleanProperty(Feature.DISABLE_XSL_EVALUATE)) {
             // If xsl:evaluate is statically disabled then we should execute any fallback children

@@ -58,6 +58,7 @@ public class XQueryFunctionLibrary implements FunctionLibrary, XQueryFunctionBin
      * @param config the Saxon configuration
      */
 
+    @Override
     public void setConfiguration(Configuration config) {
         this.config = config;
     }
@@ -108,6 +109,7 @@ public class XQueryFunctionLibrary implements FunctionLibrary, XQueryFunctionBin
      * @return if a function of this name and arity is available for calling, then a corresponding
      *         function item; or null if the function does not exist
      */
+    @Override
     public Function getFunctionItem(SymbolicName.F functionName, StaticContext staticContext)
             throws XPathException {
         XQueryFunction fd = functions.get(functionName);
@@ -144,6 +146,7 @@ public class XQueryFunctionLibrary implements FunctionLibrary, XQueryFunctionBin
      * @param functionName the qualified name of the function being called
      * @return true if a function of this name and arity is available for calling
      */
+    @Override
     public boolean isAvailable(SymbolicName.F functionName) {
         return functions.get(functionName) != null;
     }
@@ -183,6 +186,7 @@ public class XQueryFunctionLibrary implements FunctionLibrary, XQueryFunctionBin
          * @throws net.sf.saxon.trans.XPathException
          *          if a dynamic error occurs during the evaluation of the expression
          */
+        @Override
         public Sequence call(XPathContext context, Sequence[] arguments) throws XPathException {
             if (function == null) {
                 throw new XPathException("Forwards reference to XQuery function has not been resolved");
@@ -194,6 +198,7 @@ public class XQueryFunctionLibrary implements FunctionLibrary, XQueryFunctionBin
             return function.call(context.newCleanContext(), args);
         }
 
+        @Override
         public void setFunction(UserFunction function) {
             this.function = function;
         }
@@ -221,6 +226,7 @@ public class XQueryFunctionLibrary implements FunctionLibrary, XQueryFunctionBin
      */
 
     /*@Nullable*/
+    @Override
     public Expression bind(/*@NotNull*/ SymbolicName.F functionName, /*@NotNull*/  Expression[] arguments, StaticContext env, List<String> reasons) {
         XQueryFunction fd = functions.get(functionName);
         if (fd != null) {
@@ -252,6 +258,7 @@ public class XQueryFunctionLibrary implements FunctionLibrary, XQueryFunctionBin
      * @return the XQueryFunction if there is one, or null if not.
      */
 
+    @Override
     public XQueryFunction getDeclaration(StructuredQName functionName, int staticArgs) {
         SymbolicName functionKey = XQueryFunction.getIdentificationKey(
                 functionName, staticArgs);
@@ -366,6 +373,7 @@ public class XQueryFunctionLibrary implements FunctionLibrary, XQueryFunctionBin
      */
 
     /*@NotNull*/
+    @Override
     public FunctionLibrary copy() {
         XQueryFunctionLibrary qfl = new XQueryFunctionLibrary(config);
         qfl.functions = new HashMap<>(functions);

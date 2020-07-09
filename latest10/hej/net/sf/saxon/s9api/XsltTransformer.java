@@ -80,6 +80,7 @@ public class XsltTransformer extends AbstractXsltTransformer implements Destinat
      * @param baseURI the base URI to be used
      */
 
+    @Override
     public void setDestinationBaseURI(URI baseURI) {
         this.destinationBaseUri = baseURI;
     }
@@ -90,6 +91,7 @@ public class XsltTransformer extends AbstractXsltTransformer implements Destinat
      * @return the baseURI, or null if none is known
      */
 
+    @Override
     public URI getDestinationBaseURI() {
         return destinationBaseUri;
     }
@@ -400,6 +402,7 @@ public class XsltTransformer extends AbstractXsltTransformer implements Destinat
      * @throws IllegalStateException if no Destination has been supplied
      */
 
+    @Override
     public Receiver getReceiver(PipelineConfiguration pipe, SerializationProperties params) throws SaxonApiException {
         if (destination == null) {
             throw new IllegalStateException("No destination has been supplied");
@@ -416,6 +419,7 @@ public class XsltTransformer extends AbstractXsltTransformer implements Destinat
      * to the destination.
      */
 
+    @Override
     public void close() {
 
     }

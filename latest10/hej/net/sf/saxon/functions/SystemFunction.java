@@ -213,6 +213,7 @@ public abstract class SystemFunction extends AbstractFunction {
      * @return the qualified name
      */
 
+    @Override
     public StructuredQName getFunctionName() {
         return details.name;
     }
@@ -224,6 +225,7 @@ public abstract class SystemFunction extends AbstractFunction {
      *
      * @return a description of the function for use in error messages
      */
+    @Override
     public String getDescription() {
         return details.name.getDisplayName();
     }
@@ -235,6 +237,7 @@ public abstract class SystemFunction extends AbstractFunction {
      * @return the arity of the function
      */
 
+    @Override
     public int getArity() {
         return arity;
     }
@@ -244,6 +247,7 @@ public abstract class SystemFunction extends AbstractFunction {
      *
      * @return an array of OperandRole objects, one for each argument
      */
+    @Override
     public OperandRole[] getOperandRoles() {
         OperandRole[] roles = new OperandRole[getArity()];
         OperandUsage[] usages = details.usage;
@@ -360,6 +364,7 @@ public abstract class SystemFunction extends AbstractFunction {
      * @return the function item's type
      */
 
+    @Override
     public FunctionItemType getFunctionItemType() {
         SequenceType resultType = SequenceType.makeSequenceType(getResultItemType(), details.cardinality);
         return new SpecificFunctionType(details.argumentTypes, resultType);
@@ -460,6 +465,7 @@ public abstract class SystemFunction extends AbstractFunction {
      * is written to the supplied output destination.
      */
 
+    @Override
     public void export(ExpressionPresenter out) throws XPathException {
         out.startElement("fnRef");
         StructuredQName qName = getFunctionName();
@@ -481,6 +487,7 @@ public abstract class SystemFunction extends AbstractFunction {
         return caller;
     }
 
+    @Override
     public boolean isTrustedResultType() {
         return true;
     }

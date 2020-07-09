@@ -87,6 +87,7 @@ public class PIGrabber extends ProxyReceiver {
      * Abort the parse when the first start element tag is found
      */
 
+    @Override
     public void startElement(NodeName elemName, SchemaType type,
                              AttributeMap attributes, NamespaceMap namespaces,
                              Location location, int properties)
@@ -111,6 +112,7 @@ public class PIGrabber extends ProxyReceiver {
      * Handle xml-stylesheet PI
      */
 
+    @Override
     public void processingInstruction(String target, CharSequence data, Location locationId, int properties)
             throws XPathException {
         if (target.equals("xml-stylesheet")) {

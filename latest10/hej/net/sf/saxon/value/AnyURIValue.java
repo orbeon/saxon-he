@@ -66,6 +66,7 @@ public final class AnyURIValue extends StringValue {
      */
 
     /*@NotNull*/
+    @Override
     public AtomicValue copyAsSubType(AtomicType typeLabel) {
         AnyURIValue v = new AnyURIValue(value);
         v.typeLabel = typeLabel;
@@ -73,6 +74,7 @@ public final class AnyURIValue extends StringValue {
     }
 
     /*@NotNull*/
+    @Override
     public BuiltInAtomicType getPrimitiveType() {
         return BuiltInAtomicType.ANY_URI;
     }

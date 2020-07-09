@@ -114,6 +114,7 @@ public class TinyBuilder extends Builder {
      * Open the event stream
      */
 
+    @Override
     public void open() {
         //System.err.println("TinyBuilder " + this + " open; " + started);
         if (started) {
@@ -137,6 +138,7 @@ public class TinyBuilder extends Builder {
      * @param properties
      */
 
+    @Override
     public void startDocument(int properties) throws XPathException {
         if ((started && !ended) || currentDepth > 0) {
             // this happens when using an IdentityTransformer, or when copying a document node to form
@@ -170,6 +172,7 @@ public class TinyBuilder extends Builder {
      * Callback interface for SAX: not for application use
      */
 
+    @Override
     public void endDocument() throws XPathException {
 //        System.err.println("TinyBuilder: " + this + " End document");
 
@@ -193,6 +196,7 @@ public class TinyBuilder extends Builder {
 
     }
 
+    @Override
     public void reset() {
         super.reset();
         tree = null;
@@ -202,6 +206,7 @@ public class TinyBuilder extends Builder {
         statistics = config.getTreeStatistics().TEMPORARY_TREE_STATISTICS;
     }
 
+    @Override
     public void close() throws XPathException {
         TinyTree tt = tree;
         if (tt != null) {
@@ -225,6 +230,7 @@ public class TinyBuilder extends Builder {
      * @throws XPathException if an error occurs
      */
 
+    @Override
     public void startElement(NodeName elemName, SchemaType type,
                              AttributeMap attributes, NamespaceMap namespaces,
                              Location location, int properties)
@@ -353,6 +359,7 @@ public class TinyBuilder extends Builder {
      * Notify the end of an element node
      */
 
+    @Override
     public void endElement() throws XPathException {
         assert tree != null;
         //System.err.println(this + " end element " + currentDepth);
@@ -408,6 +415,7 @@ public class TinyBuilder extends Builder {
      * Notify a text node
      */
 
+    @Override
     public void characters(/*@NotNull*/ CharSequence chars, Location locationId, int properties) throws XPathException {
         //System.err.println("characters: " + chars);
         if (chars instanceof CompressedWhitespace &&
@@ -479,6 +487,7 @@ public class TinyBuilder extends Builder {
      * Callback interface for SAX: not for application use
      */
 
+    @Override
     public void processingInstruction(String piname, /*@NotNull*/ CharSequence remainder, Location locationId, int properties) throws XPathException {
         TinyTree tt = tree;
         assert tt != null;
@@ -517,6 +526,7 @@ public class TinyBuilder extends Builder {
      * Callback interface for SAX: not for application use
      */
 
+    @Override
     public void comment(/*@NotNull*/ CharSequence chars, Location locationId, int properties) throws XPathException {
         TinyTree tt = tree;
         assert tt != null;
@@ -547,6 +557,7 @@ public class TinyBuilder extends Builder {
      * Set an unparsed entity in the document
      */
 
+    @Override
     public void setUnparsedEntity(String name, String uri, String publicId) {
         if (tree.getUnparsedEntity(name) == null) {
             // bug 2187
@@ -555,6 +566,7 @@ public class TinyBuilder extends Builder {
     }
 
     /*@NotNull*/
+    @Override
     public BuilderMonitor getBuilderMonitor() {
         return new TinyBuilderMonitor(this);
     }

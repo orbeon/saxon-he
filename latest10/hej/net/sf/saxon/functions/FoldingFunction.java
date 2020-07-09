@@ -40,6 +40,7 @@ public abstract class FoldingFunction extends SystemFunction {
      * @throws net.sf.saxon.trans.XPathException
      *          if a dynamic error occurs during the evaluation of the expression
      */
+    @Override
     public Sequence call(XPathContext context, Sequence[] arguments) throws XPathException {
         Sequence[] additionalArgs = new Sequence[arguments.length - 1];
         System.arraycopy(arguments, 1, additionalArgs, 0, additionalArgs.length);
@@ -55,6 +56,7 @@ public abstract class FoldingFunction extends SystemFunction {
         return fold.result();
     }
 
+    @Override
     public String getStreamerName() {
         return "Fold";
     }

@@ -46,6 +46,7 @@ public class StreamAvailable extends SystemFunction implements Callable {
      * @throws net.sf.saxon.trans.XPathException
      *          if a dynamic error occurs during the evaluation of the argument
      */
+    @Override
     public BooleanValue call(XPathContext context, Sequence[] arguments) throws XPathException {
         boolean result = isAvailable(arguments[0].head().getStringValue(), context);
         return BooleanValue.get(result);

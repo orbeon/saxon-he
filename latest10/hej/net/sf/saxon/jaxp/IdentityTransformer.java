@@ -174,6 +174,7 @@ public class IdentityTransformer extends Transformer {
      * @see net.sf.saxon.lib.SaxonOutputKeys
      */
 
+    @Override
     public Properties getOutputProperties() {
 
         // Make a copy, so that modifications to the returned properties object have no effect (even on the
@@ -355,6 +356,7 @@ public class IdentityTransformer extends Transformer {
      * Perform identify transformation from Source to Result
      */
 
+    @Override
     public void transform(Source source, Result result)
             throws TransformerException {
         try {

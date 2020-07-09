@@ -58,6 +58,7 @@ public class NodeKindTest extends NodeTest {
      *
      * @return the smallest UType that subsumes this item type
      */
+    @Override
     public UType getUType() {
         return uType;
     }
@@ -89,6 +90,7 @@ public class NodeKindTest extends NodeTest {
         }
     }
 
+    @Override
     public boolean matches(Item item, /*@NotNull*/TypeHierarchy th) {
         return item instanceof NodeInfo && kind == ((NodeInfo) item).getNodeKind();
     }
@@ -113,6 +115,7 @@ public class NodeKindTest extends NodeTest {
         return kind == nodeKind;
     }
 
+    @Override
     public IntPredicate getMatcher(final NodeVectorTree tree) {
         final byte[] nodeKindArray = tree.getNodeKindArray();
         if (kind == Type.TEXT) {
@@ -133,6 +136,7 @@ public class NodeKindTest extends NodeTest {
      * @param node the node to be matched
      */
 
+    @Override
     public boolean test(NodeInfo node) {
         return node.getNodeKind() == kind;
     }
@@ -142,6 +146,7 @@ public class NodeKindTest extends NodeTest {
      * Determine the default priority of this node test when used on its own as a Pattern
      */
 
+    @Override
     public final double getDefaultPriority() {
         return -0.5;
     }
@@ -152,6 +157,7 @@ public class NodeKindTest extends NodeTest {
      * @return the type of node matched by this pattern. e.g. Type.ELEMENT or Type.TEXT
      */
 
+    @Override
     public int getPrimitiveType() {
         return kind;
     }
@@ -161,6 +167,7 @@ public class NodeKindTest extends NodeTest {
      * Return AnyType if there are no restrictions.
      */
 
+    @Override
     public SchemaType getContentType() {
         switch (kind) {
             case Type.DOCUMENT:
@@ -188,6 +195,7 @@ public class NodeKindTest extends NodeTest {
      */
 
     /*@NotNull*/
+    @Override
     public AtomicType getAtomizedItemType() {
         switch (kind) {
             case Type.DOCUMENT:
@@ -307,6 +315,7 @@ public class NodeKindTest extends NodeTest {
         }
     }
 
+    @Override
     public String toShortString() {
         switch (getNodeKind()) {
             case Type.ELEMENT:

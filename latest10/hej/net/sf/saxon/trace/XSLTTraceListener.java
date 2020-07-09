@@ -29,6 +29,7 @@ public class XSLTTraceListener extends AbstractTraceListener {
      * Generate attributes to be included in the opening trace element
      */
 
+    @Override
     protected String getOpeningAttributes() {
         return "xmlns:xsl=\"" + NamespaceConstant.XSLT + '\"';
     }
@@ -40,6 +41,7 @@ public class XSLTTraceListener extends AbstractTraceListener {
      */
 
     /*@Nullable*/
+    @Override
     protected String tag(Traceable info) {
         return tagName(info);
     }

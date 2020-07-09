@@ -27,6 +27,7 @@ public class XQueryTraceListener extends AbstractTraceListener {
      */
 
     /*@NotNull*/
+    @Override
     protected String getOpeningAttributes() {
         return "";
     }
@@ -38,6 +39,7 @@ public class XQueryTraceListener extends AbstractTraceListener {
      */
 
     /*@Nullable*/
+    @Override
     protected String tag(Traceable info) {
         if (info instanceof TraceableComponent) {
             if (info instanceof GlobalVariable) {

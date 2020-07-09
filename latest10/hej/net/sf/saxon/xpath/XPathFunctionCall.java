@@ -71,6 +71,7 @@ public class XPathFunctionCall extends FunctionCall implements Callable {
      */
 
     /*@NotNull*/
+    @Override
     public Expression preEvaluate(ExpressionVisitor visitor) {
         return this;
     }
@@ -81,6 +82,7 @@ public class XPathFunctionCall extends FunctionCall implements Callable {
      * dependencies on it.
      */
 
+    @Override
     public int getIntrinsicDependencies() {
         return 0;
     }
@@ -94,6 +96,7 @@ public class XPathFunctionCall extends FunctionCall implements Callable {
      */
 
     /*@NotNull*/
+    @Override
     public Expression copy(RebindingMap rebindings) {
         return new XPathFunctionCall(name, function);
     }
@@ -120,6 +123,7 @@ public class XPathFunctionCall extends FunctionCall implements Callable {
      */
 
     /*@NotNull*/
+    @Override
     public PathMap.PathMapNodeSet addToPathMap(/*@NotNull*/ PathMap pathMap, PathMap.PathMapNodeSet pathMapNodeSet) {
         return addExternalFunctionCallToPathMap(pathMap, pathMapNodeSet);
     }
@@ -133,6 +137,7 @@ public class XPathFunctionCall extends FunctionCall implements Callable {
      */
 
     /*@NotNull*/
+    @Override
     public SequenceIterator iterate(/*@NotNull*/ XPathContext context) throws XPathException {
         Sequence[] argValues = new Sequence[getArity()];
         for (int i = 0; i < argValues.length; i++) {
@@ -152,6 +157,7 @@ public class XPathFunctionCall extends FunctionCall implements Callable {
      */
 
     /*@Nullable*/
+    @Override
     public Sequence call(/*@NotNull*/ XPathContext context, Sequence[] argValues /*@NotNull*/) throws XPathException {
         // An argument is supplied to the extension function as a List, unless it is a singleton.
         // The items within the list are converted to the "natural Java representation", for example
@@ -196,6 +202,7 @@ public class XPathFunctionCall extends FunctionCall implements Callable {
      */
 
     /*@NotNull*/
+    @Override
     public ItemType getItemType() {
         return Type.ITEM_TYPE;
     }
@@ -205,6 +212,7 @@ public class XPathFunctionCall extends FunctionCall implements Callable {
      *
      * @return ZERO_OR_MORE (we don't know)
      */
+    @Override
     public int computeCardinality() {
         return StaticProperty.ALLOWS_ZERO_OR_MORE;
     }

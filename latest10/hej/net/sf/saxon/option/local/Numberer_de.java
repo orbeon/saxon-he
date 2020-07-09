@@ -26,6 +26,7 @@ public class Numberer_de extends AbstractNumberer {
      * @return the ordinal suffix to be appended to the formatted number
      */
 
+    @Override
     protected String ordinalSuffix(String ordinalParam, long number) {
         return ".";
     }
@@ -35,6 +36,7 @@ public class Numberer_de extends AbstractNumberer {
      * the result can then be converted algorithmically to lower case or upper case).
      */
 
+    @Override
     public String toWords(long number) {
         if (number >= 1000000000) {
             long rem = number % 1000000000;
@@ -83,6 +85,7 @@ public class Numberer_de extends AbstractNumberer {
      * Show an ordinal number as German words (for example, Einundzwanzigste)
      */
 
+    @Override
     public String toOrdinalWords(String ordinalParam, long number, int wordCase) {
         String suffix = "e";
         if (ordinalParam.equalsIgnoreCase("-er")) {
@@ -130,6 +133,7 @@ public class Numberer_de extends AbstractNumberer {
      * @param maxWidth The maximum number of characters
      */
 
+    @Override
     public String monthName(int month, int minWidth, int maxWidth) {
         String name = germanMonths[month - 1];
         if (maxWidth < 3) {
@@ -157,6 +161,7 @@ public class Numberer_de extends AbstractNumberer {
      * @param maxWidth The maximum number of characters
      */
 
+    @Override
     public String dayName(int day, int minWidth, int maxWidth) {
         String name = germanDays[day - 1];
         if (maxWidth < 10) {
@@ -182,6 +187,7 @@ public class Numberer_de extends AbstractNumberer {
      *         in German, to have the day represented as "dritte August".
      */
 
+    @Override
     public String getOrdinalSuffixForDateTime(String component) {
         return "-e";
     }
@@ -192,6 +198,7 @@ public class Numberer_de extends AbstractNumberer {
      * @param year the proleptic gregorian year, using "0" for the year before 1AD
      */
 
+    @Override
     public String getEraName(int year) {
         return (year <= 0 ? "v. Chr." : "n. Chr.");
     }
@@ -203,6 +210,7 @@ public class Numberer_de extends AbstractNumberer {
      */
 
     /*@NotNull*/
+    @Override
     public String getCalendarName(String code) {
         if (code.equals("AD")) {
             return "Gregorianisch";

@@ -22,6 +22,7 @@ public class PIOverNodeInfo extends NodeOverNodeInfo implements ProcessingInstru
      * the first token following the markup that begins the processing
      * instruction.
      */
+    @Override
     public String getTarget() {
         return node.getLocalPart();
     }
@@ -31,6 +32,7 @@ public class PIOverNodeInfo extends NodeOverNodeInfo implements ProcessingInstru
      * white space character after the target to the character immediately
      * preceding the <code>?&gt;</code>.
      */
+    @Override
     public String getData() {
         return node.getStringValue();
     }
@@ -42,6 +44,7 @@ public class PIOverNodeInfo extends NodeOverNodeInfo implements ProcessingInstru
      *
      * @throws org.w3c.dom.DOMException NO_MODIFICATION_ALLOWED_ERR: Raised when the node is readonly.
      */
+    @Override
     public void setData(String data) throws DOMException {
         disallowUpdate();
     }

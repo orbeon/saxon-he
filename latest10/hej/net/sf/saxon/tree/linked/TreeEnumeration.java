@@ -76,6 +76,7 @@ abstract class TreeEnumeration implements AxisIterator, LookaheadIterator {
      * @return true if there are more items in the sequence
      */
 
+    @Override
     public boolean hasNext() {
         return next != null;
     }
@@ -86,6 +87,7 @@ abstract class TreeEnumeration implements AxisIterator, LookaheadIterator {
      */
 
     /*@Nullable*/
+    @Override
     public final NodeInfo next() {
         if (next == null) {
             current = null;
@@ -109,6 +111,7 @@ abstract class TreeEnumeration implements AxisIterator, LookaheadIterator {
      *         It is acceptable for the properties of the iterator to change depending on its state.
      */
 
+    @Override
     public EnumSet<Property> getProperties() {
         return EnumSet.of(Property.LOOKAHEAD);
     }

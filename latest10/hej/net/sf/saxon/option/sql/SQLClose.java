@@ -32,6 +32,7 @@ public class SQLClose extends ExtensionInstruction {
 
     /*@Nullable*/ Expression connection = null;
 
+    @Override
     public void prepareAttributes() {
         AttributeInfo connectAtt = attributes().get("", "connection");
         if (connectAtt == null) {
@@ -41,11 +42,13 @@ public class SQLClose extends ExtensionInstruction {
         }
     }
 
+    @Override
     public void validate(ComponentDeclaration decl) throws XPathException {
         super.validate(decl);
         connection = typeCheck("connection", connection);
     }
 
+    @Override
     public Expression compile(Compilation exec, ComponentDeclaration decl) throws XPathException {
         return new CloseInstruction(connection);
     }
@@ -64,18 +67,22 @@ public class SQLClose extends ExtensionInstruction {
          * This method indicates which of the three is provided.
          */
 
+        @Override
         public int getImplementationMethod() {
             return Expression.EVALUATE_METHOD;
         }
 
+        @Override
         public String getExpressionType() {
             return "sql:close";
         }
 
+        @Override
         public int computeCardinality() {
             return StaticProperty.ALLOWS_ZERO_OR_ONE;
         }
 
+        @Override
         public Sequence call(XPathContext context, Sequence[] arguments) throws XPathException {
             Connection connection = SQLFunctionSet.expectConnection(arguments[CONNECTION], context);
             try {

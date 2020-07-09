@@ -59,6 +59,7 @@ public class ExsltCommonFunctionSet extends BuiltInFunctionSet {
      */
 
     public static class NodeSetFn extends SystemFunction {
+        @Override
         public Sequence call(XPathContext context, Sequence[] arguments) throws XPathException {
             return arguments[0];
         }
@@ -69,6 +70,7 @@ public class ExsltCommonFunctionSet extends BuiltInFunctionSet {
      */
 
     public static class ObjectTypeFn extends SystemFunction {
+        @Override
         public Sequence call(XPathContext context, Sequence[] arguments) throws XPathException {
             final TypeHierarchy th = context.getConfiguration().getTypeHierarchy();
             Item value = arguments[0].head();

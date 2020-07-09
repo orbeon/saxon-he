@@ -32,6 +32,7 @@ public abstract class AbstractFunction implements Function {
      *
      * @return an array of OperandRole objects, one for each argument
      */
+    @Override
     public OperandRole[] getOperandRoles() {
         OperandRole[] roles = new OperandRole[getArity()];
         Arrays.fill(roles, new OperandRole(0, OperandUsage.NAVIGATION));
@@ -45,6 +46,7 @@ public abstract class AbstractFunction implements Function {
      * @throws net.sf.saxon.trans.XPathException
      *          if atomization is not allowed for this kind of item
      */
+    @Override
     public AtomicSequence atomize() throws XPathException {
         throw new XPathException("Function items (other than arrays) cannot be atomized", "FOTY0013");
     }
@@ -54,6 +56,7 @@ public abstract class AbstractFunction implements Function {
      *
      * @return true if this function item is an array, otherwise false
      */
+    @Override
     public boolean isArray() {
         return false;
     }
@@ -63,6 +66,7 @@ public abstract class AbstractFunction implements Function {
      *
      * @return true if this function item is a map, otherwise false
      */
+    @Override
     public boolean isMap() {
         return false;
     }
@@ -73,6 +77,7 @@ public abstract class AbstractFunction implements Function {
      * @throws UnsupportedOperationException (the string value of a function is not defined)
      */
 
+    @Override
     public String getStringValue() {
         throw new UnsupportedOperationException("The string value of a function is not defined");
     }
@@ -83,6 +88,7 @@ public abstract class AbstractFunction implements Function {
      * @throws UnsupportedOperationException (the string value of a function is not defined)
      */
 
+    @Override
     public CharSequence getStringValueCS() {
         throw new UnsupportedOperationException("The string value of a function is not defined");
     }
@@ -98,6 +104,7 @@ public abstract class AbstractFunction implements Function {
      * @throws XPathException (the EBVof a function item is not defined)
      */
 
+    @Override
     public boolean effectiveBooleanValue() throws XPathException {
         throw new XPathException("A function has no effective boolean value", "XPTY0004");
     }
@@ -129,6 +136,7 @@ public abstract class AbstractFunction implements Function {
      * not be the same as the caller's context)
      */
 
+    @Override
     public XPathContext makeNewContext(XPathContext callingContext, ContextOriginator originator) {
         return callingContext;
     }
@@ -139,6 +147,7 @@ public abstract class AbstractFunction implements Function {
      *
      * @param other the other function item
      */
+    @Override
     public boolean deepEquals(Function other, XPathContext context, AtomicComparer comparer, int flags) throws XPathException {
         throw new XPathException("Argument to deep-equal() contains a function item", "FOTY0015");
     }
@@ -146,6 +155,7 @@ public abstract class AbstractFunction implements Function {
     /**
      * Output information about this function item to the diagnostic explain() output
      */
+    @Override
     public void export(ExpressionPresenter out) throws XPathException {
         throw new UnsupportedOperationException("export() not implemented for " + this.getClass());
     }
@@ -154,6 +164,7 @@ public abstract class AbstractFunction implements Function {
      * Check that result type is SystemFunction or AtomicConstructorFunction
      *
      */
+    @Override
     public boolean isTrustedResultType() {
         return false;
     }

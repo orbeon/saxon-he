@@ -51,6 +51,7 @@ public class ZeroOrOne<T extends Item> implements GroundedValue {
      * @return the string value of the sequence.
      */
 
+    @Override
     public CharSequence getStringValueCS() {
         return item == null ? "" : item.getStringValueCS();
     }
@@ -63,6 +64,7 @@ public class ZeroOrOne<T extends Item> implements GroundedValue {
      */
 
     /*@NotNull*/
+    @Override
     public String getStringValue() {
         return item == null ? "" : item.getStringValue();
     }
@@ -73,6 +75,7 @@ public class ZeroOrOne<T extends Item> implements GroundedValue {
      * @return the first item in the sequence if there is one, or null if the sequence
      *         is empty
      */
+    @Override
     public T head() {
         return item;
     }
@@ -81,6 +84,7 @@ public class ZeroOrOne<T extends Item> implements GroundedValue {
      * Get the length of the sequence
      */
 
+    @Override
     public int getLength() {
         return item == null ? 0 : 1;
     }
@@ -94,6 +98,7 @@ public class ZeroOrOne<T extends Item> implements GroundedValue {
      */
 
     /*@Nullable*/
+    @Override
     public T itemAt(int n) {
         if (n == 0 && item != null) {
             return item;
@@ -117,6 +122,7 @@ public class ZeroOrOne<T extends Item> implements GroundedValue {
      */
 
     /*@NotNull*/
+    @Override
     public GroundedValue subsequence(int start, int length) {
         if (item != null && start <= 0 && start + length > 0) {
             return this;
@@ -174,6 +180,7 @@ public class ZeroOrOne<T extends Item> implements GroundedValue {
      * Get the effective boolean value
      */
 
+    @Override
     public boolean effectiveBooleanValue() throws XPathException {
         return ExpressionTool.effectiveBooleanValue(item);
     }
@@ -196,6 +203,7 @@ public class ZeroOrOne<T extends Item> implements GroundedValue {
      *
      * @return the simplified sequence
      */
+    @Override
     public GroundedValue reduce() {
         if (item == null) {
             return EmptySequence.getInstance();

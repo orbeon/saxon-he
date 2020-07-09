@@ -32,11 +32,13 @@ public final class UTF8CharacterSet implements CharacterSet {
         return theInstance;
     }
 
+    @Override
     public boolean inCharset(int c) {
         return true;
     }
 
     /*@NotNull*/
+    @Override
     public String getCanonicalName() {
         return "UTF-8";
     }

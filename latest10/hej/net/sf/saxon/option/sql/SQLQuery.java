@@ -78,6 +78,7 @@ public class SQLQuery extends ExtensionInstruction {
 
     boolean disable = false;    // true means disable-output-escaping="yes"
 
+    @Override
     public void prepareAttributes() {
         // Attributes for SQL-statement
         AttributeMap atts = attributes();
@@ -145,6 +146,7 @@ public class SQLQuery extends ExtensionInstruction {
 
     }
 
+    @Override
     public void validate(ComponentDeclaration decl) throws XPathException {
         super.validate(decl);
         column = typeCheck("column", column);
@@ -153,6 +155,7 @@ public class SQLQuery extends ExtensionInstruction {
         connection = typeCheck("connection", connection);
     }
 
+    @Override
     public Expression compile(Compilation exec, ComponentDeclaration decl) throws XPathException {
         return new QueryInstruction(connection,
                 column, table, where,
@@ -190,14 +193,17 @@ public class SQLQuery extends ExtensionInstruction {
          * This method indicates which of the three is provided.
          */
 
+        @Override
         public int getImplementationMethod() {
             return Expression.PROCESS_METHOD;
         }
 
+        @Override
         public String getExpressionType() {
             return "sql:query";
         }
 
+        @Override
         public Expression copy(RebindingMap rebindings) {
             QueryInstruction qi2 = new QueryInstruction();
             qi2.copyOperandsFrom(this);
@@ -207,6 +213,7 @@ public class SQLQuery extends ExtensionInstruction {
             return qi2;
         }
 
+        @Override
         public Sequence call(XPathContext context, Sequence[] arguments /*@NotNull*/) throws XPathException {
             // Prepare the SQL statement (only do this once)
 

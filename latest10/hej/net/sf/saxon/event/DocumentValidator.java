@@ -31,6 +31,7 @@ public class DocumentValidator extends ProxyReceiver {
         this.errorCode = errorCode;
     }
 
+    @Override
     public void setPipelineConfiguration(/*@NotNull*/ PipelineConfiguration config) {
         super.setPipelineConfiguration(config);
     }
@@ -39,6 +40,7 @@ public class DocumentValidator extends ProxyReceiver {
      * Start of an element
      */
 
+    @Override
     public void startElement(NodeName elemName, SchemaType type,
                              AttributeMap attributes, NamespaceMap namespaces,
                              Location location, int properties)
@@ -55,6 +57,7 @@ public class DocumentValidator extends ProxyReceiver {
      * Character data
      */
 
+    @Override
     public void characters(CharSequence chars, Location locationId, int properties) throws XPathException {
         if (level == 0) {
             if (Whitespace.isWhite(chars)) {
@@ -69,6 +72,7 @@ public class DocumentValidator extends ProxyReceiver {
      * End of element
      */
 
+    @Override
     public void endElement() throws XPathException {
         level--;
         nextReceiver.endElement();
@@ -78,6 +82,7 @@ public class DocumentValidator extends ProxyReceiver {
      * Notify the end of a document node
      */
 
+    @Override
     public void endDocument() throws XPathException {
         if (level == 0) {
             if (!foundElement) {

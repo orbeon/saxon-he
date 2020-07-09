@@ -127,6 +127,7 @@ public class FunctionLookup extends ContextAccessorFunction {
      * @throws net.sf.saxon.trans.XPathException
      *          if a dynamic error occurs during the evaluation of the expression
      */
+    @Override
     public ZeroOrOne call(XPathContext context, Sequence[] arguments) throws XPathException {
         XPathContext c = boundContext == null ? context : boundContext;
         QNameValue qname = (QNameValue) arguments[0].head();

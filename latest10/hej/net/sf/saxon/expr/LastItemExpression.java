@@ -39,6 +39,7 @@ public final class LastItemExpression extends SingleItemFilter {
      */
 
     /*@NotNull*/
+    @Override
     public Expression copy(RebindingMap rebindings) {
         LastItemExpression exp = new LastItemExpression(getBaseExpression().copy(rebindings));
         ExpressionTool.copyLocationInfo(this, exp);
@@ -63,6 +64,7 @@ public final class LastItemExpression extends SingleItemFilter {
      */
 
     /*@Nullable*/
+    @Override
     public Item evaluateItem(XPathContext context) throws XPathException {
         SequenceIterator forwards = getBaseExpression().iterate(context);
         if (forwards instanceof ReversibleIterator) {
@@ -80,6 +82,7 @@ public final class LastItemExpression extends SingleItemFilter {
     }
 
 
+    @Override
     public String getExpressionName() {
         return "lastOf";
     }

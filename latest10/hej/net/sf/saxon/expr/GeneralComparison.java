@@ -119,6 +119,7 @@ public abstract class GeneralComparison extends BinaryExpression implements Comp
      *         in explain() output displaying the expression.
      */
 
+    @Override
     public String getExpressionName() {
         return "GeneralComparison";
     }
@@ -136,6 +137,7 @@ public abstract class GeneralComparison extends BinaryExpression implements Comp
      * Get the AtomicComparer used to compare atomic values. This encapsulates any collation that is used
      */
 
+    @Override
     public AtomicComparer getAtomicComparer() {
         return comparer;
     }
@@ -145,6 +147,7 @@ public abstract class GeneralComparison extends BinaryExpression implements Comp
      * Token.FLE, Token.FGE
      */
 
+    @Override
     public int getSingletonOperator() {
         return singletonOperator;
     }
@@ -156,6 +159,7 @@ public abstract class GeneralComparison extends BinaryExpression implements Comp
      *         should be converted to strings.
      */
 
+    @Override
     public boolean convertsUntypedToOther() {
         return true;
     }
@@ -164,6 +168,7 @@ public abstract class GeneralComparison extends BinaryExpression implements Comp
      * Determine the static cardinality. Returns [1..1]
      */
 
+    @Override
     public int computeCardinality() {
         return StaticProperty.EXACTLY_ONE;
     }
@@ -175,6 +180,7 @@ public abstract class GeneralComparison extends BinaryExpression implements Comp
      */
 
     /*@NotNull*/
+    @Override
     public Expression typeCheck(ExpressionVisitor visitor, ContextItemStaticInfo contextInfo) throws XPathException {
 
         final Configuration config = visitor.getConfiguration();
@@ -392,6 +398,7 @@ public abstract class GeneralComparison extends BinaryExpression implements Comp
      */
 
     /*@NotNull*/
+    @Override
     public Expression optimize(ExpressionVisitor visitor, ContextItemStaticInfo contextInfo) throws XPathException {
 
         final TypeHierarchy th = visitor.getConfiguration().getTypeHierarchy();
@@ -577,6 +584,7 @@ public abstract class GeneralComparison extends BinaryExpression implements Comp
      */
 
     /*@Nullable*/
+    @Override
     public BooleanValue evaluateItem(XPathContext context) throws XPathException {
         switch (comparisonCardinality) {
             case ONE_TO_ONE: {
@@ -607,6 +615,7 @@ public abstract class GeneralComparison extends BinaryExpression implements Comp
      * @throws XPathException if a dynamic error occurs during the evaluation of the expression
      */
 
+    @Override
     public BooleanValue call(XPathContext context, Sequence[] arguments) throws XPathException {
         switch (comparisonCardinality) {
             case ONE_TO_ONE: {
@@ -635,6 +644,7 @@ public abstract class GeneralComparison extends BinaryExpression implements Comp
      * @return a boolean representing the result of the numeric comparison of the two operands
      */
 
+    @Override
     public boolean effectiveBooleanValue(XPathContext context) throws XPathException {
         switch (comparisonCardinality) {
             case ONE_TO_ONE: {
@@ -860,6 +870,7 @@ public abstract class GeneralComparison extends BinaryExpression implements Comp
      */
 
     /*@NotNull*/
+    @Override
     public ItemType getItemType() {
         return BuiltInAtomicType.BOOLEAN;
     }
@@ -934,6 +945,7 @@ public abstract class GeneralComparison extends BinaryExpression implements Comp
         return "gc";
     }
 
+    @Override
     protected void explainExtraAttributes(ExpressionPresenter out) {
         String cc = "";
         switch (comparisonCardinality) {

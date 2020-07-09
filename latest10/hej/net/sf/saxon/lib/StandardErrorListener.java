@@ -180,6 +180,7 @@ public class StandardErrorListener extends StandardDiagnostics implements ErrorL
      * @see javax.xml.transform.TransformerException
      */
 
+    @Override
     public void warning(TransformerException exception) {
 
         if (logger == null) {
@@ -230,6 +231,7 @@ public class StandardErrorListener extends StandardDiagnostics implements ErrorL
      * @see TransformerException
      */
 
+    @Override
     public void error(TransformerException exception) {
 
         if (logger == null) {
@@ -278,6 +280,7 @@ public class StandardErrorListener extends StandardDiagnostics implements ErrorL
      *                  transformer exception.
      */
 
+    @Override
     public void fatalError(TransformerException exception) {
         XPathException xe = XPathException.makeXPathException(exception);
         if (xe.hasBeenReported()) {

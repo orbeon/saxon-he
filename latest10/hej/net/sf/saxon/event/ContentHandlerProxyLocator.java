@@ -54,6 +54,7 @@ public class ContentHandlerProxyLocator implements Locator {
      * @return null (always)
      */
 
+    @Override
     public String getPublicId() {
         return null;
     }
@@ -64,6 +65,7 @@ public class ContentHandlerProxyLocator implements Locator {
      * @return the system ID giving the location in the query or stylesheet of the most recent event notified
      */
 
+    @Override
     public String getSystemId() {
         return parent.getCurrentLocation().getSystemId();
     }
@@ -74,6 +76,7 @@ public class ContentHandlerProxyLocator implements Locator {
      * @return the line number giving the location of the most recent event notified
      */
 
+    @Override
     public int getLineNumber() {
         return parent.getCurrentLocation().getLineNumber();
     }
@@ -84,6 +87,7 @@ public class ContentHandlerProxyLocator implements Locator {
      * @return -1 (always)
      */
 
+    @Override
     public int getColumnNumber() {
         return parent.getCurrentLocation().getColumnNumber();
     }

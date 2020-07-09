@@ -135,10 +135,12 @@ public class XQueryExpression implements Location, ExpressionOwner, TraceableCom
         return expression;
     }
 
+    @Override
     public Expression getBody() {
         return getExpression();
     }
 
+    @Override
     public Expression getChildExpression() {
         return expression;
     }
@@ -668,6 +670,7 @@ public class XQueryExpression implements Location, ExpressionOwner, TraceableCom
      * @see #getSystemId
      */
     /*@Nullable*/
+    @Override
     public String getPublicId() {
         return null;
     }
@@ -685,6 +688,7 @@ public class XQueryExpression implements Location, ExpressionOwner, TraceableCom
      * @see #getPublicId
      */
     /*@Nullable*/
+    @Override
     public String getSystemId() {
         return mainModule.getSystemId();
     }
@@ -702,6 +706,7 @@ public class XQueryExpression implements Location, ExpressionOwner, TraceableCom
      * @return The line number, or -1 if none is available.
      * @see #getColumnNumber
      */
+    @Override
     public int getLineNumber() {
         return -1;
     }
@@ -719,6 +724,7 @@ public class XQueryExpression implements Location, ExpressionOwner, TraceableCom
      * @return The column number, or -1 if none is available.
      * @see #getLineNumber
      */
+    @Override
     public int getColumnNumber() {
         return -1;
     }
@@ -728,6 +734,7 @@ public class XQueryExpression implements Location, ExpressionOwner, TraceableCom
      * should not be saved for later use. The result of this operation holds the same location information,
      * but in an immutable form.
      */
+    @Override
     public Location saveLocation() {
         return this;
     }
@@ -742,6 +749,7 @@ public class XQueryExpression implements Location, ExpressionOwner, TraceableCom
         return HostLanguage.XQUERY;
     }
 
+    @Override
     public void setChildExpression(Expression expr) {
             expression = expr;
     }
@@ -761,6 +769,7 @@ public class XQueryExpression implements Location, ExpressionOwner, TraceableCom
         }
 
         /*@Nullable*/
+        @Override
         public Item next() throws XPathException {
             try {
                 return base.next();
@@ -773,6 +782,7 @@ public class XQueryExpression implements Location, ExpressionOwner, TraceableCom
             }
         }
 
+        @Override
         public void close() {
             base.close();
         }

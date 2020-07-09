@@ -44,6 +44,7 @@ public class PatternParser30 extends XPathParser implements PatternParser {
      */
 
     /*@NotNull*/
+    @Override
     public Pattern parsePattern(String pattern, StaticContext env) throws XPathException {
         this.env = env;
         charChecker = env.getConfiguration().getValidCharacterChecker();
@@ -174,6 +175,7 @@ public class PatternParser30 extends XPathParser implements PatternParser {
      * Callback to tailor the tokenizer
      */
 
+    @Override
     protected void customizeTokenizer(Tokenizer t) {
         // no action
     }
@@ -187,6 +189,7 @@ public class PatternParser30 extends XPathParser implements PatternParser {
      */
 
     /*@NotNull*/
+    @Override
     public Expression parseExpression() throws XPathException {
         Tokenizer t = getTokenizer();
         if (inPredicate > 0) {
@@ -244,6 +247,7 @@ public class PatternParser30 extends XPathParser implements PatternParser {
      */
 
     /*@NotNull*/
+    @Override
     protected Expression parseBasicStep(boolean firstInPattern) throws XPathException {
         if (inPredicate > 0) {
             return super.parseBasicStep(firstInPattern);
@@ -313,6 +317,7 @@ public class PatternParser30 extends XPathParser implements PatternParser {
      */
 
     /*@NotNull*/
+    @Override
     protected Expression parsePredicate() throws XPathException {
         boolean disallow = t.disallowUnionKeyword;
         t.disallowUnionKeyword = false;
@@ -334,6 +339,7 @@ public class PatternParser30 extends XPathParser implements PatternParser {
      */
 
     /*@NotNull*/
+    @Override
     public Expression parseFunctionCall(Expression prefixArgument) throws XPathException {
         Expression fn = super.parseFunctionCall(prefixArgument);
         if (inPredicate <= 0 && !fn.isCallOn(SuperId.class) && !fn.isCallOn(KeyFn.class) &&
@@ -343,6 +349,7 @@ public class PatternParser30 extends XPathParser implements PatternParser {
         return fn;
     }
 
+    @Override
     public Expression parseFunctionArgument() throws XPathException {
         if (inPredicate > 0) {
             return super.parseFunctionArgument();
@@ -364,6 +371,7 @@ public class PatternParser30 extends XPathParser implements PatternParser {
         }
     }
 
+    @Override
     public Expression makeTracer(Expression exp, StructuredQName qName) {
         // Suppress tracing of pattern evaluation
         return exp;

@@ -66,6 +66,7 @@ public class Lang extends SystemFunction  {
      * @throws net.sf.saxon.trans.XPathException
      *          if a dynamic error occurs during the evaluation of the expression
      */
+    @Override
     public BooleanValue call(XPathContext context, Sequence[] arguments) throws XPathException {
         NodeInfo target;
         if (arguments.length > 1) {

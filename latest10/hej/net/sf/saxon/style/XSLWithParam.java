@@ -38,6 +38,7 @@ public class XSLWithParam extends XSLGeneralVariable {
         return sourceBinding.hasProperty(SourceBinding.BindingProperty.TUNNEL);
     }
 
+    @Override
     public void validate(ComponentDeclaration decl) throws XPathException {
         super.validate(decl);
 

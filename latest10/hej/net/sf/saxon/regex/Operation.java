@@ -219,6 +219,7 @@ public abstract class Operation {
                 IntIterator currentIter = null;
                 Operation currentOp = null;
 
+                @Override
                 public boolean hasNext() {
                     while (true) {
                         if (currentIter == null) {
@@ -239,6 +240,7 @@ public abstract class Operation {
                     }
                 }
 
+                @Override
                 public int next() {
                     return currentIter.next();
                 }
@@ -479,6 +481,7 @@ public abstract class Operation {
                 }
 
 
+                @Override
                 public boolean hasNext() {
                     if (!primed) {
                         iterators.push(operations.get(0).iterateMatches(matcher, position));
@@ -488,6 +491,7 @@ public abstract class Operation {
                     return nextPos >= 0;
                 }
 
+                @Override
                 public int next() {
                     return nextPos;
                 }
@@ -642,6 +646,7 @@ public abstract class Operation {
             return new IntSingletonIterator(position + len);
         }
 
+        @Override
         public String display() {
             return atom.toString();
         }
@@ -909,6 +914,7 @@ public abstract class Operation {
                         }
                     }
 
+                    @Override
                     public boolean hasNext() {
                         if (primed && iterators.size() >= min) {
                             return !iterators.isEmpty();
@@ -922,6 +928,7 @@ public abstract class Operation {
                         }
                     }
 
+                    @Override
                     public int next() {
                         primed = false;
                         return positions.peek();
@@ -948,6 +955,7 @@ public abstract class Operation {
                             pos = -1;
                         }
                     }
+                    @Override
                     public boolean hasNext() {
                         do {
                             advance();
@@ -955,6 +963,7 @@ public abstract class Operation {
                         return pos >= 0;
                     }
                     
+                    @Override
                     public int next() {
                         return pos;
                     }
@@ -1027,6 +1036,7 @@ public abstract class Operation {
                 private int count = 0;
                 private boolean started = false;
 
+                @Override
                 public boolean hasNext() {
                     if (!started) {
                         started = true;
@@ -1053,6 +1063,7 @@ public abstract class Operation {
                     return false;
                 }
 
+                @Override
                 public int next() {
                     return pos;
                 }
@@ -1155,6 +1166,7 @@ public abstract class Operation {
 
     public static class OpEOL extends Operation {
 
+        @Override
         public int getMatchLength() {
             return 0;
         }
@@ -1239,10 +1251,12 @@ public abstract class Operation {
             }
             final IntIterator base = childOp.iterateMatches(matcher, position);
             return new IntIterator() {
+                @Override
                 public boolean hasNext() {
                     return base.hasNext();
                 }
 
+                @Override
                 public int next() {
                     int next = base.next();
                     // Increase valid paren count
@@ -1366,6 +1380,7 @@ public abstract class Operation {
 
     public static class OpNothing extends Operation {
 
+        @Override
         public IntIterator iterateMatches(final REMatcher matcher, final int position) {
             return new IntSingletonIterator(position);
         }
@@ -1416,12 +1431,14 @@ public abstract class Operation {
                                        base.display() + " at position " + position + " returning " +
                                        iterName + " " + iterNr);
             return new IntIterator() {
+                @Override
                 public boolean hasNext() {
                     boolean b = baseIter.hasNext();
                     System.err.println("IntIterator " + iterNr + " hasNext() = " + b);
                     return b;
                 }
 
+                @Override
                 public int next() {
                     int n = baseIter.next();
                     System.err.println("IntIterator " + iterNr + " next() = " + n);
@@ -1475,10 +1492,12 @@ public abstract class Operation {
             this.base = base;
         }
 
+        @Override
         public boolean hasNext() {
             return countZeroLength <= 3 && base.hasNext();
         }
 
+        @Override
         public int next() {
             int p = base.next();
             if (p == currentPos) {

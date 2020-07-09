@@ -40,6 +40,7 @@ public class AnyFunctionTypeWithAssertions extends AnyFunctionType {
      * @return the list of annotation assertions, or an empty list if there are none
      */
 
+    @Override
     public AnnotationList getAnnotationAssertions() {
         return assertions;
     }

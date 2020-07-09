@@ -42,6 +42,7 @@ public class GroupEndingIterator extends GroupMatchingIterator implements GroupI
         return Count.steppingCount(another);
     }
 
+    @Override
     protected void advance() throws XPathException {
         currentMembers = new ArrayList<>(20);
         currentMembers.add(current);

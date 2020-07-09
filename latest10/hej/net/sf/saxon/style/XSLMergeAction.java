@@ -20,6 +20,7 @@ public class XSLMergeAction extends StyleElement {
      * @return true - it is an instruction
      */
 
+    @Override
     public boolean isInstruction() {
         return false;
     }
@@ -30,6 +31,7 @@ public class XSLMergeAction extends StyleElement {
      * @return true: yes, it may contain a sequence constructor
      */
 
+    @Override
     public boolean mayContainSequenceConstructor() {
         return true;
     }
@@ -53,6 +55,7 @@ public class XSLMergeAction extends StyleElement {
 
     }
 
+    @Override
     public void validate(ComponentDeclaration decl) throws XPathException {
         if (!(getParent() instanceof XSLMerge)) {
             compileError("xsl:merge-action may appear only as a child of xsl:merge", "XTSE0010");

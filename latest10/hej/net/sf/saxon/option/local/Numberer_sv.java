@@ -48,6 +48,7 @@ public class Numberer_sv extends AbstractNumberer {
      * @return String representing the number in words.
      */
 
+    @Override
     public String toOrdinalWords(String ordinalParam, long number, int wordCase) {
 
         String s;
@@ -98,6 +99,7 @@ public class Numberer_sv extends AbstractNumberer {
         }
     }
 
+    @Override
     public String toWords(long number) {
         if (number >= 1000000000) {
             long rem = number % 1000000000;
@@ -121,6 +123,7 @@ public class Numberer_sv extends AbstractNumberer {
         }
     }
 
+    @Override
     public String toWords(long number, int wordCase) {
         String s;
         if (number == 0) {
@@ -152,6 +155,7 @@ public class Numberer_sv extends AbstractNumberer {
      */
 
     //@Override
+    @Override
     public String monthName(int month, int minWidth, int maxWidth) {
         String name = swedishMonths[month - 1];
         if (maxWidth < 3) {
@@ -174,6 +178,7 @@ public class Numberer_sv extends AbstractNumberer {
      * @param maxWidth The maximum number of characters
      */
 
+    @Override
     public String dayName(int day, int minWidth, int maxWidth) {
         String name = swedishDays[day - 1];
         if (maxWidth < 2) {

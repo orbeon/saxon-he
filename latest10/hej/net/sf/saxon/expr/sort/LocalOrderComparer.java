@@ -31,6 +31,7 @@ public final class LocalOrderComparer implements ItemOrderComparer {
         return instance;
     }
 
+    @Override
     public int compare(Item a, Item b) {
         NodeInfo n1 = (NodeInfo) a;
         NodeInfo n2 = (NodeInfo) b;

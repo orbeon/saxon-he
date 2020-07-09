@@ -475,6 +475,7 @@ public class XQueryEvaluator extends AbstractDestination implements Iterable<Xdm
      * described in bug 2016.
      */
 
+    @Override
     public XdmSequenceIterator<XdmItem> iterator() throws SaxonApiUncheckedException {
         if (expression.isUpdateQuery()) {
             throw new IllegalStateException("Query is updating");
@@ -533,6 +534,7 @@ public class XQueryEvaluator extends AbstractDestination implements Iterable<Xdm
      * @throws IllegalStateException if no Destination has been supplied
      */
 
+    @Override
     public Receiver getReceiver(PipelineConfiguration pipe, SerializationProperties params) throws SaxonApiException {
         if (destination == null) {
             throw new IllegalStateException("No destination has been supplied");
@@ -572,6 +574,7 @@ public class XQueryEvaluator extends AbstractDestination implements Iterable<Xdm
      * to the destination.
      */
 
+    @Override
     public void close() throws SaxonApiException {
 
     }

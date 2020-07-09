@@ -69,6 +69,7 @@ public abstract class ElementCreator extends ParentNodeConstructor {
      */
 
     /*@NotNull*/
+    @Override
     public ItemType getItemType() {
         return NodeKindTest.ELEMENT;
     }
@@ -129,6 +130,7 @@ public abstract class ElementCreator extends ParentNodeConstructor {
      * @return a set of flags indicating static properties of this expression
      */
 
+    @Override
     public int computeSpecialProperties() {
         int p = super.computeSpecialProperties() |
                 StaticProperty.SINGLE_DOCUMENT_NODESET;
@@ -143,6 +145,7 @@ public abstract class ElementCreator extends ParentNodeConstructor {
      * is already performing validation. The default implementation does nothing.
      */
 
+    @Override
     public void suppressValidation(int parentValidationMode) {
         if (getValidationAction() == parentValidationMode && getSchemaType() == null) {
             // TODO: is this safe? e.g. if the child has validation=strict but matches a skip wildcard in the parent
@@ -158,6 +161,7 @@ public abstract class ElementCreator extends ParentNodeConstructor {
      * @throws XPathException if the content is found to be incorrect
      */
 
+    @Override
     protected void checkContentSequence(StaticContext env) throws XPathException {
         Operand[] components;
         if (getContentExpression() instanceof Block) {
@@ -273,6 +277,7 @@ public abstract class ElementCreator extends ParentNodeConstructor {
      * This method indicates which of these methods is prefered. For instructions this is the process() method.
      */
 
+    @Override
     public int getImplementationMethod() {
         return Expression.PROCESS_METHOD;
     }
@@ -287,6 +292,7 @@ public abstract class ElementCreator extends ParentNodeConstructor {
      * @return null (this instruction never returns a tail call)
      * @throws XPathException if a dynamic error occurs
      */
+    @Override
     public TailCall processLeavingTail(Outputter output, XPathContext context)
             throws XPathException {
         return processLeavingTail(output, context, null);

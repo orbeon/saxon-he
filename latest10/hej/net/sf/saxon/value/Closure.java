@@ -122,6 +122,7 @@ public class Closure implements Sequence, ContextOriginator {
      *          in the situation where the sequence is evaluated lazily, and
      *          evaluation of the first item causes a dynamic error.
      */
+    @Override
     public Item head() throws XPathException {
         return iterate().next();
     }
@@ -148,6 +149,7 @@ public class Closure implements Sequence, ContextOriginator {
      */
 
     /*@NotNull*/
+    @Override
     public SequenceIterator iterate() throws XPathException {
 
         if (inputIterator == null) {

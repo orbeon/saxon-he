@@ -53,6 +53,7 @@ public final class FunctionSequenceCoercer extends UnaryExpression {
         ExpressionTool.copyLocationInfo(sequence, this);
     }
 
+    @Override
     protected OperandRole getOperandRole() {
         return OperandRole.INSPECT;
     }
@@ -63,6 +64,7 @@ public final class FunctionSequenceCoercer extends UnaryExpression {
      */
 
     /*@NotNull*/
+    @Override
     public Expression simplify() throws XPathException {
         setBaseExpression(getBaseExpression().simplify());
         if (getBaseExpression() instanceof Literal) {
@@ -78,6 +80,7 @@ public final class FunctionSequenceCoercer extends UnaryExpression {
      */
 
     /*@NotNull*/
+    @Override
     public Expression typeCheck(ExpressionVisitor visitor, ContextItemStaticInfo contextInfo) throws XPathException {
         getOperand().typeCheck(visitor, contextInfo);
         final TypeHierarchy th = visitor.getConfiguration().getTypeHierarchy();
@@ -94,6 +97,7 @@ public final class FunctionSequenceCoercer extends UnaryExpression {
      * @return {@link net.sf.saxon.expr.StaticProperty#NO_NODES_NEWLY_CREATED}.
      */
 
+    @Override
     public int computeSpecialProperties() {
         int p = super.computeSpecialProperties();
         return p | StaticProperty.NO_NODES_NEWLY_CREATED;
@@ -107,6 +111,7 @@ public final class FunctionSequenceCoercer extends UnaryExpression {
      */
 
     /*@NotNull*/
+    @Override
     public Expression copy(RebindingMap rebindings) {
         FunctionSequenceCoercer fsc2 = new FunctionSequenceCoercer(getBaseExpression().copy(rebindings), requiredItemType, role);
         ExpressionTool.copyLocationInfo(this, fsc2);
@@ -131,6 +136,7 @@ public final class FunctionSequenceCoercer extends UnaryExpression {
      */
 
     /*@NotNull*/
+    @Override
     public SequenceIterator iterate(final XPathContext context) throws XPathException {
         SequenceIterator base = getBaseExpression().iterate(context);
         Coercer coercer = new Coercer(requiredItemType, context.getConfiguration(), getLocation());
@@ -142,6 +148,7 @@ public final class FunctionSequenceCoercer extends UnaryExpression {
      */
 
     /*@Nullable*/
+    @Override
     public Function evaluateItem(XPathContext context) throws XPathException {
         Item item = getBaseExpression().evaluateItem(context);
         if (item == null) {
@@ -170,6 +177,7 @@ public final class FunctionSequenceCoercer extends UnaryExpression {
      */
 
     /*@NotNull*/
+    @Override
     public SpecificFunctionType getItemType() {
         return requiredItemType;
     }
@@ -178,6 +186,7 @@ public final class FunctionSequenceCoercer extends UnaryExpression {
      * Determine the static cardinality of the expression
      */
 
+    @Override
     public int computeCardinality() {
         return getBaseExpression().getCardinality();
     }
@@ -203,6 +212,7 @@ public final class FunctionSequenceCoercer extends UnaryExpression {
         return super.computeHashCode() ^ requiredItemType.hashCode();
     }
 
+    @Override
     public String getExpressionName() {
         return "fnCoercer";
     }
@@ -213,6 +223,7 @@ public final class FunctionSequenceCoercer extends UnaryExpression {
      * is written to the supplied output destination.
      */
 
+    @Override
     public void export(ExpressionPresenter destination) throws XPathException {
         destination.startElement("fnCoercer", this);
         SequenceType st = SequenceType.makeSequenceType(requiredItemType, StaticProperty.EXACTLY_ONE);
@@ -244,6 +255,7 @@ public final class FunctionSequenceCoercer extends UnaryExpression {
             this.locator = locator;
         }
 
+        @Override
         public Function mapItem(Item item) throws XPathException {
             if (!(item instanceof Function)) {
                 throw new XPathException(

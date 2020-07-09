@@ -64,6 +64,7 @@ public final class DocumentOrderIterator implements SequenceIterator {
     // Implement the SequenceIterator as a wrapper around the underlying iterator
     // over the sequenceExtent, but looking ahead to remove duplicates.
 
+    @Override
     public NodeInfo next() throws XPathException {
         while (true) {
             NodeInfo next = (NodeInfo)iterator.next();

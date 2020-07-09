@@ -57,6 +57,7 @@ public class NamespaceNode implements NodeInfo {
      * @return the TreeInfo
      * @since 9.7
      */
+    @Override
     public TreeInfo getTreeInfo() {
         return element.getTreeInfo();
     }
@@ -67,6 +68,7 @@ public class NamespaceNode implements NodeInfo {
      * @return this item
      */
 
+    @Override
     public NodeInfo head() {
         return this;
     }
@@ -79,6 +81,7 @@ public class NamespaceNode implements NodeInfo {
      * @see net.sf.saxon.type.Type
      */
 
+    @Override
     public int getNodeKind() {
         return Type.NAMESPACE;
     }
@@ -124,6 +127,7 @@ public class NamespaceNode implements NodeInfo {
      */
 
     /*@Nullable*/
+    @Override
     public String getSystemId() {
         return element.getSystemId();
     }
@@ -135,6 +139,7 @@ public class NamespaceNode implements NodeInfo {
      * containing the node, or null if not known or not applicable
      * @since 9.7
      */
+    @Override
     public String getPublicId() {
         return element.getPublicId();
     }
@@ -147,6 +152,7 @@ public class NamespaceNode implements NodeInfo {
      */
 
     /*@Nullable*/
+    @Override
     public String getBaseURI() {
         return null;    // the base URI of a namespace node is the empty sequence
     }
@@ -158,6 +164,7 @@ public class NamespaceNode implements NodeInfo {
      *         -1 if not available
      */
 
+    @Override
     public int getLineNumber() {
         return element.getLineNumber();
     }
@@ -169,6 +176,7 @@ public class NamespaceNode implements NodeInfo {
      *         -1 if not available
      */
 
+    @Override
     public int getColumnNumber() {
         return element.getColumnNumber();
     }
@@ -178,6 +186,7 @@ public class NamespaceNode implements NodeInfo {
      * should not be saved for later use. The result of this operation holds the same location information,
      * but in an immutable form.
      */
+    @Override
     public Location saveLocation() {
         return this;
     }
@@ -194,6 +203,7 @@ public class NamespaceNode implements NodeInfo {
      *         produce the same result for generateId())
      */
 
+    @Override
     public int compareOrder(/*@NotNull*/ NodeInfo other) {
         if (other instanceof NamespaceNode && element.equals(((NamespaceNode) other).element)) {
             int c = position - ((NamespaceNode) other).position;
@@ -212,6 +222,7 @@ public class NamespaceNode implements NodeInfo {
      * @return the string value of the node
      */
 
+    @Override
     public String getStringValue() {
         return nsBinding.getURI();
     }
@@ -221,6 +232,7 @@ public class NamespaceNode implements NodeInfo {
      * the version of the method that returns a String.
      */
 
+    @Override
     public CharSequence getStringValueCS() {
         return getStringValue();
     }
@@ -251,6 +263,7 @@ public class NamespaceNode implements NodeInfo {
      *         the same expanded QName
      */
 
+    @Override
     public int getFingerprint() {
         if (fingerprint == -1) {
             if (nsBinding.getPrefix().isEmpty()) {
@@ -269,6 +282,7 @@ public class NamespaceNode implements NodeInfo {
      *         interface, this returns the full name in the case of a non-namespaced name.
      */
 
+    @Override
     public String getLocalPart() {
         return nsBinding.getPrefix();
     }
@@ -282,6 +296,7 @@ public class NamespaceNode implements NodeInfo {
      */
 
     /*@NotNull*/
+    @Override
     public String getURI() {
         return "";
     }
@@ -294,6 +309,7 @@ public class NamespaceNode implements NodeInfo {
      *         an empty string.
      */
 
+    @Override
     public String getDisplayName() {
         return getLocalPart();
     }
@@ -306,6 +322,7 @@ public class NamespaceNode implements NodeInfo {
      */
 
     /*@NotNull*/
+    @Override
     public String getPrefix() {
         return "";
     }
@@ -314,6 +331,7 @@ public class NamespaceNode implements NodeInfo {
      * Get the configuration
      */
 
+    @Override
     public Configuration getConfiguration() {
         return element.getConfiguration();
     }
@@ -340,6 +358,7 @@ public class NamespaceNode implements NodeInfo {
      *         xs:anyType if it has.
      * @since 9.4
      */
+    @Override
     public SchemaType getSchemaType() {
         return BuiltInAtomicType.STRING;
     }
@@ -350,6 +369,7 @@ public class NamespaceNode implements NodeInfo {
      * @return the parent of this node; null if this node has no parent
      */
 
+    @Override
     public NodeInfo getParent() {
         return element;
     }
@@ -369,6 +389,7 @@ public class NamespaceNode implements NodeInfo {
      * @see net.sf.saxon.om.AxisInfo
      */
 
+    @Override
     public AxisIterator iterateAxis(int axisNumber, Predicate<? super NodeInfo> nodeTest) {
         switch (axisNumber) {
             case AxisInfo.ANCESTOR:
@@ -425,6 +446,7 @@ public class NamespaceNode implements NodeInfo {
      *         if this node is not an element.
      * @since 9.4
      */
+    @Override
     public String getAttributeValue(/*@NotNull*/ String uri, /*@NotNull*/ String local) {
         return null;
     }
@@ -436,6 +458,7 @@ public class NamespaceNode implements NodeInfo {
      *         This will not necessarily be a document node
      */
 
+    @Override
     public NodeInfo getRoot() {
         return element.getRoot();
     }
@@ -448,6 +471,7 @@ public class NamespaceNode implements NodeInfo {
      * @return True if the node has one or more children
      */
 
+    @Override
     public boolean hasChildNodes() {
         return false;
     }
@@ -460,6 +484,7 @@ public class NamespaceNode implements NodeInfo {
      *               documents.
      */
 
+    @Override
     public void generateId(/*@NotNull*/ FastStringBuffer buffer) {
         element.generateId(buffer);
         buffer.append("n");
@@ -473,6 +498,7 @@ public class NamespaceNode implements NodeInfo {
      * @param locationId  If non-zero, identifies the location of the instruction
      */
 
+    @Override
     public void copy(/*@NotNull*/ Receiver out, int copyOptions, Location locationId) throws XPathException {
         out.append(this);
     }
@@ -493,6 +519,7 @@ public class NamespaceNode implements NodeInfo {
      */
 
     /*@Nullable*/
+    @Override
     public NamespaceBinding[] getDeclaredNamespaces(NamespaceBinding[] buffer) {
         return null;
     }
@@ -521,6 +548,7 @@ public class NamespaceNode implements NodeInfo {
      *
      * @param systemId The system identifier as a URL string.
      */
+    @Override
     public void setSystemId(String systemId) {
         // no action: namespace nodes have the same base URI as their parent
     }
@@ -533,6 +561,7 @@ public class NamespaceNode implements NodeInfo {
      */
 
     /*@NotNull*/
+    @Override
     public AtomicSequence atomize() throws XPathException {
         return new StringValue(getStringValueCS());
     }

@@ -47,6 +47,7 @@ public class CastExpression extends CastingExpression implements Callable {
      */
 
     /*@NotNull*/
+    @Override
     public Expression typeCheck(ExpressionVisitor visitor, ContextItemStaticInfo contextInfo) throws XPathException {
         getOperand().typeCheck(visitor, contextInfo);
         SequenceType atomicType = SequenceType.makeSequenceType(BuiltInAtomicType.ANY_ATOMIC, getCardinality());
@@ -128,6 +129,7 @@ public class CastExpression extends CastingExpression implements Callable {
      */
 
     /*@NotNull*/
+    @Override
     public Expression optimize(ExpressionVisitor visitor, ContextItemStaticInfo contextInfo) throws XPathException {
         final TypeHierarchy th = visitor.getConfiguration().getTypeHierarchy();
         Expression e2 = super.optimize(visitor, contextInfo);
@@ -247,6 +249,7 @@ public class CastExpression extends CastingExpression implements Callable {
      * Get the static cardinality of the expression
      */
 
+    @Override
     public int computeCardinality() {
         return allowsEmpty() && Cardinality.allowsZero(getBaseExpression().getCardinality())
                 ? StaticProperty.ALLOWS_ZERO_OR_ONE : StaticProperty.EXACTLY_ONE;
@@ -257,6 +260,7 @@ public class CastExpression extends CastingExpression implements Callable {
      */
 
     /*@NotNull*/
+    @Override
     public ItemType getItemType() {
         return getTargetType();
     }
@@ -318,6 +322,7 @@ public class CastExpression extends CastingExpression implements Callable {
      */
 
     /*@NotNull*/
+    @Override
     public Expression copy(RebindingMap rebindings) {
         CastExpression c2 = new CastExpression(getBaseExpression().copy(rebindings), getTargetType(), allowsEmpty());
         ExpressionTool.copyLocationInfo(this, c2);
@@ -340,6 +345,7 @@ public class CastExpression extends CastingExpression implements Callable {
         return EVALUATE_METHOD;
     }
 
+    @Override
     public Sequence call(XPathContext context, Sequence[] arguments) throws XPathException {
         AtomicValue result = doCast((AtomicValue)arguments[0].head(), context);
         return result == null ? EmptySequence.getInstance() : result;
@@ -389,6 +395,7 @@ public class CastExpression extends CastingExpression implements Callable {
      */
 
     /*@Nullable*/
+    @Override
     public AtomicValue evaluateItem(XPathContext context) throws XPathException {
         try {
             AtomicValue value = (AtomicValue) getBaseExpression().evaluateItem(context);
@@ -441,6 +448,7 @@ public class CastExpression extends CastingExpression implements Callable {
      * is written to the supplied output destination.
      */
 
+    @Override
     public void export(ExpressionPresenter out) throws XPathException {
         export(out, "cast");
     }

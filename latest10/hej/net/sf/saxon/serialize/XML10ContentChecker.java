@@ -79,6 +79,7 @@ public class XML10ContentChecker extends ProxyReceiver {
      * Character data
      */
 
+    @Override
     public void characters(CharSequence chars, Location locationId, int properties) throws XPathException {
         checkString(chars, locationId);
         nextReceiver.characters(chars, locationId, properties);
@@ -88,6 +89,7 @@ public class XML10ContentChecker extends ProxyReceiver {
      * Output a comment
      */
 
+    @Override
     public void comment(CharSequence chars, Location locationId, int properties) throws XPathException {
         checkString(chars, locationId);
         nextReceiver.comment(chars, locationId, properties);
@@ -97,6 +99,7 @@ public class XML10ContentChecker extends ProxyReceiver {
      * Processing Instruction
      */
 
+    @Override
     public void processingInstruction(String target, /*@NotNull*/ CharSequence data, Location locationId, int properties) throws XPathException {
         checkString(data, locationId);
         nextReceiver.processingInstruction(target, data, locationId, properties);

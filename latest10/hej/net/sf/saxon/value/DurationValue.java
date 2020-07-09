@@ -413,6 +413,7 @@ public class DurationValue extends AtomicValue implements AtomicMatchKey {
      *                  the value actually conforms to this type.
      */
 
+    @Override
     public AtomicValue copyAsSubType(AtomicType typeLabel) {
         if (negative) {
             return new DurationValue(0, -months, 0, 0, 0, -seconds, -nanoseconds, typeLabel);
@@ -428,6 +429,7 @@ public class DurationValue extends AtomicValue implements AtomicMatchKey {
      * and xs:untypedAtomic. For external objects, the result is AnyAtomicType.
      */
 
+    @Override
     public BuiltInAtomicType getPrimitiveType() {
         return BuiltInAtomicType.DURATION;
     }
@@ -567,6 +569,7 @@ public class DurationValue extends AtomicValue implements AtomicMatchKey {
      * @return ISO 8601 representation.
      */
 
+    @Override
     public CharSequence getPrimitiveStringValue() {
 
         // Note, Schema does not define a canonical representation. We omit all zero components, unless
@@ -637,6 +640,7 @@ public class DurationValue extends AtomicValue implements AtomicMatchKey {
      * @param component the required component
      */
 
+    @Override
     public AtomicValue getComponent(AccessorFn.Component component) {
         switch (component) {
             case YEAR:
@@ -684,6 +688,7 @@ public class DurationValue extends AtomicValue implements AtomicMatchKey {
      */
 
     /*@Nullable*/
+    @Override
     public AtomicMatchKey getXPathComparable(boolean ordered, StringCollator collator, int implicitTimezone) {
         return ordered ? null : this;
     }
@@ -817,6 +822,7 @@ public class DurationValue extends AtomicValue implements AtomicMatchKey {
      */
 
     /*@NotNull*/
+    @Override
     public Comparable getSchemaComparable() {
         return getSchemaComparable(this);
     }
@@ -867,6 +873,7 @@ public class DurationValue extends AtomicValue implements AtomicMatchKey {
          *         {@link net.sf.saxon.om.SequenceTool#INDETERMINATE_ORDERING} if there is no defined order
          */
 
+        @Override
         public int compareTo(DurationComparable other) {
             //DurationComparable other = ;
 //            if (o instanceof DurationComparable) {

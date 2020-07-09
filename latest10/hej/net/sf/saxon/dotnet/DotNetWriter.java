@@ -36,6 +36,7 @@ public class DotNetWriter extends Writer {
      *
      * @throws java.io.IOException If an I/O error occurs
      */
+    @Override
     public void close() throws IOException {
         try {
             textWriter.Close();
@@ -58,6 +59,7 @@ public class DotNetWriter extends Writer {
      *
      * @throws java.io.IOException If an I/O error occurs
      */
+    @Override
     public void flush() throws IOException {
         try {
             textWriter.Flush();
@@ -74,6 +76,7 @@ public class DotNetWriter extends Writer {
      * @param len  Number of characters to write
      * @throws java.io.IOException If an I/O error occurs
      */
+    @Override
     public void write(char cbuf[], int off, int len) throws IOException {
         try {
             textWriter.Write(cbuf, off, len);
@@ -92,6 +95,7 @@ public class DotNetWriter extends Writer {
      * @param c int specifying a character to be written.
      * @throws java.io.IOException If an I/O error occurs
      */
+    @Override
     public void write(int c) throws IOException {
         try {
             textWriter.Write((char) c);
@@ -106,6 +110,7 @@ public class DotNetWriter extends Writer {
      * @param cbuf Array of characters to be written
      * @throws java.io.IOException If an I/O error occurs
      */
+    @Override
     public void write(char cbuf[]) throws IOException {
         try {
             textWriter.Write(cbuf);
@@ -120,6 +125,7 @@ public class DotNetWriter extends Writer {
      * @param str String to be written
      * @throws java.io.IOException If an I/O error occurs
      */
+    @Override
     public void write(String str) throws IOException {
         try {
             textWriter.Write(str);

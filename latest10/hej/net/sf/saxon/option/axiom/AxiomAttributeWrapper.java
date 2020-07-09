@@ -67,6 +67,7 @@ public class AxiomAttributeWrapper implements NodeInfo, VirtualNode, SiblingCoun
      * @return the TreeInfo
      * @since 9.7
      */
+    @Override
     public TreeInfo getTreeInfo() {
         return parent.getTreeInfo();
     }
@@ -75,6 +76,7 @@ public class AxiomAttributeWrapper implements NodeInfo, VirtualNode, SiblingCoun
      * Get the configuration
      */
 
+    @Override
     public Configuration getConfiguration() {
         return parent.getConfiguration();
     }
@@ -83,6 +85,7 @@ public class AxiomAttributeWrapper implements NodeInfo, VirtualNode, SiblingCoun
      * Get the underlying Axiom node, to implement the VirtualNode interface
      */
 
+    @Override
     public OMAttribute getUnderlyingNode() {
         return node;
     }
@@ -94,6 +97,7 @@ public class AxiomAttributeWrapper implements NodeInfo, VirtualNode, SiblingCoun
      * @return The underlying node.
      */
 
+    @Override
     public OMAttribute getRealNode() {
         return getUnderlyingNode();
     }
@@ -139,6 +143,7 @@ public class AxiomAttributeWrapper implements NodeInfo, VirtualNode, SiblingCoun
      * @return one of the values Node.ELEMENT, Node.TEXT, Node.ATTRIBUTE, etc.
      */
 
+    @Override
     public int getNodeKind() {
         return Type.ATTRIBUTE;
     }
@@ -152,6 +157,7 @@ public class AxiomAttributeWrapper implements NodeInfo, VirtualNode, SiblingCoun
      * @since 8.5 (signature changed in 9.5)
      */
 
+    @Override
     public AtomicSequence atomize() {
         return new UntypedAtomicValue(getStringValueCS());
     }
@@ -169,6 +175,7 @@ public class AxiomAttributeWrapper implements NodeInfo, VirtualNode, SiblingCoun
      * @since 9.4
      */
 
+    @Override
     public SchemaType getSchemaType() {
         return BuiltInAtomicType.UNTYPED_ATOMIC;
     }
@@ -213,10 +220,12 @@ public class AxiomAttributeWrapper implements NodeInfo, VirtualNode, SiblingCoun
      *         but the system ID cannot.
      */
 
+    @Override
     public String getSystemId() {
         return parent.getBaseURI();
     }
 
+    @Override
     public void setSystemId(String uri) {
         //
     }
@@ -226,6 +235,7 @@ public class AxiomAttributeWrapper implements NodeInfo, VirtualNode, SiblingCoun
      * relative URI contained in the node.
      */
 
+    @Override
     public String getBaseURI() {
         return getParent().getBaseURI();
     }
@@ -235,6 +245,7 @@ public class AxiomAttributeWrapper implements NodeInfo, VirtualNode, SiblingCoun
      * should not be saved for later use. The result of this operation holds the same location information,
      * but in an immutable form.
      */
+    @Override
     public Location saveLocation() {
         return this;
     }
@@ -251,6 +262,7 @@ public class AxiomAttributeWrapper implements NodeInfo, VirtualNode, SiblingCoun
      *         produce the same result for generateId())
      */
 
+    @Override
     public int compareOrder(NodeInfo other) {
         if (other instanceof AxiomAttributeWrapper) {
             AxiomAttributeWrapper otherAtt = (AxiomAttributeWrapper) other;
@@ -279,6 +291,7 @@ public class AxiomAttributeWrapper implements NodeInfo, VirtualNode, SiblingCoun
      * @return the string value of the node
      */
 
+    @Override
     public String getStringValue() {
         return node.getAttributeValue();
     }
@@ -288,6 +301,7 @@ public class AxiomAttributeWrapper implements NodeInfo, VirtualNode, SiblingCoun
      * the version of the method that returns a String.
      */
 
+    @Override
     public CharSequence getStringValueCS() {
         return node.getAttributeValue();
     }
@@ -299,6 +313,7 @@ public class AxiomAttributeWrapper implements NodeInfo, VirtualNode, SiblingCoun
      * @return the local part of the name. For an unnamed node, returns "".
      */
 
+    @Override
     public String getLocalPart() {
         return node.getLocalName();
     }
@@ -310,6 +325,7 @@ public class AxiomAttributeWrapper implements NodeInfo, VirtualNode, SiblingCoun
      * @return The prefix of the name of the node.
      */
 
+    @Override
     public String getPrefix() {
         String prefix = node.getPrefix();
         return prefix == null ? "" : prefix;
@@ -323,6 +339,7 @@ public class AxiomAttributeWrapper implements NodeInfo, VirtualNode, SiblingCoun
      *         for a node with an empty prefix, return an empty string.
      */
 
+    @Override
     public String getURI() {
         String uri = node.getNamespaceURI();
         return uri == null ? "" : uri;
@@ -336,6 +353,7 @@ public class AxiomAttributeWrapper implements NodeInfo, VirtualNode, SiblingCoun
      *         empty string.
      */
 
+    @Override
     public String getDisplayName() {
         String prefix = getPrefix();
         String local = getLocalPart();
@@ -350,6 +368,7 @@ public class AxiomAttributeWrapper implements NodeInfo, VirtualNode, SiblingCoun
      * Get the NodeInfo object representing the parent of this node
      */
 
+    @Override
     public NodeInfo getParent() {
         return parent;
     }
@@ -358,6 +377,7 @@ public class AxiomAttributeWrapper implements NodeInfo, VirtualNode, SiblingCoun
      * Get the index position of this node among its siblings (starting from 0)
      */
 
+    @Override
     public int getSiblingPosition() {
         if (index == -1) {
             OMElement elem = node.getOwner();
@@ -383,6 +403,7 @@ public class AxiomAttributeWrapper implements NodeInfo, VirtualNode, SiblingCoun
      *         turn.
      */
 
+    @Override
     public AxisIterator iterateAxis(int axisNumber, Predicate<? super NodeInfo> nodeTest) {
         // for clarifications, see the W3C specs or:
         // http://msdn.microsoft.com/library/default.asp?url=/library/en-us/xmlsdk/html/xmrefaxes.asp
@@ -437,6 +458,7 @@ public class AxiomAttributeWrapper implements NodeInfo, VirtualNode, SiblingCoun
      * @since 9.4
      */
 
+    @Override
     public String getAttributeValue(/*@NotNull*/ String uri, /*@NotNull*/ String local) {
         return null;
     }
@@ -448,6 +470,7 @@ public class AxiomAttributeWrapper implements NodeInfo, VirtualNode, SiblingCoun
      *         This will not necessarily be a document node
      */
 
+    @Override
     public NodeInfo getRoot() {
         return parent.getRoot();
     }
@@ -458,6 +481,7 @@ public class AxiomAttributeWrapper implements NodeInfo, VirtualNode, SiblingCoun
      * <code>getEnumeration(Axis.CHILD, AnyNodeTest.getInstance()).hasNext()</code></p>
      */
 
+    @Override
     public boolean hasChildNodes() {
         return node instanceof OMContainer && ((OMContainer) node).getFirstOMChild() != null;
     }
@@ -469,6 +493,7 @@ public class AxiomAttributeWrapper implements NodeInfo, VirtualNode, SiblingCoun
      * @param buffer a buffer to contain a string that uniquely identifies this node, across all documents
      */
 
+    @Override
     public void generateId(FastStringBuffer buffer) {
         Navigator.appendSequentialKey(this, buffer, true);
         //buffer.append(Navigator.getSequentialKey(this));
@@ -489,6 +514,7 @@ public class AxiomAttributeWrapper implements NodeInfo, VirtualNode, SiblingCoun
      *         <p>For a node other than an element, the method returns null.</p>
      */
 
+    @Override
     public NamespaceBinding[] getDeclaredNamespaces(NamespaceBinding[] buffer) {
         return null;
     }
@@ -514,6 +540,7 @@ public class AxiomAttributeWrapper implements NodeInfo, VirtualNode, SiblingCoun
      * @return true if the node is an ID
      */
 
+    @Override
     public boolean isId() {
         return "ID".equals(node.getAttributeType());
     }
@@ -524,6 +551,7 @@ public class AxiomAttributeWrapper implements NodeInfo, VirtualNode, SiblingCoun
      * @return true if the node is an IDREF or IDREFS element or attribute
      */
 
+    @Override
     public boolean isIdref() {
         String type = node.getAttributeType();
         return "IDREF".equals(type) || "IDREFS".equals(type);

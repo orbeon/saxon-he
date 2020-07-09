@@ -81,12 +81,14 @@ public class EndsWith extends CollatingFunctionFixed {
      * @throws net.sf.saxon.trans.XPathException
      *          if a dynamic error occurs during the evaluation of the expression
      */
+    @Override
     public BooleanValue call(XPathContext context, Sequence[] arguments) throws XPathException {
         StringValue s0 = (StringValue) arguments[0].head();
         StringValue s1 = (StringValue) arguments[1].head();
         return BooleanValue.get(endsWith(s0, s1, (SubstringMatcher)getStringCollator()));
     }
 
+    @Override
     public String getCompilerName() {
         return "StartsWithCompiler";
     }   // sic

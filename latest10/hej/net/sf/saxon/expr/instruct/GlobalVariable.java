@@ -140,6 +140,7 @@ public class GlobalVariable extends Actor
      * @return the required type
      */
 
+    @Override
     public SequenceType getRequiredType() {
         return requiredType;
     }
@@ -253,6 +254,7 @@ public class GlobalVariable extends Actor
      * is present.
      */
 
+    @Override
     public final boolean isAssignable() {
         return isAssignable;
     }
@@ -264,6 +266,7 @@ public class GlobalVariable extends Actor
      *
      * @return the QName of the object declared or manipulated by this instruction or expression
      */
+    @Override
     public StructuredQName getObjectName() {
         return getVariableQName();
     }
@@ -276,6 +279,7 @@ public class GlobalVariable extends Actor
      * @param name The name of the required property
      * @return The value of the requested property, or null if the property is not available
      */
+    @Override
     public Object getProperty(String name) {
         return null;
     }
@@ -288,6 +292,7 @@ public class GlobalVariable extends Actor
      *
      * @return an iterator over the properties.
      */
+    @Override
     public Iterator<String> getProperties() {
         List<String> list = Collections.emptyList();
         return list.iterator();
@@ -339,6 +344,7 @@ public class GlobalVariable extends Actor
      * @return true (yes, it is a global variable)
      */
 
+    @Override
     public boolean isGlobal() {
         return true;
     }
@@ -669,6 +675,7 @@ public class GlobalVariable extends Actor
      * Evaluate the variable
      */
 
+    @Override
     public GroundedValue evaluateVariable(XPathContext context) throws XPathException {
         final Controller controller = context.getController();
         assert controller != null;
@@ -800,6 +807,7 @@ public class GlobalVariable extends Actor
      * @return a pair of integers containing the minimum and maximum values for the integer value;
      *         or null if the value is not an integer or the range is unknown
      */
+    @Override
     public IntegerValue[] getIntegerBoundsForVariable() {
         return getBody()==null ? null : getBody().getIntegerBounds();
     }
@@ -829,6 +837,7 @@ public class GlobalVariable extends Actor
      *
      * @return the name of the variable, as a structured QName
      */
+    @Override
     public StructuredQName getVariableQName() {
         return variableQName;
     }
@@ -852,6 +861,7 @@ public class GlobalVariable extends Actor
      * @param isLoopingReference - true if the reference occurs within a loop, such as the predicate
      *                           of a filter expression
      */
+    @Override
     public void addReference(VariableReference ref, boolean isLoopingReference) {
         // No action
     }

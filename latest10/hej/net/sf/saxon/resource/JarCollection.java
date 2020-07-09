@@ -85,6 +85,7 @@ public class JarCollection extends AbstractResourceCollection {
      * @return the collection URI
      */
 
+    @Override
     public String getCollectionURI() {
         return collectionURI;
     }
@@ -98,6 +99,7 @@ public class JarCollection extends AbstractResourceCollection {
      * @param context dynamic evaluation context
      */
 
+    @Override
     public Iterator<String> getResourceURIs(XPathContext context) throws XPathException {
         FilenameFilter filter = null;
         boolean recurse = false;
@@ -181,6 +183,7 @@ public class JarCollection extends AbstractResourceCollection {
      * @throws XPathException if it is not possible to get an iterator.
      */
 
+    @Override
     public Iterator<Resource> getResources(XPathContext context) throws XPathException {
         FilenameFilter filter = null;
         boolean recurse = false;
@@ -231,6 +234,7 @@ public class JarCollection extends AbstractResourceCollection {
             advance();
         }
 
+        @Override
         public boolean hasNext() {
             boolean more = next != null;
             if (!more) {
@@ -243,12 +247,14 @@ public class JarCollection extends AbstractResourceCollection {
             return more;
         }
 
+        @Override
         public Resource next() {
             Resource current = next;
             advance();
             return current;
         }
 
+        @Override
         public void remove() {
             throw new UnsupportedOperationException();
         }

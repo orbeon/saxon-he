@@ -870,6 +870,7 @@ public class FormatNumber extends SystemFunction implements Callable {
      * @throws XPathException if any dynamic error occurs
      */
 
+    @Override
     public StringValue call(XPathContext context, Sequence[] arguments) throws XPathException {
         int numArgs = arguments.length;
         DecimalFormatManager dfm = getRetainedStaticContext().getDecimalFormatManager();

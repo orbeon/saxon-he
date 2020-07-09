@@ -125,6 +125,7 @@ public class NestedIntegerValue extends AtomicValue implements Comparable, Atomi
     }
 
 
+    @Override
     public int compareTo(Object other) {
         if (!(other instanceof NestedIntegerValue)) {
             throw new ClassCastException("NestedIntegerValue is not comparable to " + other.getClass());

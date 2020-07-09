@@ -35,6 +35,7 @@ final public class TinyAttributeImpl extends TinyNodeImpl {
     }
 
 
+    @Override
     public void setSystemId(String uri) {
         // no action: an attribute has the same base URI as its parent
     }
@@ -49,6 +50,7 @@ final public class TinyAttributeImpl extends TinyNodeImpl {
      * Get the parent node
      */
 
+    @Override
     public TinyNodeImpl getParent() {
         return tree.getNode(tree.attParent[nodeNr]);
     }
@@ -59,6 +61,7 @@ final public class TinyAttributeImpl extends TinyNodeImpl {
      * @return the NodeInfo representing the root of this tree
      */
 
+    @Override
     public NodeInfo getRoot() {
         NodeInfo parent = getParent();
         if (parent == null) {
@@ -76,6 +79,7 @@ final public class TinyAttributeImpl extends TinyNodeImpl {
      * a sequence number, which numbers namespaces first and then attributes.
      */
 
+    @Override
     protected long getSequenceNumber() {
         //noinspection ConstantConditions
         return
@@ -91,6 +95,7 @@ final public class TinyAttributeImpl extends TinyNodeImpl {
      * @return Node.ATTRIBUTE
      */
 
+    @Override
     public final int getNodeKind() {
         return Type.ATTRIBUTE;
     }
@@ -101,6 +106,7 @@ final public class TinyAttributeImpl extends TinyNodeImpl {
      * @return the attribute value
      */
 
+    @Override
     public CharSequence getStringValueCS() {
         return tree.attValue[nodeNr];
     }
@@ -111,6 +117,7 @@ final public class TinyAttributeImpl extends TinyNodeImpl {
      * @return the attribute value
      */
 
+    @Override
     public String getStringValue() {
         return tree.attValue[nodeNr].toString();
     }
@@ -119,6 +126,7 @@ final public class TinyAttributeImpl extends TinyNodeImpl {
      * Get the fingerprint of the node, used for matching names
      */
 
+    @Override
     public int getFingerprint() {
         return tree.attCode[nodeNr] & 0xfffff;
     }
@@ -137,6 +145,7 @@ final public class TinyAttributeImpl extends TinyNodeImpl {
      * @return the prefix part of the name. For an unnamed node, return null.
      */
 
+    @Override
     public String getPrefix() {
         int code = tree.attCode[nodeNr];
         if (!NamePool.isPrefixed(code)) {
@@ -153,6 +162,7 @@ final public class TinyAttributeImpl extends TinyNodeImpl {
      *         For a node with no name, return an empty string.
      */
 
+    @Override
     public String getDisplayName() {
         int code = tree.attCode[nodeNr];
         if (code < 0) {
@@ -173,6 +183,7 @@ final public class TinyAttributeImpl extends TinyNodeImpl {
      *         For a node with no name, return an empty string.
      */
 
+    @Override
     public String getLocalPart() {
         return tree.getNamePool().getLocalName(tree.attCode[nodeNr]);
     }
@@ -184,6 +195,7 @@ final public class TinyAttributeImpl extends TinyNodeImpl {
      *         empty string
      */
 
+    @Override
     public final String getURI() {
         int code = tree.attCode[nodeNr];
         if (!NamePool.isPrefixed(code)) {
@@ -204,6 +216,7 @@ final public class TinyAttributeImpl extends TinyNodeImpl {
      *         xs:anyType if it has.
      * @since 9.4
      */
+    @Override
     public SchemaType getSchemaType() {
         if (tree.attType == null) {
             return BuiltInAtomicType.UNTYPED_ATOMIC;
@@ -219,6 +232,7 @@ final public class TinyAttributeImpl extends TinyNodeImpl {
      * @since 8.5
      */
 
+    @Override
     public AtomicSequence atomize() throws XPathException {
         return tree.getTypedValueOfAttribute(this, nodeNr);
     }
@@ -229,6 +243,7 @@ final public class TinyAttributeImpl extends TinyNodeImpl {
      * @param buffer Buffer to contain the generated ID value
      */
 
+    @Override
     public void generateId(FastStringBuffer buffer) {
         getParent().generateId(buffer);
         buffer.append("a");
@@ -242,6 +257,7 @@ final public class TinyAttributeImpl extends TinyNodeImpl {
      * Copy this node to a given outputter
      */
 
+    @Override
     public void copy(/*@NotNull*/ Receiver out, int copyOptions, Location locationId) {
         throw new UnsupportedOperationException("copy() applied to attribute node");
     }
@@ -250,6 +266,7 @@ final public class TinyAttributeImpl extends TinyNodeImpl {
      * Get the line number of the node within its source document entity
      */
 
+    @Override
     public int getLineNumber() {
         return getParent().getLineNumber();
     }
@@ -258,6 +275,7 @@ final public class TinyAttributeImpl extends TinyNodeImpl {
      * Get the column number of the node within its source document entity
      */
 
+    @Override
     public int getColumnNumber() {
         return getParent().getColumnNumber();
     }
@@ -268,6 +286,7 @@ final public class TinyAttributeImpl extends TinyNodeImpl {
      * @return true if the node is an ID
      */
 
+    @Override
     public boolean isId() {
         return tree.isIdAttribute(nodeNr);
     }
@@ -278,6 +297,7 @@ final public class TinyAttributeImpl extends TinyNodeImpl {
      * @return true if the node is an IDREF or IDREFS element or attribute
      */
 
+    @Override
     public boolean isIdref() {
         return tree.isIdrefAttribute(nodeNr);
     }

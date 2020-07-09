@@ -68,6 +68,7 @@ public class KeyFn extends SystemFunction implements StatefulSystemFunction {
      * @param arguments expressions supplied as arguments in the function call
      */
 
+    @Override
     public int getSpecialProperties(Expression[] arguments) {
         int prop = StaticProperty.ORDERED_NODESET |
                 StaticProperty.SINGLE_DOCUMENT_NODESET |
@@ -98,6 +99,7 @@ public class KeyFn extends SystemFunction implements StatefulSystemFunction {
             this.origin = origin;
         }
 
+        @Override
         public NodeInfo mapItem(Item item) {
             if (Navigator.isAncestorOrSelf(origin, (NodeInfo)item)) {
                 return (NodeInfo)item;
@@ -178,6 +180,7 @@ public class KeyFn extends SystemFunction implements StatefulSystemFunction {
      * @return the result of the evaluation, in the form of a Sequence
      * @throws net.sf.saxon.trans.XPathException if a dynamic error occurs during the evaluation of the expression
      */
+    @Override
     public Sequence call(XPathContext context, Sequence[] arguments) throws XPathException {
         NodeInfo origin;
         if (arguments.length == 3) {

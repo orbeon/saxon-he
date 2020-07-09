@@ -144,6 +144,7 @@ public class ResultDocument extends Instruction
      * type of the document element)
      */
 
+    @Override
     public SchemaType getSchemaType() {
         return validationOptions == null ? null : validationOptions.getTopLevelType();
     }
@@ -190,6 +191,7 @@ public class ResultDocument extends Instruction
      *
      * @return the validation mode, for example {@link Validation#STRICT} or {@link Validation#PRESERVE}
      */
+    @Override
     public int getValidationAction() {
         return validationOptions == null ? Validation.PRESERVE : validationOptions.getSchemaValidationMode();
     }
@@ -235,6 +237,7 @@ public class ResultDocument extends Instruction
     }
 
     /*@NotNull*/
+    @Override
     public Expression typeCheck(ExpressionVisitor visitor, ContextItemStaticInfo contextInfo) throws XPathException {
         typeCheckChildren(visitor, contextInfo);
         String method = getStaticSerializationProperty(XSLResultDocument.METHOD);
@@ -253,6 +256,7 @@ public class ResultDocument extends Instruction
         return this;
     }
 
+    @Override
     public int getIntrinsicDependencies() {
         return StaticProperty.HAS_SIDE_EFFECTS;
     }
@@ -282,6 +286,7 @@ public class ResultDocument extends Instruction
      */
 
     /*@NotNull*/
+    @Override
     public Expression copy(RebindingMap rebindings) {
         Map<StructuredQName, Expression> map = new HashMap<>();
         for (Map.Entry<StructuredQName, Operand> entry : serializationAttributes.entrySet()) {
@@ -308,6 +313,7 @@ public class ResultDocument extends Instruction
      * (the string "xsl:result-document")
      */
 
+    @Override
     public int getInstructionNameCode() {
         return StandardNames.XSL_RESULT_DOCUMENT;
     }
@@ -320,6 +326,7 @@ public class ResultDocument extends Instruction
      */
 
     /*@NotNull*/
+    @Override
     public ItemType getItemType() {
         return ErrorType.getInstance();
     }
@@ -358,6 +365,7 @@ public class ResultDocument extends Instruction
      * expressions, it is the same as the input pathMapNode.
      */
 
+    @Override
     public PathMap.PathMapNodeSet addToPathMap(PathMap pathMap, PathMap.PathMapNodeSet pathMapNodeSet) {
         PathMap.PathMapNodeSet result = super.addToPathMap(pathMap, pathMapNodeSet);
         result.setReturnable(false);
@@ -365,6 +373,7 @@ public class ResultDocument extends Instruction
     }
 
 
+    @Override
     public TailCall processLeavingTail(Outputter output, XPathContext context) throws XPathException {
         process(getContentExpression(), context);
         return null;
@@ -834,6 +843,7 @@ public class ResultDocument extends Instruction
      * is written to the supplied output destination.
      */
 
+    @Override
     public void export(ExpressionPresenter out) throws XPathException {
         out.startElement("resultDoc", this);
         out.emitAttribute("global", exportProperties(globalProperties));
@@ -927,6 +937,7 @@ public class ResultDocument extends Instruction
         formatOp.setChildExpression(formatExpression);
     }
 
+    @Override
     public Expression getContentExpression() {
         return contentOp.getChildExpression();
     }

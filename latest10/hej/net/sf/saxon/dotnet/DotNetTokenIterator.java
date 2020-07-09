@@ -37,6 +37,7 @@ public class DotNetTokenIterator implements AtomicIterator {
         prevEnd = 0;
     }
 
+    @Override
     public StringValue next() {
         if (prevEnd < 0) {
             return null;
@@ -67,6 +68,7 @@ public class DotNetTokenIterator implements AtomicIterator {
      *
      * @since 9.1
      */
+    @Override
     public void close() {
         // no-op
     }

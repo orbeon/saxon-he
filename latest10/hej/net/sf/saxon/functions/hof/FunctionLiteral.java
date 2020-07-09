@@ -45,6 +45,7 @@ public class FunctionLiteral extends Literal {
      * @return the constant value
      */
 
+    @Override
     public Function getValue() {
         return (Function) super.getValue();
     }
@@ -59,6 +60,7 @@ public class FunctionLiteral extends Literal {
      */
 
     /*@NotNull*/
+    @Override
     public Expression simplify() throws XPathException {
         if (getValue() instanceof AbstractFunction) {
             ((AbstractFunction) getValue()).simplify();
@@ -73,6 +75,7 @@ public class FunctionLiteral extends Literal {
      */
 
     /*@NotNull*/
+    @Override
     public Expression typeCheck(ExpressionVisitor visitor, ContextItemStaticInfo contextInfo) throws XPathException {
         if (getValue() instanceof AbstractFunction) {
             ((AbstractFunction) getValue()).typeCheck(visitor, contextInfo);
@@ -87,6 +90,7 @@ public class FunctionLiteral extends Literal {
      */
 
     /*@NotNull*/
+    @Override
     public FunctionItemType getItemType() {
         return getValue().getFunctionItemType();
     }
@@ -95,6 +99,7 @@ public class FunctionLiteral extends Literal {
      * Determine the cardinality
      */
 
+    @Override
     public int computeCardinality() {
         return StaticProperty.EXACTLY_ONE;
     }
@@ -107,6 +112,7 @@ public class FunctionLiteral extends Literal {
      */
 
 
+    @Override
     public int computeSpecialProperties() {
         return StaticProperty.NO_NODES_NEWLY_CREATED;
     }
@@ -117,6 +123,7 @@ public class FunctionLiteral extends Literal {
      * @return true if this expression is vacuous
      */
 
+    @Override
     public boolean isVacuousExpression() {
         return false;
     }
@@ -129,6 +136,7 @@ public class FunctionLiteral extends Literal {
      */
 
     /*@NotNull*/
+    @Override
     public Expression copy(RebindingMap rebindings) {
         FunctionLiteral fl2 = new FunctionLiteral(getValue());
         ExpressionTool.copyLocationInfo(this, fl2);
@@ -164,6 +172,7 @@ public class FunctionLiteral extends Literal {
      * Return a hash code to support the equals() function
      */
 
+    @Override
     public int computeHashCode() {
         return getValue().hashCode();
     }
@@ -186,6 +195,7 @@ public class FunctionLiteral extends Literal {
      * is written to the supplied output destination.
      */
 
+    @Override
     public void export(ExpressionPresenter out) throws XPathException {
         Function f = getValue();
         if (f instanceof UserFunction) {

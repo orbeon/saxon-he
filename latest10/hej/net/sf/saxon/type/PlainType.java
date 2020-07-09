@@ -52,6 +52,7 @@ public interface PlainType extends ItemType {
      * @return true if the item is an instance of this type; false otherwise
      */
 
+    @Override
     boolean matches(Item item, TypeHierarchy th);
 
     /**
@@ -66,6 +67,7 @@ public interface PlainType extends ItemType {
      * except where this type is xs:error. The class ErrorType does not inherit from BuiltInAtomicType
      * because of multiple inheritance problems).
      */
+    @Override
     AtomicType getPrimitiveItemType();
 }
 

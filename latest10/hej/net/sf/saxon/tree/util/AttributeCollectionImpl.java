@@ -124,6 +124,7 @@ public class AttributeCollectionImpl implements Attributes {
      *         Such slots are not reused, to preserve attribute identity.
      */
 
+    @Override
     public int getLength() {
         return values == null ? 0 : used;
     }
@@ -197,6 +198,7 @@ public class AttributeCollectionImpl implements Attributes {
      */
 
     /*@Nullable*/
+    @Override
     public String getQName(int index) {
         if (names == null) {
             return null;
@@ -216,6 +218,7 @@ public class AttributeCollectionImpl implements Attributes {
      */
 
     /*@Nullable*/
+    @Override
     public String getLocalName(int index) {
         if (names == null) {
             return null;
@@ -235,6 +238,7 @@ public class AttributeCollectionImpl implements Attributes {
      */
 
     /*@Nullable*/
+    @Override
     public String getURI(int index) {
         if (names == null) {
             return null;
@@ -259,6 +263,7 @@ public class AttributeCollectionImpl implements Attributes {
      */
 
     /*@NotNull*/
+    @Override
     public String getType(int index) {
         int typeCode = getTypeAnnotation(index).getFingerprint();
         switch (typeCode) {
@@ -290,6 +295,7 @@ public class AttributeCollectionImpl implements Attributes {
      */
 
     /*@Nullable*/
+    @Override
     public String getType(String uri, String localname) {
         int index = findByName(uri, localname);
         return (index < 0 ? null : getType(index));
@@ -304,6 +310,7 @@ public class AttributeCollectionImpl implements Attributes {
      */
 
     /*@Nullable*/
+    @Override
     public String getValue(int index) {
         if (values == null) {
             return null;
@@ -323,6 +330,7 @@ public class AttributeCollectionImpl implements Attributes {
      */
 
     /*@Nullable*/
+    @Override
     public String getValue(String uri, String localname) {
         int index = findByName(uri, localname);
         return (index < 0 ? null : getValue(index));
@@ -335,6 +343,7 @@ public class AttributeCollectionImpl implements Attributes {
      * @return The index position of the attribute
      */
 
+    @Override
     public int getIndex(/*@NotNull*/ String qname) {
         if (names == null) {
             return -1;
@@ -375,6 +384,7 @@ public class AttributeCollectionImpl implements Attributes {
      * @return The index position of the attribute, or -1 if absent
      */
 
+    @Override
     public int getIndex(String uri, String localname) {
         return findByName(uri, localname);
     }
@@ -388,6 +398,7 @@ public class AttributeCollectionImpl implements Attributes {
      */
 
     /*@NotNull*/
+    @Override
     public String getType(/*@NotNull*/ String name) {
         int index = getIndex(name);
         return getType(index);
@@ -403,6 +414,7 @@ public class AttributeCollectionImpl implements Attributes {
      */
 
     /*@Nullable*/
+    @Override
     public String getValue(/*@NotNull*/ String name) {
         int index = getIndex(name);
         return getValue(index);

@@ -30,6 +30,7 @@ public class Sort_3 extends Sort_2 {
      * @return the result of the evaluation, in the form of a SequenceIterator
      * @throws XPathException if a dynamic error occurs during the evaluation of the expression
      */
+    @Override
     public Sequence call(XPathContext context, Sequence[] arguments) throws XPathException {
         Sequence input = arguments[0];
         final List<ItemToBeSorted> inputList = new ArrayList<>();

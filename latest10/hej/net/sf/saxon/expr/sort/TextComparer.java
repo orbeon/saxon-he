@@ -37,6 +37,7 @@ public class TextComparer implements AtomicComparer {
         return baseComparer;
     }
 
+    @Override
     public StringCollator getCollator() {
         return baseComparer.getCollator();
     }
@@ -49,6 +50,7 @@ public class TextComparer implements AtomicComparer {
      *         is known. The original AtomicComparer is not modified
      */
 
+    @Override
     public AtomicComparer provideContext(XPathContext context) {
         AtomicComparer newBase = baseComparer.provideContext(context);
         if (newBase != baseComparer) {
@@ -69,6 +71,7 @@ public class TextComparer implements AtomicComparer {
      *                            to strings (e.g. QNames)
      */
 
+    @Override
     public int compareAtomicValues(AtomicValue a, AtomicValue b) throws ClassCastException, NoDynamicContextException {
         return baseComparer.compareAtomicValues(toStringValue(a), toStringValue(b));
     }
@@ -91,6 +94,7 @@ public class TextComparer implements AtomicComparer {
      * @throws ClassCastException if the objects are not comparable
      */
 
+    @Override
     public boolean comparesEqual(AtomicValue a, /*@NotNull*/ AtomicValue b) throws NoDynamicContextException {
         return compareAtomicValues(a, b) == 0;
     }
@@ -101,6 +105,7 @@ public class TextComparer implements AtomicComparer {
      *
      * @return a string representation of the AtomicComparer
      */
+    @Override
     public String save() {
         return "TEXT|" + baseComparer.save();
     }

@@ -63,6 +63,7 @@ public class EmptyTextNodeRemover extends UnaryExpression
      */
 
     /*@NotNull*/
+    @Override
     public Expression copy(RebindingMap rebindings) {
         EmptyTextNodeRemover e2 = new EmptyTextNodeRemover(getBaseExpression().copy(rebindings));
         ExpressionTool.copyLocationInfo(this, e2);
@@ -74,6 +75,7 @@ public class EmptyTextNodeRemover extends UnaryExpression
      * This method indicates which of these methods is prefered.
      */
 
+    @Override
     public int getImplementationMethod() {
         return Expression.ITERATE_METHOD | ITEM_FEED_METHOD | WATCH_METHOD;
     }
@@ -108,6 +110,7 @@ public class EmptyTextNodeRemover extends UnaryExpression
      */
 
     /*@Nullable*/
+    @Override
     public Item mapItem(Item item) throws XPathException {
         if (item instanceof NodeInfo &&
             ((NodeInfo) item).getNodeKind() == Type.TEXT &&

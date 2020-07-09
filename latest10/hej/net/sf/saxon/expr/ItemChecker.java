@@ -61,6 +61,7 @@ public final class ItemChecker extends UnaryExpression {
         return requiredItemType;
     }
 
+    @Override
     protected OperandRole getOperandRole() {
         return OperandRole.SAME_FOCUS_ACTION;
     }
@@ -81,6 +82,7 @@ public final class ItemChecker extends UnaryExpression {
      */
 
     /*@NotNull*/
+    @Override
     public Expression simplify() throws XPathException {
         Expression operand = getBaseExpression().simplify();
         if (requiredItemType instanceof AnyItemType) {
@@ -95,6 +97,7 @@ public final class ItemChecker extends UnaryExpression {
      */
 
     /*@NotNull*/
+    @Override
     public Expression typeCheck(ExpressionVisitor visitor, ContextItemStaticInfo contextInfo) throws XPathException {
         getOperand().typeCheck(visitor, contextInfo);
         Expression operand = getBaseExpression();
@@ -179,6 +182,7 @@ public final class ItemChecker extends UnaryExpression {
      * process() methods natively.
      */
 
+    @Override
     public int getImplementationMethod() {
         int m = ITERATE_METHOD | PROCESS_METHOD | ITEM_FEED_METHOD;
         if (!Cardinality.allowsMany(getCardinality())) {
@@ -222,6 +226,7 @@ public final class ItemChecker extends UnaryExpression {
      */
 
     /*@NotNull*/
+    @Override
     public SequenceIterator iterate(XPathContext context) throws XPathException {
         SequenceIterator base = getBaseExpression().iterate(context);
         return new ItemMappingIterator(base, getMappingFunction(context), true);
@@ -244,6 +249,7 @@ public final class ItemChecker extends UnaryExpression {
      * Evaluate as an Item.
      */
 
+    @Override
     public Item evaluateItem(XPathContext context) throws XPathException {
         final TypeHierarchy th = context.getConfiguration().getTypeHierarchy();
         Item item = getBaseExpression().evaluateItem(context);
@@ -274,6 +280,7 @@ public final class ItemChecker extends UnaryExpression {
      * @param context The dynamic context, giving access to the current node,
      */
 
+    @Override
     public void process(Outputter output, XPathContext context) throws XPathException {
         Expression next = getBaseExpression();
         int card = StaticProperty.ALLOWS_ZERO_OR_MORE;
@@ -300,6 +307,7 @@ public final class ItemChecker extends UnaryExpression {
      */
 
     /*@NotNull*/
+    @Override
     public Expression copy(RebindingMap rebindings) {
         ItemChecker exp = new ItemChecker(getBaseExpression().copy(rebindings), requiredItemType, role);
         ExpressionTool.copyLocationInfo(this, exp);
@@ -312,6 +320,7 @@ public final class ItemChecker extends UnaryExpression {
      */
 
     /*@NotNull*/
+    @Override
     public ItemType getItemType() {
         ItemType operandType = getBaseExpression().getItemType();
         TypeHierarchy th = getConfiguration().getTypeHierarchy();
@@ -372,6 +381,7 @@ public final class ItemChecker extends UnaryExpression {
      * is written to the supplied output destination.
      */
 
+    @Override
     public void export(ExpressionPresenter out) throws XPathException {
         out.startElement("treat", this);
         out.emitAttribute("as", AlphaCode.fromItemType(requiredItemType));
@@ -388,6 +398,7 @@ public final class ItemChecker extends UnaryExpression {
      *         in explain() output displaying the expression.
      */
 
+    @Override
     public String getExpressionName() {
         return "treatAs";
     }

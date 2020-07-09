@@ -26,6 +26,7 @@ public class XSLAccumulatorRule extends StyleElement {
     private Expression select;
     private boolean capture;
 
+    @Override
     public void prepareAttributes() {
 
         String matchAtt = null;
@@ -84,6 +85,7 @@ public class XSLAccumulatorRule extends StyleElement {
     }
 
 
+    @Override
     public void validate(ComponentDeclaration decl) throws XPathException {
         select = typeCheck("select", select);
         match = typeCheck("match", match);
@@ -127,6 +129,7 @@ public class XSLAccumulatorRule extends StyleElement {
         this.select = select;
     }
 
+    @Override
     public SourceBinding hasImplicitBinding(StructuredQName name) {
         if (name.getLocalPart().equals("value") && name.hasURI("")) {
             SourceBinding sb = new SourceBinding(this);

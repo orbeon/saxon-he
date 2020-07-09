@@ -28,6 +28,7 @@ public final class XSLWherePopulated extends StyleElement {
      * @return true - it is an instruction
      */
 
+    @Override
     public boolean isInstruction() {
         return true;
     }
@@ -38,6 +39,7 @@ public final class XSLWherePopulated extends StyleElement {
      * @return in XSLT 2.0, false. In XSLT 3.0 true: yes, it may contain a sequence constructor
      */
 
+    @Override
     public boolean mayContainSequenceConstructor() {
         return true;
     }
@@ -47,10 +49,12 @@ public final class XSLWherePopulated extends StyleElement {
      * instruction
      */
 
+    @Override
     public boolean mayContainFallback() {
         return true;
     }
 
+    @Override
     public void prepareAttributes() {
 
         for (AttributeInfo att : attributes()) {
@@ -60,11 +64,13 @@ public final class XSLWherePopulated extends StyleElement {
         }
     }
 
+    @Override
     public void validate(ComponentDeclaration decl) throws XPathException {
         // no action
     }
 
     /*@Nullable*/
+    @Override
     public Expression compile(Compilation exec, ComponentDeclaration decl) throws XPathException {
         if (select == null) {
             select = compileSequenceConstructor(exec, decl, false);

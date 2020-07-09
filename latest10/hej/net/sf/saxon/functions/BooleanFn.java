@@ -91,6 +91,7 @@ public class BooleanFn extends SystemFunction {
         }
     }
 
+    @Override
     public BooleanValue call(XPathContext c, Sequence[] arguments) throws XPathException {
         boolean bValue = ExpressionTool.effectiveBooleanValue(arguments[0].iterate());
         return BooleanValue.get(bValue);
@@ -100,6 +101,7 @@ public class BooleanFn extends SystemFunction {
     public Expression makeFunctionCall(Expression[] arguments) {
         return new SystemFunctionCall(this, arguments) {
 
+            @Override
             public Expression optimize(/*@NotNull*/ ExpressionVisitor visitor, ContextItemStaticInfo contextItemType) throws XPathException {
                 Expression e = super.optimize(visitor, contextItemType);
                 if (e == this) {
@@ -138,10 +140,12 @@ public class BooleanFn extends SystemFunction {
         };
     }
 
+    @Override
     public String getCompilerName() {
         return "BooleanFnCompiler";
     }
 
+    @Override
     public String getStreamerName() {
         return "BooleanFn";
     }

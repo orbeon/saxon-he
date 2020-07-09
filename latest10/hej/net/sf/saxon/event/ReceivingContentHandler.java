@@ -232,6 +232,7 @@ public class ReceivingContentHandler
      * Receive notification of the beginning of a document.
      */
 
+    @Override
     public void startDocument() throws SAXException {
 //        System.err.println("ReceivingContentHandler#startDocument");
         try {
@@ -259,6 +260,7 @@ public class ReceivingContentHandler
      * Receive notification of the end of a document
      */
 
+    @Override
     public void endDocument() throws SAXException {
         // System.err.println("RCH: end document");
         try {
@@ -281,6 +283,7 @@ public class ReceivingContentHandler
      * being parsed.
      */
 
+    @Override
     public void setDocumentLocator(Locator locator) {
         localLocator = new LocalLocator(locator);
         if (!lineNumbering) {
@@ -292,6 +295,7 @@ public class ReceivingContentHandler
      * Notify a namespace prefix to URI binding
      */
 
+    @Override
     public void startPrefixMapping(String prefix, String uri) {
         //System.err.println("StartPrefixMapping " + prefix + "=" + uri);
         if (prefix.equals("xmlns")) {
@@ -306,6 +310,7 @@ public class ReceivingContentHandler
      * Notify that a namespace binding is going out of scope
      */
 
+    @Override
     public void endPrefixMapping(String prefix) {
         //System.err.println("endPrefixMapping " + prefix);
     }
@@ -356,6 +361,7 @@ public class ReceivingContentHandler
      * @see org.xml.sax.Attributes
      * @see org.xml.sax.helpers.AttributesImpl
      */
+    @Override
     public void startElement(String uri, String localname, String rawname, Attributes atts)
             throws SAXException {
         //System.err.println("ReceivingContentHandler#startElement " + localname + " (depth=" + namespaceStack.size() + ")");
@@ -524,6 +530,7 @@ public class ReceivingContentHandler
      * Report the end of an element (the close tag)
      */
 
+    @Override
     public void endElement(String uri, String localname, String rawname) throws SAXException {
         //System.err.println("ReceivingContentHandler#End element " + rawname + " (depth=" + namespaceStack.size() + ")");
         try {
@@ -552,6 +559,7 @@ public class ReceivingContentHandler
      * calls on this method, with arbitrary boundaries
      */
 
+    @Override
     public void characters(char[] ch, int start, int length) {
         // System.err.println("characters (" + length + ")");
         // need to concatenate chunks of text before we can decide whether a node is all-white
@@ -572,6 +580,7 @@ public class ReceivingContentHandler
      * appearing as children of elements with an element-only content model
      */
 
+    @Override
     public void ignorableWhitespace(char[] ch, int start, int length) {
         if (!ignoreIgnorable) {
             characters(ch, start, length);
@@ -582,6 +591,7 @@ public class ReceivingContentHandler
      * Notify the existence of a processing instruction
      */
 
+    @Override
     public void processingInstruction(String name, String remainder) throws SAXException {
         try {
             flush(true);
@@ -626,6 +636,7 @@ public class ReceivingContentHandler
      * rather than the ContentHandler interface.
      */
 
+    @Override
     public void comment(char[] ch, int start, int length) throws SAXException {
         try {
             flush(true);
@@ -661,6 +672,7 @@ public class ReceivingContentHandler
      * Notify a skipped entity. Saxon ignores this event
      */
 
+    @Override
     public void skippedEntity(String name) {
     }
 
@@ -672,6 +684,7 @@ public class ReceivingContentHandler
      * are skipped because they are not part of the XPath data model
      */
 
+    @Override
     public void startDTD(String name, String publicId, String systemId) {
         inDTD = true;
     }
@@ -681,10 +694,12 @@ public class ReceivingContentHandler
      * are not part of the XPath data model
      */
 
+    @Override
     public void endDTD() {
         inDTD = false;
     }
 
+    @Override
     public void startEntity(String name) {
         if (elementDepthWithinEntity == null) {
             elementDepthWithinEntity = new Stack<>();
@@ -693,13 +708,16 @@ public class ReceivingContentHandler
         localLocator.levelInEntity = 0;
     }
 
+    @Override
     public void endEntity(String name) {
         localLocator.levelInEntity = elementDepthWithinEntity.pop();
     }
 
+    @Override
     public void startCDATA() {
     }
 
+    @Override
     public void endCDATA() {
     }
 
@@ -708,12 +726,14 @@ public class ReceivingContentHandler
     //////////////////////////////////////////////////////////////////////////////
 
 
+    @Override
     public void notationDecl(String name,
                              String publicId,
                              String systemId) {
     }
 
 
+    @Override
     public void unparsedEntityDecl(String name,
                                    String publicId,
                                    String systemId,
@@ -767,6 +787,7 @@ public class ReceivingContentHandler
          *         null if none is available.
          */
 
+        @Override
         public String getSystemId() {
             return saxLocator.getSystemId();
         }
@@ -778,6 +799,7 @@ public class ReceivingContentHandler
          *         null if none is available.
          */
 
+        @Override
         public String getPublicId() {
             return saxLocator.getPublicId();
         }
@@ -788,6 +810,7 @@ public class ReceivingContentHandler
          * @return The line number, or -1 if none is available.
          */
 
+        @Override
         public int getLineNumber() {
             return saxLocator.getLineNumber();
         }
@@ -798,6 +821,7 @@ public class ReceivingContentHandler
          * @return The column number, or -1 if none is available.
          */
 
+        @Override
         public int getColumnNumber() {
             return saxLocator.getColumnNumber();
         }
@@ -808,6 +832,7 @@ public class ReceivingContentHandler
          * but in an immutable form.
          */
 
+        @Override
         public Location saveLocation() {
             return new Loc(getSystemId(), getLineNumber(), getColumnNumber());
         }

@@ -35,6 +35,7 @@ public class ApplyImports extends ApplyNextMatchingTemplate implements ITemplate
     /**
      * Get the name of this instruction for diagnostic and tracing purposes
      */
+    @Override
     public int getInstructionNameCode() {
         return StandardNames.XSL_APPLY_IMPORTS;
     }
@@ -47,6 +48,7 @@ public class ApplyImports extends ApplyNextMatchingTemplate implements ITemplate
      */
 
     /*@NotNull*/
+    @Override
     public Expression copy(RebindingMap rebindings) {
         ApplyImports ai2 = new ApplyImports();
         ai2.setActualParams(WithParam.copy(ai2, getActualParams(), rebindings));
@@ -56,6 +58,7 @@ public class ApplyImports extends ApplyNextMatchingTemplate implements ITemplate
     }
 
 
+    @Override
     public TailCall processLeavingTail(Outputter output, XPathContext context) throws XPathException {
 
         Controller controller = context.getController();
@@ -109,6 +112,7 @@ public class ApplyImports extends ApplyNextMatchingTemplate implements ITemplate
      * is written to the supplied output destination.
      */
 
+    @Override
     public void export(ExpressionPresenter out) throws XPathException {
         out.startElement("applyImports", this);
         out.emitAttribute("flags", "i");  // used to mean "allow any item" i.e. non-nodes

@@ -131,14 +131,17 @@ public class XPathExecutable {
     public Iterator<QName> iterateExternalVariables() {
         final Iterator varIterator = env.iterateExternalVariables();
         return new Iterator<QName>() {
+            @Override
             public boolean hasNext() {
                 return varIterator.hasNext();
             }
 
+            @Override
             public QName next() {
                 return new QName(((XPathVariable) varIterator.next()).getVariableQName());
             }
 
+            @Override
             public void remove() {
                 throw new UnsupportedOperationException("remove");
             }

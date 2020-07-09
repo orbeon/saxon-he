@@ -114,6 +114,7 @@ public class DocumentWrapper extends GenericTreeInfo {
      *         that comes last should be returned.
      */
 
+    @Override
     public NodeInfo selectID(String id, boolean getParent) {
         synchronized (docNode) {
             Node node = ((DOMNodeWrapper)getRootNode()).node;
@@ -151,6 +152,7 @@ public class DocumentWrapper extends GenericTreeInfo {
      * @since 9.1 (implemented for this subclass since 9.2)
      */
 
+    @Override
     public Iterator<String> getUnparsedEntityNames() {
         synchronized (docNode) {
             Node node = ((DOMNodeWrapper) getRootNode()).node;
@@ -193,6 +195,7 @@ public class DocumentWrapper extends GenericTreeInfo {
      * @since 8.4 (implemented for this subclass since 9.2)
      */
 
+    @Override
     public String[] getUnparsedEntity(String name) {
         synchronized (docNode) {
             Node node = ((DOMNodeWrapper) getRootNode()).node;

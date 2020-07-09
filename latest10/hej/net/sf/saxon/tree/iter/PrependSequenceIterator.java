@@ -33,6 +33,7 @@ public class PrependSequenceIterator implements SequenceIterator {
      */
 
     /*@Nullable*/
+    @Override
     public Item next() throws XPathException {
         if (start != null) {
             Item temp = start;
@@ -43,6 +44,7 @@ public class PrependSequenceIterator implements SequenceIterator {
         }
     }
 
+    @Override
     public void close() {
         base.close();
     }

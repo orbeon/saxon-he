@@ -40,6 +40,7 @@ public final class WhitespaceTextImpl extends TinyNodeImpl {
      * @return the string value of the node
      */
 
+    @Override
     public String getStringValue() {
         return getStringValueCS().toString();
     }
@@ -50,6 +51,7 @@ public final class WhitespaceTextImpl extends TinyNodeImpl {
      * cost of decompressing the whitespace
      */
 
+    @Override
     public CharSequence getStringValueCS() {
         long value = ((long) tree.alpha[nodeNr] << 32) | ((long) tree.beta[nodeNr] & 0xffffffffL);
         return new CompressedWhitespace(value);
@@ -90,6 +92,7 @@ public final class WhitespaceTextImpl extends TinyNodeImpl {
      * @since 8.5
      */
 
+    @Override
     public AtomicSequence atomize() {
         return new UntypedAtomicValue(getStringValueCS());
     }
@@ -113,6 +116,7 @@ public final class WhitespaceTextImpl extends TinyNodeImpl {
      * @return Type.TEXT
      */
 
+    @Override
     public final int getNodeKind() {
         return Type.TEXT;
     }
@@ -121,6 +125,7 @@ public final class WhitespaceTextImpl extends TinyNodeImpl {
      * Copy this node to a given outputter
      */
 
+    @Override
     public void copy(/*@NotNull*/ Receiver out, int copyOptions, Location locationId) throws XPathException {
         out.characters(getStringValueCS(), locationId, ReceiverOption.NONE);
     }

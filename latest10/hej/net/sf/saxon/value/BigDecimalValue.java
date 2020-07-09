@@ -225,6 +225,7 @@ public final class BigDecimalValue extends DecimalValue {
      *                  the value actually conforms to this type.
      */
 
+    @Override
     public AtomicValue copyAsSubType(AtomicType typeLabel) {
         BigDecimalValue v = new BigDecimalValue(value);
         v.typeLabel = typeLabel;
@@ -238,6 +239,7 @@ public final class BigDecimalValue extends DecimalValue {
      * and xs:untypedAtomic. For external objects, the result is AnyAtomicType.
      */
 
+    @Override
     public BuiltInAtomicType getPrimitiveType() {
         return BuiltInAtomicType.DECIMAL;
     }
@@ -286,6 +288,7 @@ public final class BigDecimalValue extends DecimalValue {
      * Get the value
      */
 
+    @Override
     public BigDecimal getDecimalValue() {
         return value;
     }
@@ -306,6 +309,7 @@ public final class BigDecimalValue extends DecimalValue {
         }
     }
 
+    @Override
     public boolean effectiveBooleanValue() {
         return value.signum() != 0;
     }
@@ -325,6 +329,7 @@ public final class BigDecimalValue extends DecimalValue {
      * representation always contains a decimal point.
      */
 
+    @Override
     public CharSequence getCanonicalLexicalRepresentation() {
         String s = getStringValue();
         if (s.indexOf('.') < 0) {
@@ -340,6 +345,7 @@ public final class BigDecimalValue extends DecimalValue {
      */
 
     /*@NotNull*/
+    @Override
     public CharSequence getPrimitiveStringValue() {
         return decimalToString(value, new FastStringBuffer(FastStringBuffer.C16));
     }
@@ -404,6 +410,7 @@ public final class BigDecimalValue extends DecimalValue {
      * Negate the value
      */
 
+    @Override
     public NumericValue negate() {
         return new BigDecimalValue(value.negate());
     }
@@ -412,6 +419,7 @@ public final class BigDecimalValue extends DecimalValue {
      * Implement the XPath floor() function
      */
 
+    @Override
     public NumericValue floor() {
         return new BigDecimalValue(value.setScale(0, RoundingMode.FLOOR));
     }
@@ -420,6 +428,7 @@ public final class BigDecimalValue extends DecimalValue {
      * Implement the XPath ceiling() function
      */
 
+    @Override
     public NumericValue ceiling() {
         return new BigDecimalValue(value.setScale(0, RoundingMode.CEILING));
     }
@@ -428,6 +437,7 @@ public final class BigDecimalValue extends DecimalValue {
      * Implement the XPath round() function
      */
 
+    @Override
     public NumericValue round(int scale) {
         // The XPath rules say that we should round to the nearest integer, with .5 rounding towards
         // positive infinity. Unfortunately this is not one of the rounding modes that the Java BigDecimal
@@ -459,6 +469,7 @@ public final class BigDecimalValue extends DecimalValue {
      * Implement the XPath round-half-to-even() function
      */
 
+    @Override
     public NumericValue roundHalfToEven(int scale) {
         if (scale >= value.scale()) {
             return this;
@@ -473,6 +484,7 @@ public final class BigDecimalValue extends DecimalValue {
      * @return -1 if negative, 0 if zero, +1 if positive, NaN if NaN
      */
 
+    @Override
     public int signum() {
         return value.signum();
     }
@@ -482,6 +494,7 @@ public final class BigDecimalValue extends DecimalValue {
      * equal to some integer
      */
 
+    @Override
     public boolean isWholeNumber() {
         return value.scale() == 0 ||
                 value.compareTo(value.setScale(0, RoundingMode.DOWN)) == 0;
@@ -513,6 +526,7 @@ public final class BigDecimalValue extends DecimalValue {
      * @since 9.2
      */
 
+    @Override
     public NumericValue abs() {
         if (value.signum() > 0) {
             return this;
@@ -525,6 +539,7 @@ public final class BigDecimalValue extends DecimalValue {
      * Compare the value to another numeric value
      */
 
+    @Override
     public int compareTo(NumericValue other) {
         if (NumericValue.isInteger(other)) {
             // deliberately triggers a ClassCastException if other value is the wrong type
@@ -549,6 +564,7 @@ public final class BigDecimalValue extends DecimalValue {
      * @return -1 if this is less, 0 if this is equal, +1 if this is greater or if this is NaN
      */
 
+    @Override
     public int compareTo(long other) {
         if (other == 0) {
             return value.signum();
@@ -570,6 +586,7 @@ public final class BigDecimalValue extends DecimalValue {
      * Get an object that implements XML Schema comparison semantics
      */
 
+    @Override
     public Comparable getSchemaComparable() {
         return new DecimalComparable(this);
     }
@@ -591,6 +608,7 @@ public final class BigDecimalValue extends DecimalValue {
             return value.getDecimalValue();
         }
 
+        @Override
         public int compareTo(Object o) {
             if (o instanceof DecimalComparable) {
                 return asBigDecimal().compareTo(((DecimalComparable) o).asBigDecimal());
@@ -631,6 +649,7 @@ public final class BigDecimalValue extends DecimalValue {
      * @return true if the two values are identical, false otherwise.
      */
 
+    @Override
     public boolean isIdentical(/*@NotNull*/ AtomicValue v) {
         return (v instanceof DecimalValue) && equals(v);
     }

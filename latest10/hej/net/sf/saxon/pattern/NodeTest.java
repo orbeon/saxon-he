@@ -57,9 +57,11 @@ public abstract class NodeTest implements Predicate<NodeInfo>, ItemType.WithSequ
      * @return the default priority for the pattern
      */
 
+    @Override
     public abstract double getDefaultPriority();
 
 
+    @Override
     public boolean matches(Item item, TypeHierarchy th) {
         return item instanceof NodeInfo && test((NodeInfo) item);
     }
@@ -74,6 +76,7 @@ public abstract class NodeTest implements Predicate<NodeInfo>, ItemType.WithSequ
      */
 
     /*@NotNull*/
+    @Override
     public ItemType getPrimitiveItemType() {
         int p = getPrimitiveType();
         if (p == Type.NODE) {
@@ -90,6 +93,7 @@ public abstract class NodeTest implements Predicate<NodeInfo>, ItemType.WithSequ
      * @return the node kind matched by this node test
      */
 
+    @Override
     public int getPrimitiveType() {
         return Type.NODE;
     }
@@ -148,6 +152,7 @@ public abstract class NodeTest implements Predicate<NodeInfo>, ItemType.WithSequ
      *
      * @return true if this is ANY_ATOMIC_TYPE or a subtype thereof
      */
+    @Override
     public boolean isAtomicType() {
         return false;
     }
@@ -159,6 +164,7 @@ public abstract class NodeTest implements Predicate<NodeInfo>, ItemType.WithSequ
      * @return false: this is not ANY_ATOMIC_TYPE or a subtype thereof
      */
 
+    @Override
     public boolean isPlainType() {
         return false;
     }
@@ -169,6 +175,7 @@ public abstract class NodeTest implements Predicate<NodeInfo>, ItemType.WithSequ
      */
 
     /*@NotNull*/
+    @Override
     public AtomicType getAtomizedItemType() {
         // This is overridden for a ContentTypeTest
         return BuiltInAtomicType.ANY_ATOMIC;
@@ -182,6 +189,7 @@ public abstract class NodeTest implements Predicate<NodeInfo>, ItemType.WithSequ
      * @param th The type hierarchy cache
      */
 
+    @Override
     public boolean isAtomizable(TypeHierarchy th) {
         // This is overridden for a ContentTypeTest
         return true;
@@ -230,6 +238,7 @@ public abstract class NodeTest implements Predicate<NodeInfo>, ItemType.WithSequ
      * @return true if the node test is satisfied by the supplied node, false otherwise
      */
 
+    @Override
     public boolean test(/*@NotNull*/ NodeInfo node) {
         return matches(node.getNodeKind(), NameOfNode.makeName(node), node.getSchemaType());
     }
@@ -309,6 +318,7 @@ public abstract class NodeTest implements Predicate<NodeInfo>, ItemType.WithSequ
      * @since 9.8.0.2
      */
 
+    @Override
     public SequenceType one() {
         if (_one == null) {
             _one = new SequenceType(this, StaticProperty.EXACTLY_ONE);
@@ -323,6 +333,7 @@ public abstract class NodeTest implements Predicate<NodeInfo>, ItemType.WithSequ
      * @since 9.8.0.2
      */
 
+    @Override
     public SequenceType zeroOrOne() {
         if (_zeroOrOne == null) {
             _zeroOrOne = new SequenceType(this, StaticProperty.ALLOWS_ZERO_OR_ONE);
@@ -337,6 +348,7 @@ public abstract class NodeTest implements Predicate<NodeInfo>, ItemType.WithSequ
      * @since 9.8.0.2
      */
 
+    @Override
     public SequenceType oneOrMore() {
         if (_oneOrMore == null) {
             _oneOrMore = new SequenceType(this, StaticProperty.ALLOWS_ONE_OR_MORE);
@@ -351,6 +363,7 @@ public abstract class NodeTest implements Predicate<NodeInfo>, ItemType.WithSequ
      * @since 9.8.0.2
      */
 
+    @Override
     public SequenceType zeroOrMore() {
         if (_zeroOrMore == null) {
             _zeroOrMore = new SequenceType(this, StaticProperty.ALLOWS_ZERO_OR_MORE);

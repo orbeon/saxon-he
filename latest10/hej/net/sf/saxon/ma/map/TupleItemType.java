@@ -96,6 +96,7 @@ public class TupleItemType extends AnyFunctionType implements TupleType {
      * @return the type of the field if it is defined, or null otherwise
      */
 
+    @Override
     public SequenceType getFieldType(String field) {
         return fields.get(field);
     }
@@ -160,6 +161,7 @@ public class TupleItemType extends AnyFunctionType implements TupleType {
      * @return the list of argument types of this map, viewed as a function
      */
 
+    @Override
     public SequenceType[] getArgumentTypes() {
         // regardless of the key type, a function call on this map can supply any atomic value
         return new SequenceType[]{SequenceType.SINGLE_ATOMIC};
@@ -171,6 +173,7 @@ public class TupleItemType extends AnyFunctionType implements TupleType {
      * @return the result type of this tuple type, viewed as a function
      */
 
+    @Override
     public SequenceType getResultType() {
         if (extensible) {
             return SequenceType.ANY_SEQUENCE;
@@ -292,6 +295,7 @@ public class TupleItemType extends AnyFunctionType implements TupleType {
      * @return for example {@link Affinity#SUBSUMES}, {@link Affinity#SAME_TYPE}
      */
 
+    @Override
     public Affinity relationship(FunctionItemType other, TypeHierarchy th) {
         if (other == AnyFunctionType.getInstance()) {
             return Affinity.SUBSUMED_BY;

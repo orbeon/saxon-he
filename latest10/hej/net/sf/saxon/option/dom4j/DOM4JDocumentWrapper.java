@@ -60,6 +60,7 @@ public class DOM4JDocumentWrapper extends GenericTreeInfo {
 
 
     /*@Nullable*/
+    @Override
     public NodeInfo selectID(String id, boolean getParent) {
         HashMap<String, Element> idIndex = (HashMap<String, Element>)getUserData("saxon-id-index");
         if (idIndex != null) {

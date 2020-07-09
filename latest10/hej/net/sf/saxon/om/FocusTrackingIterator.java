@@ -71,6 +71,7 @@ public class FocusTrackingIterator
      *          if an error occurs retrieving the next item
      * @since 8.4
      */
+    @Override
     public Item next() throws XPathException {
         curr = base.next();
         if (curr == null) {
@@ -91,6 +92,7 @@ public class FocusTrackingIterator
      *         of the sequence has been reached.
      * @since 8.4
      */
+    @Override
     public Item current() {
         return curr;
     }
@@ -113,6 +115,7 @@ public class FocusTrackingIterator
      *         value is -1.
      * @since 8.4
      */
+    @Override
     public int position() {
         return pos;
     }
@@ -126,6 +129,7 @@ public class FocusTrackingIterator
      * @throws XPathException if a failure occurs reading the sequence
      */
 
+    @Override
     public int getLength() throws XPathException {
         if (last == -1) {
             if (base.getProperties().contains(Property.LAST_POSITION_FINDER)) {
@@ -151,6 +155,7 @@ public class FocusTrackingIterator
      * @return true if there are more items in the sequence
      * @throws ClassCastException if the base iterator does not support lookahead processing
      */
+    @Override
     public boolean hasNext() {
         assert base instanceof LookaheadIterator;
         return ((LookaheadIterator)base).hasNext();
@@ -196,6 +201,7 @@ public class FocusTrackingIterator
      *
      * @since 9.1
      */
+    @Override
     public void close() {
         base.close();
     }
@@ -210,6 +216,7 @@ public class FocusTrackingIterator
      *         It is acceptable for the properties of the iterator to change depending on its state.
      * @since 8.6
      */
+    @Override
     public EnumSet<Property> getProperties() {
         return base.getProperties();
     }

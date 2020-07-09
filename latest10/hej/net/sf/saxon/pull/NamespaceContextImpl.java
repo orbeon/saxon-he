@@ -45,6 +45,7 @@ public class NamespaceContextImpl implements NamespaceContext, NamespaceResolver
      */
 
     /*@Nullable*/
+    @Override
     public String getURIForPrefix(String prefix, boolean useDefault) {
         return resolver.getURIForPrefix(prefix, useDefault);
     }
@@ -54,6 +55,7 @@ public class NamespaceContextImpl implements NamespaceContext, NamespaceResolver
      * the default namespace (prefix="") and the XML namespace where appropriate
      */
 
+    @Override
     public Iterator<String> iteratePrefixes() {
         return resolver.iteratePrefixes();
     }
@@ -65,6 +67,7 @@ public class NamespaceContextImpl implements NamespaceContext, NamespaceResolver
      * @return the corresponding URI, if the prefix is bound, or "" otherwise
      */
 
+    @Override
     public String getNamespaceURI(String prefix) {
         if (prefix.equals("xmlns")) {
             return "http://www.w3.org/2000/xmlns/";
@@ -79,6 +82,7 @@ public class NamespaceContextImpl implements NamespaceContext, NamespaceResolver
      * @return the prefix bound to the URI if there is one, or null if not
      */
 
+    @Override
     public String getPrefix(String uri) {
         Iterator prefixes = iteratePrefixes();
         while (prefixes.hasNext()) {
@@ -97,6 +101,7 @@ public class NamespaceContextImpl implements NamespaceContext, NamespaceResolver
      * @param uri the namespace URI
      * @return an iterator over all the prefixes bound to this namespace URI
      */
+    @Override
     public Iterator<String> getPrefixes(String uri) {
         List<String> list = new ArrayList<>(4);
         Iterator<String> prefixes = iteratePrefixes();

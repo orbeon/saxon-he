@@ -142,6 +142,7 @@ public final class EvaluateInstr extends Expression {
      */
 
     /*@NotNull*/
+    @Override
     public Expression typeCheck(ExpressionVisitor visitor, ContextItemStaticInfo contextInfo) throws XPathException {
         importedSchemaNamespaces = visitor.getStaticContext().getImportedSchemaNamespaces();
         typeCheckChildren(visitor, contextInfo);
@@ -151,6 +152,7 @@ public final class EvaluateInstr extends Expression {
     }
 
     /*@NotNull*/
+    @Override
     public Expression optimize(ExpressionVisitor visitor, ContextItemStaticInfo contextItemType) throws XPathException {
         optimizeChildren(visitor, contextItemType);
         return this;
@@ -164,10 +166,12 @@ public final class EvaluateInstr extends Expression {
      */
 
     /*@NotNull*/
+    @Override
     public final ItemType getItemType() {
         return requiredType.getPrimaryType();
     }
 
+    @Override
     protected int computeCardinality() {
         return requiredType.getCardinality();
     }
@@ -192,6 +196,7 @@ public final class EvaluateInstr extends Expression {
      *         expressions, it is the same as the input pathMapNode.
      */
 
+    @Override
     public PathMap.PathMapNodeSet addToPathMap(PathMap pathMap, PathMap.PathMapNodeSet pathMapNodeSet) {
         throw new UnsupportedOperationException("Cannot do document projection when xsl:evaluate is used");
     }
@@ -234,6 +239,7 @@ public final class EvaluateInstr extends Expression {
      * This method indicates which of these methods is provided. This implementation provides the iterate() method natively.
      */
 
+    @Override
     public int getImplementationMethod() {
         return ITERATE_METHOD;
     }
@@ -248,6 +254,7 @@ public final class EvaluateInstr extends Expression {
      */
 
     /*@NotNull*/
+    @Override
     public Expression copy(RebindingMap rebindings) {
         EvaluateInstr e2 = new EvaluateInstr(getXpath().copy(rebindings), requiredType,
                                              getContextItemExpr().copy(rebindings),
@@ -268,6 +275,7 @@ public final class EvaluateInstr extends Expression {
     }
 
     /*@NotNull*/
+    @Override
     public SequenceIterator iterate(final XPathContext context) throws XPathException {
 
         Configuration config = context.getConfiguration();
@@ -512,6 +520,7 @@ public final class EvaluateInstr extends Expression {
      * is written to the supplied output destination.
      */
 
+    @Override
     public void export(ExpressionPresenter out) throws XPathException {
         out.startElement("evaluate", this);
         if (!SequenceType.ANY_SEQUENCE.equals(requiredType)) {

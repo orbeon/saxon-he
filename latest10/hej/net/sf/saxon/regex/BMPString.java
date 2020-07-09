@@ -25,14 +25,17 @@ public final class BMPString extends UnicodeString {
         this.src = src;
     }
 
+    @Override
     public UnicodeString uSubstring(int beginIndex, int endIndex) {
         return new BMPString(src.subSequence(beginIndex, endIndex));
     }
 
+    @Override
     public int uCharAt(int pos) {
         return src.charAt(pos);
     }
 
+    @Override
     public int uIndexOf(int search, int pos) {
         if (search > 65535) {
             return -1;
@@ -46,10 +49,12 @@ public final class BMPString extends UnicodeString {
         }
     }
 
+    @Override
     public int uLength() {
         return src.length();
     }
 
+    @Override
     public boolean isEnd(int pos) {
         return pos >= src.length();
     }
@@ -73,6 +78,7 @@ public final class BMPString extends UnicodeString {
      *
      * @return the number of <code>char</code>s in this sequence
      */
+    @Override
     public int length() {
         return src.length();
     }
@@ -91,6 +97,7 @@ public final class BMPString extends UnicodeString {
      * @throws IndexOutOfBoundsException if the <tt>index</tt> argument is negative or not less than
      *                                   <tt>length()</tt>
      */
+    @Override
     public char charAt(int index) {
         return src.charAt(index);
     }
@@ -110,6 +117,7 @@ public final class BMPString extends UnicodeString {
      *                                   if <tt>end</tt> is greater than <tt>length()</tt>,
      *                                   or if <tt>start</tt> is greater than <tt>end</tt>
      */
+    @Override
     public CharSequence subSequence(int start, int end) {
         return src.subSequence(start, end);
     }

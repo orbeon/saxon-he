@@ -80,15 +80,18 @@ public class SquareArrayConstructor extends Expression {
     }
 
 
+    @Override
     public String getExpressionName() {
         return "SquareArrayConstructor";
     }
 
+    @Override
     public String getStreamerName() {
         return "ArrayBlock";
     }
 
 
+    @Override
     public int computeSpecialProperties() {
         return 0;
     }
@@ -121,6 +124,7 @@ public class SquareArrayConstructor extends Expression {
      * Hashcode supporting equals()
      */
 
+    @Override
     public int computeHashCode() {
         int h = 0x878b92a0;
         for (Operand o : operands()) {
@@ -169,6 +173,7 @@ public class SquareArrayConstructor extends Expression {
      */
 
     /*@NotNull*/
+    @Override
     public Expression copy(RebindingMap rebindings) {
         List<Expression> m2 = new ArrayList<>(getOperanda().getNumberOfOperands());
         for (Operand o : operands()) {
@@ -186,6 +191,7 @@ public class SquareArrayConstructor extends Expression {
      */
 
     /*@NotNull*/
+    @Override
     public final ItemType getItemType() {
         ItemType contentType = null;
         int contentCardinality = StaticProperty.EXACTLY_ONE;
@@ -221,6 +227,7 @@ public class SquareArrayConstructor extends Expression {
      * Determine the cardinality of the expression
      */
 
+    @Override
     public final int computeCardinality() {
         // An array is an item!
         return StaticProperty.EXACTLY_ONE;
@@ -231,6 +238,7 @@ public class SquareArrayConstructor extends Expression {
      * is written to the supplied output destination.
      */
 
+    @Override
     public void export(ExpressionPresenter out) throws XPathException {
         out.startElement("arrayBlock", this);
         for (Operand o : operands()) {
@@ -261,6 +269,7 @@ public class SquareArrayConstructor extends Expression {
      * process() methods natively.
      */
 
+    @Override
     public int getImplementationMethod() {
         return EVALUATE_METHOD;
     }

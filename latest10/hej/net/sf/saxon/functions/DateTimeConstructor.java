@@ -31,6 +31,7 @@ public class DateTimeConstructor extends SystemFunction {
      * @throws net.sf.saxon.trans.XPathException
      *          if a dynamic error occurs during the evaluation of the expression
      */
+    @Override
     public ZeroOrOne call(XPathContext context, Sequence[] arguments) throws XPathException {
         DateValue arg0 = (DateValue) arguments[0].head();
         TimeValue arg1 = (TimeValue) arguments[1].head();
@@ -40,6 +41,7 @@ public class DateTimeConstructor extends SystemFunction {
         return new ZeroOrOne(DateTimeValue.makeDateTimeValue(arg0, arg1));
     }
 
+    @Override
     public String getCompilerName() {
         return "DateTimeConstructorCompiler";
     }

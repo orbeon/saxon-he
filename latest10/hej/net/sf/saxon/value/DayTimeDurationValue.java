@@ -153,6 +153,7 @@ public final class DayTimeDurationValue extends DurationValue
      */
 
     /*@NotNull*/
+    @Override
     public AtomicValue copyAsSubType(AtomicType typeLabel) {
         DayTimeDurationValue v = DayTimeDurationValue.fromSeconds(getTotalSeconds());
         v.typeLabel = typeLabel;
@@ -166,6 +167,7 @@ public final class DayTimeDurationValue extends DurationValue
      * and xs:untypedAtomic. For external objects, the result is AnyAtomicType.
      */
 
+    @Override
     public BuiltInAtomicType getPrimitiveType() {
         return BuiltInAtomicType.DAY_TIME_DURATION;
     }
@@ -176,6 +178,7 @@ public final class DayTimeDurationValue extends DurationValue
      * @return ISO 8601 representation.
      */
 
+    @Override
     public CharSequence getPrimitiveStringValue() {
 
         FastStringBuffer sb = new FastStringBuffer(32);
@@ -217,6 +220,7 @@ public final class DayTimeDurationValue extends DurationValue
      * @return an approximation to the length of the duration in seconds, expressed as a double.
      */
 
+    @Override
     public double getLengthInSeconds() {
         double a = seconds + ((double) nanoseconds / 1_000_000_000);
         // System.err.println("Duration length " + days + "/" + hours + "/" + minutes + "/" + seconds + " is " + a);
@@ -373,6 +377,7 @@ public final class DayTimeDurationValue extends DurationValue
      * @return the result of the multiplication
      */
 
+    @Override
     public DurationValue multiply(long factor) throws XPathException {
         // Fast path for simple cases
         if (Math.abs(factor) < 0x7fff_ffff && Math.abs(seconds) < 0x7fff_ffff) {
@@ -392,6 +397,7 @@ public final class DayTimeDurationValue extends DurationValue
      * exceeds Saxon limits (2^63 seconds)
      */
 
+    @Override
     public DayTimeDurationValue multiply(double n) throws XPathException {
         if (Double.isNaN(n)) {
             XPathException err = new XPathException("Cannot multiply a duration by NaN");
@@ -431,6 +437,7 @@ public final class DayTimeDurationValue extends DurationValue
      *                        exceeds Saxon limits (2^63 seconds)
      */
 
+    @Override
     public DurationValue divide(double n) throws XPathException {
         if (Double.isNaN(n)) {
             XPathException err = new XPathException("Cannot divide a duration by NaN");
@@ -464,6 +471,7 @@ public final class DayTimeDurationValue extends DurationValue
      * @return the ratio, as a decimal
      * @throws XPathException when dividing by zero, or when dividing two durations of different type
      */
+    @Override
     public BigDecimalValue divide(DurationValue other) throws XPathException {
         if (other instanceof DayTimeDurationValue) {
             BigDecimal v1 = getTotalSeconds();
@@ -485,6 +493,7 @@ public final class DayTimeDurationValue extends DurationValue
      * Add two dayTimeDurations
      */
 
+    @Override
     public DurationValue add(DurationValue other) throws XPathException {
         if (other instanceof DayTimeDurationValue) {
             DayTimeDurationValue d2 = (DayTimeDurationValue)other;
@@ -514,6 +523,7 @@ public final class DayTimeDurationValue extends DurationValue
      * Subtract two dayTime-durations
      */
 
+    @Override
     public DurationValue subtract(DurationValue other) throws XPathException {
         if (other instanceof DayTimeDurationValue) {
             DayTimeDurationValue d2 = (DayTimeDurationValue) other;
@@ -547,6 +557,7 @@ public final class DayTimeDurationValue extends DurationValue
      *                                  off from the limit for negative durations)
      */
 
+    @Override
     public DurationValue negate() throws IllegalArgumentException {
         DayTimeDurationValue d2 = new DayTimeDurationValue();
         d2.setTypeLabel(typeLabel);
@@ -565,6 +576,7 @@ public final class DayTimeDurationValue extends DurationValue
      * @throws NullPointerException if the other value is null
      */
 
+    @Override
     public int compareTo(DayTimeDurationValue other) {
         Objects.requireNonNull(other);
         if (this.negative != other.negative) {
@@ -587,6 +599,7 @@ public final class DayTimeDurationValue extends DurationValue
      * @param implicitTimezone  XPath dynamic context
      */
 
+    @Override
     public AtomicMatchKey getXPathComparable(boolean ordered, StringCollator collator, int implicitTimezone) {
         return this;
     }

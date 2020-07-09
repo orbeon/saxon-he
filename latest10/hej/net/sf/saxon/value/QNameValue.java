@@ -118,6 +118,7 @@ public class QNameValue extends QualifiedNameValue {
      */
 
     /*@NotNull*/
+    @Override
     public AtomicValue copyAsSubType(AtomicType typeLabel) {
         return new QNameValue(qName, typeLabel);
     }
@@ -130,6 +131,7 @@ public class QNameValue extends QualifiedNameValue {
      */
 
     /*@NotNull*/
+    @Override
     public BuiltInAtomicType getPrimitiveType() {
         return BuiltInAtomicType.QNAME;
     }
@@ -144,6 +146,7 @@ public class QNameValue extends QualifiedNameValue {
      */
 
     /*@Nullable*/
+    @Override
     public AtomicValue getComponent(AccessorFn.Component part) {
         switch (part) {
             case LOCALNAME:
@@ -174,6 +177,7 @@ public class QNameValue extends QualifiedNameValue {
     }
 
     /*@NotNull*/
+    @Override
     public Comparable getSchemaComparable() {
         return new QNameComparable();
     }
@@ -185,6 +189,7 @@ public class QNameValue extends QualifiedNameValue {
             return QNameValue.this;
         }
 
+        @Override
         public int compareTo(/*@NotNull*/ Object o) {
             return equals(o) ? 0 : SequenceTool.INDETERMINATE_ORDERING;
         }

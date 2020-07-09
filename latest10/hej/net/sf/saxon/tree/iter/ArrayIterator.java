@@ -108,6 +108,7 @@ public class ArrayIterator<T extends Item> implements UnfailingIterator,
      * @return true if there are more items
      */
 
+    @Override
     public boolean hasNext() {
         return index < end;
     }
@@ -119,6 +120,7 @@ public class ArrayIterator<T extends Item> implements UnfailingIterator,
      */
 
     /*@Nullable*/
+    @Override
     public T next() {
         if (index >= end) {
             index = end + 1;
@@ -133,6 +135,7 @@ public class ArrayIterator<T extends Item> implements UnfailingIterator,
      * @return the number of items; equivalently, the position of the last
      *         item
      */
+    @Override
     public int getLength() {
         return end - start;
     }
@@ -176,6 +179,7 @@ public class ArrayIterator<T extends Item> implements UnfailingIterator,
      */
 
     /*@NotNull*/
+    @Override
     public GroundedValue materialize() {
         SequenceExtent seq;
         if (start == 0 && end == items.length) {
@@ -209,6 +213,7 @@ public class ArrayIterator<T extends Item> implements UnfailingIterator,
      *         It is acceptable for the properties of the iterator to change depending on its state.
      */
 
+    @Override
     public EnumSet<Property> getProperties() {
         return EnumSet.of(Property.GROUNDED, Property.LAST_POSITION_FINDER, Property.LOOKAHEAD);
     }

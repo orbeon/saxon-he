@@ -55,6 +55,7 @@ public class CaseFirstCollator implements StringCollator {
      *
      * @return a collation URI that can be used to reconstruct the collation when an XSLT package is reloaded.
      */
+    @Override
     public String getCollationURI() {
         return uri;
     }
@@ -67,6 +68,7 @@ public class CaseFirstCollator implements StringCollator {
      * @throws ClassCastException if the objects are of the wrong type for this Comparer
      */
 
+    @Override
     public int compareStrings(CharSequence a, CharSequence b) {
         int diff = baseCollator.compareStrings(a, b);
         if (diff != 0) {
@@ -120,6 +122,7 @@ public class CaseFirstCollator implements StringCollator {
      * @return true if and only if the strings are considered equal,
      */
 
+    @Override
     public boolean comparesEqual(CharSequence s1, /*@NotNull*/ CharSequence s2) {
         return compareStrings(s1, s2) == 0;
     }
@@ -131,6 +134,7 @@ public class CaseFirstCollator implements StringCollator {
      * @param s
      */
 
+    @Override
     public AtomicMatchKey getCollationKey(CharSequence s) {
         return baseCollator.getCollationKey(s);
     }

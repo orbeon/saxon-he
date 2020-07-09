@@ -94,6 +94,7 @@ public class UnicodeNormalizer extends ProxyReceiver {
      * Output character data
      */
 
+    @Override
     public void characters(/*@NotNull*/ CharSequence chars, Location locationId, int properties) throws XPathException {
         if (Whitespace.isWhite(chars)) {
             nextReceiver.characters(chars, locationId, properties);

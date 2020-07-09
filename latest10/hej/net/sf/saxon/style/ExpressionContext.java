@@ -61,6 +61,7 @@ public class ExpressionContext implements StaticContext {
      * Get the system configuration
      */
 
+    @Override
     public Configuration getConfiguration() {
         return element.getConfiguration();
     }
@@ -70,6 +71,7 @@ public class ExpressionContext implements StaticContext {
      * @return the containing XSLT package
      */
 
+    @Override
     public StylesheetPackage getPackageData() {
         return element.getPackageData();
     }
@@ -88,6 +90,7 @@ public class ExpressionContext implements StaticContext {
      * Construct a dynamic context for early evaluation of constant subexpressions
      */
 
+    @Override
     public XPathContext makeEarlyEvaluationContext() {
         return new EarlyEvaluationContext(getConfiguration());
     }
@@ -100,6 +103,7 @@ public class ExpressionContext implements StaticContext {
      * @return a RetainedStaticContext object: either a newly created one, or one that is
      * reused from a previous invocation.
      */
+    @Override
     public RetainedStaticContext makeRetainedStaticContext() {
         if (retainedStaticContext == null) {
             if (element.changesRetainedStaticContext() || !(element.getParent() instanceof StyleElement)) {
@@ -118,6 +122,7 @@ public class ExpressionContext implements StaticContext {
      * attribute holding the XPath expression in question.
      */
 
+    @Override
     public Location getContainingLocation() {
         if (containingLocation == null) {
             if (attributeName == null) {
@@ -133,6 +138,7 @@ public class ExpressionContext implements StaticContext {
      * Issue a compile-time warning
      */
 
+    @Override
     public void issueWarning(String s, Location locator) {
         element.compileWarning(s, SaxonErrorCode.SXWN9000, locator);
     }
@@ -141,6 +147,7 @@ public class ExpressionContext implements StaticContext {
      * Get the System ID of the entity containing the expression (used for diagnostics)
      */
 
+    @Override
     public String getSystemId() {
         return element.getSystemId();
     }
@@ -151,6 +158,7 @@ public class ExpressionContext implements StaticContext {
      * Used by the document() function.
      */
 
+    @Override
     public String getStaticBaseURI() {
         return element.getBaseURI();
     }
@@ -162,6 +170,7 @@ public class ExpressionContext implements StaticContext {
      */
 
 
+    @Override
     public NamespaceResolver getNamespaceResolver() {
         return element.getAllNamespaces();
     }
@@ -174,6 +183,7 @@ public class ExpressionContext implements StaticContext {
      * @since 9.3
      */
 
+    @Override
     public ItemType getRequiredContextItemType() {
         return AnyItemType.getInstance();
     }
@@ -186,6 +196,7 @@ public class ExpressionContext implements StaticContext {
      * formats are not supported in this environment.
      */
 
+    @Override
     public DecimalFormatManager getDecimalFormatManager() {
         return element.getCompilation().getPrincipalStylesheetModule().getDecimalFormatManager();
     }
@@ -211,6 +222,7 @@ public class ExpressionContext implements StaticContext {
      * @throws XPathException if the variable has not been declared
      */
 
+    @Override
     public Expression bindVariable(StructuredQName qName) throws XPathException {
         SourceBinding sourceBinding = element.bindVariable(qName);
         if (sourceBinding == null) {
@@ -289,6 +301,7 @@ public class ExpressionContext implements StaticContext {
      * context
      */
 
+    @Override
     public FunctionLibrary getFunctionLibrary() {
         FunctionLibrary lib = element.getContainingPackage().getFunctionLibrary();
         StyleElement containingOverride = element.findAncestorElement(StandardNames.XSL_OVERRIDE);
@@ -306,6 +319,7 @@ public class ExpressionContext implements StaticContext {
      * Get the default collation. Return null if no default collation has been defined
      */
 
+    @Override
     public String getDefaultCollationName() {
         return element.getDefaultCollationName();
     }
@@ -315,6 +329,7 @@ public class ExpressionContext implements StaticContext {
      * Return NamespaceConstant.NULL for the non-namespace
      */
 
+    @Override
     public String getDefaultElementNamespace() {
         return element.getDefaultXPathNamespace();
     }
@@ -323,6 +338,7 @@ public class ExpressionContext implements StaticContext {
      * Get the default function namespace
      */
 
+    @Override
     public String getDefaultFunctionNamespace() {
         return NamespaceConstant.FN;
     }
@@ -331,6 +347,7 @@ public class ExpressionContext implements StaticContext {
      * Determine whether Backwards Compatible Mode is used
      */
 
+    @Override
     public boolean isInBackwardsCompatibleMode() {
         return element.xPath10ModeIsEnabled();
     }
@@ -344,6 +361,7 @@ public class ExpressionContext implements StaticContext {
      * @since 9.7
      */
 
+    @Override
     public int getXPathVersion() {
         return getConfiguration().getConfigurationProperty(Feature.XPATH_VERSION_FOR_XSLT);
     }
@@ -355,6 +373,7 @@ public class ExpressionContext implements StaticContext {
      * @return true if a schema for this namespace has been imported
      */
 
+    @Override
     public boolean isImportedSchema(String namespace) {
         //if (Configuration.USE_PACKAGE_BINDING) {
         return element.getPrincipalStylesheetModule().isImportedSchema(namespace);
@@ -369,6 +388,7 @@ public class ExpressionContext implements StaticContext {
      * @return a Set, the set of URIs representing the names of imported schemas
      */
 
+    @Override
     public Set<String> getImportedSchemaNamespaces() {
         return element.getPrincipalStylesheetModule().getImportedSchemaTable();
     }
@@ -380,6 +400,7 @@ public class ExpressionContext implements StaticContext {
      * on key() used in XSLT, and system-generated calls on key() which may
      * also appear in XQuery and XPath
      */
+    @Override
     public KeyManager getKeyManager() {
         return element.getCompilation().getPrincipalStylesheetModule().getKeyManager();
     }

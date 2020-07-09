@@ -632,6 +632,7 @@ public class StandardEntityResolver implements EntityResolver {
      *                                  wrapping another exception.
      * @see org.xml.sax.InputSource
      */
+    @Override
     public InputSource resolveEntity(String publicId, String systemId) throws SAXException {
         // See if it's a known public ID
         String fileName = publicIds.get(publicId);

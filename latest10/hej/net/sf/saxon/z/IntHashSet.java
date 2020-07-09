@@ -72,6 +72,7 @@ public class IntHashSet implements IntSet {
         setCapacity(capacity);
     }
 
+    @Override
     public IntSet copy() {
         if (_size == 0) {
             return IntEmptySet.getInstance();
@@ -89,10 +90,12 @@ public class IntHashSet implements IntSet {
         }
     }
 
+    @Override
     public IntSet mutableCopy() {
         return copy();
     }
 
+    @Override
     public void clear() {
         _size = 0;
         for (int i = 0; i < _nmax; ++i) {
@@ -100,10 +103,12 @@ public class IntHashSet implements IntSet {
         }
     }
 
+    @Override
     public int size() {
         return _size;
     }
 
+    @Override
     public boolean isEmpty() {
         return _size == 0;
     }
@@ -120,11 +125,13 @@ public class IntHashSet implements IntSet {
     }
 
 
+    @Override
     public boolean contains(int value) {
         return (_values[indexOf(value)] != ndv);
     }
 
 
+    @Override
     public boolean remove(int value) {
         // Knuth, v. 3, 527, Algorithm R.
         int i = indexOf(value);
@@ -148,6 +155,7 @@ public class IntHashSet implements IntSet {
     }
 
 
+    @Override
     public boolean add(int value) {
         if (value == ndv) {
             throw new IllegalArgumentException("Can't add the 'no data' value");
@@ -237,6 +245,7 @@ public class IntHashSet implements IntSet {
      * Get an iterator over the values
      */
 
+    @Override
     public IntIterator iterator() {
         return new IntHashSetIterator();
     }
@@ -377,6 +386,7 @@ public class IntHashSet implements IntSet {
             i = 0;
         }
 
+        @Override
         public boolean hasNext() {
             while (i < _values.length) {
                 if (_values[i] != ndv) {
@@ -388,6 +398,7 @@ public class IntHashSet implements IntSet {
             return false;
         }
 
+        @Override
         public int next() {
             return _values[i++];
         }

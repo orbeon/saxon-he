@@ -53,11 +53,13 @@ public class MemoSequence implements Sequence {
         this.inputIterator = iterator;
     }
 
+    @Override
     public Item head() throws XPathException {
         return iterate().next();
     }
 
 
+    @Override
     public synchronized SequenceIterator iterate() throws XPathException {
 
         switch (state) {
@@ -207,6 +209,7 @@ public class MemoSequence implements Sequence {
         }
 
         /*@Nullable*/
+        @Override
         public Item next() throws XPathException {
             synchronized (MemoSequence.this) {
                 // synchronized for the case where a multi-threaded xsl:for-each is reading the variable
@@ -237,6 +240,7 @@ public class MemoSequence implements Sequence {
             }
         }
 
+        @Override
         public void close() {
         }
 
@@ -244,6 +248,7 @@ public class MemoSequence implements Sequence {
          * Get the last position (that is, the number of items in the sequence)
          */
 
+        @Override
         public int getLength() throws XPathException {
             if (state == State.ALL_READ) {
                 return used;
@@ -269,6 +274,7 @@ public class MemoSequence implements Sequence {
          */
 
         /*@Nullable*/
+        @Override
         public GroundedValue materialize() throws XPathException {
             if (state == State.ALL_READ) {
                 return makeExtent();
@@ -329,6 +335,7 @@ public class MemoSequence implements Sequence {
          *         acceptable to return the value zero, indicating that there are no known special properties.
          */
 
+        @Override
         public EnumSet<Property> getProperties() {
             // bug 1740 shows that it is better to report the iterator as grounded even though this
             // may trigger eager evaluation of the underlying sequence.

@@ -41,6 +41,7 @@ public class TailExpression extends UnaryExpression {
     }
 
     /*@NotNull*/
+    @Override
     public Expression optimize(ExpressionVisitor visitor, ContextItemStaticInfo contextInfo) throws XPathException {
         getOperand().optimize(visitor, contextInfo);
         if (getBaseExpression() instanceof Literal) {
@@ -59,6 +60,7 @@ public class TailExpression extends UnaryExpression {
      */
 
     /*@NotNull*/
+    @Override
     public Expression copy(RebindingMap rebindings) {
         TailExpression exp = new TailExpression(getBaseExpression().copy(rebindings), start);
         ExpressionTool.copyLocationInfo(this, exp);
@@ -79,10 +81,12 @@ public class TailExpression extends UnaryExpression {
     }
 
     /*@NotNull*/
+    @Override
     public ItemType getItemType() {
         return getBaseExpression().getItemType();
     }
 
+    @Override
     public int computeCardinality() {
         return getBaseExpression().getCardinality() | StaticProperty.ALLOWS_ZERO;
     }
@@ -115,6 +119,7 @@ public class TailExpression extends UnaryExpression {
                 start == ((TailExpression) other).start;
     }
 
+    @Override
     public int computeHashCode() {
         return super.computeHashCode() ^ start;
     }
@@ -131,6 +136,7 @@ public class TailExpression extends UnaryExpression {
     }
 
     /*@NotNull*/
+    @Override
     public SequenceIterator iterate(XPathContext context) throws XPathException {
         SequenceIterator baseIter = getBaseExpression().iterate(context);
         return TailIterator.make(baseIter, start);
@@ -155,6 +161,7 @@ public class TailExpression extends UnaryExpression {
      * is written to the supplied output destination.
      */
 
+    @Override
     public void export(ExpressionPresenter destination) throws XPathException {
         destination.startElement("tail", this);
         destination.emitAttribute("start", start + "");

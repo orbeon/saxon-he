@@ -54,6 +54,7 @@ public class SortExpression extends Expression
      *         in explain() output displaying the expression.
      */
 
+    @Override
     public String getExpressionName() {
         return "sort";
     }
@@ -125,6 +126,7 @@ public class SortExpression extends Expression
      *         expressions, it is the same as the input pathMapNode.
      */
 
+    @Override
     public PathMap.PathMapNodeSet addToPathMap(PathMap pathMap, PathMap.PathMapNodeSet pathMapNodeSet) {
         PathMap.PathMapNodeSet target = getSelect().addToPathMap(pathMap, pathMapNodeSet);
         for (SortKeyDefinition sortKeyDefinition : getSortKeyDefinitionList()) {
@@ -162,6 +164,7 @@ public class SortExpression extends Expression
      */
 
     /*@NotNull*/
+    @Override
     public Expression typeCheck(ExpressionVisitor visitor, ContextItemStaticInfo contextInfo) throws XPathException {
 
         selectOp.typeCheck(visitor, contextInfo);
@@ -244,6 +247,7 @@ public class SortExpression extends Expression
      */
 
     /*@NotNull*/
+    @Override
     public Expression optimize(ExpressionVisitor visitor, ContextItemStaticInfo contextItemType) throws XPathException {
         selectOp.optimize(visitor, contextItemType);
 
@@ -275,6 +279,7 @@ public class SortExpression extends Expression
      */
 
     /*@NotNull*/
+    @Override
     public Expression copy(RebindingMap rebindings) {
         int len = getSortKeyDefinitionList().size();
         SortKeyDefinition[] sk2 = new SortKeyDefinition[len];
@@ -308,6 +313,7 @@ public class SortExpression extends Expression
      * Determine the static cardinality
      */
 
+    @Override
     public int computeCardinality() {
         return getSelect().getCardinality();
     }
@@ -320,6 +326,7 @@ public class SortExpression extends Expression
      */
 
     /*@NotNull*/
+    @Override
     public ItemType getItemType() {
         return getSelect().getItemType();
     }
@@ -330,6 +337,7 @@ public class SortExpression extends Expression
      * property bit is set, it is true, but if it is unset, the value is unknown.
      */
 
+    @Override
     public int computeSpecialProperties() {
         int props = 0;
         if (getSelect().hasSpecialProperty(StaticProperty.CONTEXT_DOCUMENT_NODESET)) {
@@ -362,6 +370,7 @@ public class SortExpression extends Expression
      */
 
     /*@NotNull*/
+    @Override
     public SequenceIterator iterate(XPathContext context) throws XPathException {
 
         SequenceIterator iter = getSelect().iterate(context);
@@ -390,6 +399,7 @@ public class SortExpression extends Expression
      * Callback for evaluating the sort keys
      */
 
+    @Override
     public AtomicValue evaluateSortKey(int n, XPathContext c) throws XPathException {
         return (AtomicValue) getSortKeyDefinition(n).getSortKey().evaluateItem(c);
     }
@@ -416,6 +426,7 @@ public class SortExpression extends Expression
      * is written to the supplied output destination.
      */
 
+    @Override
     public void export(ExpressionPresenter out) throws XPathException {
         out.startElement("sort", this);
         out.setChildRole("select");

@@ -34,6 +34,7 @@ public abstract class AbstractNodeWrapper implements NodeInfo, VirtualNode {
 
     protected TreeInfo treeInfo;
 
+    @Override
     public TreeInfo getTreeInfo() {
         return treeInfo;
     }
@@ -45,6 +46,7 @@ public abstract class AbstractNodeWrapper implements NodeInfo, VirtualNode {
      * @return The underlying node.
      */
 
+    @Override
     public final Object getRealNode() {
         return getUnderlyingNode();
     }
@@ -67,6 +69,7 @@ public abstract class AbstractNodeWrapper implements NodeInfo, VirtualNode {
      * @since 8.5 - signature changed in 9.5
      */
 
+    @Override
     public AtomicSequence atomize() throws XPathException {
         switch (getNodeKind()) {
             case Type.COMMENT:
@@ -119,6 +122,7 @@ public abstract class AbstractNodeWrapper implements NodeInfo, VirtualNode {
      *         modified by xml:base, but the system ID cannot.
      */
 
+    @Override
     public String getSystemId() {
         if (treeInfo instanceof GenericTreeInfo) {
             return ((GenericTreeInfo) treeInfo).getSystemId();
@@ -133,6 +137,7 @@ public abstract class AbstractNodeWrapper implements NodeInfo, VirtualNode {
      * @param uri the system ID.
      */
 
+    @Override
     public void setSystemId(String uri) {
         if (treeInfo instanceof GenericTreeInfo) {
             ((GenericTreeInfo) treeInfo).setSystemId(uri);
@@ -149,6 +154,7 @@ public abstract class AbstractNodeWrapper implements NodeInfo, VirtualNode {
      * @return the base URI of the node, taking into account xml:base attributes if present
      */
 
+    @Override
     public String getBaseURI() {
         if (getNodeKind() == Type.NAMESPACE) {
             return null;
@@ -176,6 +182,7 @@ public abstract class AbstractNodeWrapper implements NodeInfo, VirtualNode {
      *         Always returns -1 in this implementation.
      */
 
+    @Override
     public int getLineNumber() {
         return -1;
     }
@@ -186,6 +193,7 @@ public abstract class AbstractNodeWrapper implements NodeInfo, VirtualNode {
      * @return the column number of the node in its original source document; or -1 if not available
      */
 
+    @Override
     public int getColumnNumber() {
         return -1;
     }
@@ -195,6 +203,7 @@ public abstract class AbstractNodeWrapper implements NodeInfo, VirtualNode {
      * should not be saved for later use. The result of this operation holds the same location information,
      * but in an immutable form.
      */
+    @Override
     public Location saveLocation() {
         return this;
     }
@@ -207,6 +216,7 @@ public abstract class AbstractNodeWrapper implements NodeInfo, VirtualNode {
      * @return the string value of the node
      */
 
+    @Override
     public String getStringValue() {
         return getStringValueCS().toString();
     }
@@ -219,6 +229,7 @@ public abstract class AbstractNodeWrapper implements NodeInfo, VirtualNode {
      *         empty string.
      */
 
+    @Override
     public String getDisplayName() {
         String prefix = getPrefix();
         String local = getLocalPart();
@@ -240,6 +251,7 @@ public abstract class AbstractNodeWrapper implements NodeInfo, VirtualNode {
      *         if this node is not an element.
      * @since 9.4
      */
+    @Override
     public String getAttributeValue(String uri, String local) {
         return null;
     }
@@ -252,6 +264,7 @@ public abstract class AbstractNodeWrapper implements NodeInfo, VirtualNode {
      * @return a SequenceIterator that scans the nodes reached by the axis in turn.
      */
 
+    @Override
     public AxisIterator iterateAxis(int axisNumber) {
         return iterateAxis(axisNumber, AnyNodeTest.getInstance());
     }
@@ -269,6 +282,7 @@ public abstract class AbstractNodeWrapper implements NodeInfo, VirtualNode {
      * @return a SequenceIterator that scans the nodes reached by the axis in turn.
      */
 
+    @Override
     public AxisIterator iterateAxis(int axisNumber, Predicate<? super NodeInfo> nodeTest) {
         int nodeKind = getNodeKind();
         switch (axisNumber) {
@@ -436,6 +450,7 @@ public abstract class AbstractNodeWrapper implements NodeInfo, VirtualNode {
      *      then the first unused entry will be set to null.
      *      <p>For a node other than an element, the method returns null.</p>
      */
+    @Override
     public NamespaceBinding[] getDeclaredNamespaces(NamespaceBinding[] buffer) {
         return new NamespaceBinding[0];
     }
@@ -464,6 +479,7 @@ public abstract class AbstractNodeWrapper implements NodeInfo, VirtualNode {
      * @return the NodeInfo representing the containing document
      */
 
+    @Override
     public NodeInfo getRoot() {
         NodeInfo p = this;
         while (true) {
@@ -482,6 +498,7 @@ public abstract class AbstractNodeWrapper implements NodeInfo, VirtualNode {
      * must avoid calling this method.
      */
 
+    @Override
     public boolean hasChildNodes() {
         switch (getNodeKind()) {
             case Type.DOCUMENT:

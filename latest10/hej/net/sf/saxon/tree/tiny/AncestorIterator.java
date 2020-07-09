@@ -30,6 +30,7 @@ final public class AncestorIterator implements AxisIterator {
     }
 
     /*@Nullable*/
+    @Override
     public NodeInfo next() {
         if (current == null) {
             return null;

@@ -243,34 +243,42 @@ public class XdmStream<T extends XdmItem> implements Stream<T> {
         return base.findAny();
     }
 
+    @Override
     public Iterator<T> iterator() {
         return base.iterator();
     }
 
+    @Override
     public Spliterator<T> spliterator() {
         return base.spliterator();
     }
 
+    @Override
     public boolean isParallel() {
         return base.isParallel();
     }
 
+    @Override
     public Stream<T> sequential() {
         return new XdmStream<>(base.sequential());
     }
 
+    @Override
     public Stream<T> parallel() {
         return new XdmStream<>(base.parallel());
     }
 
+    @Override
     public Stream<T> unordered() {
         return new XdmStream<>(base.unordered());
     }
 
+    @Override
     public Stream<T> onClose(Runnable closeHandler) {
         return new XdmStream<>(base.onClose(closeHandler));
     }
 
+    @Override
     public void close() {
         base.close();
     }

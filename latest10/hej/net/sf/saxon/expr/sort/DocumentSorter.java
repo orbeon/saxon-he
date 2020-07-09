@@ -50,6 +50,7 @@ public class DocumentSorter extends UnaryExpression {
         }
     }
 
+    @Override
     protected OperandRole getOperandRole() {
         return OperandRole.SAME_FOCUS_ACTION;
     }
@@ -62,6 +63,7 @@ public class DocumentSorter extends UnaryExpression {
      *         in explain() output displaying the expression.
      */
 
+    @Override
     public String getExpressionName() {
         return "docOrder";
     }
@@ -71,6 +73,7 @@ public class DocumentSorter extends UnaryExpression {
     }
 
     /*@NotNull*/
+    @Override
     public Expression simplify() throws XPathException {
         Expression operand = getBaseExpression().simplify();
         if (operand.hasSpecialProperty(StaticProperty.ORDERED_NODESET)) {
@@ -98,6 +101,7 @@ public class DocumentSorter extends UnaryExpression {
     }
 
     /*@NotNull*/
+    @Override
     public Expression optimize(ExpressionVisitor visitor, ContextItemStaticInfo contextInfo) throws XPathException {
         getOperand().optimize(visitor, contextInfo);
         Expression sortable = getBaseExpression();
@@ -208,6 +212,7 @@ public class DocumentSorter extends UnaryExpression {
     }
 
 
+    @Override
     public int computeSpecialProperties() {
         return getBaseExpression().getSpecialProperties() | StaticProperty.ORDERED_NODESET;
     }
@@ -220,6 +225,7 @@ public class DocumentSorter extends UnaryExpression {
      */
 
     /*@NotNull*/
+    @Override
     public Expression copy(RebindingMap rebindings) {
         DocumentSorter ds = new DocumentSorter(getBaseExpression().copy(rebindings));
         ExpressionTool.copyLocationInfo(this, ds);
@@ -253,10 +259,12 @@ public class DocumentSorter extends UnaryExpression {
     }
 
     /*@NotNull*/
+    @Override
     public SequenceIterator iterate(XPathContext context) throws XPathException {
         return new DocumentOrderIterator(getBaseExpression().iterate(context), comparer);
     }
 
+    @Override
     public boolean effectiveBooleanValue(XPathContext context) throws XPathException {
         return getBaseExpression().effectiveBooleanValue(context);
     }
@@ -266,6 +274,7 @@ public class DocumentSorter extends UnaryExpression {
      * is written to the supplied output destination.
      */
 
+    @Override
     public void export(ExpressionPresenter out) throws XPathException {
         out.startElement("docOrder", this);
         out.emitAttribute("intra", comparer instanceof LocalOrderComparer ? "1" : "0");

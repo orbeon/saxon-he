@@ -44,6 +44,7 @@ public class SubstringBefore extends CollatingFunctionFixed {
      * @throws net.sf.saxon.trans.XPathException
      *          if a dynamic error occurs during the evaluation of the expression
      */
+    @Override
     public StringValue call(XPathContext context, Sequence[] arguments) throws XPathException {
         StringValue arg1 = (StringValue) arguments[1].head();
         if (arg1 == null || arg1.isZeroLength()) {
@@ -59,6 +60,7 @@ public class SubstringBefore extends CollatingFunctionFixed {
         return substringBefore(arg0, arg1, (SubstringMatcher)collator);
     }
 
+    @Override
     public String getCompilerName() {
         return "SubstringBeforeCompiler";
     }

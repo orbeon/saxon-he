@@ -38,6 +38,7 @@ public class TypeInfoImpl implements TypeInfo {
      * DOM level 3 TypeInfo interface.
      */
 
+    @Override
     public String getTypeName() {
         return schemaType.getStructuredQName().getLocalPart();
     }
@@ -47,6 +48,7 @@ public class TypeInfoImpl implements TypeInfo {
      * DOM level 3 TypeInfo interface.
      */
 
+    @Override
     public String getTypeNamespace() {
         return schemaType.getStructuredQName().getURI();
     }
@@ -63,6 +65,7 @@ public class TypeInfoImpl implements TypeInfo {
      *                         Zero means derived by any possible route.
      */
 
+    @Override
     public boolean isDerivedFrom(String typeNamespaceArg,
                                  String typeNameArg,
                                  int derivationMethod) throws IllegalStateException {

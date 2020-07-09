@@ -55,6 +55,7 @@ public abstract class TinyNodeImpl implements NodeInfo {
      * @return the TreeInfo
      * @since 9.7
      */
+    @Override
     public TreeInfo getTreeInfo() {
         return tree;
     }
@@ -73,6 +74,7 @@ public abstract class TinyNodeImpl implements NodeInfo {
      * @return this item
      */
 
+    @Override
     public NodeInfo head() {
         return this;
     }
@@ -82,6 +84,7 @@ public abstract class TinyNodeImpl implements NodeInfo {
      * the version of the method that returns a String.
      */
 
+    @Override
     public CharSequence getStringValueCS() {
         return getStringValue();
     }
@@ -98,6 +101,7 @@ public abstract class TinyNodeImpl implements NodeInfo {
      *         xs:anyType if it has.
      * @since 9.4
      */
+    @Override
     public SchemaType getSchemaType() {
         return null;
     }
@@ -107,6 +111,7 @@ public abstract class TinyNodeImpl implements NodeInfo {
      * The default implementation returns -1, meaning unknown
      */
 
+    @Override
     public int getColumnNumber() {
         return tree.getColumnNumber(nodeNr);
     }
@@ -118,6 +123,7 @@ public abstract class TinyNodeImpl implements NodeInfo {
      * be used as the source of a transformation.</p>
      */
 
+    @Override
     public void setSystemId(String uri) {
         tree.setSystemId(nodeNr, uri);
     }
@@ -141,6 +147,7 @@ public abstract class TinyNodeImpl implements NodeInfo {
      *         same node in the tree.
      */
 
+    @Override
     public boolean isSameNodeInfo(/*@NotNull*/ NodeInfo other) {
         return this == other ||
                 (other instanceof TinyNodeImpl &&
@@ -183,6 +190,7 @@ public abstract class TinyNodeImpl implements NodeInfo {
      * Get the system ID for the entity containing the node.
      */
 
+    @Override
     public String getSystemId() {
         return tree.getSystemId(nodeNr);
     }
@@ -192,6 +200,7 @@ public abstract class TinyNodeImpl implements NodeInfo {
      * the base URI of the parent node.
      */
 
+    @Override
     public String getBaseURI() {
         return getParent().getBaseURI();
     }
@@ -200,6 +209,7 @@ public abstract class TinyNodeImpl implements NodeInfo {
      * Get the line number of the node within its source document entity
      */
 
+    @Override
     public int getLineNumber() {
         return tree.getLineNumber(nodeNr);
     }
@@ -209,6 +219,7 @@ public abstract class TinyNodeImpl implements NodeInfo {
      * should not be saved for later use. The result of this operation holds the same location information,
      * but in an immutable form.
      */
+    @Override
     public Location saveLocation() {
         return this;
     }
@@ -238,6 +249,7 @@ public abstract class TinyNodeImpl implements NodeInfo {
      *         return true, and the two nodes will produce the same result for generateId())
      */
 
+    @Override
     public final int compareOrder(/*@NotNull*/ NodeInfo other) {
         long a = getSequenceNumber();
         if (other instanceof TinyNodeImpl) {
@@ -269,6 +281,7 @@ public abstract class TinyNodeImpl implements NodeInfo {
      * Get the fingerprint of the node, used for matching names
      */
 
+    @Override
     public int getFingerprint() {
         int nc = tree.nameCode[nodeNr];
         if (nc == -1) {
@@ -283,6 +296,7 @@ public abstract class TinyNodeImpl implements NodeInfo {
      * @return the prefix part of the name. For an unnamed node, return "".
      */
 
+    @Override
     public String getPrefix() {
         int code = tree.nameCode[nodeNr];
         if (code < 0) {
@@ -302,6 +316,7 @@ public abstract class TinyNodeImpl implements NodeInfo {
      *         an element or attribute in the default namespace, return an empty string.
      */
 
+    @Override
     public String getURI() {
         int code = tree.nameCode[nodeNr];
         if (code < 0) {
@@ -318,6 +333,7 @@ public abstract class TinyNodeImpl implements NodeInfo {
      *         For a node with no name, return an empty string.
      */
 
+    @Override
     public String getDisplayName() {
         int code = tree.nameCode[nodeNr];
         if (code < 0) {
@@ -337,6 +353,7 @@ public abstract class TinyNodeImpl implements NodeInfo {
      *         For a node with no name, return "".
      */
 
+    @Override
     public String getLocalPart() {
         int code = tree.nameCode[nodeNr];
         if (code < 0) {
@@ -352,6 +369,7 @@ public abstract class TinyNodeImpl implements NodeInfo {
      * @return a AxisIteratorImpl that scans the nodes reached by the axis in turn.
      */
 
+    @Override
     public AxisIterator iterateAxis(int axisNumber) {
         // fast path for child axis
         if (axisNumber == AxisInfo.CHILD) {
@@ -373,6 +391,7 @@ public abstract class TinyNodeImpl implements NodeInfo {
      * @return a AxisIteratorImpl that scans the nodes reached by the axis in turn.
      */
 
+    @Override
     public AxisIterator iterateAxis(int axisNumber, Predicate<? super NodeInfo> predicate) {
         if (predicate instanceof NodeTest) {
             NodeTest nodeTest = (NodeTest) predicate;
@@ -505,6 +524,7 @@ public abstract class TinyNodeImpl implements NodeInfo {
      */
 
     /*@Nullable*/
+    @Override
     public TinyNodeImpl getParent() {
         if (parent != null) {
             return parent;
@@ -551,6 +571,7 @@ public abstract class TinyNodeImpl implements NodeInfo {
      *         <code>false</code> otherwise.
      */
 
+    @Override
     public boolean hasChildNodes() {
         // overridden in TinyParentNodeImpl
         return false;
@@ -567,6 +588,7 @@ public abstract class TinyNodeImpl implements NodeInfo {
      * @since 9.4
      */
 
+    @Override
     public String getAttributeValue(/*@NotNull*/ String uri, /*@NotNull*/ String local) {
         return null;
     }
@@ -577,6 +599,7 @@ public abstract class TinyNodeImpl implements NodeInfo {
      * @return the NodeInfo representing the root of this tree
      */
 
+    @Override
     public NodeInfo getRoot() {
         return nodeNr==0 ? this : tree.getRootNode();
 //        if (tree.depth[nodeNr] == 0) {
@@ -592,6 +615,7 @@ public abstract class TinyNodeImpl implements NodeInfo {
      * Get the configuration
      */
 
+    @Override
     public Configuration getConfiguration() {
         return tree.getConfiguration();
     }
@@ -620,6 +644,7 @@ public abstract class TinyNodeImpl implements NodeInfo {
      */
 
     /*@Nullable*/
+    @Override
     public NamespaceBinding[] getDeclaredNamespaces(NamespaceBinding[] buffer) {
         return null;
     }
@@ -646,6 +671,7 @@ public abstract class TinyNodeImpl implements NodeInfo {
      *               a character string that uniquely identifies this node.
      */
 
+    @Override
     public void generateId(/*@NotNull*/ FastStringBuffer buffer) {
         buffer.append("d");
         buffer.append(Long.toString(tree.getDocumentNumber()));
@@ -732,6 +758,7 @@ public abstract class TinyNodeImpl implements NodeInfo {
      * @return true if the node is an ID
      */
 
+    @Override
     public boolean isId() {
         return false;   // overridden for element and attribute nodes
     }
@@ -742,6 +769,7 @@ public abstract class TinyNodeImpl implements NodeInfo {
      * @return true if the node is an IDREF or IDREFS element or attribute
      */
 
+    @Override
     public boolean isIdref() {
         return false;    // overridden for element and attribute nodes
     }
@@ -752,6 +780,7 @@ public abstract class TinyNodeImpl implements NodeInfo {
      * @return true if the node has the is-nilled property
      */
 
+    @Override
     public boolean isNilled() {
         return tree.isNilled(nodeNr);
     }

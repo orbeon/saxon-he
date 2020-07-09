@@ -42,6 +42,7 @@ public class MappingIterator implements SequenceIterator {
         this.action = action;
     }
 
+    @Override
     public Item next() throws XPathException {
         Item nextItem;
         while (true) {
@@ -80,6 +81,7 @@ public class MappingIterator implements SequenceIterator {
         return nextItem;
     }
 
+    @Override
     public void close() {
         if (results != null) {
             results.close();

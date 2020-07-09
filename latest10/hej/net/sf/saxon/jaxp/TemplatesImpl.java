@@ -31,6 +31,7 @@ public class TemplatesImpl implements Templates {
      *
      * @return A valid non-null instance of a Transformer.
      */
+    @Override
     public Transformer newTransformer() {
         if (forceStreaming) {
             return new StreamingTransformerImpl(executable, executable.load30());
@@ -66,6 +67,7 @@ public class TemplatesImpl implements Templates {
      *
      * @return A Properties object, never null.
      */
+    @Override
     public Properties getOutputProperties() {
         Properties details = executable.getUnderlyingCompiledStylesheet().getPrimarySerializationProperties().getProperties();
         return new Properties(details);

@@ -32,6 +32,7 @@ public class ConcatenatingAxisIterator implements AxisIterator {
      */
 
     /*@Nullable*/
+    @Override
     public NodeInfo next() {
         NodeInfo n = active.next();
         if (n == null && active == first) {
@@ -41,6 +42,7 @@ public class ConcatenatingAxisIterator implements AxisIterator {
         return n;
     }
 
+    @Override
     public void close() {
         first.close();
         second.close();

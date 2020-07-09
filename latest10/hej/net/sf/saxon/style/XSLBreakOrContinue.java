@@ -23,6 +23,7 @@ public abstract class XSLBreakOrContinue extends StyleElement {
      * @return true - it is an instruction
      */
 
+    @Override
     public boolean isInstruction() {
         return true;
     }
@@ -33,6 +34,7 @@ public abstract class XSLBreakOrContinue extends StyleElement {
      * Must be supplied in a subclass
      */
 
+    @Override
     public void prepareAttributes() {
         for (AttributeInfo att : attributes()) {
             NodeName attName = att.getNodeName();

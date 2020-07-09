@@ -23,6 +23,7 @@ public class EagerLetExpression extends LetExpression {
     }
 
     /*@NotNull*/
+    @Override
     public Expression optimize(ExpressionVisitor visitor, ContextItemStaticInfo contextItemType) throws XPathException {
         Expression e = super.optimize(visitor, contextItemType);
         if (e == this) {

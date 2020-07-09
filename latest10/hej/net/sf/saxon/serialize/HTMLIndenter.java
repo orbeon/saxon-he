@@ -140,6 +140,7 @@ public class HTMLIndenter extends ProxyReceiver {
      * Output element start tag
      */
 
+    @Override
     public void startElement(NodeName elemName, SchemaType type,
                              AttributeMap attributes, NamespaceMap namespaces,
                              Location location, int properties) throws XPathException {
@@ -168,6 +169,7 @@ public class HTMLIndenter extends ProxyReceiver {
      * Output element end tag
      */
 
+    @Override
     public void endElement() throws XPathException {
         level--;
         boolean thisInline = (propertyStack[level] & IS_INLINE) != 0;
@@ -192,6 +194,7 @@ public class HTMLIndenter extends ProxyReceiver {
      * Output character data
      */
 
+    @Override
     public void characters(CharSequence chars, Location locationId, int properties) throws XPathException {
         if (inFormattedTag ||
                 ReceiverOption.contains(properties, ReceiverOption.USE_NULL_MARKERS) ||
@@ -238,6 +241,7 @@ public class HTMLIndenter extends ProxyReceiver {
      * Output a comment
      */
 
+    @Override
     public void comment(CharSequence chars, Location locationId, int properties) throws XPathException {
         if (afterEndElement && level != 0 && (propertyStack[level - 1] & IS_INLINE) == 0) {
             indent();

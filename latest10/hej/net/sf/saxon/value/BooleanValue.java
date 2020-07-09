@@ -78,6 +78,7 @@ public final class BooleanValue extends AtomicValue implements Comparable, Atomi
      * @param typeLabel the atomic type label to be added to the copied value
      */
 
+    @Override
     public AtomicValue copyAsSubType(AtomicType typeLabel) {
         BooleanValue v = new BooleanValue(value);
         v.typeLabel = typeLabel;
@@ -133,6 +134,7 @@ public final class BooleanValue extends AtomicValue implements Comparable, Atomi
      *
      * @return the boolean value
      */
+    @Override
     public boolean effectiveBooleanValue() {
         return value;
     }
@@ -144,6 +146,7 @@ public final class BooleanValue extends AtomicValue implements Comparable, Atomi
      * and xs:untypedAtomic. For external objects, the result is AnyAtomicType.
      */
 
+    @Override
     public BuiltInAtomicType getPrimitiveType() {
         return BuiltInAtomicType.BOOLEAN;
     }
@@ -154,6 +157,7 @@ public final class BooleanValue extends AtomicValue implements Comparable, Atomi
      * @return "true" or "false"
      */
 
+    @Override
     public String getPrimitiveStringValue() {
         return value ? "true" : "false";
     }
@@ -168,6 +172,7 @@ public final class BooleanValue extends AtomicValue implements Comparable, Atomi
      * @return a Comparable that follows XML Schema comparison rules
      */
 
+    @Override
     public Comparable getSchemaComparable() {
         return new BooleanComparable();
     }
@@ -178,6 +183,7 @@ public final class BooleanValue extends AtomicValue implements Comparable, Atomi
             return BooleanValue.this.getBooleanValue();
         }
 
+        @Override
         public int compareTo(/*@NotNull*/ Object o) {
             return equals(o) ? 0 : SequenceTool.INDETERMINATE_ORDERING;
         }
@@ -209,6 +215,7 @@ public final class BooleanValue extends AtomicValue implements Comparable, Atomi
      *         no ordering is defined, or will be a Comparable
      */
 
+    @Override
     public AtomicMatchKey getXPathComparable(boolean ordered, StringCollator collator, int implicitTimezone) {
         return this;
     }
@@ -224,6 +231,7 @@ public final class BooleanValue extends AtomicValue implements Comparable, Atomi
      *                            interface)
      */
 
+    @Override
     public int compareTo(Object other) {
         if (!(other instanceof BooleanValue)) {
             XPathException e = new XPathException("Boolean values are not comparable to " + other.getClass(), "XPTY0004");

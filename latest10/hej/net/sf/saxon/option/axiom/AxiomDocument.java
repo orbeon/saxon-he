@@ -88,6 +88,7 @@ public class AxiomDocument extends GenericTreeInfo {
      */
 
     /*@Nullable*/
+    @Override
     public NodeInfo selectID(String id, boolean getParent) {
         if (idIndex == null) {
             idIndex = new HashMap<String, NodeInfo>(50);
@@ -131,6 +132,7 @@ public class AxiomDocument extends GenericTreeInfo {
             this.docWrapper = docWrapper;
         }
 
+        @Override
         public NodeInfo next() {
             if (currentOMNode == null) {
                 return null;
@@ -159,6 +161,7 @@ public class AxiomDocument extends GenericTreeInfo {
             this.docWrapper = docWrapper;
         }
 
+        @Override
         public NodeInfo next() {
             if (currentOMNode == null) {
                 return null;

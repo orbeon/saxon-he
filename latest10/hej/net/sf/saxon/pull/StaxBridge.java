@@ -98,6 +98,7 @@ public class StaxBridge implements PullProvider {
      * have been read.
      */
 
+    @Override
     public void setPipelineConfiguration(PipelineConfiguration pipe) {
         this.pipe = new PipelineConfiguration(pipe);
         this.namePool = pipe.getConfiguration().getNamePool();
@@ -108,6 +109,7 @@ public class StaxBridge implements PullProvider {
      * Get configuration information.
      */
 
+    @Override
     public PipelineConfiguration getPipelineConfiguration() {
         return pipe;
     }
@@ -141,6 +143,7 @@ public class StaxBridge implements PullProvider {
      *         {@link net.sf.saxon.pull.PullProvider.Event#END_OF_INPUT} is returned at the end of the sequence.
      */
 
+    @Override
     public Event next() throws XPathException {
         if (currentEvent == Event.START_OF_INPUT) {
             // StAX isn't reporting START_DOCUMENT so we supply it ourselves
@@ -278,6 +281,7 @@ public class StaxBridge implements PullProvider {
      * @return the current event
      */
 
+    @Override
     public Event current() {
         return currentEvent;
     }
@@ -294,6 +298,7 @@ public class StaxBridge implements PullProvider {
      *         that has just been notified.
      */
 
+    @Override
     public AttributeMap getAttributes() {
         return attributes;
     }
@@ -315,6 +320,7 @@ public class StaxBridge implements PullProvider {
      * one of the methods skipToEnd(), getStringValue(), or getTypedValue().</p>
      */
 
+    @Override
     public NamespaceBinding[] getNamespaceDeclarations() {
         int n = reader.getNamespaceCount();
         if (n == 0) {
@@ -343,6 +349,7 @@ public class StaxBridge implements PullProvider {
      * the event following the END_DOCUMENT or END_ELEMENT.
      */
 
+    @Override
     public Event skipToMatchingEnd() throws XPathException {
         switch (currentEvent) {
             case START_DOCUMENT:
@@ -382,6 +389,7 @@ public class StaxBridge implements PullProvider {
      * calls on next() is undefined.
      */
 
+    @Override
     public void close() {
         try {
             reader.close();
@@ -402,6 +410,7 @@ public class StaxBridge implements PullProvider {
      * @return the NodeName. The NodeName can be used to obtain the prefix, local name,
      * and namespace URI.
      */
+    @Override
     public NodeName getNodeName() {
         if (currentEvent == Event.START_ELEMENT || currentEvent == Event.END_ELEMENT) {
             String local = reader.getLocalName();
@@ -442,6 +451,7 @@ public class StaxBridge implements PullProvider {
      *         XPath data model.
      */
 
+    @Override
     public CharSequence getStringValue() throws XPathException {
         switch (currentEvent) {
             case TEXT:
@@ -497,6 +507,7 @@ public class StaxBridge implements PullProvider {
      * a free-standing atomic value; it is never used when reading the content of a node.
      */
 
+    @Override
     public AtomicValue getAtomicValue() {
         throw new IllegalStateException();
     }
@@ -509,6 +520,7 @@ public class StaxBridge implements PullProvider {
      * @return the type annotation.
      */
 
+    @Override
     public SchemaType getSchemaType() {
         if (currentEvent == Event.START_ELEMENT) {
             return Untyped.getInstance();
@@ -527,6 +539,7 @@ public class StaxBridge implements PullProvider {
      * A value of null can be returned if no location information is available.
      */
 
+    @Override
     public net.sf.saxon.s9api.Location getSourceLocator() {
         return translateLocation(reader.getLocation());
     }
@@ -554,6 +567,7 @@ public class StaxBridge implements PullProvider {
      *         be an instance of {@link net.sf.saxon.pull.UnparsedEntity}
      */
 
+    @Override
     public List<UnparsedEntity> getUnparsedEntities() {
         if (unparsedEntities == null) {
             return null;
@@ -614,6 +628,7 @@ public class StaxBridge implements PullProvider {
 
     private class StaxErrorReporter implements XMLReporter {
 
+        @Override
         public void report(String message, String errorType,
                            Object relatedInformation, Location location) {
             XmlProcessingIncident err = new XmlProcessingIncident("Error reported by XML parser: " + message + " (" + errorType + ')');

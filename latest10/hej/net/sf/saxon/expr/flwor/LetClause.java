@@ -40,6 +40,7 @@ public class LetClause extends Clause {
         return evaluator;
     }
 
+    @Override
     public LetClause copy(FLWORExpression flwor, RebindingMap rebindings) {
         LetClause let2 = new LetClause();
         let2.setLocation(getLocation());
@@ -123,6 +124,7 @@ public class LetClause extends Clause {
      * Type-check the expression
      */
 
+    @Override
     public void typeCheck(ExpressionVisitor visitor, ContextItemStaticInfo contextInfo) throws XPathException {
         RoleDiagnostic role = new RoleDiagnostic(RoleDiagnostic.VARIABLE, rangeVariable.getVariableQName().getDisplayName(), 0);
         setSequence(TypeChecker.strictTypeCheck(
@@ -203,6 +205,7 @@ public class LetClause extends Clause {
         out.endElement();
     }
 
+    @Override
     public String toShortString() {
         FastStringBuffer fsb = new FastStringBuffer(FastStringBuffer.C64);
         fsb.append("let $");

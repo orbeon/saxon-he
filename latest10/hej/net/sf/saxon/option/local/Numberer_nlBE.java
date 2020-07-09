@@ -45,6 +45,7 @@ public class Numberer_nlBE extends AbstractNumberer {
      * Show an ordinal number as dutch words in a requested case (for example, Twentyfirst)
      */
 
+    @Override
     public String toOrdinalWords(String ordinalParam, long number, int wordCase) {
         String s;
         if (number == 1000000000) {
@@ -96,6 +97,7 @@ public class Numberer_nlBE extends AbstractNumberer {
         }
     }
 
+    @Override
     public String toWords(long number) {
         if (number >= 1000000000) {
             long rem = number % 1000000000;
@@ -119,6 +121,7 @@ public class Numberer_nlBE extends AbstractNumberer {
         }
     }
 
+    @Override
     public String toWords(long number, int wordCase) {
         String s;
         if (number == 0) {
@@ -150,6 +153,7 @@ public class Numberer_nlBE extends AbstractNumberer {
      */
 
     //@Override
+    @Override
     public String monthName(int month, int minWidth, int maxWidth) {
         String name = dutchMonths[month - 1];
         if (maxWidth < 3) {
@@ -172,6 +176,7 @@ public class Numberer_nlBE extends AbstractNumberer {
      * @param maxWidth The maximum number of characters
      */
 
+    @Override
     public String dayName(int day, int minWidth, int maxWidth) {
         String name = dutchDays[day - 1];
         if (maxWidth < 2) {
@@ -214,6 +219,7 @@ public class Numberer_nlBE extends AbstractNumberer {
      * @return the AM or PM indicator
      */
 
+    @Override
     public String halfDayName(int minutes, int minWidth, int maxWidth) {
         String s;
         if (minutes < 12 * 60) {
@@ -251,6 +257,7 @@ public class Numberer_nlBE extends AbstractNumberer {
      */
 
     /*@NotNull*/
+    @Override
     public String getEraName(int year) {
         return (year > 0 ? "n.C." : "v.C.");
     }

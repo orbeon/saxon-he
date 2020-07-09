@@ -62,10 +62,12 @@ public class UnionEnumeration implements SequenceIterator, LookaheadIterator {
         // we rely on the type-checking mechanism to prevent a ClassCastException here
     }
 
+    @Override
     public boolean hasNext() {
         return nextNode1 != null || nextNode2 != null;
     }
 
+    @Override
     public NodeInfo next() throws XPathException {
 
         // main merge loop: take a value from whichever set has the lower value
@@ -105,6 +107,7 @@ public class UnionEnumeration implements SequenceIterator, LookaheadIterator {
         return null;
     }
 
+    @Override
     public void close() {
         e1.close();
         e2.close();
@@ -120,6 +123,7 @@ public class UnionEnumeration implements SequenceIterator, LookaheadIterator {
      *         It is acceptable for the properties of the iterator to change depending on its state.
      */
 
+    @Override
     public EnumSet<Property> getProperties() {
         return EnumSet.of(Property.LOOKAHEAD);
     }

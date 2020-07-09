@@ -56,6 +56,7 @@ public class DOM4JObjectModel extends TreeModel implements ExternalObjectModel {
      * @return by convention (but not necessarily) the class that implements a document node in the relevant
      * external model
      */
+    @Override
     public String getDocumentClassName() {
         return "org.dom4j.Document";
     }
@@ -65,23 +66,28 @@ public class DOM4JObjectModel extends TreeModel implements ExternalObjectModel {
      * an XPath implementation
      */
 
+    @Override
     public String getIdentifyingURI() {
         return NamespaceConstant.OBJECT_MODEL_DOM4J;
     }
 
+    @Override
     public String getName() {
         return "DOM4J";
     }
 
+    @Override
     public Builder makeBuilder(PipelineConfiguration pipe) {
         return new DOM4JWriter(pipe);
     }
 
 
     /*@Nullable*/
+    @Override
     public PJConverter getPJConverter(Class<?> targetClass) {
         if (isRecognizedNodeClass(targetClass)) {
             return new PJConverter() {
+                @Override
                 public Object convert(Sequence value, Class<?> targetClass, XPathContext context) {
                     return convertXPathValueToObject(value, targetClass);
                 }
@@ -91,13 +97,16 @@ public class DOM4JObjectModel extends TreeModel implements ExternalObjectModel {
         }
     }
 
+    @Override
     public JPConverter getJPConverter(Class sourceClass, Configuration config) {
         if (isRecognizedNodeClass(sourceClass)) {
             return new JPConverter() {
+                @Override
                 public Sequence convert(Object object, XPathContext context) throws XPathException {
                     return convertObjectToXPathValue((Node) object, context.getConfiguration());
                 }
 
+                @Override
                 public ItemType getItemType() {
                     return AnyNodeTest.getInstance();
                 }
@@ -117,6 +126,7 @@ public class DOM4JObjectModel extends TreeModel implements ExternalObjectModel {
      *         returns a collection of nodes in this object model
      */
 
+    @Override
     public PJConverter getNodeListCreator(Object node) {
         return null;
     }
@@ -165,6 +175,7 @@ public class DOM4JObjectModel extends TreeModel implements ExternalObjectModel {
      * @return always null
      */
 
+    @Override
     public Receiver getDocumentBuilder(Result result) {
         return null;
     }
@@ -174,6 +185,7 @@ public class DOM4JObjectModel extends TreeModel implements ExternalObjectModel {
      * @return always false
      */
 
+    @Override
     public boolean sendSource(Source source, Receiver receiver)  {
         return false;
     }
@@ -183,6 +195,7 @@ public class DOM4JObjectModel extends TreeModel implements ExternalObjectModel {
      * source does not belong to this object model, return null
      */
 
+    @Override
     public NodeInfo unravel(Source source, Configuration config) {
         return null;
     }

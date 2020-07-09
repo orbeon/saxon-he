@@ -49,6 +49,7 @@ public class StandardURIChecker implements URIChecker {
      * @return true if the string is considered to be a valid URI
      */
 
+    @Override
     public boolean isValidURI(CharSequence value) {
         LRUCache<CharSequence, Boolean> cache = caches.get();
         if (cache == null) {

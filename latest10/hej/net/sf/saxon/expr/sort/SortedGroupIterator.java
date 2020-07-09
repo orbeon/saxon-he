@@ -42,6 +42,7 @@ public class SortedGroupIterator extends SortedIterator implements GroupIterator
      * @throws XPathException in the event of a dynamic error
      */
 
+    @Override
     protected void buildArray() throws XPathException {
         int allocated;
         if (base.getProperties().contains(Property.LAST_POSITION_FINDER)) {
@@ -79,16 +80,19 @@ public class SortedGroupIterator extends SortedIterator implements GroupIterator
     }
 
     /*@Nullable*/
+    @Override
     public AtomicSequence getCurrentGroupingKey() {
         return ((GroupToBeSorted) values[position - 1]).currentGroupingKey;
     }
 
+    @Override
     public SequenceIterator iterateCurrentGroup() throws XPathException {
         return ((GroupToBeSorted) values[position - 1]).currentGroup.iterate();
     }
 
     //#if EE==true
 
+    @Override
     public ManualGroupIterator getSnapShot(XPathContext context) throws XPathException {
         return new ManualSortedGroupIterator();
     }
@@ -98,16 +102,19 @@ public class SortedGroupIterator extends SortedIterator implements GroupIterator
         ManualSortedGroupIterator() {
             super((Item) values[position - 1].value, position);
             setLastPositionFinder(new LastPositionFinder() {
+                @Override
                 public int getLength() throws XPathException {
                     return values.length;
                 }
             });
         }
 
+        @Override
         public AtomicSequence getCurrentGroupingKey() {
             return ((GroupToBeSorted) values[position() - 1]).currentGroupingKey;
         }
 
+        @Override
         public SequenceIterator iterateCurrentGroup() throws XPathException {
             return ((GroupToBeSorted) values[position() - 1]).currentGroup.iterate();
         }

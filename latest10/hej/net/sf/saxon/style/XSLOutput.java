@@ -48,6 +48,7 @@ public class XSLOutput extends StyleElement {
         return true;
     }
 
+    @Override
     public void prepareAttributes() {
         String nameAtt = null;
         for (AttributeInfo att : attributes()) {
@@ -101,11 +102,13 @@ public class XSLOutput extends StyleElement {
         return outputFormatName;
     }
 
+    @Override
     public void validate(ComponentDeclaration decl) throws XPathException {
         checkTopLevel("XTSE0010", false);
         checkEmpty();
     }
 
+    @Override
     public void compileDeclaration(Compilation compilation, ComponentDeclaration decl) {
         // no action
     }

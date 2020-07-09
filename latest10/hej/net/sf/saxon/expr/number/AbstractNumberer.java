@@ -38,6 +38,7 @@ public abstract class AbstractNumberer implements Numberer {
      * Override for subclasses where this can happen
      * @return the locale used, null if it wasn't defaulted
      */
+    @Override
     public Locale defaultedLocale() {
         return null;
     }
@@ -46,6 +47,7 @@ public abstract class AbstractNumberer implements Numberer {
      * Set the country used by this numberer (currently used only for names of timezones)
      */
 
+    @Override
     public void setCountry(String country) {
         this.country = country;
     }
@@ -75,6 +77,7 @@ public abstract class AbstractNumberer implements Numberer {
      * @return the country used by this numberer, or null if no country has been set
      */
 
+    @Override
     public String getCountry() {
         return country;
     }
@@ -99,6 +102,7 @@ public abstract class AbstractNumberer implements Numberer {
      *         is invalid, the number is formatted as if the string() function were used.
      */
 
+    @Override
     public final String format(long number,
                                UnicodeString picture,
                                int groupSize,
@@ -126,6 +130,7 @@ public abstract class AbstractNumberer implements Numberer {
      * @return the formatted number. Note that no errors are reported; if the request
      *         is invalid, the number is formatted as if the string() function were used.
      */
+    @Override
     public String format(long number,
                          /*@Nullable*/ UnicodeString picture,
                          NumericGroupFormatter numGroupFormatter,
@@ -779,6 +784,7 @@ public abstract class AbstractNumberer implements Numberer {
      * @param maxWidth The maximum number of characters
      */
 
+    @Override
     public abstract String monthName(int month, int minWidth, int maxWidth);
 
     /**
@@ -789,6 +795,7 @@ public abstract class AbstractNumberer implements Numberer {
      * @param maxWidth The maximum number of characters
      */
 
+    @Override
     public abstract String dayName(int day, int minWidth, int maxWidth);
 
     /**
@@ -802,6 +809,7 @@ public abstract class AbstractNumberer implements Numberer {
      * @return the AM or PM indicator
      */
 
+    @Override
     public String halfDayName(int minutes, int minWidth, int maxWidth) {
         String s;
         if (minutes == 0 && maxWidth >= 8 && "gb".equals(country)) {
@@ -846,6 +854,7 @@ public abstract class AbstractNumberer implements Numberer {
      *         in German, to have the day represented as "dritte August".
      */
 
+    @Override
     public String getOrdinalSuffixForDateTime(String component) {
         return "yes";
     }
@@ -856,6 +865,7 @@ public abstract class AbstractNumberer implements Numberer {
      * @param year the proleptic gregorian year, using "0" for the year before 1AD
      */
 
+    @Override
     public String getEraName(int year) {
         return year > 0 ? "AD" : "BC";
     }
@@ -866,6 +876,7 @@ public abstract class AbstractNumberer implements Numberer {
      * @param code The code representing the calendar as in the XSLT 2.0 spec, e.g. AD for the Gregorian calendar
      */
 
+    @Override
     public String getCalendarName(String code) {
         if (code.equals("AD")) {
             return "Gregorian";

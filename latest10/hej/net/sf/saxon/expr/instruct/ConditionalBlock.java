@@ -82,11 +82,13 @@ public class ConditionalBlock extends Instruction {
     }
 
 
+    @Override
     public String getExpressionName() {
         return "condSeq";
     }
 
 
+    @Override
     public int computeSpecialProperties() {
         if (size() == 0) {
             // An empty sequence has all special properties except "has side effects".
@@ -145,6 +147,7 @@ public class ConditionalBlock extends Instruction {
      */
 
     /*@NotNull*/
+    @Override
     public Expression copy(RebindingMap rebindings) {
         Expression[] c2 = new Expression[size()];
         for (int c = 0; c < size(); c++) {
@@ -166,6 +169,7 @@ public class ConditionalBlock extends Instruction {
      */
 
     /*@NotNull*/
+    @Override
     public final ItemType getItemType() {
         if (size() == 0) {
             return ErrorType.getInstance();
@@ -185,6 +189,7 @@ public class ConditionalBlock extends Instruction {
      * Determine the cardinality of the expression
      */
 
+    @Override
     public final int getCardinality() {
         if (size() == 0) {
             return StaticProperty.EMPTY;
@@ -205,12 +210,14 @@ public class ConditionalBlock extends Instruction {
      * returns true.
      */
 
+    @Override
     public final boolean mayCreateNewNodes() {
         return someOperandCreatesNewNodes();
     }
 
 
     /*@NotNull*/
+    @Override
     public Expression typeCheck(ExpressionVisitor visitor, ContextItemStaticInfo contextInfo) throws XPathException {
         typeCheckChildren(visitor, contextInfo);
         if (Block.neverReturnsTypedNodes(this, visitor.getConfiguration().getTypeHierarchy())) {
@@ -221,6 +228,7 @@ public class ConditionalBlock extends Instruction {
     }
 
     /*@NotNull*/
+    @Override
     public Expression optimize(ExpressionVisitor visitor, ContextItemStaticInfo contextInfo) throws XPathException {
         Expression e = super.optimize(visitor, contextInfo);
         if (e != this) {
@@ -302,6 +310,7 @@ public class ConditionalBlock extends Instruction {
      * static validation can continue recursively.
      */
 
+    @Override
     public void checkPermittedContents(SchemaType parentType, boolean whole) throws XPathException {
         for (Operand o : operands()) {
             Expression child = o.getChildExpression();
@@ -314,6 +323,7 @@ public class ConditionalBlock extends Instruction {
      * is written to the supplied output destination.
      */
 
+    @Override
     public void export(ExpressionPresenter out) throws XPathException {
         out.startElement("condSeq", this);
         for (Operand o : operands()) {
@@ -330,6 +340,7 @@ public class ConditionalBlock extends Instruction {
 
 
 
+    @Override
     @SuppressWarnings("StatementWithEmptyBody")
     public TailCall processLeavingTail(Outputter output, final XPathContext context) throws XPathException {
 
@@ -383,6 +394,7 @@ public class ConditionalBlock extends Instruction {
      * process() methods natively.
      */
 
+    @Override
     public int getImplementationMethod() {
         return PROCESS_METHOD;
     }

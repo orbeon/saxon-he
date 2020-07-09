@@ -24,6 +24,7 @@ import net.sf.saxon.value.StringValue;
 
 public class CodepointEqual extends SystemFunction implements Callable {
 
+    @Override
     public ZeroOrOne call(XPathContext context, Sequence[] arguments) throws XPathException {
         StringValue op1 = (StringValue) arguments[0].head();
         StringValue op2 = (StringValue) arguments[1].head();

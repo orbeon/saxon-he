@@ -24,6 +24,7 @@ public class VirtualAccumulatorData implements IAccumulatorData {
         this.realData = realData;
     }
 
+    @Override
     public Accumulator getAccumulator() {
         return realData.getAccumulator();
     }
@@ -37,6 +38,7 @@ public class VirtualAccumulatorData implements IAccumulatorData {
      * @return the value of the accumulator for this node
      */
 
+    @Override
     public Sequence getValue(NodeInfo node, boolean postDescent) throws XPathException {
         NodeInfo original = ((VirtualCopy)node).getOriginalNode();
         return realData.getValue(original, postDescent);

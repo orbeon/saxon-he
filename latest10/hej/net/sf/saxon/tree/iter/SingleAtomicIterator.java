@@ -33,6 +33,7 @@ public class SingleAtomicIterator<T extends AtomicValue>
 
 
     /*@NotNull*/
+    @Override
     public SingleAtomicIterator<T> getReverseIterator() {
         return new SingleAtomicIterator<T>(getValue());
     }

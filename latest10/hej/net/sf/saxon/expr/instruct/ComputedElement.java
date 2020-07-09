@@ -119,6 +119,7 @@ public class ComputedElement extends ElementCreator {
     }
 
     /*@NotNull*/
+    @Override
     public Expression simplify() throws XPathException {
         setNameExp(getNameExp().simplify());
         if (getNamespaceExp() != null) {
@@ -143,6 +144,7 @@ public class ComputedElement extends ElementCreator {
     }
 
     /*@NotNull*/
+    @Override
     public Expression typeCheck(ExpressionVisitor visitor, ContextItemStaticInfo contextInfo) throws XPathException {
         super.typeCheck(visitor, contextInfo);
         Configuration config = visitor.getConfiguration();
@@ -211,6 +213,7 @@ public class ComputedElement extends ElementCreator {
      */
 
     /*@NotNull*/
+    @Override
     public Expression copy(RebindingMap rebindings) {
         ComputedElement ce = new ComputedElement(
                 getNameExp().copy(rebindings), getNamespaceExp() == null ? null : getNamespaceExp().copy(rebindings),
@@ -228,6 +231,7 @@ public class ComputedElement extends ElementCreator {
      */
 
     /*@NotNull*/
+    @Override
     public ItemType getItemType() {
         if (itemType == null) {
             return super.getItemType();
@@ -244,6 +248,7 @@ public class ComputedElement extends ElementCreator {
      * static validation can continue recursively.
      */
 
+    @Override
     public void checkPermittedContents(SchemaType parentType, boolean whole) throws XPathException {
         if (parentType instanceof SimpleType || ((ComplexType) parentType).isSimpleContent()) {
             String msg = "Elements are not permitted here: the containing element ";
@@ -275,6 +280,7 @@ public class ComputedElement extends ElementCreator {
      * @return the name code for the element name
      */
 
+    @Override
     public NodeName getElementName(XPathContext context, NodeInfo copiedNode)
             throws XPathException {
 
@@ -387,6 +393,7 @@ public class ComputedElement extends ElementCreator {
         return allowNameAsQName;
     }
 
+    @Override
     public String getNewBaseURI(XPathContext context, NodeInfo copiedNode) {
         return getStaticBaseURIString();
     }
@@ -397,6 +404,7 @@ public class ComputedElement extends ElementCreator {
      * @param nodeName   The name of the element node being output
      * @param copiedNode Where this is a copied node, the node being copied
      */
+    @Override
     public void outputNamespaceNodes(Outputter out, NodeName nodeName, NodeInfo copiedNode)
             throws XPathException {
         // no action
@@ -407,6 +415,7 @@ public class ComputedElement extends ElementCreator {
      * Get the name of this instruction for diagnostic and tracing purposes
      */
 
+    @Override
     public int getInstructionNameCode() {
         return StandardNames.XSL_ELEMENT;
     }
@@ -416,6 +425,7 @@ public class ComputedElement extends ElementCreator {
      * is written to the supplied output destination.
      */
 
+    @Override
     public void export(ExpressionPresenter out) throws XPathException {
         out.startElement("compElem", this);
         String flags = getInheritanceFlags();

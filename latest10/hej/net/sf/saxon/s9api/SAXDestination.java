@@ -58,6 +58,7 @@ public class SAXDestination extends AbstractDestination {
      */
 
     /*@NotNull*/
+    @Override
     public Receiver getReceiver(PipelineConfiguration pipe, SerializationProperties params) {
         ContentHandlerProxy chp = new ContentHandlerProxy();
         chp.setUnderlyingContentHandler(contentHandler);
@@ -70,6 +71,7 @@ public class SAXDestination extends AbstractDestination {
      * it has finished writing to the destination.
      */
 
+    @Override
     public void close() {
         // no action
     }

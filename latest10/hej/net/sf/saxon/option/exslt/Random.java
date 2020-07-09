@@ -90,6 +90,7 @@ public abstract class Random {
          * @return the next item, or null if there are no more items.
          */
 
+        @Override
         public Item next() {
             if (position++ >= count) {
                 position = -1;

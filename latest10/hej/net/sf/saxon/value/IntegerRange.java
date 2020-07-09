@@ -79,6 +79,7 @@ public class IntegerRange implements AtomicSequence {
      */
 
     /*@NotNull*/
+    @Override
     public AtomicIterator iterate() {
         return new RangeIterator(start, end);
     }
@@ -90,6 +91,7 @@ public class IntegerRange implements AtomicSequence {
      */
 
     /*@Nullable*/
+    @Override
     public IntegerValue itemAt(int n) {
         if (n < 0 || n > (end - start)) {
             return null;
@@ -112,6 +114,7 @@ public class IntegerRange implements AtomicSequence {
      */
 
     /*@NotNull*/
+    @Override
     public GroundedValue subsequence(int start, int length) {
         if (length <= 0) {
             return EmptySequence.getInstance();
@@ -132,10 +135,12 @@ public class IntegerRange implements AtomicSequence {
      * Get the length of the sequence
      */
 
+    @Override
     public int getLength() {
         return (int) (end - start + 1);
     }
 
+    @Override
     public IntegerValue head() {
         return new Int64Value(start);
     }
@@ -147,6 +152,7 @@ public class IntegerRange implements AtomicSequence {
      * @return the canonical lexical representation if defined in XML Schema; otherwise, the result
      *         of casting to string according to the XPath 2.0 rules
      */
+    @Override
     public CharSequence getCanonicalLexicalRepresentation() {
         return getStringValueCS();
     }
@@ -161,6 +167,7 @@ public class IntegerRange implements AtomicSequence {
      *
      * @return a Comparable that follows XML Schema comparison rules
      */
+    @Override
     public Comparable getSchemaComparable() {
         try {
             return new AtomicArray(iterate()).getSchemaComparable();
@@ -169,6 +176,7 @@ public class IntegerRange implements AtomicSequence {
         }
     }
 
+    @Override
     public CharSequence getStringValueCS() {
         try {
             return SequenceTool.getStringValue(this);
@@ -177,10 +185,12 @@ public class IntegerRange implements AtomicSequence {
         }
     }
 
+    @Override
     public String getStringValue() {
         return getStringValueCS().toString();
     }
 
+    @Override
     public boolean effectiveBooleanValue() throws XPathException {
         return ExpressionTool.effectiveBooleanValue(iterate());
     }
@@ -193,6 +203,7 @@ public class IntegerRange implements AtomicSequence {
      *
      * @return the simplified sequence
      */
+    @Override
     public GroundedValue reduce() {
         if (start == end) {
             return itemAt(0);
@@ -211,6 +222,7 @@ public class IntegerRange implements AtomicSequence {
      * @return an Iterator.
      */
 
+    @Override
     public Iterator<AtomicValue> iterator() {
         return new Iterator<AtomicValue>() {
 
@@ -223,6 +235,7 @@ public class IntegerRange implements AtomicSequence {
              *
              * @return <tt>true</tt> if the iterator has more elements.
              */
+            @Override
             public boolean hasNext() {
                 return current <= end;
             }
@@ -241,6 +254,7 @@ public class IntegerRange implements AtomicSequence {
              *                                       been called after the last call to the <tt>next</tt>
              *                                       method.
              */
+            @Override
             public void remove() {
                 throw new UnsupportedOperationException();
             }
@@ -252,6 +266,7 @@ public class IntegerRange implements AtomicSequence {
              * @throws java.util.NoSuchElementException
              *          iteration has no more elements.
              */
+            @Override
             public IntegerValue next() {
                 return new Int64Value(current++);
 

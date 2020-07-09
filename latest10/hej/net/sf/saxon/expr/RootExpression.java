@@ -43,6 +43,7 @@ public class RootExpression extends Expression {
      */
 
     /*@NotNull*/
+    @Override
     public Expression typeCheck(ExpressionVisitor visitor, /*@Nullable*/ ContextItemStaticInfo contextInfo) throws XPathException {
         TypeHierarchy th = visitor.getConfiguration().getTypeHierarchy();
         if (contextInfo == null || contextInfo.getItemType() == null || contextInfo.getItemType().equals(ErrorType.getInstance())) {
@@ -92,11 +93,13 @@ public class RootExpression extends Expression {
      */
 
     /*@NotNull*/
+    @Override
     public Expression optimize(ExpressionVisitor visitor, ContextItemStaticInfo contextItemType) throws XPathException {
         // repeat the check: in XSLT insufficient information is available the first time
         return typeCheck(visitor, contextItemType);
     }
 
+    @Override
     public int computeSpecialProperties() {
         return StaticProperty.ORDERED_NODESET |
                 StaticProperty.CONTEXT_DOCUMENT_NODESET |
@@ -135,6 +138,7 @@ public class RootExpression extends Expression {
      * Specify that the expression returns a singleton
      */
 
+    @Override
     public final int computeCardinality() {
         return StaticProperty.EXACTLY_ONE;
     }
@@ -146,6 +150,7 @@ public class RootExpression extends Expression {
      */
 
     /*@NotNull*/
+    @Override
     public ItemType getItemType() {
         return NodeKindTest.DOCUMENT;
     }
@@ -181,6 +186,7 @@ public class RootExpression extends Expression {
      * get HashCode for comparing two expressions
      */
 
+    @Override
     public int computeHashCode() {
         return "RootExpression".hashCode();
     }
@@ -217,6 +223,7 @@ public class RootExpression extends Expression {
      * StaticProperty.CURRENT_NODE
      */
 
+    @Override
     public int getIntrinsicDependencies() {
         return StaticProperty.DEPENDS_ON_CONTEXT_DOCUMENT;
     }
@@ -229,6 +236,7 @@ public class RootExpression extends Expression {
      */
 
     /*@NotNull*/
+    @Override
     public Expression copy(RebindingMap rebindings) {
         RootExpression exp = new RootExpression();
         ExpressionTool.copyLocationInfo(this, exp);
@@ -258,6 +266,7 @@ public class RootExpression extends Expression {
      *         expression is the first operand of a path expression or filter expression
      */
 
+    @Override
     public PathMap.PathMapNodeSet addToPathMap(PathMap pathMap, PathMap.PathMapNodeSet pathMapNodeSet) {
         if (pathMapNodeSet == null) {
             ContextItemExpression cie = new ContextItemExpression();
@@ -287,6 +296,7 @@ public class RootExpression extends Expression {
      * is written to the supplied output destination.
      */
 
+    @Override
     public void export(ExpressionPresenter destination) throws XPathException {
         destination.startElement("root", this);
         destination.endElement();
@@ -300,14 +310,17 @@ public class RootExpression extends Expression {
      */
 
     /*@NotNull*/
+    @Override
     public SequenceIterator iterate(XPathContext context) throws XPathException {
         return SingletonIterator.makeIterator(getNode(context));
     }
 
+    @Override
     public NodeInfo evaluateItem(XPathContext context) throws XPathException {
         return getNode(context);
     }
 
+    @Override
     public boolean effectiveBooleanValue(XPathContext context) throws XPathException {
         return getNode(context) != null;
     }

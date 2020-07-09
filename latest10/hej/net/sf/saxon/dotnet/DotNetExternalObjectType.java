@@ -40,6 +40,7 @@ public class DotNetExternalObjectType extends ExternalObjectType {
      *
      * @return the smallest UType that subsumes this item type
      */
+    @Override
     public UType getUType() {
         return UType.EXTENSION;
     }
@@ -51,6 +52,7 @@ public class DotNetExternalObjectType extends ExternalObjectType {
      *         anonymous type.
      */
 
+    @Override
     public String getName() {
         return qName.getLocalPart();
     }
@@ -62,6 +64,7 @@ public class DotNetExternalObjectType extends ExternalObjectType {
      * {@link NamespaceConstant#DOT_NET_TYPE}.
      */
 
+    @Override
     public String getTargetNamespace() {
         return NamespaceConstant.DOT_NET_TYPE;
     }
@@ -93,6 +96,7 @@ public class DotNetExternalObjectType extends ExternalObjectType {
      * @return the name of the atomic type, or null if the type is anonymous.
      */
 
+    @Override
     public StructuredQName getTypeName() {
         return null;
     }
@@ -215,6 +219,7 @@ public class DotNetExternalObjectType extends ExternalObjectType {
      */
 
     /*@NotNull*/
+    @Override
     public ItemType getPrimitiveItemType() {
         return this;
     }
@@ -228,6 +233,7 @@ public class DotNetExternalObjectType extends ExternalObjectType {
      * except that INTEGER is considered to be a primitive type.
      */
 
+    @Override
     public int getPrimitiveType() {
         return StandardNames.XS_ANY_ATOMIC_TYPE;
     }
@@ -328,6 +334,7 @@ public class DotNetExternalObjectType extends ExternalObjectType {
      * @return true, this is considered to be an atomic type
      */
 
+    @Override
     public boolean isAtomicType() {
         return true;
     }
@@ -487,6 +494,7 @@ public class DotNetExternalObjectType extends ExternalObjectType {
      * @param th      The type hierarchy cache
      * @return true if the item is an instance of this type; false otherwise
      */
+    @Override
     public boolean matches(Item item, TypeHierarchy th) {
         if (item instanceof DotNetObjectValue) {
             cli.System.Object obj = (cli.System.Object) ((DotNetObjectValue) item).getObject();
@@ -559,6 +567,7 @@ public class DotNetExternalObjectType extends ExternalObjectType {
     }
 
 
+    @Override
     public double getDefaultPriority() {
         return 0.5;
     }

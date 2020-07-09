@@ -60,27 +60,33 @@ public class CollectionFn extends SystemFunction implements Callable {
             collectionUri = cUri;
         }
 
+        @Override
         public String getCollectionURI() {
             return collectionUri;
         }
 
+        @Override
         public Iterator<String> getResourceURIs(XPathContext context) {
             return new ArrayList<String>().iterator();
         }
 
+        @Override
         public Iterator<Resource> getResources(XPathContext context) {
             return new ArrayList<Resource>().iterator();
         }
 
+        @Override
         public boolean isStable(XPathContext context) {
             return true;
         }
 
+        @Override
         public boolean stripWhitespace(SpaceStrippingRule rules) {
             return false;
         }
     }
 
+    @Override
     public int getSpecialProperties(Expression[] arguments) {
         // See redmine bug 1652. We cannot assume that the nodes will be in document order because we can't assume
         // they will all be "new" documents. We can't even assume that they will be distinct.
@@ -137,6 +143,7 @@ public class CollectionFn extends SystemFunction implements Callable {
 
         return new SequenceIterator() {
 
+            @Override
             public Item next() throws XPathException {
                 try {
                     if (sources.hasNext()) {
@@ -149,6 +156,7 @@ public class CollectionFn extends SystemFunction implements Callable {
                 }
             }
 
+            @Override
             public void close() {
                 if (sources instanceof Closeable) {
                     try {
@@ -172,6 +180,7 @@ public class CollectionFn extends SystemFunction implements Callable {
      * @throws XPathException if a dynamic error occurs
      */
 
+    @Override
     public Sequence call(final XPathContext context, Sequence[] arguments) throws XPathException {
         String href;
         if (getArity() == 0) {

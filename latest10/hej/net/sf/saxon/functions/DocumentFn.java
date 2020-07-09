@@ -47,6 +47,7 @@ public class DocumentFn extends SystemFunction implements Callable {
      * Determine the static cardinality
      */
 
+    @Override
     public int getCardinality(Expression[] arguments) {
         Expression expression = arguments[0];
         if (Cardinality.allowsMany(expression.getCardinality())) {
@@ -64,6 +65,7 @@ public class DocumentFn extends SystemFunction implements Callable {
      * @param arguments the expressions supplied as arguments to the function call
      */
 
+    @Override
     public int getSpecialProperties(Expression[] arguments) {
         return StaticProperty.ORDERED_NODESET |
                 StaticProperty.PEER_NODESET |
@@ -90,6 +92,7 @@ public class DocumentFn extends SystemFunction implements Callable {
      * @throws net.sf.saxon.trans.XPathException
      *          if a dynamic error occurs during the evaluation of the expression
      */
+    @Override
     public Sequence call(XPathContext context, Sequence[] arguments) throws XPathException {
         int numArgs = getArity();
 
@@ -132,6 +135,7 @@ public class DocumentFn extends SystemFunction implements Callable {
             this.context = context;
         }
 
+        @Override
         public Item mapItem(Item item) throws XPathException {
             String b = baseURI;
             if (b == null) {

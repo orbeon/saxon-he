@@ -54,6 +54,7 @@ public class ItemTypeCheckingFunction implements ItemMappingFunction {
         this.config = config;
     }
 
+    @Override
     public Item mapItem(Item item) throws XPathException {
         testConformance(item, config);
         return item;

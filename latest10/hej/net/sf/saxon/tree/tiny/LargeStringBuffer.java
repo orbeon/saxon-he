@@ -69,6 +69,7 @@ public final class LargeStringBuffer implements AppendableCharSequence {
      * @param s the data to be appended
      */
 
+    @Override
     public LargeStringBuffer cat(CharSequence s) {
         // Although we provide variants of this method for different subtypes, Java decides which to use based
         // on the static type of the operand. We want to use the right method based on the dynamic type, to avoid
@@ -160,6 +161,7 @@ public final class LargeStringBuffer implements AppendableCharSequence {
         return this;
     }
 
+    @Override
     public LargeStringBuffer cat(char c) {
         return cat("" + c);
     }
@@ -170,6 +172,7 @@ public final class LargeStringBuffer implements AppendableCharSequence {
      *
      * @return the number of characters in this sequence
      */
+    @Override
     public int length() {
         return length;
     }
@@ -182,6 +185,7 @@ public final class LargeStringBuffer implements AppendableCharSequence {
      * @param length the new length
      */
 
+    @Override
     public void setLength(int length) {
         if (length < this.length) {
             int usedInLastSegment = length & MASK;
@@ -201,6 +205,7 @@ public final class LargeStringBuffer implements AppendableCharSequence {
      * @throws IndexOutOfBoundsException if the <tt>index</tt> argument is negative or not less than
      *                                   <tt>length()</tt>
      */
+    @Override
     public char charAt(int index) {
         if (index < 0 || index >= length) {
             throw new IndexOutOfBoundsException(index + "");
@@ -223,6 +228,7 @@ public final class LargeStringBuffer implements AppendableCharSequence {
      *                                   or if <tt>start</tt> is greater than <tt>end</tt>
      */
     /*@NotNull*/
+    @Override
     public CharSequence subSequence(int start, int end) {
         int firstSeg = start >> BITS;
         int lastSeg = (end - 1) >> BITS;

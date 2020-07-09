@@ -35,6 +35,7 @@ public class DescendingComparer implements AtomicComparer {
         return baseComparer;
     }
 
+    @Override
     public StringCollator getCollator() {
         return baseComparer.getCollator();
     }
@@ -48,6 +49,7 @@ public class DescendingComparer implements AtomicComparer {
      */
 
     /*@NotNull*/
+    @Override
     public AtomicComparer provideContext(XPathContext context) {
         AtomicComparer newBase = baseComparer.provideContext(context);
         if (newBase != baseComparer) {
@@ -64,6 +66,7 @@ public class DescendingComparer implements AtomicComparer {
      * @throws ClassCastException if the objects are of the wrong type for this Comparer
      */
 
+    @Override
     public int compareAtomicValues(AtomicValue a, AtomicValue b) throws NoDynamicContextException {
         return 0 - baseComparer.compareAtomicValues(a, b);
     }
@@ -81,6 +84,7 @@ public class DescendingComparer implements AtomicComparer {
      * @throws ClassCastException if the objects are not comparable
      */
 
+    @Override
     public boolean comparesEqual(AtomicValue a, AtomicValue b) throws NoDynamicContextException {
         return baseComparer.comparesEqual(a, b);
     }
@@ -91,6 +95,7 @@ public class DescendingComparer implements AtomicComparer {
      *
      * @return a string representation of the AtomicComparer
      */
+    @Override
     public String save() {
         return "DESC|" + baseComparer.save();
     }

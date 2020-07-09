@@ -890,6 +890,7 @@ public class TestOutcome {
     }
 
     private static class RemoveWhitespace implements ItemMappingFunction {
+        @Override
         public NodeInfo mapItem(Item item) {
             boolean isWhite = ((NodeInfo)item).getNodeKind() == Type.TEXT && Whitespace.isWhite(item.getStringValueCS());
             return isWhite ? null : (NodeInfo)item;

@@ -28,6 +28,7 @@ public class Instantiator<T> implements Maker<T> {
      * @throws XPathException if the attempt fails
      */
 
+    @Override
     public T make() throws XPathException {
         Object o = config.getInstance(className, null);
         try {

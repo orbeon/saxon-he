@@ -41,6 +41,7 @@ public interface Item extends GroundedValue {
      * is empty
      */
 
+    @Override
     default Item head() {
         return this;
     }
@@ -61,6 +62,7 @@ public interface Item extends GroundedValue {
      * @since 8.4
      */
 
+    @Override
     String getStringValue();
 
     /**
@@ -81,6 +83,7 @@ public interface Item extends GroundedValue {
      * @since 8.4
      */
 
+    @Override
     CharSequence getStringValueCS();
 
     /**
@@ -98,6 +101,7 @@ public interface Item extends GroundedValue {
      * @return a depiction of the item suitable for use in error messages
      */
 
+    @Override
     default String toShortString() {
         return toString();
     }
@@ -119,6 +123,7 @@ public interface Item extends GroundedValue {
      * @param n the index of the required item, with 0 representing the first item in the sequence
      * @return the n'th item if it exists, or null otherwise
      */
+    @Override
     default Item itemAt(int n) {
         return n == 0 ? head() : null;
     }
@@ -135,6 +140,7 @@ public interface Item extends GroundedValue {
      *               of the sequence
      * @return the required subsequence. If min is
      */
+    @Override
     default GroundedValue subsequence(int start, int length) {
         return start <= 0 && (start + length) > 0 ? this : EmptySequence.getInstance();
     }
@@ -145,6 +151,7 @@ public interface Item extends GroundedValue {
      * @return the number of items in the sequence. Note that for a single item, including a map or array,
      * the result is always 1 (one).
      */
+    @Override
     default int getLength() {
         return 1;
     }
@@ -154,6 +161,7 @@ public interface Item extends GroundedValue {
      *
      * @return an iterator over all the items
      */
+    @Override
     default SingletonIterator<? extends Item> iterate() {
         return new SingletonIterator<>(this);
     }
@@ -166,6 +174,7 @@ public interface Item extends GroundedValue {
      *
      * @return the simplified sequence
      */
+    @Override
     default GroundedValue reduce() {
         return this;
     }

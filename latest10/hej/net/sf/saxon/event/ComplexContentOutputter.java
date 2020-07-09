@@ -135,6 +135,7 @@ public final class ComplexContentOutputter extends Outputter implements Receiver
         return result;
     }
 
+    @Override
     public void setPipelineConfiguration(/*@NotNull*/ PipelineConfiguration pipe) {
         if (pipelineConfiguration != pipe) {
             pipelineConfiguration = pipe;
@@ -186,6 +187,7 @@ public final class ComplexContentOutputter extends Outputter implements Receiver
      * Start the output process
      */
 
+    @Override
     public void open() throws XPathException {
         nextReceiver.open();
         previousAtomic = false;
@@ -197,6 +199,7 @@ public final class ComplexContentOutputter extends Outputter implements Receiver
      * @param properties any special properties of the node
      */
 
+    @Override
     public void startDocument(int properties) throws XPathException {
         level++;
         if (level == 0) {
@@ -216,6 +219,7 @@ public final class ComplexContentOutputter extends Outputter implements Receiver
      * Notify the end of a document node
      */
 
+    @Override
     public void endDocument() throws XPathException {
         if (level == 0) {
             nextReceiver.endDocument();
@@ -248,6 +252,7 @@ public final class ComplexContentOutputter extends Outputter implements Receiver
      * @throws XPathException for any failure
      */
 
+    @Override
     public void characters(CharSequence s, Location locationId, int properties) throws XPathException {
         if (level >= 0) {
             previousAtomic = false;
@@ -274,6 +279,7 @@ public final class ComplexContentOutputter extends Outputter implements Receiver
      * @param properties any special properties of the node
      */
 
+    @Override
     public void startElement(NodeName elemName, SchemaType typeCode, Location location, int properties) throws XPathException {
         //System.err.println("Start element " + elemName);
         level++;
@@ -300,6 +306,7 @@ public final class ComplexContentOutputter extends Outputter implements Receiver
      * Add a namespace node to the content being constructed.
      */
 
+    @Override
     public void namespace(String prefix, String namespaceUri, int properties)
             throws XPathException {
         Objects.requireNonNull(prefix);
@@ -370,6 +377,7 @@ public final class ComplexContentOutputter extends Outputter implements Receiver
      * @throws XPathException if any failure occurs
      */
 
+    @Override
     public void namespaces(NamespaceBindingSet bindings, int properties) throws XPathException {
         if (bindings instanceof NamespaceMap && pendingNSMap.isEmpty()
                 && ReceiverOption.contains(properties, ReceiverOption.NAMESPACE_OK)) {
@@ -391,6 +399,7 @@ public final class ComplexContentOutputter extends Outputter implements Receiver
      * @param properties Bit fields containing properties of the attribute to be written  @throws XPathException if there is no start tag to write to (created using writeStartTag),
      */
 
+    @Override
     public void attribute(NodeName attName, SimpleType typeCode, CharSequence value, Location locationId, int properties) throws XPathException {
         //System.err.println("Write attribute " + attName + "=" + value + " to Outputter " + this);
         if (level >= 0 && state != StartTag) {
@@ -581,6 +590,7 @@ public final class ComplexContentOutputter extends Outputter implements Receiver
      * Output an element end tag.
      */
 
+    @Override
     public void endElement() throws XPathException {
         //System.err.println("Write end tag ");
         if (state == StartTag) {
@@ -603,6 +613,7 @@ public final class ComplexContentOutputter extends Outputter implements Receiver
      * Write a comment
      */
 
+    @Override
     public void comment(CharSequence comment, Location locationId, int properties) throws XPathException {
         if (level >= 0) {
             if (state == StartTag) {
@@ -617,6 +628,7 @@ public final class ComplexContentOutputter extends Outputter implements Receiver
      * Write a processing instruction
      */
 
+    @Override
     public void processingInstruction(String target, CharSequence data, Location locationId, int properties) throws XPathException {
         if (level >= 0) {
             if (state == StartTag) {
@@ -635,6 +647,7 @@ public final class ComplexContentOutputter extends Outputter implements Receiver
 *                       need to be copied. Values are {@link ReceiverOption#ALL_NAMESPACES}}; the default (0) means
      */
 
+    @Override
     public void append(Item item, Location locationId, int copyNamespaces) throws XPathException {
         // Decompose the item into a sequence of node events if we're within a start/end element/document
         // pair. Otherwise, send the item down the pipeline unchanged: it's the job of the Destination
@@ -691,6 +704,7 @@ public final class ComplexContentOutputter extends Outputter implements Receiver
      * Close the output
      */
 
+    @Override
     public void close() throws XPathException {
         // System.err.println("Close " + this + " using emitter " + emitter.getClass());
         nextReceiver.close();
@@ -702,6 +716,7 @@ public final class ComplexContentOutputter extends Outputter implements Receiver
      * Flush out a pending start tag
      */
 
+    @Override
     public void startContent() throws XPathException {
 
         if (state != StartTag) {
@@ -754,6 +769,7 @@ public final class ComplexContentOutputter extends Outputter implements Receiver
      *         may supply untyped nodes instead of supplying the type annotation
      */
 
+    @Override
     public boolean usesTypeAnnotations() {
         return nextReceiver.usesTypeAnnotations();
     }

@@ -95,6 +95,7 @@ public final class FilterExpression extends BinaryExpression implements ContextS
      * in explain() output displaying the expression.
      */
 
+    @Override
     public String getExpressionName() {
         return "filter";
     }
@@ -106,6 +107,7 @@ public final class FilterExpression extends BinaryExpression implements ContextS
      */
 
     /*@NotNull*/
+    @Override
     public ItemType getItemType() {
         // special case the expression B[. instance of x]
         if (getFilter() instanceof InstanceOfExpression &&
@@ -135,6 +137,7 @@ public final class FilterExpression extends BinaryExpression implements ContextS
      * @return the base expression being filtered
      */
 
+    @Override
     public Expression getSelectExpression() {
         return getBase();
     }
@@ -153,6 +156,7 @@ public final class FilterExpression extends BinaryExpression implements ContextS
      * @return the subexpression evaluated in the context set by the controlling expression
      */
 
+    @Override
     public Expression getActionExpression() {
         return getFilter();
     }
@@ -199,6 +203,7 @@ public final class FilterExpression extends BinaryExpression implements ContextS
      */
 
     /*@NotNull*/
+    @Override
     public Expression simplify() throws XPathException {
 
         setBase(getBase().simplify());
@@ -243,6 +248,7 @@ public final class FilterExpression extends BinaryExpression implements ContextS
      */
 
     /*@NotNull*/
+    @Override
     public Expression typeCheck(ExpressionVisitor visitor, ContextItemStaticInfo contextInfo) throws XPathException {
         Configuration config = visitor.getConfiguration();
         final TypeHierarchy th = config.getTypeHierarchy();
@@ -303,6 +309,7 @@ public final class FilterExpression extends BinaryExpression implements ContextS
      */
 
     /*@NotNull*/
+    @Override
     public Expression optimize(ExpressionVisitor visitor, ContextItemStaticInfo contextItemType) throws XPathException {
         final Configuration config = visitor.getConfiguration();
         final Optimizer opt = visitor.obtainOptimizer();
@@ -553,6 +560,7 @@ public final class FilterExpression extends BinaryExpression implements ContextS
      * expression is the first operand of a path expression or filter expression
      */
 
+    @Override
     public PathMap.PathMapNodeSet addToPathMap(PathMap pathMap, PathMap.PathMapNodeSet pathMapNodeSet) {
         PathMap.PathMapNodeSet target = getBase().addToPathMap(pathMap, pathMapNodeSet);
         getFilter().addToPathMap(pathMap, target);
@@ -957,6 +965,7 @@ public final class FilterExpression extends BinaryExpression implements ContextS
      * filter predicate is guaranteed to select at most one item from the sequence being filtered
      */
 
+    @Override
     public int computeCardinality() {
         if (getFilter() instanceof Literal && ((Literal) getFilter()).getValue() instanceof NumericValue) {
             if (((NumericValue) ((Literal) getFilter()).getValue()).compareTo(1) == 0 &&
@@ -994,6 +1003,7 @@ public final class FilterExpression extends BinaryExpression implements ContextS
      * @return the static properties of the expression, as a bit-significant value
      */
 
+    @Override
     public int computeSpecialProperties() {
         return getBase().getSpecialProperties();
     }
@@ -1020,6 +1030,7 @@ public final class FilterExpression extends BinaryExpression implements ContextS
      * @return the hash code
      */
 
+    @Override
     public int computeHashCode() {
         return "FilterExpression".hashCode() + getBase().hashCode() + getFilter().hashCode();
     }
@@ -1067,6 +1078,7 @@ public final class FilterExpression extends BinaryExpression implements ContextS
      */
 
     /*@NotNull*/
+    @Override
     public SequenceIterator iterate(XPathContext context) throws XPathException {
 
         // Fast path where the filter value is independent of the focus
@@ -1163,6 +1175,7 @@ public final class FilterExpression extends BinaryExpression implements ContextS
      */
 
     /*@NotNull*/
+    @Override
     public Expression copy(RebindingMap rebindings) {
         FilterExpression fe = new FilterExpression(getBase().copy(rebindings), getFilter().copy(rebindings));
         ExpressionTool.copyLocationInfo(this, fe);
@@ -1206,6 +1219,7 @@ public final class FilterExpression extends BinaryExpression implements ContextS
      * @param out the ExpressionPresenter to be used
      */
 
+    @Override
     public void export(ExpressionPresenter out) throws XPathException {
         out.startElement("filter", this);
         String flags = "";

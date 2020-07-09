@@ -373,6 +373,7 @@ public abstract class SchemaValidator extends AbstractDestination {
     }
 //#endif
 
+    @Override
     public abstract Receiver getReceiver(PipelineConfiguration pipe, SerializationProperties params) throws SaxonApiException;
 
     /**
@@ -380,6 +381,7 @@ public abstract class SchemaValidator extends AbstractDestination {
      * it has finished writing to the destination.
      */
 
+    @Override
     public abstract void close() throws SaxonApiException;
 
 }

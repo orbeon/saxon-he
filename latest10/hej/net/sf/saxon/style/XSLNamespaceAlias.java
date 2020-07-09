@@ -36,6 +36,7 @@ public class XSLNamespaceAlias extends StyleElement {
         return true;
     }
 
+    @Override
     public void prepareAttributes() {
 
         String stylesheetPrefix = null;
@@ -85,15 +86,18 @@ public class XSLNamespaceAlias extends StyleElement {
         resultNamespaceBinding = new NamespaceBinding(resultPrefix, resultURI);
     }
 
+    @Override
     public void validate(ComponentDeclaration decl) throws XPathException {
         checkTopLevel("XTSE0010", false);
     }
 
     /*@Nullable*/
+    @Override
     public Expression compile(Compilation exec, ComponentDeclaration decl) throws XPathException {
         return null;
     }
 
+    @Override
     public void index(ComponentDeclaration decl, PrincipalStylesheetModule top) throws XPathException {
         top.addNamespaceAlias(decl);
     }

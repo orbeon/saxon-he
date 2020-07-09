@@ -25,6 +25,7 @@ public class CalendarValueComparer implements AtomicComparer {
     }
 
     /*@Nullable*/
+    @Override
     public StringCollator getCollator() {
         return null;
     }
@@ -37,6 +38,7 @@ public class CalendarValueComparer implements AtomicComparer {
      *         is known. The original AtomicComparer is not modified
      */
 
+    @Override
     public AtomicComparer provideContext(XPathContext context) {
         return new CalendarValueComparer(context);
     }
@@ -56,6 +58,7 @@ public class CalendarValueComparer implements AtomicComparer {
      * @throws ClassCastException if the objects are not comparable
      */
 
+    @Override
     public int compareAtomicValues(AtomicValue a, AtomicValue b) throws NoDynamicContextException {
         if (a == null) {
             return b == null ? 0 : -1;
@@ -78,6 +81,7 @@ public class CalendarValueComparer implements AtomicComparer {
      * @throws ClassCastException if the objects are not comparable
      */
 
+    @Override
     public boolean comparesEqual(AtomicValue a, AtomicValue b) throws NoDynamicContextException {
         return compareAtomicValues(a, b) == 0;
     }
@@ -88,6 +92,7 @@ public class CalendarValueComparer implements AtomicComparer {
      *
      * @return a string representation of the AtomicComparer
      */
+    @Override
     public String save() {
         return "CalVC";
     }

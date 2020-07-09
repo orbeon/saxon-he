@@ -64,6 +64,7 @@ public final class XPathVariable implements LocalBinding {
      * @return false (always)
      */
 
+    @Override
     public boolean isGlobal() {
         return false;
     }
@@ -76,6 +77,7 @@ public final class XPathVariable implements LocalBinding {
      * @return false (always)
      */
 
+    @Override
     public final boolean isAssignable() {
         return false;
     }
@@ -98,6 +100,7 @@ public final class XPathVariable implements LocalBinding {
      * @return the required type of the variable
      */
 
+    @Override
     public SequenceType getRequiredType() {
         return requiredType;
     }
@@ -107,6 +110,7 @@ public final class XPathVariable implements LocalBinding {
      * Return null if unknown or not applicable
      */
     /*@Nullable*/
+    @Override
     public IntegerValue[] getIntegerBoundsForVariable() {
         return null;
     }
@@ -126,6 +130,7 @@ public final class XPathVariable implements LocalBinding {
      * In other cases, return -1.
      */
 
+    @Override
     public int getLocalSlotNumber() {
         return slotNumber;
     }
@@ -136,6 +141,7 @@ public final class XPathVariable implements LocalBinding {
      * @return the name of the variable, as a QNameValue
      */
 
+    @Override
     public StructuredQName getVariableQName() {
         return name;
     }
@@ -145,6 +151,7 @@ public final class XPathVariable implements LocalBinding {
      * This method should not be called by users of the API.
      */
 
+    @Override
     public void addReference(VariableReference ref, boolean isLoopingReference) {
         // no action
     }
@@ -179,6 +186,7 @@ public final class XPathVariable implements LocalBinding {
      * @return The value of the variable
      */
 
+    @Override
     public Sequence evaluateVariable(XPathContext context) {
         return context.evaluateLocalVariable(slotNumber);
     }
@@ -186,6 +194,7 @@ public final class XPathVariable implements LocalBinding {
     /**
      * Say that the bound value has the potential to be indexed
      */
+    @Override
     public void setIndexedVariable() { }
 
     /**
@@ -193,6 +202,7 @@ public final class XPathVariable implements LocalBinding {
      *
      * @return true if the variable value can be indexed
      */
+    @Override
     public boolean isIndexedVariable() {
         return false;
     }

@@ -18,6 +18,7 @@ public final class EmptyString extends UnicodeString {
     private EmptyString() {}
 
 
+    @Override
     public EmptyString uSubstring(int beginIndex, int endIndex) {
         if (beginIndex == 0 && endIndex == 0) {
             return this;
@@ -26,18 +27,22 @@ public final class EmptyString extends UnicodeString {
         }
     }
 
+    @Override
     public int uCharAt(int pos) {
         throw new IndexOutOfBoundsException();
     }
 
+    @Override
     public int uIndexOf(int search, int pos) {
         return -1;
     }
 
+    @Override
     public int uLength() {
         return 0;
     }
 
+    @Override
     public boolean isEnd(int pos) {
         return pos >= 0;
     }
@@ -46,14 +51,17 @@ public final class EmptyString extends UnicodeString {
         return "";
     }
 
+    @Override
     public int length() {
         return 0;
     }
 
+    @Override
     public char charAt(int index) {
         throw new IndexOutOfBoundsException();
     }
 
+    @Override
     public CharSequence subSequence(int start, int end) {
         if (start == 0 && end == 0) {
             return "";

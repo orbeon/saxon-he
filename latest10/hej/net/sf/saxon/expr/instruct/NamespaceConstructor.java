@@ -59,19 +59,23 @@ public class NamespaceConstructor extends SimpleNodeConstructor {
      * Set the name of this instruction for diagnostic and tracing purposes
      */
 
+    @Override
     public int getInstructionNameCode() {
         return StandardNames.XSL_NAMESPACE;
     }
 
     /*@NotNull*/
+    @Override
     public ItemType getItemType() {
         return NodeKindTest.NAMESPACE;
     }
 
+    @Override
     public int getCardinality() {
         return StaticProperty.EXACTLY_ONE;
     }
 
+    @Override
     public void localTypeCheck(ExpressionVisitor visitor, ContextItemStaticInfo contextItemType) throws XPathException {
         StaticContext env = visitor.getStaticContext();
         nameOp.typeCheck(visitor, contextItemType);
@@ -100,6 +104,7 @@ public class NamespaceConstructor extends SimpleNodeConstructor {
      */
 
     /*@NotNull*/
+    @Override
     public Expression copy(RebindingMap rebindings) {
         NamespaceConstructor exp = new NamespaceConstructor(getNameExp().copy(rebindings));
         exp.setSelect(getSelect().copy(rebindings));
@@ -108,6 +113,7 @@ public class NamespaceConstructor extends SimpleNodeConstructor {
     }
 
 
+    @Override
     public NodeName evaluateNodeName(XPathContext context) throws XPathException {
         String prefix = evaluatePrefix(context);
         return new NoNamespaceName(prefix);
@@ -140,6 +146,7 @@ public class NamespaceConstructor extends SimpleNodeConstructor {
         return prefix;
     }
 
+    @Override
     public void processValue(CharSequence value, Outputter output, XPathContext context) throws XPathException {
         String prefix = evaluatePrefix(context);
         String uri = value.toString();
@@ -155,6 +162,7 @@ public class NamespaceConstructor extends SimpleNodeConstructor {
      * the content
      */
 
+    @Override
     public NodeInfo evaluateItem(XPathContext context) throws XPathException {
         NodeInfo node = (NodeInfo) super.evaluateItem(context);
         assert node != null;
@@ -199,6 +207,7 @@ public class NamespaceConstructor extends SimpleNodeConstructor {
      * is written to the supplied output destination.
      */
 
+    @Override
     public void export(ExpressionPresenter out) throws XPathException {
         out.startElement("namespace", this);
         String flags = "";

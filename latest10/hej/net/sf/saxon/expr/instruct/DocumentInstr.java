@@ -71,6 +71,7 @@ public class DocumentInstr extends ParentNodeConstructor {
      * This method indicates which of these methods is prefered. For instructions this is the process() method.
      */
 
+    @Override
     public int getImplementationMethod() {
         return Expression.EVALUATE_METHOD;
     }
@@ -105,6 +106,7 @@ public class DocumentInstr extends ParentNodeConstructor {
      * @throws XPathException
      */
 
+    @Override
     protected void checkContentSequence(StaticContext env) throws XPathException {
         checkContentSequence(env, getContentOperand(), getValidationOptions());
     }
@@ -213,6 +215,7 @@ public class DocumentInstr extends ParentNodeConstructor {
      */
 
     /*@NotNull*/
+    @Override
     public Expression copy(RebindingMap rebindings) {
         DocumentInstr doc = new DocumentInstr(textOnly, constantText);
         ExpressionTool.copyLocationInfo(this, doc);
@@ -227,10 +230,12 @@ public class DocumentInstr extends ParentNodeConstructor {
      * @return the in
      */
     /*@NotNull*/
+    @Override
     public ItemType getItemType() {
         return NodeKindTest.DOCUMENT;
     }
 
+    @Override
     public TailCall processLeavingTail(Outputter output, XPathContext context) throws XPathException {
         if (preservingTypes && !textOnly) {
             output.startDocument(ReceiverOption.NONE);
@@ -250,6 +255,7 @@ public class DocumentInstr extends ParentNodeConstructor {
      * Evaluate as an item.
      */
 
+    @Override
     public NodeInfo evaluateItem(XPathContext context) throws XPathException {
         Controller controller = context.getController();
         Configuration config = controller.getConfiguration();
@@ -313,6 +319,7 @@ public class DocumentInstr extends ParentNodeConstructor {
      * (the string "document-constructor")
      */
 
+    @Override
     public int getInstructionNameCode() {
         return StandardNames.XSL_DOCUMENT;
     }
@@ -322,6 +329,7 @@ public class DocumentInstr extends ParentNodeConstructor {
      * is written to the supplied output destination.
      */
 
+    @Override
     public void export(ExpressionPresenter out) throws XPathException {
         out.startElement("doc", this);
         if (!out.isRelocatable()) {

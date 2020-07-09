@@ -118,6 +118,7 @@ public class JsonHandler {
         CharSequence escaped;
         if (escape) {
             escaped = JsonReceiver.escape(val, true, new IntPredicate() {
+                @Override
                 public boolean test(int value) {
                     return (value >= 0 && value <= 0x1F) ||
                             (value >= 0x7F && value <= 0x9F) ||

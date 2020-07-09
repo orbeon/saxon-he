@@ -44,6 +44,7 @@ public class SingletonAttributeMap extends AttributeInfo implements AttributeMap
      * @return The number of attributes in the map.
      */
 
+    @Override
     public int size() {
         return 1;
     }
@@ -58,6 +59,7 @@ public class SingletonAttributeMap extends AttributeInfo implements AttributeMap
         return getNodeName().getLocalPart().equals(local) && getNodeName().hasURI(uri) ? this : null;
     }
 
+    @Override
     public AttributeInfo getByFingerprint(int fingerprint, NamePool namePool) {
         return getNodeName().obtainFingerprint(namePool) == fingerprint ? this : null;
     }
@@ -84,6 +86,7 @@ public class SingletonAttributeMap extends AttributeInfo implements AttributeMap
         return new MonoIterator<>(this);
     }
 
+    @Override
     public AttributeMap apply(java.util.function.Function<AttributeInfo, AttributeInfo> mapper) {
         return SingletonAttributeMap.of(mapper.apply(this));
     }

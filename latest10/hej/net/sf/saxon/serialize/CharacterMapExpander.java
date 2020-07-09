@@ -110,6 +110,7 @@ public class CharacterMapExpander extends ProxyReceiver {
      * Output character data
      */
 
+    @Override
     public void characters(/*@NotNull*/ CharSequence chars, Location locationId, int properties) throws XPathException {
 
         if (!ReceiverOption.contains(properties, ReceiverOption.DISABLE_CHARACTER_MAPS)) {

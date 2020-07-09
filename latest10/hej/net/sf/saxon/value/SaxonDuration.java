@@ -59,6 +59,7 @@ public class SaxonDuration extends Duration {
      *         xs:yearMonthDuration
      */
 
+    @Override
     public QName getXMLSchemaType() {
         if (duration instanceof DayTimeDurationValue) {
             return new QName(NamespaceConstant.SCHEMA, "dayTimeDuration");
@@ -75,6 +76,7 @@ public class SaxonDuration extends Duration {
      * @return -1 if this duration is negative, 0 if the duration is zero,
      *         and 1 if the duration is positive.
      */
+    @Override
     public int getSign() {
         return duration.signum();
     }
@@ -101,6 +103,7 @@ public class SaxonDuration extends Duration {
      *         method returns a {@link java.math.BigDecimal}.
      * @throws NullPointerException If the <code>field</code> is <code>null</code>.
      */
+    @Override
     public Number getField(DatatypeConstants.Field field) {
         if (field == DatatypeConstants.YEARS) {
             return BigInteger.valueOf(((Int64Value) duration.getComponent(AccessorFn.Component.YEAR)).longValue());
@@ -126,6 +129,7 @@ public class SaxonDuration extends Duration {
      *              MINUTES, or SECONDS.)
      * @return This implementation always returns true.
      */
+    @Override
     public boolean isSet(DatatypeConstants.Field field) {
         return true;
     }
@@ -142,6 +146,7 @@ public class SaxonDuration extends Duration {
      *                               both yearMonthDurations.
      * @see #subtract(javax.xml.datatype.Duration)
      */
+    @Override
     public Duration add(Duration rhs) {
         try {
             return new SaxonDuration(duration.add(((SaxonDuration) rhs).duration));
@@ -162,6 +167,7 @@ public class SaxonDuration extends Duration {
      *                               both yearMonthDurations.
      * @see #add(javax.xml.datatype.Duration)
      */
+    @Override
     public Duration subtract(Duration rhs) {
         try {
             return new SaxonDuration(duration.subtract(((SaxonDuration) rhs).duration));
@@ -196,6 +202,7 @@ public class SaxonDuration extends Duration {
      * @param calendar A calendar object whose value will be modified.
      * @throws NullPointerException if the calendar parameter is null.
      */
+    @Override
     public void addTo(Calendar calendar) {
         int sign = getSign();
         if (sign == 0) {
@@ -223,6 +230,7 @@ public class SaxonDuration extends Duration {
      * @throws NullPointerException  if the <code>factor</code> parameter is
      *                               <code>null</code>.
      */
+    @Override
     public Duration multiply(BigDecimal factor) {
         try {
             return new SaxonDuration(duration.multiply(factor.doubleValue()));
@@ -240,6 +248,7 @@ public class SaxonDuration extends Duration {
      *
      * @return always return a non-null valid <code>Duration</code> object.
      */
+    @Override
     public Duration negate() {
         return new SaxonDuration(duration.negate());
     }
@@ -254,6 +263,7 @@ public class SaxonDuration extends Duration {
      * @throws NullPointerException          If the startTimeInstant parameter is null.
      * @throws UnsupportedOperationException Always thrown by this implementation.
      */
+    @Override
     public Duration normalizeWith(Calendar startTimeInstant) {
         throw new UnsupportedOperationException();
     }
@@ -289,6 +299,7 @@ public class SaxonDuration extends Duration {
      * @see #isShorterThan(javax.xml.datatype.Duration)
      * @see #isLongerThan(javax.xml.datatype.Duration)
      */
+    @Override
     public int compare(/*@NotNull*/ Duration rhs) {
         if (!(rhs instanceof SaxonDuration)) {
             throw new IllegalArgumentException("Supplied duration is not a SaxonDuration");

@@ -190,6 +190,7 @@ public class StandardErrorReporter
      * @param error the error or warning being reported
      */
 
+    @Override
     public void report(XmlProcessingError error) {
         if (error != latestError) {
             latestError = error;

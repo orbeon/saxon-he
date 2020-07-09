@@ -23,10 +23,12 @@ public class XSLNamespace extends XSLLeafNodeConstructor {
 
     /*@Nullable*/ Expression name;
 
+    @Override
     public void prepareAttributes() {
         name = prepareAttributesNameAndSelect();
     }
 
+    @Override
     public void validate(ComponentDeclaration decl) throws XPathException {
         name = typeCheck("name", name);
         select = typeCheck("select", select);
@@ -70,10 +72,12 @@ public class XSLNamespace extends XSLLeafNodeConstructor {
      * @return the error code defined for this condition, for this particular instruction
      */
 
+    @Override
     protected String getErrorCodeForSelectPlusContent() {
         return "XTSE0910";
     }
 
+    @Override
     public Expression compile(Compilation exec, ComponentDeclaration decl) throws XPathException {
         NamespaceConstructor inst = new NamespaceConstructor(name);
         compileContent(exec, decl, inst, new StringLiteral(StringValue.SINGLE_SPACE));

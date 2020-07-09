@@ -40,6 +40,7 @@ public class UntypedAtomizingIterator implements SequenceIterator,
     }
 
     /*@Nullable*/
+    @Override
     public AtomicValue next() throws XPathException {
         Item nextSource = base.next();
         if (nextSource == null) {
@@ -49,6 +50,7 @@ public class UntypedAtomizingIterator implements SequenceIterator,
         }
     }
 
+    @Override
     public void close() {
         base.close();
     }
@@ -63,16 +65,19 @@ public class UntypedAtomizingIterator implements SequenceIterator,
      *         It is acceptable for the properties of the iterator to change depending on its state.
      */
 
+    @Override
     public EnumSet<Property> getProperties() {
         EnumSet<Property> p = EnumSet.copyOf(base.getProperties());
         p.retainAll(EnumSet.of(Property.LAST_POSITION_FINDER, Property.LOOKAHEAD));
         return p;
     }
 
+    @Override
     public int getLength() throws XPathException {
         return ((LastPositionFinder) base).getLength();
     }
 
+    @Override
     public boolean hasNext() {
         return ((LookaheadIterator) base).hasNext();
     }

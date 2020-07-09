@@ -38,6 +38,7 @@ public class IgnorableSpaceStrippingRule implements SpaceStrippingRule {
      * @return STRIP_DEFAULT: strip spaces unless xml:space tells you not to.
      */
 
+    @Override
     public int isSpacePreserving(NodeName name, SchemaType schemaType) {
         if (schemaType != Untyped.getInstance() && schemaType.isComplexType() &&
                     !((ComplexType) schemaType).isSimpleContent() &&
@@ -66,6 +67,7 @@ public class IgnorableSpaceStrippingRule implements SpaceStrippingRule {
      *
      * @param presenter the output handler
      */
+    @Override
     public void export(ExpressionPresenter presenter) {
         presenter.startElement("strip.ignorable");
         presenter.endElement();

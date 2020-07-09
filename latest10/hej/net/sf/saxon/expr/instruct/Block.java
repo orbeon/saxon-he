@@ -177,6 +177,7 @@ public class Block extends Instruction {
         }
     }
 
+    @Override
     public String getExpressionName() {
         return "sequence";
     }
@@ -193,6 +194,7 @@ public class Block extends Instruction {
     }
 
 
+    @Override
     public int computeSpecialProperties() {
         if (size() == 0) {
             // An empty sequence has all special properties except "has side effects".
@@ -243,6 +245,7 @@ public class Block extends Instruction {
         return p;
     }
 
+    @Override
     public boolean implementsStaticTypeCheck() {
         return true;
     }
@@ -260,6 +263,7 @@ public class Block extends Instruction {
      *                        is incompatible with the required type
      */
 
+    @Override
     public Expression staticTypeCheck(SequenceType req,
                                       boolean backwardsCompatible,
                                       RoleDiagnostic role, ExpressionVisitor visitor)
@@ -375,6 +379,7 @@ public class Block extends Instruction {
      */
 
     /*@NotNull*/
+    @Override
     public Expression copy(RebindingMap rebindings) {
         Expression[] c2 = new Expression[size()];
         for (int c = 0; c < size(); c++) {
@@ -396,6 +401,7 @@ public class Block extends Instruction {
      */
 
     /*@NotNull*/
+    @Override
     public final ItemType getItemType() {
         if (size() == 0) {
             return ErrorType.getInstance();
@@ -445,6 +451,7 @@ public class Block extends Instruction {
      * Determine the cardinality of the expression
      */
 
+    @Override
     public int computeCardinality() {
         if (size() == 0) {
             return StaticProperty.EMPTY;
@@ -465,6 +472,7 @@ public class Block extends Instruction {
      * returns true.
      */
 
+    @Override
     public final boolean mayCreateNewNodes() {
         return someOperandCreatesNewNodes();
     }
@@ -478,6 +486,7 @@ public class Block extends Instruction {
      *          if the expression has a non-permitted updateing subexpression
      */
 
+    @Override
     public void checkForUpdatingSubexpressions() throws XPathException {
         if (size() < 2) {
             return;
@@ -513,6 +522,7 @@ public class Block extends Instruction {
      * @return true if this expression is vacuous
      */
 
+    @Override
     public boolean isVacuousExpression() {
         // true if all subexpressions are vacuous
         for (Operand o : operands()) {
@@ -535,6 +545,7 @@ public class Block extends Instruction {
      */
 
     /*@NotNull*/
+    @Override
     public Expression simplify() throws XPathException {
         boolean allAtomic = true;
         boolean nested = false;
@@ -645,6 +656,7 @@ public class Block extends Instruction {
     }
 
     /*@NotNull*/
+    @Override
     public Expression typeCheck(ExpressionVisitor visitor, ContextItemStaticInfo contextInfo) throws XPathException {
         typeCheckChildren(visitor, contextInfo);
         if (neverReturnsTypedNodes(this, visitor.getConfiguration().getTypeHierarchy())) {
@@ -655,6 +667,7 @@ public class Block extends Instruction {
     }
 
     /*@NotNull*/
+    @Override
     public Expression optimize(ExpressionVisitor visitor, ContextItemStaticInfo contextInfo) throws XPathException {
         optimizeChildren(visitor, contextInfo);
         boolean canSimplify = false;
@@ -701,6 +714,7 @@ public class Block extends Instruction {
      * static validation can continue recursively.
      */
 
+    @Override
     public void checkPermittedContents(SchemaType parentType, boolean whole) throws XPathException {
         for (Operand o : operands()) {
             Expression child = o.getChildExpression();
@@ -713,6 +727,7 @@ public class Block extends Instruction {
      * is written to the supplied output destination.
      */
 
+    @Override
     public void export(ExpressionPresenter out) throws XPathException {
         out.startElement("sequence", this);
         for (Operand o : operands()) {
@@ -727,6 +742,7 @@ public class Block extends Instruction {
         return "(" + child(0).toShortString() + ", ...)";
     }
 
+    @Override
     public TailCall processLeavingTail(Outputter output, XPathContext context) throws XPathException {
         TailCall tc = null;
         for (Operand o : operands()) {
@@ -753,6 +769,7 @@ public class Block extends Instruction {
      * process() methods natively.
      */
 
+    @Override
     public int getImplementationMethod() {
         return ITERATE_METHOD | PROCESS_METHOD;
     }
@@ -762,6 +779,7 @@ public class Block extends Instruction {
      */
 
     /*@NotNull*/
+    @Override
     public SequenceIterator iterate(XPathContext context) throws XPathException {
         if (size() == 0) {
             return EmptyIterator.emptyIterator();
@@ -782,6 +800,7 @@ public class Block extends Instruction {
      * @param pul     the pending update list to which the results should be written
      */
 
+    @Override
     public void evaluatePendingUpdates(XPathContext context, PendingUpdateList pul) throws XPathException {
         for (Operand o : operands()) {
             Expression child = o.getChildExpression();

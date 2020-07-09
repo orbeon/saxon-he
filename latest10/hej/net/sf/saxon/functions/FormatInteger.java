@@ -84,6 +84,7 @@ public class FormatInteger extends SystemFunction implements StatefulSystemFunct
      * @throws net.sf.saxon.trans.XPathException
      *          if a dynamic error occurs during the evaluation of the expression
      */
+    @Override
     public StringValue call(XPathContext context, Sequence[] arguments) throws XPathException {
         return formatInteger(
                 (IntegerValue) arguments[0].head(),

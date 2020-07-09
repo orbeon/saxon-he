@@ -71,6 +71,7 @@ public class IntArraySet implements IntSet {
         System.arraycopy(input.contents, 0, contents, 0, contents.length);
     }
 
+    @Override
     public IntSet copy() {
         IntArraySet i2 = new IntArraySet();
         i2.contents = new int[contents.length];
@@ -79,19 +80,23 @@ public class IntArraySet implements IntSet {
         return i2;
     }
 
+    @Override
     public IntSet mutableCopy() {
         return copy();
     }
 
+    @Override
     public void clear() {
         contents = EMPTY_INT_ARRAY;
         hashCode = -1;
     }
 
+    @Override
     public int size() {
         return contents.length;
     }
 
+    @Override
     public boolean isEmpty() {
         return contents.length == 0;
     }
@@ -107,10 +112,12 @@ public class IntArraySet implements IntSet {
     }
 
 
+    @Override
     public boolean contains(int value) {
         return Arrays.binarySearch(contents, value) >= 0;
     }
 
+    @Override
     public boolean remove(int value) {
         hashCode = -1;
         int pos = Arrays.binarySearch(contents, value);
@@ -137,6 +144,7 @@ public class IntArraySet implements IntSet {
      * @return true if the integer was added, false if it was already present
      */
 
+    @Override
     public boolean add(int value) {
         hashCode = -1;
         if (contents.length == 0) {
@@ -179,6 +187,7 @@ public class IntArraySet implements IntSet {
      * @return an iterator over the values, which will be delivered in sorted order
      */
 
+    @Override
     public IntIterator iterator() {
         return new IntArrayIterator(contents, contents.length);
     }
@@ -190,6 +199,7 @@ public class IntArraySet implements IntSet {
      * @return the union of the two sets
      */
 
+    @Override
     public IntSet union(IntSet other) {
         // Look for special cases: one set empty, or both sets equal
         if (size() == 0) {
@@ -350,10 +360,12 @@ public class IntArraySet implements IntSet {
             this.limit = limit;
         }
 
+        @Override
         public boolean hasNext() {
             return i < limit;
         }
 
+        @Override
         public int next() {
             return contents[i++];
         }

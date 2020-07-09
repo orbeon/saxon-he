@@ -45,6 +45,7 @@ public class Data_1 extends SystemFunction  {
      * @throws net.sf.saxon.trans.XPathException
      *          if a dynamic error occurs during the evaluation of the expression
      */
+    @Override
     public Sequence call(XPathContext context, Sequence[] arguments) throws XPathException {
         Sequence arg = arguments[0];
         if (arg instanceof Item) {

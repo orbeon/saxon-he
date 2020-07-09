@@ -80,6 +80,7 @@ public class LinkedTreeBuilder extends Builder
      */
 
     /*@Nullable*/
+    @Override
     public NodeInfo getCurrentRoot() {
         NodeInfo physicalRoot = currentRoot;
         if (physicalRoot instanceof DocumentImpl && ((DocumentImpl) physicalRoot).isImaginary()) {
@@ -89,6 +90,7 @@ public class LinkedTreeBuilder extends Builder
         }
     }
 
+    @Override
     public void reset() {
         super.reset();
         currentNode = null;
@@ -125,6 +127,7 @@ public class LinkedTreeBuilder extends Builder
      * Open the stream of Receiver events
      */
 
+    @Override
     public void open() {
         started = true;
         depth = 0;
@@ -142,6 +145,7 @@ public class LinkedTreeBuilder extends Builder
      * @param properties properties of the document node
      */
 
+    @Override
     public void startDocument(int properties) throws XPathException {
         DocumentImpl doc = new DocumentImpl();
         doc.setMutable(mutable);
@@ -165,6 +169,7 @@ public class LinkedTreeBuilder extends Builder
      * Notify the end of the document
      */
 
+    @Override
     public void endDocument() throws XPathException {
         //System.err.println("End document depth=" + depth);
         currentNode.compact(size[depth]);
@@ -174,6 +179,7 @@ public class LinkedTreeBuilder extends Builder
      * Close the stream of Receiver events
      */
 
+    @Override
     public void close() throws XPathException {
         // System.err.println("TreeBuilder: " + this + " End document");
         if (currentNode == null) {
@@ -194,6 +200,7 @@ public class LinkedTreeBuilder extends Builder
      * Notify the start of an element
      */
 
+    @Override
     public void startElement(NodeName elemName, SchemaType type,
                              AttributeMap suppliedAttributes, NamespaceMap namespaces,
                              Location location, int properties) throws XPathException {
@@ -251,6 +258,7 @@ public class LinkedTreeBuilder extends Builder
      * Notify the end of an element
      */
 
+    @Override
     public void endElement() throws XPathException {
         //System.err.println("End element depth=" + depth);
         currentNode.compact(size[depth]);
@@ -263,6 +271,7 @@ public class LinkedTreeBuilder extends Builder
      * Notify a text node. Adjacent text nodes must have already been merged
      */
 
+    @Override
     public void characters(/*@NotNull*/ CharSequence chars, Location locationId, int properties) throws XPathException {
         // System.err.println("Characters: " + chars.toString() + " depth=" + depth);
         if (chars.length() > 0) {
@@ -281,6 +290,7 @@ public class LinkedTreeBuilder extends Builder
      * Notify a processing instruction
      */
 
+    @Override
     public void processingInstruction(String name, /*@NotNull*/ CharSequence remainder, Location locationId, int properties) {
         ProcInstImpl pi = new ProcInstImpl(name, remainder.toString());
         currentNode.addChild(pi, size[depth]++);
@@ -291,6 +301,7 @@ public class LinkedTreeBuilder extends Builder
      * Notify a comment
      */
 
+    @Override
     public void comment(/*@NotNull*/ CharSequence chars, Location locationId, int properties) throws XPathException {
         CommentImpl comment = new CommentImpl(chars.toString());
         currentNode.addChild(comment, size[depth]++);
@@ -339,6 +350,7 @@ public class LinkedTreeBuilder extends Builder
      * Set an unparsed entity URI for the document
      */
 
+    @Override
     public void setUnparsedEntity(String name, String uri, String publicId) {
         if (((DocumentImpl) currentRoot).getUnparsedEntity(name) == null) {
             // bug 2187
@@ -355,6 +367,7 @@ public class LinkedTreeBuilder extends Builder
      */
 
     /*@NotNull*/
+    @Override
     public BuilderMonitor getBuilderMonitor() {
         return new LinkedBuilderMonitor(this);
     }
@@ -369,6 +382,7 @@ public class LinkedTreeBuilder extends Builder
         public static DefaultNodeFactory THE_INSTANCE = new DefaultNodeFactory();
 
         /*@NotNull*/
+        @Override
         public ElementImpl makeElementNode(
                 /*@NotNull*/ NodeInfo parent,
                 /*@NotNull*/ NodeName nodeName,
@@ -404,6 +418,7 @@ public class LinkedTreeBuilder extends Builder
          * @param content the content of the text node
          * @return the constructed text node
          */
+        @Override
         public TextImpl makeTextNode(NodeInfo parent, CharSequence content) {
             return new TextImpl(content.toString());
         }

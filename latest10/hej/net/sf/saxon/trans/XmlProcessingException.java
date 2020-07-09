@@ -98,6 +98,7 @@ public class XmlProcessingException implements XmlProcessingError {
         isWarning = warning;
     }
 
+    @Override
     public XmlProcessingException asWarning() {
         XmlProcessingException e2 = new XmlProcessingException(exception);
         e2.setWarning(true);
@@ -115,6 +116,7 @@ public class XmlProcessingException implements XmlProcessingError {
      * @param message an error message giving the reason for the fatal error
      */
 
+    @Override
     public void setFatal(String message) {
         this.fatalErrorMessage = message;
     }
@@ -135,6 +137,7 @@ public class XmlProcessingException implements XmlProcessingError {
      * @return true if the error has already been reported
      */
 
+    @Override
     public boolean isAlreadyReported() {
         return exception.hasBeenReported();
     }
@@ -145,6 +148,7 @@ public class XmlProcessingException implements XmlProcessingError {
      * @param reported true if the error has been reported
      */
 
+    @Override
     public void setAlreadyReported(boolean reported) {
         exception.setHasBeenReported(reported);
     }

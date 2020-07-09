@@ -82,10 +82,12 @@ public abstract class Assignation extends Expression implements LocalBinding {
      * @return the variable name, as a QName
      */
 
+    @Override
     public StructuredQName getVariableQName() {
         return variableName;
     }
 
+    @Override
     public StructuredQName getObjectName() {
         return variableName;
     }
@@ -97,6 +99,7 @@ public abstract class Assignation extends Expression implements LocalBinding {
      * @return the declared type
      */
 
+    @Override
     public SequenceType getRequiredType() {
         return requiredType;
     }
@@ -105,6 +108,7 @@ public abstract class Assignation extends Expression implements LocalBinding {
      * If the variable is bound to an integer, get the minimum and maximum possible values.
      * Return null if unknown or not applicable
      */
+    @Override
     public IntegerValue[] getIntegerBoundsForVariable() {
         return getSequence().getIntegerBounds();
     }
@@ -114,6 +118,7 @@ public abstract class Assignation extends Expression implements LocalBinding {
      * In other cases, return -1.
      */
 
+    @Override
     public int getLocalSlotNumber() {
         return slotNumber;
     }
@@ -143,6 +148,7 @@ public abstract class Assignation extends Expression implements LocalBinding {
      * Get the value of the range variable
      */
 
+    @Override
     public Sequence evaluateVariable(XPathContext context) throws XPathException {
         Sequence actual = context.evaluateLocalVariable(slotNumber);
         if (!(actual instanceof GroundedValue || actual instanceof NodeInfo)) {
@@ -170,6 +176,7 @@ public abstract class Assignation extends Expression implements LocalBinding {
      * value for the life of a query or transformation; any other binding is local.
      */
 
+    @Override
     public final boolean isGlobal() {
         return false;
     }
@@ -180,6 +187,7 @@ public abstract class Assignation extends Expression implements LocalBinding {
      * attribute saxon:assignable="yes" is present.
      */
 
+    @Override
     public final boolean isAssignable() {
         return false;
     }
@@ -192,6 +200,7 @@ public abstract class Assignation extends Expression implements LocalBinding {
      *          if the expression has a non-permitted updateing subexpression
      */
 
+    @Override
     public void checkForUpdatingSubexpressions() throws XPathException {
         getSequence().checkForUpdatingSubexpressions();
         if (getSequence().isUpdatingExpression()) {
@@ -209,6 +218,7 @@ public abstract class Assignation extends Expression implements LocalBinding {
      * @return true if this is an updating expression
      */
 
+    @Override
     public boolean isUpdatingExpression() {
         return getAction().isUpdatingExpression();
     }
@@ -263,6 +273,7 @@ public abstract class Assignation extends Expression implements LocalBinding {
         return 1;
     }
 
+    @Override
     public boolean hasVariableBinding(Binding binding) {
         return this == binding;
     }
@@ -300,6 +311,7 @@ public abstract class Assignation extends Expression implements LocalBinding {
      * is already performing validation. The default implementation does nothing.
      */
 
+    @Override
     public void suppressValidation(int validationMode) {
         getAction().suppressValidation(validationMode);
     }
@@ -324,6 +336,7 @@ public abstract class Assignation extends Expression implements LocalBinding {
      *         expressions, it is the same as the input pathMapNode.
      */
 
+    @Override
     public PathMap.PathMapNodeSet addToPathMap(PathMap pathMap, PathMap.PathMapNodeSet pathMapNodeSet) {
         PathMap.PathMapNodeSet varPath = getSequence().addToPathMap(pathMap, pathMapNodeSet);
         pathMap.registerPathForVariable(this, varPath);
@@ -397,6 +410,7 @@ public abstract class Assignation extends Expression implements LocalBinding {
      *                           of a filter expression
      */
 
+    @Override
     public void addReference(VariableReference ref, boolean isLoopingReference) {
         hasLoopingReference |= isLoopingReference;
         if (references == null) {
@@ -515,6 +529,7 @@ public abstract class Assignation extends Expression implements LocalBinding {
      * @return true if the variable should be indexable
      */
 
+    @Override
     public boolean isIndexedVariable() {
         return isIndexedVariable;
     }
@@ -545,6 +560,7 @@ public abstract class Assignation extends Expression implements LocalBinding {
      * (because it is used in an appropriate filter expression)
      */
 
+    @Override
     public void setIndexedVariable() {
         isIndexedVariable = true;
     }

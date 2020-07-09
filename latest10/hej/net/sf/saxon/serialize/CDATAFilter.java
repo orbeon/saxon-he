@@ -67,6 +67,7 @@ public class CDATAFilter extends ProxyReceiver {
      * Output element start tag
      */
 
+    @Override
     public void startElement(NodeName elemName, SchemaType type,
                              AttributeMap attributes, NamespaceMap namespaces,
                              Location location, int properties)
@@ -80,6 +81,7 @@ public class CDATAFilter extends ProxyReceiver {
      * Output element end tag
      */
 
+    @Override
     public void endElement() throws XPathException {
         flush();
         stack.pop();
@@ -90,6 +92,7 @@ public class CDATAFilter extends ProxyReceiver {
      * Output a processing instruction
      */
 
+    @Override
     public void processingInstruction(String target, CharSequence data, Location locationId, int properties) throws XPathException {
         flush();
         nextReceiver.processingInstruction(target, data, locationId, properties);
@@ -99,6 +102,7 @@ public class CDATAFilter extends ProxyReceiver {
      * Output character data
      */
 
+    @Override
     public void characters(CharSequence chars, Location locationId, int properties) throws XPathException {
 
         if (!ReceiverOption.contains(properties, ReceiverOption.DISABLE_ESCAPING)) {
@@ -115,6 +119,7 @@ public class CDATAFilter extends ProxyReceiver {
      * Output a comment
      */
 
+    @Override
     public void comment(CharSequence chars, Location locationId, int properties) throws XPathException {
         flush();
         nextReceiver.comment(chars, locationId, properties);

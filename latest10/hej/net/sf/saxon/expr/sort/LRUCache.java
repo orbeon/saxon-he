@@ -38,6 +38,7 @@ public class LRUCache<K, V> {
      */
     public LRUCache(final int cacheSize, boolean concurrent) {
         map = new LinkedHashMap<K, V>(cacheSize, 0.75f, true) {
+            @Override
             protected boolean removeEldestEntry(Map.Entry eldest) {
                 return cacheSize < super.size();
             }

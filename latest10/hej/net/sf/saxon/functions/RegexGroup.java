@@ -26,6 +26,7 @@ public class RegexGroup extends SystemFunction {
      * @throws net.sf.saxon.trans.XPathException
      *          if a dynamic error occurs during the evaluation of the expression
      */
+    @Override
     public StringValue call(XPathContext context, Sequence[] arguments) throws XPathException {
         RegexIterator iter = context.getCurrentRegexIterator();
         if (iter == null) {

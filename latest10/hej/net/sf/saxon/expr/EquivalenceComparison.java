@@ -144,10 +144,12 @@ public class EquivalenceComparison extends BinaryExpression implements Compariso
     }
 
 
+    @Override
     public AtomicComparer getAtomicComparer() {
         return comparer;
     }
 
+    @Override
     public int getSingletonOperator() {
         return operator;
     }
@@ -159,6 +161,7 @@ public class EquivalenceComparison extends BinaryExpression implements Compariso
      *         should be converted to strings.
      */
 
+    @Override
     public boolean convertsUntypedToOther() {
         return false;
     }
@@ -167,6 +170,7 @@ public class EquivalenceComparison extends BinaryExpression implements Compariso
      * Determine the static cardinality. Returns [1..1]
      */
 
+    @Override
     public int computeCardinality() {
         return StaticProperty.EXACTLY_ONE;
     }
@@ -178,6 +182,7 @@ public class EquivalenceComparison extends BinaryExpression implements Compariso
      */
 
     /*@NotNull*/
+    @Override
     public ItemType getItemType() {
         return BuiltInAtomicType.BOOLEAN;
     }
@@ -199,6 +204,7 @@ public class EquivalenceComparison extends BinaryExpression implements Compariso
      */
 
     /*@NotNull*/
+    @Override
     public Expression copy(RebindingMap rebindings) {
         EquivalenceComparison sc = new EquivalenceComparison(getLhsExpression().copy(rebindings), operator, getRhsExpression().copy(rebindings));
         ExpressionTool.copyLocationInfo(this, sc);
@@ -214,6 +220,7 @@ public class EquivalenceComparison extends BinaryExpression implements Compariso
      * @return a BooleanValue representing the result of the numeric comparison of the two operands
      */
 
+    @Override
     public BooleanValue evaluateItem(XPathContext context) throws XPathException {
         return BooleanValue.get(effectiveBooleanValue(context));
     }
@@ -225,6 +232,7 @@ public class EquivalenceComparison extends BinaryExpression implements Compariso
      * @return a boolean representing the result of the numeric comparison of the two operands
      */
 
+    @Override
     public boolean effectiveBooleanValue(XPathContext context) throws XPathException {
         AtomicValue v0 = (AtomicValue) getLhsExpression().evaluateItem(context);
         AtomicValue v1 = (AtomicValue) getRhsExpression().evaluateItem(context);
@@ -251,6 +259,7 @@ public class EquivalenceComparison extends BinaryExpression implements Compariso
         return "equivalent";
     }
 
+    @Override
     protected void explainExtraAttributes(ExpressionPresenter out) {
         out.emitAttribute("cardinality", "singleton");
     }

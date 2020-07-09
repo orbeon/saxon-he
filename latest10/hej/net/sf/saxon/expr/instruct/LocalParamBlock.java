@@ -39,6 +39,7 @@ public class LocalParamBlock extends Instruction {
         }
     }
 
+    @Override
     public String getExpressionName() {
         return "params";
     }
@@ -52,6 +53,7 @@ public class LocalParamBlock extends Instruction {
         return operanda.length;
     }
 
+    @Override
     public int computeSpecialProperties() {
         return 0;
     }
@@ -65,6 +67,7 @@ public class LocalParamBlock extends Instruction {
      */
 
     /*@NotNull*/
+    @Override
     public Expression copy(RebindingMap rebindings) {
         LocalParam[] lps2 = new LocalParam[getNumberOfParams()];
         int i=0;
@@ -84,6 +87,7 @@ public class LocalParamBlock extends Instruction {
      */
 
     /*@NotNull*/
+    @Override
     public final ItemType getItemType() {
         return ErrorType.getInstance();
     }
@@ -92,6 +96,7 @@ public class LocalParamBlock extends Instruction {
      * Determine the cardinality of the expression
      */
 
+    @Override
     public final int getCardinality() {
         return StaticProperty.EMPTY;
     }
@@ -101,6 +106,7 @@ public class LocalParamBlock extends Instruction {
      * is written to the supplied output destination.
      */
 
+    @Override
     public void export(ExpressionPresenter out) throws XPathException {
         out.startElement("params", this);
         for (Operand o : operands()) {
@@ -111,6 +117,7 @@ public class LocalParamBlock extends Instruction {
 
 
     /*@Nullable*/
+    @Override
     public TailCall processLeavingTail(Outputter output, XPathContext context) throws XPathException {
         for (Operand o : operands()) {
             LocalParam param = (LocalParam)o.getChildExpression();
@@ -131,6 +138,7 @@ public class LocalParamBlock extends Instruction {
      * process() methods natively.
      */
 
+    @Override
     public int getImplementationMethod() {
         return PROCESS_METHOD;
     }

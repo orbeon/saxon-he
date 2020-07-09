@@ -56,6 +56,7 @@ public class Doctype extends Instruction {
      */
 
     /*@NotNull*/
+    @Override
     public Expression copy(RebindingMap rebindings) {
         throw new UnsupportedOperationException("Doctype.copy()");
     }
@@ -66,6 +67,7 @@ public class Doctype extends Instruction {
      * This implementation returns true.
      */
 
+    @Override
     public final boolean mayCreateNewNodes() {
         return true;
     }
@@ -74,10 +76,12 @@ public class Doctype extends Instruction {
      * Get the name of this instruction for diagnostic and tracing purposes
      */
 
+    @Override
     public int getInstructionNameCode() {
         return StandardNames.SAXON_DOCTYPE;
     }
 
+    @Override
     public TailCall processLeavingTail(Outputter out, XPathContext context) throws XPathException {
         Controller controller = context.getController();
 
@@ -282,6 +286,7 @@ public class Doctype extends Instruction {
      * is written to the supplied output destination.
      */
 
+    @Override
     public void export(ExpressionPresenter out) throws XPathException {
         out.startElement("saxonDoctype", this);
         getContent().export(out);

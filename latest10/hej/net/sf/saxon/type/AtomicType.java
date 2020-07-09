@@ -86,6 +86,7 @@ public interface AtomicType extends SimpleType, PlainType, CastingTarget {
      * node, however, can still allow a list.
      */
 
+    @Override
     boolean isIdType();
 
     /**
@@ -94,6 +95,7 @@ public interface AtomicType extends SimpleType, PlainType, CastingTarget {
      * from IDREF or IDREFS by restriction, list, or union
      */
 
+    @Override
     boolean isIdRefType();
 
     /**
@@ -102,6 +104,7 @@ public interface AtomicType extends SimpleType, PlainType, CastingTarget {
      * xs:untypedAtomic, and all supertypes of these (xs:anyAtomicType, xs:numeric, ...)
      */
 
+    @Override
     boolean isBuiltInType();
 
     /**
@@ -111,6 +114,7 @@ public interface AtomicType extends SimpleType, PlainType, CastingTarget {
      * @return the name of the atomic type, or null if the type is anonymous.
      */
 
+    @Override
     StructuredQName getTypeName();
 
 

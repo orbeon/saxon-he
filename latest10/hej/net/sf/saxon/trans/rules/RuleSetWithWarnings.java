@@ -46,6 +46,7 @@ public class RuleSetWithWarnings implements BuiltInRuleSet {
      * @param locationId   location of the instruction (apply-templates, apply-imports etc) that caused
      */
 
+    @Override
     public void process(Item item, ParameterSet parameters,
                         ParameterSet tunnelParams, Outputter output, XPathContext context,
                         Location locationId) throws XPathException {
@@ -81,6 +82,7 @@ public class RuleSetWithWarnings implements BuiltInRuleSet {
      * @param nodeKind the node kind
      * @return the default action for unmatched element nodes: one of DEEP_COPY, APPLY_TEMPLATES, DEEP_SKIP, FAIL
      */
+    @Override
     public int[] getActionForParentNodes(int nodeKind) {
         return baseRuleSet.getActionForParentNodes(nodeKind);
     }

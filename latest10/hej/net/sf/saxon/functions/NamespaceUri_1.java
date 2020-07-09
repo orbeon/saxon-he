@@ -33,6 +33,7 @@ public class NamespaceUri_1 extends ScalarSystemFunction {
         return new One(new AnyURIValue(""));
     }
 
+    @Override
     public String getCompilerName() {
         return "NamespaceUriFnCompiler";
     }

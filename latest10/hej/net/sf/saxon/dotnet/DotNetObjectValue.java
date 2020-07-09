@@ -32,6 +32,7 @@ public class DotNetObjectValue extends ObjectValue {
      */
 
     /*@NotNull*/
+    @Override
     public ItemType getItemType(/*@Nullable*/ TypeHierarchy th) {
         if (th == null) {
             return AnyItemType.getInstance();

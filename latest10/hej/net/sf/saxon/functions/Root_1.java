@@ -29,6 +29,7 @@ public class Root_1 extends SystemFunction {
      * @param arguments the actual arguments to the function call
      */
 
+    @Override
     public int getSpecialProperties(Expression[] arguments) {
         int prop = StaticProperty.ORDERED_NODESET |
                 StaticProperty.SINGLE_DOCUMENT_NODESET |
@@ -49,6 +50,7 @@ public class Root_1 extends SystemFunction {
      * @throws net.sf.saxon.trans.XPathException
      *          if a dynamic error occurs during the evaluation of the expression
      */
+    @Override
     public ZeroOrOne call(XPathContext context, Sequence[] arguments) throws XPathException {
         NodeInfo node = (NodeInfo) arguments[0].head();
         if (node == null) {
@@ -58,10 +60,12 @@ public class Root_1 extends SystemFunction {
         }
     }
 
+    @Override
     public String getStreamerName() {
         return "Root";
     }
 
+    @Override
     public String getCompilerName() {
         return "RootFunctionCompiler";
     }

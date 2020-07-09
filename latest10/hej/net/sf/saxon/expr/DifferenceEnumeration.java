@@ -65,6 +65,7 @@ public class DifferenceEnumeration implements SequenceIterator {
         // rely on type-checking to prevent a ClassCastException
     }
 
+    @Override
     public NodeInfo next() throws XPathException {
         // main merge loop: if the node in p1 has a lower key value that that in p2, return it;
         // if they are equal, advance both nodesets; if p1 is higher, advance p2.
@@ -110,6 +111,7 @@ public class DifferenceEnumeration implements SequenceIterator {
         return current;
     }
 
+    @Override
     public void close() {
         p1.close();
         p2.close();

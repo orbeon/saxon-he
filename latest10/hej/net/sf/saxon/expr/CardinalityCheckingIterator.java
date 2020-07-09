@@ -69,6 +69,7 @@ public final class CardinalityCheckingIterator implements SequenceIterator {
         }
     }
 
+    @Override
     public Item next() throws XPathException {
         if (position < 2) {
             if (position == 0) {
@@ -93,6 +94,7 @@ public final class CardinalityCheckingIterator implements SequenceIterator {
         return current;
     }
 
+    @Override
     public void close() {
         base.close();
     }

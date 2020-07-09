@@ -79,6 +79,7 @@ public class SortKeyDefinition extends PseudoExpression {
      * @param forStreaming true if we are optimizing for streamed evaluation
      */
 
+    @Override
     public boolean isLiftable(boolean forStreaming) {
         return false;
     }
@@ -397,6 +398,7 @@ public class SortKeyDefinition extends PseudoExpression {
      *                     local variable references that are copied.
      */
 
+    @Override
     public SortKeyDefinition copy(RebindingMap rm) {
         SortKeyDefinition sk2 = new SortKeyDefinition();
         sk2.setSortKey(copy(sortKey.getChildExpression(), rm), true);
@@ -428,6 +430,7 @@ public class SortKeyDefinition extends PseudoExpression {
      * @throws XPathException if any failure occurs
      */
 
+    @Override
     public SortKeyDefinition typeCheck(ExpressionVisitor visitor, ContextItemStaticInfo contextItemType) throws XPathException {
         for (Operand o : checkedOperands()) {
             if (o.hasSameFocus()) {
@@ -669,6 +672,7 @@ public class SortKeyDefinition extends PseudoExpression {
      * @return a hashcode based sortkey attribute values.
      */
 
+    @Override
     public int computeHashCode() {
         int h = 0;
         h ^= getOrder().hashCode();

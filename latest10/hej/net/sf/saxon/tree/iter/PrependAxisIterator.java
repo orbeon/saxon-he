@@ -31,6 +31,7 @@ public class PrependAxisIterator extends PrependSequenceIterator implements Axis
      */
 
     /*@Nullable*/
+    @Override
     public NodeInfo next() {
         try {
             return (NodeInfo)super.next();

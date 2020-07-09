@@ -90,6 +90,7 @@ public abstract class SteppingNavigator {
             this.anchor = anchor;
         }
 
+        @Override
         public N step(N node) {
             return getFollowingNode(node, anchor);
         }
@@ -118,6 +119,7 @@ public abstract class SteppingNavigator {
             this.test = test;
         }
 
+        @Override
         public N step(N node) {
             do {
                 node = getFollowingNode(node, anchor);
@@ -153,6 +155,7 @@ public abstract class SteppingNavigator {
             this.local = local;
         }
 
+        @Override
         public N step(N node) {
             return node.getSuccessorElement(anchor, uri, local);
         }
@@ -181,6 +184,7 @@ public abstract class SteppingNavigator {
             this.fingerprint = fingerprint;
         }
 
+        @Override
         public N step(N node) {
             do {
                 node = getFollowingNode(node, anchor);
@@ -256,6 +260,7 @@ public abstract class SteppingNavigator {
         }
 
 
+        @Override
         public N next() {
             if (current == null) {
                 // implies includeSelf: first time round, return the start node

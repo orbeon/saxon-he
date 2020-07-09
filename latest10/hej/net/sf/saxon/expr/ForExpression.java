@@ -52,6 +52,7 @@ public class ForExpression extends Assignation {
      * in explain() output displaying the expression.
      */
 
+    @Override
     public String getExpressionName() {
         return "for";
     }
@@ -62,6 +63,7 @@ public class ForExpression extends Assignation {
      */
 
     /*@NotNull*/
+    @Override
     public Expression typeCheck(ExpressionVisitor visitor, ContextItemStaticInfo contextInfo) throws XPathException {
 
         // The order of events is critical here. First we ensure that the type of the
@@ -112,6 +114,7 @@ public class ForExpression extends Assignation {
      */
 
     /*@NotNull*/
+    @Override
     public Expression optimize(ExpressionVisitor visitor, ContextItemStaticInfo contextItemType) throws XPathException {
         Configuration config = visitor.getConfiguration();
         Optimizer opt = visitor.obtainOptimizer();
@@ -302,6 +305,7 @@ public class ForExpression extends Assignation {
      */
 
     /*@NotNull*/
+    @Override
     public Expression copy(RebindingMap rebindings) {
         ForExpression forExp = new ForExpression();
         ExpressionTool.copyLocationInfo(this, forExp);
@@ -321,6 +325,7 @@ public class ForExpression extends Assignation {
      * (This arises in XSLT/XPath, which does not have a LET expression, so FOR gets used instead)
      */
 
+    @Override
     public int markTailFunctionCalls(StructuredQName qName, int arity) {
         if (!Cardinality.allowsMany(getSequence().getCardinality())) {
             return ExpressionTool.markTailFunctionCalls(getAction(), qName, arity);
@@ -335,6 +340,7 @@ public class ForExpression extends Assignation {
      * @return true if this expression is vacuous
      */
 
+    @Override
     public boolean isVacuousExpression() {
         return getAction().isVacuousExpression();
     }
@@ -345,6 +351,7 @@ public class ForExpression extends Assignation {
      * process() methods natively.
      */
 
+    @Override
     public int getImplementationMethod() {
         return ITERATE_METHOD | PROCESS_METHOD;
     }
@@ -357,6 +364,7 @@ public class ForExpression extends Assignation {
      * static validation can continue recursively.
      */
 
+    @Override
     public void checkPermittedContents(SchemaType parentType, boolean whole) throws XPathException {
         getAction().checkPermittedContents(parentType, false);
     }
@@ -366,6 +374,7 @@ public class ForExpression extends Assignation {
      */
 
     /*@NotNull*/
+    @Override
     public SequenceIterator iterate(XPathContext context) throws XPathException {
 
         // First create an iteration of the base sequence.
@@ -392,6 +401,7 @@ public class ForExpression extends Assignation {
      * outputter
      */
 
+    @Override
     public void process(Outputter output, XPathContext context) throws XPathException {
         int slot = getLocalSlotNumber();
         getSequence().iterate(context).forEachOrFail(item -> {
@@ -410,6 +420,7 @@ public class ForExpression extends Assignation {
      * @param pul     the pending update list to which the results should be written
      */
 
+    @Override
     public void evaluatePendingUpdates(XPathContext context, PendingUpdateList pul) throws XPathException {
         int slot = getLocalSlotNumber();
         getSequence().iterate(context).forEachOrFail(item -> {
@@ -426,6 +437,7 @@ public class ForExpression extends Assignation {
      */
 
     /*@NotNull*/
+    @Override
     public ItemType getItemType() {
         return getAction().getItemType();
     }
@@ -446,6 +458,7 @@ public class ForExpression extends Assignation {
      * Determine the static cardinality of the expression
      */
 
+    @Override
     public int computeCardinality() {
         int c1 = getSequence().getCardinality();
         int c2 = getAction().getCardinality();
@@ -478,6 +491,7 @@ public class ForExpression extends Assignation {
      * is written to the supplied output destination.
      */
 
+    @Override
     public void export(ExpressionPresenter out) throws XPathException {
         out.startElement("for", this);
         explainSpecializedAttributes(out);
@@ -519,12 +533,14 @@ public class ForExpression extends Assignation {
         }
 
         /*@Nullable*/
+        @Override
         public SequenceIterator map(Item item) throws XPathException {
             context.setLocalVariable(slotNumber, item);
             return action.iterate(context);
         }
 
         /*@Nullable*/
+        @Override
         public Item mapItem(Item item) throws XPathException {
             context.setLocalVariable(slotNumber, item);
             return action.evaluateItem(context);

@@ -54,18 +54,22 @@ public abstract class ItemType {
 
     public static ItemType ANY_ITEM = new ItemType() {
 
+        @Override
         public ConversionRules getConversionRules() {
             return defaultConversionRules;
         }
 
+        @Override
         public boolean matches(XdmItem item) {
             return true;
         }
 
+        @Override
         public boolean subsumes(ItemType other) {
             return true;
         }
 
+        @Override
         public net.sf.saxon.type.ItemType getUnderlyingItemType() {
             return AnyItemType.getInstance();
         }
@@ -78,14 +82,17 @@ public abstract class ItemType {
 
     public static ItemType ANY_FUNCTION = new ItemType() {
 
+        @Override
         public boolean matches(XdmItem item) {
             return item.getUnderlyingValue() instanceof Function;
         }
 
+        @Override
         public boolean subsumes(ItemType other) {
             return other.getUnderlyingItemType() instanceof FunctionItemType;
         }
 
+        @Override
         public net.sf.saxon.type.ItemType getUnderlyingItemType() {
             return AnyFunctionType.getInstance();
         }
@@ -97,14 +104,17 @@ public abstract class ItemType {
 
     public static final ItemType ANY_NODE = new ItemType() {
 
+        @Override
         public boolean matches(XdmItem item) {
             return item.getUnderlyingValue() instanceof NodeInfo;
         }
 
+        @Override
         public boolean subsumes(ItemType other) {
             return other.getUnderlyingItemType() instanceof NodeTest;
         }
 
+        @Override
         public net.sf.saxon.type.ItemType getUnderlyingItemType() {
             return AnyNodeTest.getInstance();
         }
@@ -117,15 +127,18 @@ public abstract class ItemType {
 
     public static final ItemType ATTRIBUTE_NODE = new ItemType() {
 
+        @Override
         public boolean matches(XdmItem item) {
             Item it = item.getUnderlyingValue();
             return it instanceof NodeInfo && ((NodeInfo) it).getNodeKind() == Type.ATTRIBUTE;
         }
 
+        @Override
         public boolean subsumes(ItemType other) {
             return other.getUnderlyingItemType().getUType() == UType.ATTRIBUTE;
         }
 
+        @Override
         public net.sf.saxon.type.ItemType getUnderlyingItemType() {
             return NodeKindTest.ATTRIBUTE;
         }
@@ -138,15 +151,18 @@ public abstract class ItemType {
 
     public static final ItemType COMMENT_NODE = new ItemType() {
 
+        @Override
         public boolean matches(XdmItem item) {
             Item it = item.getUnderlyingValue();
             return it instanceof NodeInfo && ((NodeInfo) it).getNodeKind() == Type.COMMENT;
         }
 
+        @Override
         public boolean subsumes(ItemType other) {
             return other.getUnderlyingItemType().getUType() == UType.COMMENT;
         }
 
+        @Override
         public net.sf.saxon.type.ItemType getUnderlyingItemType() {
             return NodeKindTest.COMMENT;
         }
@@ -159,15 +175,18 @@ public abstract class ItemType {
 
     public static final ItemType TEXT_NODE = new ItemType() {
 
+        @Override
         public boolean matches(XdmItem item) {
             Item it = item.getUnderlyingValue();
             return it instanceof NodeInfo && ((NodeInfo) it).getNodeKind() == Type.TEXT;
         }
 
+        @Override
         public boolean subsumes(ItemType other) {
             return other.getUnderlyingItemType().getUType() == UType.TEXT;
         }
 
+        @Override
         public net.sf.saxon.type.ItemType getUnderlyingItemType() {
             return NodeKindTest.TEXT;
         }
@@ -180,15 +199,18 @@ public abstract class ItemType {
 
     public static final ItemType ELEMENT_NODE = new ItemType() {
 
+        @Override
         public boolean matches(XdmItem item) {
             Item it = item.getUnderlyingValue();
             return it instanceof NodeInfo && ((NodeInfo) it).getNodeKind() == Type.ELEMENT;
         }
 
+        @Override
         public boolean subsumes(ItemType other) {
             return other.getUnderlyingItemType().getUType() == UType.ELEMENT;
         }
 
+        @Override
         public net.sf.saxon.type.ItemType getUnderlyingItemType() {
             return NodeKindTest.ELEMENT;
         }
@@ -200,15 +222,18 @@ public abstract class ItemType {
 
     public static final ItemType DOCUMENT_NODE = new ItemType() {
 
+        @Override
         public boolean matches(XdmItem item) {
             Item it = item.getUnderlyingValue();
             return it instanceof NodeInfo && ((NodeInfo) it).getNodeKind() == Type.DOCUMENT;
         }
 
+        @Override
         public boolean subsumes(ItemType other) {
             return other.getUnderlyingItemType().getUType() == UType.DOCUMENT;
         }
 
+        @Override
         public net.sf.saxon.type.ItemType getUnderlyingItemType() {
             return NodeKindTest.DOCUMENT;
         }
@@ -221,15 +246,18 @@ public abstract class ItemType {
 
     public static final ItemType NAMESPACE_NODE = new ItemType() {
 
+        @Override
         public boolean matches(XdmItem item) {
             Item it = item.getUnderlyingValue();
             return it instanceof NodeInfo && ((NodeInfo) it).getNodeKind() == Type.NAMESPACE;
         }
 
+        @Override
         public boolean subsumes(ItemType other) {
             return other.getUnderlyingItemType().getUType() == UType.NAMESPACE;
         }
 
+        @Override
         public net.sf.saxon.type.ItemType getUnderlyingItemType() {
             return NodeKindTest.NAMESPACE;
         }
@@ -242,15 +270,18 @@ public abstract class ItemType {
 
     public static final ItemType PROCESSING_INSTRUCTION_NODE = new ItemType() {
 
+        @Override
         public boolean matches(XdmItem item) {
             Item it = item.getUnderlyingValue();
             return it instanceof NodeInfo && ((NodeInfo) it).getNodeKind() == Type.PROCESSING_INSTRUCTION;
         }
 
+        @Override
         public boolean subsumes(ItemType other) {
             return other.getUnderlyingItemType().getUType() == UType.PI;
         }
 
+        @Override
         public net.sf.saxon.type.ItemType getUnderlyingItemType() {
             return NodeKindTest.PROCESSING_INSTRUCTION;
         }
@@ -263,14 +294,17 @@ public abstract class ItemType {
 
     public static final ItemType ANY_MAP = new ItemType() {
 
+        @Override
         public boolean matches(XdmItem item) {
             return item.getUnderlyingValue() instanceof MapItem;
         }
 
+        @Override
         public boolean subsumes(ItemType other) {
             return other.getUnderlyingItemType() instanceof MapType;
         }
 
+        @Override
         public net.sf.saxon.type.ItemType getUnderlyingItemType() {
             return MapType.ANY_MAP_TYPE;
         }
@@ -282,14 +316,17 @@ public abstract class ItemType {
 
     public static final ItemType ANY_ARRAY = new ItemType() {
 
+        @Override
         public boolean matches(XdmItem item) {
             return item.getUnderlyingValue() instanceof ArrayItem;
         }
 
+        @Override
         public boolean subsumes(ItemType other) {
             return other.getUnderlyingItemType() instanceof ArrayItemType;
         }
 
+        @Override
         public net.sf.saxon.type.ItemType getUnderlyingItemType() {
             return ArrayItemType.ANY_ARRAY_TYPE;
         }
@@ -302,14 +339,17 @@ public abstract class ItemType {
 
     public static final ItemType ANY_ATOMIC_VALUE = new ItemType() {
 
+        @Override
         public boolean matches(XdmItem item) {
             return item.getUnderlyingValue() instanceof AtomicValue;
         }
 
+        @Override
         public boolean subsumes(ItemType other) {
             return other.getUnderlyingItemType() instanceof AtomicType;
         }
 
+        @Override
         public net.sf.saxon.type.ItemType getUnderlyingItemType() {
             return BuiltInAtomicType.ANY_ATOMIC;
         }
@@ -321,14 +361,17 @@ public abstract class ItemType {
 
     public static final ItemType ERROR = new ItemType() {
 
+        @Override
         public boolean matches(XdmItem item) {
             return false;
         }
 
+        @Override
         public boolean subsumes(ItemType other) {
             return other.getUnderlyingItemType() instanceof ErrorType;
         }
 
+        @Override
         public net.sf.saxon.type.ItemType getUnderlyingItemType() {
             return ErrorType.getInstance();
         }
@@ -352,10 +395,12 @@ public abstract class ItemType {
             return new BuiltInAtomicItemType(type.underlyingType, conversionRules);
         }
 
+        @Override
         public ConversionRules getConversionRules() {
             return conversionRules;
         }
 
+        @Override
         public boolean matches(XdmItem item) {
             Item value = item.getUnderlyingValue();
             if (!(value instanceof AtomicValue)) {
@@ -365,6 +410,7 @@ public abstract class ItemType {
             return subsumesUnderlyingType(type);
         }
 
+        @Override
         public boolean subsumes(ItemType other) {
             net.sf.saxon.type.ItemType otherType = other.getUnderlyingItemType();
             if (!otherType.isPlainType()) {
@@ -389,6 +435,7 @@ public abstract class ItemType {
             }
         }
 
+        @Override
         public net.sf.saxon.type.ItemType getUnderlyingItemType() {
             return underlyingType;
         }

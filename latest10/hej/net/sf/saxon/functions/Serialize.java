@@ -466,6 +466,7 @@ public class Serialize extends SystemFunction implements Callable {
     }
 
 
+    @Override
     public StringValue call(XPathContext context, Sequence[] arguments) throws XPathException {
         return evalSerialize(arguments[0].iterate(),
             arguments.length == 1 ? null : arguments[1].head(), context);

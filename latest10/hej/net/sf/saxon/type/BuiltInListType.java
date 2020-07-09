@@ -41,6 +41,7 @@ public class BuiltInListType implements ListType {
      * Determine whether this is a built-in type or a user-defined type
      */
 
+    @Override
     public boolean isBuiltInType() {
         return true;
     }
@@ -53,6 +54,7 @@ public class BuiltInListType implements ListType {
      */
 
     /*@Nullable*/
+    @Override
     public String getSystemId() {
         return null;
     }
@@ -67,6 +69,7 @@ public class BuiltInListType implements ListType {
      * @return the redefinition level
      */
 
+    @Override
     public int getRedefinitionLevel() {
         return 0;
     }
@@ -78,6 +81,7 @@ public class BuiltInListType implements ListType {
      *         {@link net.sf.saxon.value.Whitespace#REPLACE}.
      */
 
+    @Override
     public int getWhitespaceAction() {
         return Whitespace.COLLAPSE;
     }
@@ -116,6 +120,7 @@ public class BuiltInListType implements ListType {
     /**
      * Get the validation status - always valid
      */
+    @Override
     public ValidationStatus getValidationStatus() {
         return VALIDATED;
     }
@@ -128,6 +133,7 @@ public class BuiltInListType implements ListType {
      */
 
     /*@NotNull*/
+    @Override
     public SchemaType getBaseType() {
         return AnySimpleType.getInstance();
     }
@@ -138,6 +144,7 @@ public class BuiltInListType implements ListType {
      * @return false, this is not an atomic type
      */
 
+    @Override
     public boolean isAtomicType() {
         return false;
     }
@@ -150,6 +157,7 @@ public class BuiltInListType implements ListType {
      * node, however, can still allow a list.
      */
 
+    @Override
     public boolean isIdType() {
         return false;
     }
@@ -160,6 +168,7 @@ public class BuiltInListType implements ListType {
      * from IDREF or IDREFS by restriction, list, or union
      */
 
+    @Override
     public boolean isIdRefType() {
         return fingerprint == StandardNames.XS_IDREFS;
     }
@@ -169,10 +178,12 @@ public class BuiltInListType implements ListType {
      * from a list type, or if it is a union that contains a list as one of its members
      */
 
+    @Override
     public boolean isListType() {
         return true;
     }
 
+    @Override
     public boolean isUnionType() {
         return false;
     }
@@ -183,15 +194,18 @@ public class BuiltInListType implements ListType {
      * @return true if this SchemaType is an anonymous type
      */
 
+    @Override
     public boolean isAnonymousType() {
         return false;
     }
 
     /*@NotNull*/
+    @Override
     public SchemaType getBuiltInBaseType() {
         return this;
     }
 
+    @Override
     public boolean isNamespaceSensitive() {
         return false;
     }
@@ -203,6 +217,7 @@ public class BuiltInListType implements ListType {
      *         anonymous type.
      */
 
+    @Override
     public String getName() {
         return StandardNames.getLocalName(fingerprint);
     }
@@ -214,6 +229,7 @@ public class BuiltInListType implements ListType {
      *         of an anonymous type, and in the case of a global type defined in a no-namespace schema.
      */
 
+    @Override
     public String getTargetNamespace() {
         return NamespaceConstant.SCHEMA;
     }
@@ -223,6 +239,7 @@ public class BuiltInListType implements ListType {
      *
      * @return an EQName identifying the type.
      */
+    @Override
     public String getEQName() {
         return "Q{" + NamespaceConstant.SCHEMA + "}" + getName();
     }
@@ -233,6 +250,7 @@ public class BuiltInListType implements ListType {
      * @return the fingerprint. Returns an invented fingerprint for an anonymous type.
      */
 
+    @Override
     public int getFingerprint() {
         return fingerprint;
     }
@@ -243,6 +261,7 @@ public class BuiltInListType implements ListType {
      * @return a lexical QName identifying the type
      */
 
+    @Override
     public String getDisplayName() {
         return StandardNames.getDisplayName(fingerprint);
     }
@@ -253,6 +272,7 @@ public class BuiltInListType implements ListType {
      * @return true if this SchemaType is a complex type
      */
 
+    @Override
     public boolean isComplexType() {
         return false;
     }
@@ -263,6 +283,7 @@ public class BuiltInListType implements ListType {
      * @return true if this SchemaType is a simple type
      */
 
+    @Override
     public boolean isSimpleType() {
         return true;
     }
@@ -274,6 +295,7 @@ public class BuiltInListType implements ListType {
      * @return the value of the 'block' attribute for this type
      */
 
+    @Override
     public int getBlock() {
         return 0;
     }
@@ -299,6 +321,7 @@ public class BuiltInListType implements ListType {
      * @return a numeric code representing the derivation method, for example {@link SchemaType#DERIVATION_RESTRICTION}
      */
 
+    @Override
     public int getDerivationMethod() {
         return SchemaType.DERIVATION_LIST;
     }
@@ -311,6 +334,7 @@ public class BuiltInListType implements ListType {
      * @return true if this kind of derivation is allowed
      */
 
+    @Override
     public boolean allowsDerivation(int derivation) {
         return true;
     }
@@ -321,6 +345,7 @@ public class BuiltInListType implements ListType {
      * @return the types of derivation that are not permitted, as a bit-significant integer
      *         containing bits such as {@link net.sf.saxon.type.SchemaType#DERIVATION_EXTENSION}
      */
+    @Override
     public int getFinalProhibitions() {
         return 0;
     }
@@ -336,6 +361,7 @@ public class BuiltInListType implements ListType {
      *
      * @return the schema component represented as a function from property names to property values.
      */
+    @Override
     public Function getComponentAsFunction() {
         return UserSimpleType.getComponentAsFunction(this);
     }
@@ -349,6 +375,7 @@ public class BuiltInListType implements ListType {
      * @since 8.5
      */
 
+    @Override
     public AtomicSequence atomize(/*@NotNull*/ NodeInfo node) throws XPathException {
         try {
             return getTypedValue(node.getStringValue(),
@@ -365,10 +392,12 @@ public class BuiltInListType implements ListType {
      * can happen when there are multiple includes of the same file)
      */
 
+    @Override
     public boolean isSameType(/*@NotNull*/ SchemaType other) {
         return other.getFingerprint() == getFingerprint();
     }
 
+    @Override
     public String getDescription() {
         return getDisplayName();
     }
@@ -380,6 +409,7 @@ public class BuiltInListType implements ListType {
      * @param block the derivations that are blocked by the relevant element declaration
      */
 
+    @Override
     public void checkTypeDerivationIsOK(SchemaType type, int block) {
         //
     }
@@ -400,6 +430,7 @@ public class BuiltInListType implements ListType {
      * @return a StructuredQName identifying the type.  In the case of an anonymous type, an internally-generated
      * name is returned
      */
+    @Override
     public StructuredQName getStructuredQName() {
         return new StructuredQName("xs", NamespaceConstant.SCHEMA, getLocalName());
     }
@@ -411,6 +442,7 @@ public class BuiltInListType implements ListType {
      */
 
     /*@NotNull*/
+    @Override
     public SimpleType getItemType() {
         return itemType;
     }
@@ -437,6 +469,7 @@ public class BuiltInListType implements ListType {
      *          if the expression will never deliver a value of the correct type
      */
 
+    @Override
     public void analyzeContentExpression(/*@NotNull*/ Expression expression, int kind) throws XPathException {
         BuiltInAtomicType.analyzeContentExpression(this, expression, kind);
     }
@@ -456,6 +489,7 @@ public class BuiltInListType implements ListType {
      */
 
     /*@Nullable*/
+    @Override
     public ValidationFailure validateContent(
             /*@NotNull*/ CharSequence value, /*@Nullable*/ NamespaceResolver nsResolver, /*@NotNull*/ ConversionRules rules) {
         SimpleType base = getItemType();
@@ -487,6 +521,7 @@ public class BuiltInListType implements ListType {
      */
 
     /*@NotNull*/
+    @Override
     public AtomicSequence getTypedValue(/*@NotNull*/ CharSequence value, NamespaceResolver resolver, ConversionRules rules) throws ValidationException {
         Whitespace.Tokenizer iter = new Whitespace.Tokenizer(value);
         ListTypeMappingFunction map = new ListTypeMappingFunction();
@@ -520,6 +555,7 @@ public class BuiltInListType implements ListType {
          * For details see {@link net.sf.saxon.expr.MappingFunction}
          */
 
+        @Override
         public AtomicIterator<AtomicValue> map(Item item) throws XPathException {
             try {
                 return atomicType.getTypedValue(item.getStringValueCS(), resolver, rules).iterate();
@@ -537,6 +573,7 @@ public class BuiltInListType implements ListType {
      * @return the value after preprocessing
      */
 
+    @Override
     public CharSequence preprocess(CharSequence input) {
         return input;
     }
@@ -551,6 +588,7 @@ public class BuiltInListType implements ListType {
      * @return the value after postprocessing
      */
 
+    @Override
     public CharSequence postprocess(CharSequence input) {
         return input;
     }

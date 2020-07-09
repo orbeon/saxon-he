@@ -25,10 +25,12 @@ public class ComparisonException extends ClassCastException {
         this.cause = cause;
     }
 
+    @Override
     public String getMessage() {
         return cause.getMessage();
     }
 
+    @Override
     public XPathException getCause() {
         return cause;
     }

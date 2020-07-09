@@ -91,6 +91,7 @@ public class Error extends SystemFunction implements Callable {
     }
 
 
+    @Override
     public Sequence call(XPathContext context, Sequence[] arguments) throws XPathException {
         int len = arguments.length;
 

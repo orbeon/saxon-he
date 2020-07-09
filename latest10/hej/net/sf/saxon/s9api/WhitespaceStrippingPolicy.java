@@ -125,6 +125,7 @@ public class WhitespaceStrippingPolicy {
     /*@NotNull*/
     protected FilterFactory makeStripper() {
         return new FilterFactory() {
+            @Override
             public ProxyReceiver makeFilter(Receiver next) {
                 return new Stripper(stripperRules, next);
             }

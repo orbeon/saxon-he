@@ -34,6 +34,7 @@ public class XSLDocument extends StyleElement {
      * @return true - it is an instruction
      */
 
+    @Override
     public boolean isInstruction() {
         return true;
     }
@@ -44,10 +45,12 @@ public class XSLDocument extends StyleElement {
      * @return true: yes, it may contain a template-body
      */
 
+    @Override
     public boolean mayContainSequenceConstructor() {
         return true;
     }
 
+    @Override
     public void prepareAttributes() {
 
         String validationAtt = null;
@@ -84,10 +87,12 @@ public class XSLDocument extends StyleElement {
         }
     }
 
+    @Override
     public void validate(ComponentDeclaration decl) throws XPathException {
         //
     }
 
+    @Override
     public Expression compile(Compilation exec, ComponentDeclaration decl) throws XPathException {
 
         DocumentInstr inst = new DocumentInstr(false, null);

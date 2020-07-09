@@ -31,6 +31,7 @@ public class CodedName implements NodeName {
      *
      * @return the prefix. Returns the empty string if the name is unprefixed.
      */
+    @Override
     public String getPrefix() {
         return prefix;
     }
@@ -40,6 +41,7 @@ public class CodedName implements NodeName {
      *
      * @return the URI. Returns the empty string to represent the no-namespace
      */
+    @Override
     public String getURI() {
         return pool.getURI(fingerprint);
     }
@@ -49,6 +51,7 @@ public class CodedName implements NodeName {
      *
      * @return the local part of the QName
      */
+    @Override
     public String getLocalPart() {
         return pool.getLocalName(fingerprint);
     }
@@ -58,6 +61,7 @@ public class CodedName implements NodeName {
      *
      * @return the lexical QName
      */
+    @Override
     public String getDisplayName() {
         return prefix.isEmpty() ? getLocalPart() : prefix + ":" + getLocalPart();
     }
@@ -67,6 +71,7 @@ public class CodedName implements NodeName {
      *
      * @return the name in the form of a StructuredQName
      */
+    @Override
     public StructuredQName getStructuredQName() {
         StructuredQName qn = pool.getUnprefixedQName(fingerprint);
         if (prefix.isEmpty()) {
@@ -82,6 +87,7 @@ public class CodedName implements NodeName {
      * @param ns the namespace to be tested against
      * @return true if the name is in the specified namespace
      */
+    @Override
     public boolean hasURI(String ns) {
         return getURI().equals(ns);
     }
@@ -93,6 +99,7 @@ public class CodedName implements NodeName {
      * @return the corresponding NamespaceBinding
      */
 
+    @Override
     public NamespaceBinding getNamespaceBinding() {
         return new NamespaceBinding(prefix, pool.getURI(fingerprint));
     }
@@ -104,6 +111,7 @@ public class CodedName implements NodeName {
      * @return true if the method getFingerprint() will
      *         return a result other than -1
      */
+    @Override
     public boolean hasFingerprint() {
         return true;
     }
@@ -114,6 +122,7 @@ public class CodedName implements NodeName {
      *
      * @return the fingerprint if known; otherwise -1
      */
+    @Override
     public int getFingerprint() {
         return fingerprint;
     }
@@ -124,6 +133,7 @@ public class CodedName implements NodeName {
      * @param namePool the NamePool used to allocate the name
      * @return a nameCode for this name, newly allocated if necessary
      */
+    @Override
     public int obtainFingerprint(NamePool namePool) {
         return fingerprint;
     }
@@ -153,6 +163,7 @@ public class CodedName implements NodeName {
         }
     }
 
+    @Override
     public boolean isIdentical(IdentityComparable other) {
         return other instanceof NodeName &&
                 this.equals(other) && this.getPrefix().equals(((NodeName) other).getPrefix());
@@ -163,6 +174,7 @@ public class CodedName implements NodeName {
      *
      * @return a hashCode suitable for use when testing for identity.
      */
+    @Override
     public int identityHashCode() {
         return hashCode() ^ getPrefix().hashCode();
     }

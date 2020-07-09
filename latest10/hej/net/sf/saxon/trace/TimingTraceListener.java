@@ -69,6 +69,7 @@ public class TimingTraceListener implements TraceListener {
      *               to System.err.
      */
 
+    @Override
     public void setOutputDestination(Logger stream) {
         out = stream;
     }
@@ -77,6 +78,7 @@ public class TimingTraceListener implements TraceListener {
      * Called at start
      */
 
+    @Override
     public void open(/*@NotNull*/ Controller controller) {
         config = controller.getConfiguration();
         lang = controller.getExecutable().getHostLanguage();
@@ -87,6 +89,7 @@ public class TimingTraceListener implements TraceListener {
      * Called at end. This method builds the XML out and analyzed html output
      */
 
+    @Override
     public void close() {
         t_total = System.nanoTime() - t_total;
         runs++;
@@ -150,6 +153,7 @@ public class TimingTraceListener implements TraceListener {
      * Called when an instruction in the stylesheet gets processed
      */
 
+    @Override
     public void enter(/*@NotNull*/ Traceable instruction, Map<String, Object> properties, XPathContext context) {
         if (isTarget(instruction)) {
             long start = System.nanoTime();
@@ -179,6 +183,7 @@ public class TimingTraceListener implements TraceListener {
      * @param instruction the instruction or other construct that has now finished execution
      */
 
+    @Override
     public void leave(/*@NotNull*/ Traceable instruction) {
         if (isTarget(instruction)) {
             ComponentMetrics metric = metrics.peek();
@@ -210,6 +215,7 @@ public class TimingTraceListener implements TraceListener {
      * Called when an item becomes current
      */
 
+    @Override
     public void startCurrentItem(Item item) {
     }
 
@@ -217,6 +223,7 @@ public class TimingTraceListener implements TraceListener {
      * Called after a node of the source tree got processed
      */
 
+    @Override
     public void endCurrentItem(Item item) {
     }
 

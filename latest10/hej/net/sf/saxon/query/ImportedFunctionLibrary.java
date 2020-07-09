@@ -78,6 +78,7 @@ public class ImportedFunctionLibrary implements FunctionLibrary, XQueryFunctionB
      */
 
     /*@Nullable*/
+    @Override
     public Expression bind(/*@NotNull*/ SymbolicName.F symbolicName, Expression[] staticArgs, StaticContext env, List<String> reasons) {
         final StructuredQName functionName = symbolicName.getComponentName();
         final String uri = functionName.getURI();
@@ -101,6 +102,7 @@ public class ImportedFunctionLibrary implements FunctionLibrary, XQueryFunctionB
      */
 
     /*@Nullable*/
+    @Override
     public XQueryFunction getDeclaration(/*@NotNull*/ StructuredQName functionName, int staticArgs) {
         String uri = functionName.getURI();
         if (namespaces.contains(uri)) {
@@ -119,6 +121,7 @@ public class ImportedFunctionLibrary implements FunctionLibrary, XQueryFunctionB
      */
 
     /*@NotNull*/
+    @Override
     public FunctionLibrary copy() {
         ImportedFunctionLibrary lib = new ImportedFunctionLibrary(importingModule, baseLibrary);
         for (String ns : namespaces) {
@@ -151,6 +154,7 @@ public class ImportedFunctionLibrary implements FunctionLibrary, XQueryFunctionB
      *          in the event of certain errors, for example attempting to get a function
      *          that is private
      */
+    @Override
     public Function getFunctionItem(SymbolicName.F functionName, StaticContext staticContext) throws XPathException {
         if (namespaces.contains(functionName.getComponentName().getURI())) {
             return baseLibrary.getFunctionItem(functionName, staticContext);
@@ -166,6 +170,7 @@ public class ImportedFunctionLibrary implements FunctionLibrary, XQueryFunctionB
      * @param functionName the qualified name of the function being called
      * @return true if a function of this name and arity is available for calling
      */
+    @Override
     public boolean isAvailable(SymbolicName.F functionName) {
         return namespaces.contains(functionName.getComponentName().getURI()) && baseLibrary.isAvailable(functionName);
     }

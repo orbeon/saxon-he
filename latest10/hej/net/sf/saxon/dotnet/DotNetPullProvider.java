@@ -71,6 +71,7 @@ public class DotNetPullProvider implements PullProvider, Location {
      * calls on next() is undefined.
      */
 
+    @Override
     public void close() {
         parser.Close();
     }
@@ -83,6 +84,7 @@ public class DotNetPullProvider implements PullProvider, Location {
      * @return the current event
      */
 
+    @Override
     public Event current() {
         return current;
     }
@@ -93,6 +95,7 @@ public class DotNetPullProvider implements PullProvider, Location {
      * a free-standing atomic value; it is never used when reading the content of a node.
      */
 
+    @Override
     public AtomicValue getAtomicValue() {
         return null;
     }
@@ -111,6 +114,7 @@ public class DotNetPullProvider implements PullProvider, Location {
      *         that has just been notified.
      */
 
+    @Override
     public AttributeMap getAttributes() {
         if (parser.get_HasAttributes()) {
             AttributeMap atts = EmptyAttributeMap.getInstance();
@@ -149,6 +153,7 @@ public class DotNetPullProvider implements PullProvider, Location {
      * @return the NodeName. The NodeName can be used to obtain the prefix, local name,
      * and namespace URI.
      */
+    @Override
     public NodeName getNodeName() {
         return new FingerprintedQName(parser.get_Prefix(), parser.get_NamespaceURI(), parser.get_LocalName());
     }
@@ -170,6 +175,7 @@ public class DotNetPullProvider implements PullProvider, Location {
      * one of the methods skipToEnd(), getStringValue(), or getTypedValue().</p>
      */
 
+    @Override
     public NamespaceBinding[] getNamespaceDeclarations() throws XPathException {
         if (parser.get_HasAttributes()) {
             int limit = parser.get_AttributeCount();
@@ -203,6 +209,7 @@ public class DotNetPullProvider implements PullProvider, Location {
      * Get configuration information.
      */
 
+    @Override
     public PipelineConfiguration getPipelineConfiguration() {
         return pipe;
     }
@@ -215,6 +222,7 @@ public class DotNetPullProvider implements PullProvider, Location {
      * A value of null can be returned if no location information is available.
      */
 
+    @Override
     public Location getSourceLocator() {
         if (parser instanceof IXmlLineInfo || parser instanceof XmlValidatingReader) {
             return this;
@@ -236,6 +244,7 @@ public class DotNetPullProvider implements PullProvider, Location {
      *         XPath data model.
      */
 
+    @Override
     public CharSequence getStringValue() throws XPathException {
         if (current == Event.TEXT) {
             return CompressedWhitespace.compress(parser.get_Value());
@@ -253,6 +262,7 @@ public class DotNetPullProvider implements PullProvider, Location {
      * @return the type annotation.
      */
 
+    @Override
     public SchemaType getSchemaType() {
         return Untyped.getInstance();
     }
@@ -264,6 +274,7 @@ public class DotNetPullProvider implements PullProvider, Location {
      *         {@link net.sf.saxon.pull.PullProvider.Event#END_OF_INPUT} is returned at the end of the sequence.
      */
 
+    @Override
     public Event next() throws XPathException {
         //System.err.println("next(), current = " + current + " empty: " + isEmptyElement);
         if (current == Event.START_OF_INPUT) {
@@ -390,6 +401,7 @@ public class DotNetPullProvider implements PullProvider, Location {
      * have been read.
      */
 
+    @Override
     public void setPipelineConfiguration(PipelineConfiguration pipe) {
         this.pipe = pipe;
         final Configuration config = pipe.getConfiguration();
@@ -406,6 +418,7 @@ public class DotNetPullProvider implements PullProvider, Location {
      *                               immediately after a START_DOCUMENT or START_ELEMENT event.
      */
 
+    @Override
     public Event skipToMatchingEnd() throws XPathException {
         if (current == Event.START_ELEMENT) {
             current = Event.END_ELEMENT;
@@ -431,6 +444,7 @@ public class DotNetPullProvider implements PullProvider, Location {
      * @return The column number, or -1 if none is available.
      * @see #getLineNumber
      */
+    @Override
     public int getColumnNumber() {
         if (parser instanceof IXmlLineInfo && ((IXmlLineInfo) parser).HasLineInfo()) {
             return ((IXmlLineInfo) parser).get_LinePosition();
@@ -452,6 +466,7 @@ public class DotNetPullProvider implements PullProvider, Location {
      * @return The line number, or -1 if none is available.
      * @see #getColumnNumber
      */
+    @Override
     public int getLineNumber() {
         if (parser instanceof IXmlLineInfo && ((IXmlLineInfo) parser).HasLineInfo()) {
             return ((IXmlLineInfo) parser).get_LineNumber();
@@ -470,6 +485,7 @@ public class DotNetPullProvider implements PullProvider, Location {
      *         null if none is available.
      * @see #getSystemId
      */
+    @Override
     public String getPublicId() {
         return null;
     }
@@ -486,6 +502,7 @@ public class DotNetPullProvider implements PullProvider, Location {
      *         if none is available.
      * @see #getPublicId
      */
+    @Override
     public String getSystemId() {
         String base = parser.get_BaseURI();
         if (base == null || base.isEmpty()) {
@@ -500,6 +517,7 @@ public class DotNetPullProvider implements PullProvider, Location {
      * should not be saved for later use. The result of this operation holds the same location information,
      * but in an immutable form.
      */
+    @Override
     public Location saveLocation() {
         return new Loc(this);
     }
@@ -524,6 +542,7 @@ public class DotNetPullProvider implements PullProvider, Location {
      */
 
     /*@Nullable*/
+    @Override
     public List<net.sf.saxon.pull.UnparsedEntity> getUnparsedEntities() {
         return null;
     }

@@ -63,6 +63,7 @@ public class CompoundMode extends Mode {
      * been supplied
      */
 
+    @Override
     public BuiltInRuleSet getBuiltInRuleSet() {
         return base.getBuiltInRuleSet();
     }
@@ -100,6 +101,7 @@ public class CompoundMode extends Mode {
      * @return the highest rank
      */
 
+    @Override
     public int getMaxRank() {
         return overrides.getMaxRank();
     }
@@ -113,6 +115,7 @@ public class CompoundMode extends Mode {
      * @throws XPathException if an error occurs processing the rules
      */
 
+    @Override
     public void computeRankings(int start) throws XPathException {
         overrides.computeRankings(base.getMaxRank() + 1);
     }
@@ -150,6 +153,7 @@ public class CompoundMode extends Mode {
      * @param pack the containing package
      */
 
+    @Override
     public void allocateAllBindingSlots(final StylesheetPackage pack) {
         if (!bindingSlotsAllocated) {
             List<ComponentBinding> baseBindings = base.getDeclaringComponent().getComponentBindings();
@@ -170,6 +174,7 @@ public class CompoundMode extends Mode {
      * @throws XPathException if an error occurs matching a pattern
      */
 
+    @Override
     public Rule getRule(Item item, XPathContext context) throws XPathException {
         Rule r = overrides.getRule(item, context);
         if (r == null) {

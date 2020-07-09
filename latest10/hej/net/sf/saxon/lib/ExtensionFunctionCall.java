@@ -159,6 +159,7 @@ public abstract class ExtensionFunctionCall implements Callable {
      *                        code will add information about the error location.
      */
 
+    @Override
     public abstract Sequence call(XPathContext context, Sequence[] arguments) throws XPathException;
 
     /**

@@ -37,6 +37,7 @@ public class DotNetOutputStream extends OutputStream {
      *                             an <code>IOException</code> may be thrown if the
      *                             output stream has been closed.
      */
+    @Override
     public void write(int b) throws IOException {
         stream.WriteByte((byte) b);
     }
@@ -66,6 +67,7 @@ public class DotNetOutputStream extends OutputStream {
      *                             an <code>IOException</code> is thrown if the output
      *                             stream is closed.
      */
+    @Override
     public void write(byte b[], int off, int len) throws IOException {
         stream.Write(b, off, len);
     }
@@ -80,6 +82,7 @@ public class DotNetOutputStream extends OutputStream {
      * @throws java.io.IOException if an I/O error occurs.
      * @see java.io.OutputStream#write(byte[], int, int)
      */
+    @Override
     public void write(byte b[]) throws IOException {
         stream.Write(b, 0, b.length);
     }
@@ -100,6 +103,7 @@ public class DotNetOutputStream extends OutputStream {
      *
      * @throws java.io.IOException if an I/O error occurs.
      */
+    @Override
     public void flush() throws IOException {
         stream.Flush();
     }
@@ -113,6 +117,7 @@ public class DotNetOutputStream extends OutputStream {
      *
      * @throws java.io.IOException if an I/O error occurs.
      */
+    @Override
     public void close() throws IOException {
         //System.err.println("close");
         stream.Close();

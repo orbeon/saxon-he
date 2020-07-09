@@ -451,35 +451,43 @@ public class ParserExtension {
             this.declaration = decl;
         }
 
+        @Override
         public SequenceType getRequiredType() {
             return declaration.getInferredType(true);
         }
 
+        @Override
         public Sequence evaluateVariable(XPathContext context) {
             throw new UnsupportedOperationException();
         }
 
+        @Override
         public boolean isGlobal() {
             return false;
         }
 
 
+        @Override
         public boolean isAssignable() {
             return false;
         }
 
+        @Override
         public int getLocalSlotNumber() {
             return 0;
         }
 
+        @Override
         public StructuredQName getVariableQName() {
             return declaration.getVariableQName();
         }
 
+        @Override
         public void addReference(VariableReference ref, boolean isLoopingReference) {
 
         }
 
+        @Override
         public IntegerValue[] getIntegerBoundsForVariable() {
             return null;
         }

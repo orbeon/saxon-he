@@ -19,6 +19,7 @@ import net.sf.saxon.tree.wrapper.VirtualCopy;
  */
 public class CopyOfFn extends SystemFunction {
 
+    @Override
     public int getCardinality(Expression[] arguments) {
         return arguments[0].getCardinality();
     }
@@ -32,6 +33,7 @@ public class CopyOfFn extends SystemFunction {
      * @throws net.sf.saxon.trans.XPathException
      *          if a dynamic error occurs during the evaluation of the expression
      */
+    @Override
     public Sequence call(final XPathContext context, Sequence[] arguments) throws XPathException {
         Sequence in = arguments.length == 0 ? context.getContextItem() : arguments[0];
         SequenceIterator input = in.iterate();

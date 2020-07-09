@@ -51,6 +51,7 @@ public class ContextStackIterator implements Iterator<ContextStackFrame> {
      *
      * @return <tt>true</tt> if the iterator has more elements.
      */
+    @Override
     public boolean hasNext() {
         return next != null;
     }
@@ -66,6 +67,7 @@ public class ContextStackIterator implements Iterator<ContextStackFrame> {
      *          iteration has no more elements.
      */
     /*@Nullable*/
+    @Override
     public ContextStackFrame next() {
         XPathContextMajor context = next;
         if (context == null) {
@@ -155,6 +157,7 @@ public class ContextStackIterator implements Iterator<ContextStackFrame> {
      * @throws UnsupportedOperationException as the <tt>remove</tt>
      *                                       operation is not supported by this Iterator.
      */
+    @Override
     public void remove() {
         throw new UnsupportedOperationException();
     }

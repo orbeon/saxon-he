@@ -36,6 +36,7 @@ public abstract class AbstractArrayItem implements ArrayItem {
      *
      * @return an array of OperandRole objects, one for each argument
      */
+    @Override
     public OperandRole[] getOperandRoles() {
         return new OperandRole[]{OperandRole.SINGLE_ATOMIC};
     }
@@ -45,6 +46,7 @@ public abstract class AbstractArrayItem implements ArrayItem {
      *
      * @return true (it is an array)
      */
+    @Override
     public boolean isArray() {
         return true;
     }
@@ -54,6 +56,7 @@ public abstract class AbstractArrayItem implements ArrayItem {
      *
      * @return false (it is not a map)
      */
+    @Override
     public boolean isMap() {
         return false;
     }
@@ -64,6 +67,7 @@ public abstract class AbstractArrayItem implements ArrayItem {
      * @return the result of atomization
      * @throws XPathException if atomization is not allowed for this kind of item
      */
+    @Override
     public AtomicSequence atomize() throws XPathException {
         List<AtomicValue> list = new ArrayList<>(arrayLength());
         for (GroundedValue seq : members()) {
@@ -96,6 +100,7 @@ public abstract class AbstractArrayItem implements ArrayItem {
      * @return the function item's type
      */
 
+    @Override
     public FunctionItemType getFunctionItemType() {
         return ArrayItemType.ANY_ARRAY_TYPE;
     }
@@ -107,6 +112,7 @@ public abstract class AbstractArrayItem implements ArrayItem {
      */
 
 
+    @Override
     public StructuredQName getFunctionName() {
         return null;
     }
@@ -118,6 +124,7 @@ public abstract class AbstractArrayItem implements ArrayItem {
      *
      * @return a description of the function for use in error messages
      */
+    @Override
     public String getDescription() {
         return "array";
     }
@@ -128,6 +135,7 @@ public abstract class AbstractArrayItem implements ArrayItem {
      * @return the number of arguments in the function signature (in this case, 1 (one))
      */
 
+    @Override
     public int getArity() {
         return 1;
     }
@@ -140,6 +148,7 @@ public abstract class AbstractArrayItem implements ArrayItem {
      * @return a suitable context for evaluating the function (which may or may
      * not be the same as the caller's context)
      */
+    @Override
     public XPathContext makeNewContext(XPathContext callingContext, ContextOriginator originator) {
         return callingContext;
     }
@@ -153,6 +162,7 @@ public abstract class AbstractArrayItem implements ArrayItem {
      * @throws XPathException if the index is out of bounds
      */
 
+    @Override
     public GroundedValue call(XPathContext context, Sequence[] args) throws XPathException {
         IntegerValue subscript = (IntegerValue) args[0].head();
         return get(ArrayFunctionSet.checkSubscript(subscript, arrayLength()) - 1);
@@ -172,6 +182,7 @@ public abstract class AbstractArrayItem implements ArrayItem {
      */
 
 
+    @Override
     public boolean deepEquals(Function other, XPathContext context, AtomicComparer comparer, int flags) throws XPathException {
         if (other instanceof ArrayItem) {
             ArrayItem that = (ArrayItem) other;
@@ -197,6 +208,7 @@ public abstract class AbstractArrayItem implements ArrayItem {
      */
 
 
+    @Override
     public boolean effectiveBooleanValue() throws XPathException {
         throw new XPathException("Effective boolean value is not defined for arrays", "FORG0006");
     }
@@ -213,6 +225,7 @@ public abstract class AbstractArrayItem implements ArrayItem {
      * @since 8.4
      */
 
+    @Override
     public String getStringValue() {
         throw new UnsupportedOperationException("An array does not have a string value");
     }
@@ -229,6 +242,7 @@ public abstract class AbstractArrayItem implements ArrayItem {
      * @since 8.4
      */
 
+    @Override
     public CharSequence getStringValueCS() {
         throw new UnsupportedOperationException("An array does not have a string value");
     }
@@ -236,6 +250,7 @@ public abstract class AbstractArrayItem implements ArrayItem {
     /**
      * Output information about this function item to the diagnostic explain() output
      */
+    @Override
     public void export(ExpressionPresenter out) throws XPathException {
         out.startElement("array");
         out.emitAttribute("size", arrayLength() + "");
@@ -245,6 +260,7 @@ public abstract class AbstractArrayItem implements ArrayItem {
         out.endElement();
     }
 
+    @Override
     public boolean isTrustedResultType() {
         return false;
     }
@@ -273,6 +289,7 @@ public abstract class AbstractArrayItem implements ArrayItem {
      * @return the most specific type to which all the members belong.
      */
 
+    @Override
     public SequenceType getMemberType(TypeHierarchy th) {
         //try {
             if (memberType == null) {

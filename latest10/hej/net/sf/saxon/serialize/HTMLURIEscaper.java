@@ -108,6 +108,7 @@ public class HTMLURIEscaper extends ProxyReceiver {
      * @param properties
      */
 
+    @Override
     public void startDocument(int properties) throws XPathException {
         nextReceiver.startDocument(properties);
         pool = getPipelineConfiguration().getConfiguration().getNamePool();
@@ -117,6 +118,7 @@ public class HTMLURIEscaper extends ProxyReceiver {
      * Notify the start of an element
      */
 
+    @Override
     public void startElement(NodeName nameCode, SchemaType type,
                              AttributeMap attributes, NamespaceMap namespaces,
                              Location location, int properties) throws XPathException {

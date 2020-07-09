@@ -43,6 +43,7 @@ public class WrappingIterator implements AxisIterator {
 
 
     /*@Nullable*/
+    @Override
     public NodeInfo next() {
         Item n = base.next();
         if (n instanceof NodeInfo && !atomizing) {
@@ -58,6 +59,7 @@ public class WrappingIterator implements AxisIterator {
         return current;
     }
 
+    @Override
     public void close() {
         base.close();
     }

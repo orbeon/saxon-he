@@ -85,6 +85,7 @@ public class SpaceStrippedNode extends AbstractVirtualNode implements WrappingFu
      */
 
     /*@NotNull*/
+    @Override
     public VirtualNode makeWrapper(NodeInfo node, VirtualNode parent) {
         SpaceStrippedNode wrapper = new SpaceStrippedNode(node, (SpaceStrippedNode) parent);
         wrapper.docWrapper = this.docWrapper;
@@ -162,6 +163,7 @@ public class SpaceStrippedNode extends AbstractVirtualNode implements WrappingFu
      * @since 8.5
      */
 
+    @Override
     public AtomicSequence atomize() throws XPathException {
         if (getNodeKind() == Type.ELEMENT) {
             return getSchemaType().atomize(this);
@@ -197,6 +199,7 @@ public class SpaceStrippedNode extends AbstractVirtualNode implements WrappingFu
      *         return true, and the two nodes will produce the same result for generateId())
      */
 
+    @Override
     public int compareOrder(/*@NotNull*/ NodeInfo other) {
         if (other instanceof SpaceStrippedNode) {
             return node.compareOrder(((SpaceStrippedNode) other).node);
@@ -210,6 +213,7 @@ public class SpaceStrippedNode extends AbstractVirtualNode implements WrappingFu
      * the version of the method that returns a String.
      */
 
+    @Override
     public CharSequence getStringValueCS() {
         // Might not be the same as the string value of the underlying node because of space stripping
         switch (getNodeKind()) {
@@ -235,6 +239,7 @@ public class SpaceStrippedNode extends AbstractVirtualNode implements WrappingFu
      */
 
     /*@Nullable*/
+    @Override
     public NodeInfo getParent() {
         if (parent == null) {
             NodeInfo realParent = node.getParent();
@@ -265,6 +270,7 @@ public class SpaceStrippedNode extends AbstractVirtualNode implements WrappingFu
      */
 
     /*@Nullable*/
+    @Override
     public AxisIterator iterateAxis(int axisNumber) {
         switch (axisNumber) {
             case AxisInfo.ATTRIBUTE:
@@ -303,6 +309,7 @@ public class SpaceStrippedNode extends AbstractVirtualNode implements WrappingFu
      * Copy this node to a given outputter (deep copy)
      */
 
+    @Override
     public void copy(Receiver out, int copyOptions, Location locationId) throws XPathException {
         // The underlying code does not do whitespace stripping. So we need to interpose
         // a stripper. Moreover, if the node is typed and we are removing type annotations,
@@ -351,6 +358,7 @@ public class SpaceStrippedNode extends AbstractVirtualNode implements WrappingFu
 
 
         /*@Nullable*/
+        @Override
         public NodeInfo next() {
             NodeInfo nextRealNode;
             while (true) {
@@ -378,6 +386,7 @@ public class SpaceStrippedNode extends AbstractVirtualNode implements WrappingFu
             return isPreservedNode(nextRealNode, (SpaceStrippedDocument)docWrapper, actualParent);
         }
 
+        @Override
         public void close() {
             base.close();
         }

@@ -90,6 +90,7 @@ public final class AttributeGetter extends Expression {
         return ag2;
     }
 
+    @Override
     public PathMap.PathMapNodeSet addToPathMap(PathMap pathMap, PathMap.PathMapNodeSet pathMapNodeSet) {
         if (pathMapNodeSet == null) {
             ContextItemExpression cie = new ContextItemExpression();

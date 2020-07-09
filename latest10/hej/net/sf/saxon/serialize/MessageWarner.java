@@ -30,6 +30,7 @@ public class MessageWarner extends XMLEmitter {
     private boolean abort = false;
     private String errorCode = null;
 
+    @Override
     public void startDocument(int properties) throws XPathException {
         setWriter(new StringWriter());
         abort = ReceiverOption.contains(properties, ReceiverOption.TERMINATE);
@@ -45,6 +46,7 @@ public class MessageWarner extends XMLEmitter {
         }
     }
 
+    @Override
     public void endDocument() throws XPathException {
         ErrorReporter reporter = getPipelineConfiguration().getErrorReporter();
         XmlProcessingIncident de = new XmlProcessingIncident(getWriter().toString(), errorCode==null ? "XTMM9000" : errorCode);
@@ -54,6 +56,7 @@ public class MessageWarner extends XMLEmitter {
         reporter.report(de);
     }
 
+    @Override
     public void close() {
         // do nothing
     }

@@ -149,6 +149,7 @@ public class RegularSequenceChecker extends ProxyReceiver {
 *                       need to be copied. Values are {@link ReceiverOption#ALL_NAMESPACES}; the default (0) means
      */
 
+    @Override
     public void append(Item item, Location locationId, int copyNamespaces) throws XPathException {
         try {
             transition(Transition.APPEND);
@@ -165,6 +166,7 @@ public class RegularSequenceChecker extends ProxyReceiver {
      * and will never be zero-length.
      */
 
+    @Override
     public void characters(CharSequence chars, Location locationId, int properties) throws XPathException {
         transition(Transition.TEXT);
         if (chars.length() == 0 && !stack.isEmpty()) {
@@ -182,6 +184,7 @@ public class RegularSequenceChecker extends ProxyReceiver {
      * End of sequence
      */
 
+    @Override
     public void close() throws XPathException {
         if (state != State.Final && state != State.Failed) {
             if (!stack.isEmpty()) {
@@ -196,6 +199,7 @@ public class RegularSequenceChecker extends ProxyReceiver {
      * Output a comment
      */
 
+    @Override
     public void comment(CharSequence chars, Location locationId, int properties) throws XPathException {
         transition(Transition.COMMENT);
         try {
@@ -210,6 +214,7 @@ public class RegularSequenceChecker extends ProxyReceiver {
      * Notify the end of a document node
      */
 
+    @Override
     public void endDocument() throws XPathException {
         transition(Transition.END_DOCUMENT);
         if (stack.isEmpty() || stack.pop() != Type.DOCUMENT) {
@@ -227,6 +232,7 @@ public class RegularSequenceChecker extends ProxyReceiver {
      * End of element
      */
 
+    @Override
     public void endElement() throws XPathException {
         transition(Transition.END_ELEMENT);
         if (stack.isEmpty() || stack.pop() != Type.ELEMENT) {
@@ -247,6 +253,7 @@ public class RegularSequenceChecker extends ProxyReceiver {
      * Start of event stream
      */
 
+    @Override
     public void open() throws XPathException {
         transition(Transition.OPEN);
         try {
@@ -261,6 +268,7 @@ public class RegularSequenceChecker extends ProxyReceiver {
      * Processing Instruction
      */
 
+    @Override
     public void processingInstruction(String target, CharSequence data, Location locationId, int properties) throws XPathException {
         transition(Transition.PI);
         try {
@@ -276,6 +284,7 @@ public class RegularSequenceChecker extends ProxyReceiver {
      * @param properties properties of the document node.
      */
 
+    @Override
     public void startDocument(int properties) throws XPathException {
         transition(Transition.START_DOCUMENT);
         stack.push(Type.DOCUMENT);
@@ -322,6 +331,7 @@ public class RegularSequenceChecker extends ProxyReceiver {
      * @param properties properties of the element node
      */
 
+    @Override
     public void startElement(NodeName elemName, SchemaType type,
                              AttributeMap attributes, NamespaceMap namespaces,
                              Location location, int properties) throws XPathException {

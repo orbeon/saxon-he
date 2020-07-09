@@ -67,6 +67,7 @@ public class Loc implements Location {
      * @return the system ID
      */
 
+    @Override
     public String getSystemId() {
         return systemId;
     }
@@ -78,6 +79,7 @@ public class Loc implements Location {
      */
 
     /*@Nullable*/
+    @Override
     public String getPublicId() {
         return null;
     }
@@ -88,6 +90,7 @@ public class Loc implements Location {
      * @return the line number
      */
 
+    @Override
     public int getLineNumber() {
         return lineNumber;
     }
@@ -98,6 +101,7 @@ public class Loc implements Location {
      * @return the column number
      */
 
+    @Override
     public int getColumnNumber() {
         return columnNumber;
     }
@@ -107,6 +111,7 @@ public class Loc implements Location {
      * should not be saved for later use. The result of this operation holds the same location information,
      * but in an immutable form.
      */
+    @Override
     public Location saveLocation() {
         return this;
     }

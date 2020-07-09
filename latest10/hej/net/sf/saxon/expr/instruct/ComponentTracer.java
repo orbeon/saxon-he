@@ -82,6 +82,7 @@ public class ComponentTracer extends Instruction {
     }
 
     /*@NotNull*/
+    @Override
     public Expression copy(RebindingMap rebindings) {
         ComponentTracer t = new ComponentTracer(component);
         t.setLocation(getLocation());   // Bug 3034
@@ -123,6 +124,7 @@ public class ComponentTracer extends Instruction {
         getChild().checkForUpdatingSubexpressions();
     }
 
+    @Override
     public int getImplementationMethod() {
         return getChild().getImplementationMethod();
     }
@@ -139,6 +141,7 @@ public class ComponentTracer extends Instruction {
      * @throws XPathException
      *
      */
+    @Override
     public TailCall processLeavingTail(Outputter output, XPathContext context) throws XPathException {
         Controller controller = context.getController();
         assert controller != null;
@@ -162,6 +165,7 @@ public class ComponentTracer extends Instruction {
      */
 
     /*@NotNull*/
+    @Override
     public ItemType getItemType() {
         return getChild().getItemType();
     }
@@ -178,6 +182,7 @@ public class ComponentTracer extends Instruction {
      *         information).
      */
 
+    @Override
     public int getCardinality() {
         return getChild().getCardinality();
     }
@@ -195,6 +200,7 @@ public class ComponentTracer extends Instruction {
      *         the expression
      */
 
+    @Override
     public int getDependencies() {
         return getChild().getDependencies();
     }
@@ -203,6 +209,7 @@ public class ComponentTracer extends Instruction {
      * Determine whether this instruction potentially creates new nodes.
      */
 
+    @Override
     public final boolean mayCreateNewNodes() {
         return !getChild().hasSpecialProperty(StaticProperty.NO_NODES_NEWLY_CREATED);
     }
@@ -233,6 +240,7 @@ public class ComponentTracer extends Instruction {
      *          expression
      */
 
+    @Override
     public Item evaluateItem(XPathContext context) throws XPathException {
         Controller controller = context.getController();
         assert controller != null;
@@ -263,6 +271,7 @@ public class ComponentTracer extends Instruction {
      */
 
     /*@NotNull*/
+    @Override
     public SequenceIterator iterate(XPathContext context) throws XPathException {
         Controller controller = context.getController();
         assert controller != null;
@@ -278,6 +287,7 @@ public class ComponentTracer extends Instruction {
 
     }
 
+    @Override
     public int getInstructionNameCode() {
         if (getChild() instanceof Instruction) {
             return ((Instruction) getChild()).getInstructionNameCode();
@@ -292,6 +302,7 @@ public class ComponentTracer extends Instruction {
      * are omitted from the generated SEF file.
      */
 
+    @Override
     public void export(ExpressionPresenter out) throws XPathException {
         getChild().export(out);
     }
@@ -305,6 +316,7 @@ public class ComponentTracer extends Instruction {
      * @param pul     the pending update list to which the results should be written
      */
 
+    @Override
     public void evaluatePendingUpdates(XPathContext context, PendingUpdateList pul) throws XPathException {
         Controller controller = context.getController();
         assert controller != null;

@@ -64,6 +64,7 @@ public class XSLMode extends StyleElement {
      * @return false - it is a declaration
      */
 
+    @Override
     public boolean isInstruction() {
         return false;
     }
@@ -74,6 +75,7 @@ public class XSLMode extends StyleElement {
      * If there is no name, the value will be null.
      */
 
+    @Override
     public StructuredQName getObjectName() {
         StructuredQName qn = super.getObjectName();
         if (qn == null) {
@@ -125,6 +127,7 @@ public class XSLMode extends StyleElement {
         }
     }
 
+    @Override
     public void prepareAttributes() {
 
         String nameAtt = null;
@@ -285,6 +288,7 @@ public class XSLMode extends StyleElement {
 
     }
 
+    @Override
     public void validate(ComponentDeclaration decl) throws XPathException {
         checkTopLevel("XTSE0010", false);
 
@@ -322,6 +326,7 @@ public class XSLMode extends StyleElement {
         checkTopLevel("XTSE0010", false);
     }
 
+    @Override
     public void compileDeclaration(Compilation compilation, ComponentDeclaration decl) throws XPathException {
         StylesheetPackage pack = getPrincipalStylesheetModule().getStylesheetPackage();
         Component c = pack.getComponent(mode.getSymbolicName());

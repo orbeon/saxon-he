@@ -37,10 +37,12 @@ public final class XSLCopyOf extends StyleElement {
      * @return true - it is an instruction
      */
 
+    @Override
     public boolean isInstruction() {
         return true;
     }
 
+    @Override
     public void prepareAttributes() {
 
         String selectAtt = null;
@@ -113,11 +115,13 @@ public final class XSLCopyOf extends StyleElement {
 
     }
 
+    @Override
     public void validate(ComponentDeclaration decl) throws XPathException {
         checkEmpty();
         select = typeCheck("select", select);
     }
 
+    @Override
     public Expression compile(Compilation exec, ComponentDeclaration decl) {
         CopyOf inst = new CopyOf(select, copyNamespaces, validation, schemaType, false);
         inst.setCopyAccumulators(copyAccumulators);

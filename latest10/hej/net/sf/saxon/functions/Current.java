@@ -36,6 +36,7 @@ public class Current extends SystemFunction {
      * @throws net.sf.saxon.trans.XPathException
      *          if a dynamic error occurs during the evaluation of the expression
      */
+    @Override
     public Sequence call(XPathContext context, Sequence[] arguments) throws XPathException {
         throw new XPathException("Dynamic evaluation of the current() function is not supported", "XTDE1360");
     }

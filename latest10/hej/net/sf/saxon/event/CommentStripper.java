@@ -41,6 +41,7 @@ public class CommentStripper extends ProxyReceiver {
         super(next);
     }
 
+    @Override
     public void startElement(NodeName elemName, SchemaType type,
                              AttributeMap attributes, NamespaceMap namespaces,
                              Location location, int properties)
@@ -53,6 +54,7 @@ public class CommentStripper extends ProxyReceiver {
      * Callback interface for SAX: not for application use
      */
 
+    @Override
     public void endElement() throws XPathException {
         flush();
         nextReceiver.endElement();
@@ -66,6 +68,7 @@ public class CommentStripper extends ProxyReceiver {
      * more common case, so that it can easily be detected and stripped downstream.
      */
 
+    @Override
     public void characters(CharSequence chars, Location locationId, int properties) throws XPathException {
         if (chars instanceof CompressedWhitespace) {
             if (buffer.isEmpty() && savedWhitespace == null) {
@@ -87,6 +90,7 @@ public class CommentStripper extends ProxyReceiver {
      * Remove comments
      */
 
+    @Override
     public void comment(CharSequence chars, Location locationId, int properties) {
     }
 
@@ -94,6 +98,7 @@ public class CommentStripper extends ProxyReceiver {
      * Remove processing instructions
      */
 
+    @Override
     public void processingInstruction(String name, CharSequence data, Location locationId, int properties) {
     }
 

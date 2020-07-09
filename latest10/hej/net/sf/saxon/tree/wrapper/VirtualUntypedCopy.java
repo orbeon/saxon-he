@@ -91,6 +91,7 @@ public class VirtualUntypedCopy extends VirtualCopy {
      * @since 8.5
      */
 
+    @Override
     public AtomicSequence atomize() throws XPathException {
         switch (getNodeKind()) {
             case Type.ELEMENT:
@@ -102,6 +103,7 @@ public class VirtualUntypedCopy extends VirtualCopy {
     }
 
 
+    @Override
     public void copy(Receiver out, int copyOptions, Location locationId) throws XPathException {
         super.copy(out, copyOptions & ~CopyOptions.TYPE_ANNOTATIONS, locationId);
     }
@@ -111,6 +113,7 @@ public class VirtualUntypedCopy extends VirtualCopy {
      * is separated out so that it can be overridden in a subclass.
      */
 
+    @Override
     protected VirtualCopy wrap(NodeInfo node) {
         VirtualUntypedCopy vc = new VirtualUntypedCopy(node, root);
         vc.tree = tree;
@@ -123,6 +126,7 @@ public class VirtualUntypedCopy extends VirtualCopy {
      * @return true if the node has the is-nilled property
      */
 
+    @Override
     public boolean isNilled() {
         return false;
     }

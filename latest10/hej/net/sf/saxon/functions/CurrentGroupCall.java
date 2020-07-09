@@ -123,6 +123,7 @@ public class CurrentGroupCall extends Expression implements Callable {
      * Determine the dependencies
      */
 
+    @Override
     public int getIntrinsicDependencies() {
         return StaticProperty.DEPENDS_ON_CURRENT_GROUP;
     }
@@ -193,6 +194,7 @@ public class CurrentGroupCall extends Expression implements Callable {
      */
 
     /*@NotNull*/
+    @Override
     public SequenceIterator iterate(XPathContext c) throws XPathException {
         GroupIterator gi = c.getCurrentGroupIterator();
         if (gi == null) {
@@ -223,6 +225,7 @@ public class CurrentGroupCall extends Expression implements Callable {
      * of the callee to ensure that the type of result conforms to the expected result type.
      * @throws XPathException if a dynamic error occurs during the evaluation of the expression
      */
+    @Override
     public Sequence call(XPathContext context, Sequence[] arguments) throws XPathException {
         return SequenceTool.toLazySequence(iterate(context));
     }

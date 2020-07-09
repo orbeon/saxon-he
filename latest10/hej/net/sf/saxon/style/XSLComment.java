@@ -21,6 +21,7 @@ import net.sf.saxon.value.StringValue;
 
 public final class XSLComment extends XSLLeafNodeConstructor {
 
+    @Override
     public void prepareAttributes() {
 
         String selectAtt = null;
@@ -39,6 +40,7 @@ public final class XSLComment extends XSLLeafNodeConstructor {
 
     }
 
+    @Override
     public void validate(ComponentDeclaration decl) throws XPathException {
         select = typeCheck("select", select);
         super.validate(decl);
@@ -50,11 +52,13 @@ public final class XSLComment extends XSLLeafNodeConstructor {
      * @return the error code defined for this condition, for this particular instruction
      */
 
+    @Override
     protected String getErrorCodeForSelectPlusContent() {
         return "XTSE0940";
     }
 
     /*@NotNull*/
+    @Override
     public Expression compile(Compilation exec, ComponentDeclaration decl) throws XPathException {
         Comment inst = new Comment();
         compileContent(exec, decl, inst, new StringLiteral(StringValue.SINGLE_SPACE));

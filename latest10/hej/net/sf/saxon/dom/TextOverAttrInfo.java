@@ -32,6 +32,7 @@ public class TextOverAttrInfo extends TextOverNodeInfo {
      *
      * @since DOM Level 3
      */
+    @Override
     public boolean isElementContentWhitespace() {
         return false;
     }
@@ -42,6 +43,7 @@ public class TextOverAttrInfo extends TextOverNodeInfo {
      * in Saxon (see {@link net.sf.saxon.type.Type}) are the same as those assigned in the DOM
      */
 
+    @Override
     public short getNodeType() {
         return Type.TEXT;
     }
@@ -54,6 +56,7 @@ public class TextOverAttrInfo extends TextOverNodeInfo {
      * @return Returns how the node is positioned relatively to the reference node.
      */
 
+    @Override
     public short compareDocumentPosition(Node other)  {
         final short DOCUMENT_POSITION_FOLLOWING = 0x04;
         if (other instanceof TextOverAttrInfo) {
@@ -76,6 +79,7 @@ public class TextOverAttrInfo extends TextOverNodeInfo {
      * @return The Node object describing the containing element or root node.
      */
 
+    @Override
     public Node getParentNode() {
         return attr;
     }

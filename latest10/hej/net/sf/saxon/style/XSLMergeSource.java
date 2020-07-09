@@ -47,6 +47,7 @@ public class XSLMergeSource extends StyleElement {
      * @return true - it is an instruction
      */
 
+    @Override
     public boolean isInstruction() {
         return false;
     }
@@ -57,6 +58,7 @@ public class XSLMergeSource extends StyleElement {
      * @return false: no, it may not contain a sequence constructor
      */
 
+    @Override
     public boolean mayContainSequenceConstructor() {
         return false;
     }
@@ -264,6 +266,7 @@ public class XSLMergeSource extends StyleElement {
 
     }
 
+    @Override
     public void validate(ComponentDeclaration decl) throws XPathException {
 
         forEachItem = typeCheck("for-each-item", forEachItem);

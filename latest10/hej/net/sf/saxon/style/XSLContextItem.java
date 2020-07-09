@@ -31,6 +31,7 @@ public class XSLContextItem extends StyleElement {
     private boolean absentFocus = false;
 
 
+    @Override
     public void prepareAttributes() {
 
         String asAtt = null;
@@ -97,6 +98,7 @@ public class XSLContextItem extends StyleElement {
      * @throws XPathException if any error is found during validation
      */
 
+    @Override
     public void validate(ComponentDeclaration decl) throws XPathException {
         if (!(getParent() instanceof XSLTemplate)) {
             compileError("xsl:context-item can appear only as a child of xsl:template");

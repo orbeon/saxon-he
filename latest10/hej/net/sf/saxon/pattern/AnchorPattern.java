@@ -60,6 +60,7 @@ public class AnchorPattern extends Pattern {
      * @return the optimised Pattern
      */
 
+    @Override
     public Pattern typeCheck(ExpressionVisitor visitor, ContextItemStaticInfo contextItemType) throws XPathException {
         return this;
     }
@@ -75,6 +76,7 @@ public class AnchorPattern extends Pattern {
      * @return true if the node matches the Pattern, false otherwise
      */
 
+    @Override
     public boolean matchesBeneathAnchor(NodeInfo node, NodeInfo anchor, XPathContext context) throws XPathException {
         return anchor == null || node == anchor;
     }
@@ -89,6 +91,7 @@ public class AnchorPattern extends Pattern {
      * @return true if the node matches the Pattern, false otherwise
      */
 
+    @Override
     public boolean matches(Item item, XPathContext context) throws XPathException {
         throw new AssertionError();
         //return true;
@@ -100,6 +103,7 @@ public class AnchorPattern extends Pattern {
      * @return a NodeTest, as specific as possible, which all the matching nodes satisfy
      */
 
+    @Override
     public ItemType getItemType() {
         return AnyNodeTest.getInstance();
     }
@@ -124,6 +128,7 @@ public class AnchorPattern extends Pattern {
      */
 
     /*@NotNull*/
+    @Override
     public Pattern copy(RebindingMap rebindings) {
         return this;
     }

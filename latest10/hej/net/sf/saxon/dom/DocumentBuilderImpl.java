@@ -94,6 +94,7 @@ public class DocumentBuilderImpl extends DocumentBuilder {
      * namespaces. This implementation always returns true.
      */
 
+    @Override
     public boolean isNamespaceAware() {
         return true;
     }
@@ -116,6 +117,7 @@ public class DocumentBuilderImpl extends DocumentBuilder {
      * XML documents against a DTD; false otherwise.
      */
 
+    @Override
     public boolean isValidating() {
         return parseOptions.getDTDValidationMode() == Validation.STRICT;
     }
@@ -127,6 +129,7 @@ public class DocumentBuilderImpl extends DocumentBuilder {
      *                                       implementation is by using the parse() method.
      */
 
+    @Override
     public Document newDocument() {
         throw new UnsupportedOperationException("The only way to build a document using this DocumentBuilder is with the parse() method");
     }
@@ -147,6 +150,7 @@ public class DocumentBuilderImpl extends DocumentBuilder {
      * @throws SAXException If any parse errors occur.
      */
 
+    @Override
     public Document parse(InputSource in) throws SAXException {
         try {
             if (config == null) {
@@ -178,6 +182,7 @@ public class DocumentBuilderImpl extends DocumentBuilder {
      * @throws SAXException        If any parse errors occur.
      */
 
+    @Override
     public Document parse(File f) throws SAXException {
         Objects.requireNonNull(f);
         String uri = f.toURI().toString();
@@ -194,6 +199,7 @@ public class DocumentBuilderImpl extends DocumentBuilder {
      *           present in the XML document to be parsed.
      */
 
+    @Override
     public void setEntityResolver(EntityResolver er) {
         parseOptions.setEntityResolver(er);
     }
@@ -205,6 +211,7 @@ public class DocumentBuilderImpl extends DocumentBuilder {
      */
 
 
+    @Override
     public void setErrorHandler(ErrorHandler eh) {
         parseOptions.setErrorHandler(eh);
     }
@@ -215,6 +222,7 @@ public class DocumentBuilderImpl extends DocumentBuilder {
      * @return A new instance of a <code>DOMImplementation</code>.
      */
 
+    @Override
     public DOMImplementation getDOMImplementation() {
         return newDocument().getImplementation();
     }
@@ -246,6 +254,7 @@ public class DocumentBuilderImpl extends DocumentBuilder {
      * @see javax.xml.parsers.DocumentBuilderFactory#setXIncludeAware(boolean)
      * @since JAXP 1.5, Saxon 8.9
      */
+    @Override
     public boolean isXIncludeAware() {
         return parseOptions.isXIncludeAware();
     }

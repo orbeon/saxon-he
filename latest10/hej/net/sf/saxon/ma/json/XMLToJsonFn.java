@@ -41,6 +41,7 @@ public class XMLToJsonFn extends SystemFunction implements PushableFunction {
         return xmlToJsonOptions;
     }
 
+    @Override
     public Sequence call(XPathContext context, Sequence[] arguments) throws XPathException {
         NodeInfo xml = (NodeInfo) arguments[0].head();
         if (xml == null) {
@@ -91,6 +92,7 @@ public class XMLToJsonFn extends SystemFunction implements PushableFunction {
         r.close();
     }
 
+    @Override
     public String getStreamerName() {
         return "XmlToJsonFn";
     }

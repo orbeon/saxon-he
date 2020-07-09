@@ -120,6 +120,7 @@ public class ApplyFn extends SystemFunction  {
      * @throws net.sf.saxon.trans.XPathException
      *          if a dynamic error occurs during the evaluation of the expression
      */
+    @Override
     public Sequence call(XPathContext context, Sequence[] arguments) throws XPathException {
         final Function function = (Function) arguments[0].head();
         ArrayItem args = (ArrayItem)arguments[1].head();

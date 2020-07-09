@@ -33,6 +33,7 @@ public abstract class XSLModuleRoot extends StyleElement {
      * Process the attributes of every node in the stylesheet module
      */
 
+    @Override
     public void processAllAttributes() throws XPathException {
         prepareAttributes();
         for (NodeInfo node : children(StyleElement.class::isInstance)) {

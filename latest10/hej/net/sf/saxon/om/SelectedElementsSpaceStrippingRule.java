@@ -60,6 +60,7 @@ public class SelectedElementsSpaceStrippingRule implements SpaceStrippingRule {
      *         xml:space setting, and STRIP_DEFAULT otherwise
      */
 
+    @Override
     public int isSpacePreserving(NodeName fingerprint, SchemaType schemaType) throws XPathException {
 
         Rule rule = getRule(fingerprint);
@@ -282,6 +283,7 @@ public class SelectedElementsSpaceStrippingRule implements SpaceStrippingRule {
      *
      * @param presenter the output handler
      */
+    @Override
     public void export(ExpressionPresenter presenter) throws XPathException {
         presenter.startElement("strip");
         Rule rule = anyElementRule;

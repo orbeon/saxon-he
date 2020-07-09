@@ -29,6 +29,7 @@ public abstract class XSLAcceptExpose extends StyleElement {
     private Set<ComponentTest> wildcardComponentTests = new HashSet<>();
     private Visibility visibility;
 
+    @Override
     public Visibility getVisibility() {
         return visibility;
     }

@@ -91,6 +91,7 @@ public class UseWhenFilter extends ProxyReceiver {
      * Start of document
      */
 
+    @Override
     public void open() throws XPathException {
         nextReceiver.open();
 
@@ -116,6 +117,7 @@ public class UseWhenFilter extends ProxyReceiver {
      * Notify the start of an element.
      */
 
+    @Override
     public void startElement(NodeName elemName, SchemaType type,
                              AttributeMap attributes, NamespaceMap namespaces,
                              Location location, int properties) throws XPathException {
@@ -534,6 +536,7 @@ public class UseWhenFilter extends ProxyReceiver {
      * End of element
      */
 
+    @Override
     public void endElement() throws XPathException {
         defaultNamespaceStack.pop();
         if (depthOfHole > 0) {
@@ -550,6 +553,7 @@ public class UseWhenFilter extends ProxyReceiver {
      * Character data
      */
 
+    @Override
     public void characters(CharSequence chars, Location locationId, int properties) throws XPathException {
         if (depthOfHole == 0) {
             nextReceiver.characters(chars, locationId, properties);
@@ -560,6 +564,7 @@ public class UseWhenFilter extends ProxyReceiver {
      * Processing Instruction
      */
 
+    @Override
     public void processingInstruction(String target, CharSequence data, Location locationId, int properties) {
         // these are ignored in a stylesheet
     }
@@ -568,6 +573,7 @@ public class UseWhenFilter extends ProxyReceiver {
      * Output a comment
      */
 
+    @Override
     public void comment(CharSequence chars, Location locationId, int properties) throws XPathException {
         // these are ignored in a stylesheet
     }
@@ -681,6 +687,7 @@ public class UseWhenFilter extends ProxyReceiver {
          *                        resolve the URI.
          */
         /*@NotNull*/
+        @Override
         public Source resolve(String href, String base) throws XPathException {
             throw new XPathException("No external documents are available within an [xsl]use-when expression");
         }

@@ -43,6 +43,7 @@ public class TextImpl extends NodeImpl {
      * @return the string value of the node
      */
 
+    @Override
     public String getStringValue() {
         return content;
     }
@@ -53,6 +54,7 @@ public class TextImpl extends NodeImpl {
      * @return Type.TEXT
      */
 
+    @Override
     public final int getNodeKind() {
         return Type.TEXT;
     }
@@ -61,6 +63,7 @@ public class TextImpl extends NodeImpl {
      * Copy this node to a given outputter
      */
 
+    @Override
     public void copy(/*@NotNull*/ Receiver out, int copyOptions, Location locationId) throws XPathException {
         out.characters(content, locationId, ReceiverOption.NONE);
     }
@@ -72,6 +75,7 @@ public class TextImpl extends NodeImpl {
      * @param stringValue the new string value
      */
 
+    @Override
     public void replaceStringValue(/*@NotNull*/ CharSequence stringValue) {
         if (stringValue.length() == 0) {
             delete();

@@ -31,6 +31,7 @@ public class SaxonApiUncheckedException extends RuntimeException {
      * @return the detail message string of this <tt>Throwable</tt> instance
      *         (which may be <tt>null</tt>).
      */
+    @Override
     public String getMessage() {
         return getCause().getMessage();
     }

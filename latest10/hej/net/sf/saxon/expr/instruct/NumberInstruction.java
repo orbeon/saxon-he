@@ -147,6 +147,7 @@ public class NumberInstruction extends Expression {
      */
 
     /*@NotNull*/
+    @Override
     public Expression copy(RebindingMap rebindings) {
         NumberInstruction exp = new NumberInstruction(copy(selectOp, rebindings), level,
                                                       copy(getCount(), rebindings),
@@ -165,10 +166,12 @@ public class NumberInstruction extends Expression {
 
 
     /*@NotNull*/
+    @Override
     public ItemType getItemType() {
         return BuiltInAtomicType.INTEGER;
     }
 
+    @Override
     public int computeCardinality() {
         switch (level) {
             case SIMPLE:
@@ -224,6 +227,7 @@ public class NumberInstruction extends Expression {
         return this;
     }
 
+    @Override
     public SequenceIterator iterate(XPathContext context) throws XPathException {
         List<IntegerValue> vec = new ArrayList<>(1);
         NodeInfo source = (NodeInfo) selectOp.getChildExpression().evaluateItem(context);
@@ -271,6 +275,7 @@ public class NumberInstruction extends Expression {
      * is written to the supplied output destination.
      */
 
+    @Override
     public void export(ExpressionPresenter out) throws XPathException {
         out.startElement("nodeNum", this);
         out.emitAttribute("level", LEVEL_NAMES[level]);

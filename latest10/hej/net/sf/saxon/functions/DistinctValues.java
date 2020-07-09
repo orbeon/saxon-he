@@ -25,6 +25,7 @@ import java.util.HashSet;
 public class DistinctValues extends CollatingFunctionFixed {
 
 
+    @Override
     public String getStreamerName() {
         return "DistinctValues";
     }
@@ -64,6 +65,7 @@ public class DistinctValues extends CollatingFunctionFixed {
          *          if an error occurs retrieving the next item
          */
 
+        @Override
         public AtomicValue next() throws XPathException {
             int implicitTimezone = context.getImplicitTimezone();
             while (true) {
@@ -84,12 +86,14 @@ public class DistinctValues extends CollatingFunctionFixed {
             }
         }
 
+        @Override
         public void close() {
             base.close();
         }
 
     }
 
+    @Override
     public ZeroOrMore<AtomicValue> call(XPathContext context, Sequence[] arguments) throws XPathException {
         StringCollator collator = getStringCollator();
         return new ZeroOrMore<>(new DistinctIterator(arguments[0].iterate(), collator, context));

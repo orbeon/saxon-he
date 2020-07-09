@@ -403,6 +403,7 @@ public class KeyIndex {
          *
          * @return an atomic value that encapsulates this match key
          */
+        @Override
         public AtomicValue asAtomic() {
             throw new UnsupportedOperationException();
         }

@@ -165,6 +165,7 @@ public class TransformerImpl extends AbstractTransformerImpl {
      * @return the underlying Saxon Controller instance
      */
 
+    @Override
     public XsltController getUnderlyingController() {
         return xsltTransformer.getUnderlyingController();
     }
@@ -184,6 +185,7 @@ public class TransformerImpl extends AbstractTransformerImpl {
      * @return the transformation in the form of an XMLFilter
      */
 
+    @Override
     public XMLFilter newXMLFilter() {
         return new FilterImpl(this);
     }

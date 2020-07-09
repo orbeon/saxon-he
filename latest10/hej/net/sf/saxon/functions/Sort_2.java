@@ -29,6 +29,7 @@ public class Sort_2 extends Sort_1 {
      * @return the result of the evaluation, in the form of a SequenceIterator
      * @throws net.sf.saxon.trans.XPathException if a dynamic error occurs during the evaluation of the expression
      */
+    @Override
     public Sequence call(XPathContext context, Sequence[] arguments) throws XPathException {
         final List<ItemToBeSorted> inputList = getItemsToBeSorted(arguments[0]);
         return doSort(inputList, getCollation(context, arguments[1]), context);

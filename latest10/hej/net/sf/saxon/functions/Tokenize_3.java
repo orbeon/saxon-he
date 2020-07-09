@@ -24,6 +24,7 @@ import net.sf.saxon.value.EmptySequence;
 
 public class Tokenize_3 extends RegexFunction {
 
+    @Override
     protected boolean allowRegexMatchingEmptyString() {
         return false;
     }
@@ -37,6 +38,7 @@ public class Tokenize_3 extends RegexFunction {
      * @throws net.sf.saxon.trans.XPathException
      *          if a dynamic error occurs during the evaluation of the expression
      */
+    @Override
     public Sequence call(XPathContext context, Sequence[] arguments) throws XPathException {
         AtomicValue sv = (AtomicValue) arguments[0].head();
         if (sv == null) {

@@ -33,6 +33,7 @@ public class XSLMapEntry extends StyleElement {
      * @return true - it is an instruction
      */
 
+    @Override
     public boolean isInstruction() {
         return true;
     }
@@ -54,10 +55,12 @@ public class XSLMapEntry extends StyleElement {
      * @return true: yes, it may contain a sequence constructor
      */
 
+    @Override
     public boolean mayContainSequenceConstructor() {
         return true;
     }
 
+    @Override
     public void prepareAttributes() {
 
         String keyAtt = null;
@@ -84,6 +87,7 @@ public class XSLMapEntry extends StyleElement {
 
     }
 
+    @Override
     public void validate(ComponentDeclaration decl) throws XPathException {
         key = typeCheck("key", key);
         select = typeCheck("select", select);
@@ -97,6 +101,7 @@ public class XSLMapEntry extends StyleElement {
         }
     }
 
+    @Override
     public Expression compile(Compilation exec, ComponentDeclaration decl) throws XPathException {
         if (select == null) {
             select = compileSequenceConstructor(exec, decl, false);

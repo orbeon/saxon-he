@@ -31,6 +31,7 @@ public class UncheckedXPathException extends RuntimeException {
         return cause;
     }
 
+    @Override
     public String getMessage() {
         return cause.getMessage();
     }

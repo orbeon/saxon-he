@@ -172,6 +172,7 @@ public class XSLPackage extends XSLModuleRoot {
      */
 
 
+    @Override
     public void validate(ComponentDeclaration decl) throws XPathException {
         for (NodeInfo child : children()) {
             int fp = child.getFingerprint();

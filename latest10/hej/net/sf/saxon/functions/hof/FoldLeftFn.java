@@ -23,6 +23,7 @@ import net.sf.saxon.type.ItemType;
 
 public class FoldLeftFn extends FoldingFunction {
 
+    @Override
     public Fold getFold(XPathContext context, Sequence... arguments) throws XPathException {
         Sequence arg0 = (Sequence)arguments[0];
         return new FoldLeftFold(context, arg0.materialize(), (Function)arguments[1].head());
@@ -42,6 +43,7 @@ public class FoldLeftFn extends FoldingFunction {
             this.counter = 0;
         }
 
+        @Override
         public void processItem(Item item) throws XPathException {
             Sequence[] args = new Sequence[2];
             args[0] = data;
@@ -59,10 +61,12 @@ public class FoldLeftFn extends FoldingFunction {
             }
         }
 
+        @Override
         public boolean isFinished() {
             return false;
         }
 
+        @Override
         public Sequence result() {
             return data;
         }

@@ -51,6 +51,7 @@ public class CharacterMapIndex implements Iterable<CharacterMap> {
      * @return an iterator over the character maps
      */
 
+    @Override
     public Iterator<CharacterMap> iterator() {
         return index.values().iterator();
     }

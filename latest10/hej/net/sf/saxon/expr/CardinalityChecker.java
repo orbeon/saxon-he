@@ -77,6 +77,7 @@ public final class CardinalityChecker extends UnaryExpression {
         return result;
     }
 
+    @Override
     protected OperandRole getOperandRole() {
         return OperandRole.SAME_FOCUS_ACTION;
     }
@@ -96,6 +97,7 @@ public final class CardinalityChecker extends UnaryExpression {
      */
 
     /*@NotNull*/
+    @Override
     public Expression typeCheck(ExpressionVisitor visitor, ContextItemStaticInfo contextInfo) throws XPathException {
         getOperand().typeCheck(visitor, contextInfo);
         Expression base = getBaseExpression();
@@ -122,6 +124,7 @@ public final class CardinalityChecker extends UnaryExpression {
      */
 
     /*@NotNull*/
+    @Override
     public Expression optimize(ExpressionVisitor visitor, ContextItemStaticInfo contextInfo) throws XPathException {
         getOperand().optimize(visitor, contextInfo);
         Expression base = getBaseExpression();
@@ -177,6 +180,7 @@ public final class CardinalityChecker extends UnaryExpression {
      * process() methods natively.
      */
 
+    @Override
     public int getImplementationMethod() {
         int m = ITERATE_METHOD | PROCESS_METHOD | ITEM_FEED_METHOD;
         if (!Cardinality.allowsMany(requiredCardinality)) {
@@ -208,6 +212,7 @@ public final class CardinalityChecker extends UnaryExpression {
      */
 
     /*@NotNull*/
+    @Override
     public SequenceIterator iterate(XPathContext context) throws XPathException {
         SequenceIterator base = getBaseExpression().iterate(context);
 
@@ -273,6 +278,7 @@ public final class CardinalityChecker extends UnaryExpression {
      */
 
     /*@Nullable*/
+    @Override
     public Item evaluateItem(XPathContext context) throws XPathException {
         SequenceIterator iter = getBaseExpression().iterate(context);
         Item first = iter.next();
@@ -306,6 +312,7 @@ public final class CardinalityChecker extends UnaryExpression {
      * @param context The dynamic context, giving access to the current node,
      */
 
+    @Override
     public void process(Outputter output, XPathContext context) throws XPathException {
         Expression next = getBaseExpression();
         ItemType type = Type.ITEM_TYPE;
@@ -337,6 +344,7 @@ public final class CardinalityChecker extends UnaryExpression {
      */
 
     /*@NotNull*/
+    @Override
     public ItemType getItemType() {
         return getBaseExpression().getItemType();
     }
@@ -345,6 +353,7 @@ public final class CardinalityChecker extends UnaryExpression {
      * Determine the static cardinality of the expression
      */
 
+    @Override
     public int computeCardinality() {
         return requiredCardinality;
     }
@@ -355,6 +364,7 @@ public final class CardinalityChecker extends UnaryExpression {
      * property bit is set, it is true, but if it is unset, the value is unknown.
      */
 
+    @Override
     public int computeSpecialProperties() {
         return getBaseExpression().getSpecialProperties();
     }
@@ -367,6 +377,7 @@ public final class CardinalityChecker extends UnaryExpression {
      */
 
     /*@NotNull*/
+    @Override
     public Expression copy(RebindingMap rebindings) {
         CardinalityChecker c2 = new CardinalityChecker(getBaseExpression().copy(rebindings), requiredCardinality, role);
         ExpressionTool.copyLocationInfo(this, c2);
@@ -397,6 +408,7 @@ public final class CardinalityChecker extends UnaryExpression {
      * is written to the supplied output destination.
      */
 
+    @Override
     public void export(ExpressionPresenter out) throws XPathException {
         out.startElement("check", this);
         String occ = Cardinality.getOccurrenceIndicator(requiredCardinality);
@@ -439,6 +451,7 @@ public final class CardinalityChecker extends UnaryExpression {
      *         in explain() output displaying the expression.
      */
 
+    @Override
     public String getExpressionName() {
         return "CheckCardinality";
     }

@@ -30,6 +30,7 @@ public class TailFn extends SystemFunction {
      * @throws net.sf.saxon.trans.XPathException
      *          if a dynamic error occurs during the evaluation of the expression
      */
+    @Override
     public Sequence call(XPathContext context, Sequence[] arguments) throws XPathException {
         return SequenceTool.toLazySequence(TailIterator.make(arguments[0].iterate(), 2));
     }

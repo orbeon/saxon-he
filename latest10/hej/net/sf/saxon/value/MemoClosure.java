@@ -76,6 +76,7 @@ public class MemoClosure extends Closure implements ContextOriginator {
      */
 
     /*@NotNull*/
+    @Override
     public synchronized SequenceIterator iterate() throws XPathException {
         makeSequence();
         return sequence.iterate();
@@ -117,6 +118,7 @@ public class MemoClosure extends Closure implements ContextOriginator {
      */
 
     /*@Nullable*/
+    @Override
     public GroundedValue reduce() throws XPathException {
         if (sequence instanceof GroundedValue) {
             return (GroundedValue)sequence;

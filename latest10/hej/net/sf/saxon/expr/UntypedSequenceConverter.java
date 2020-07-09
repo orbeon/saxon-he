@@ -113,6 +113,7 @@ public final class UntypedSequenceConverter extends AtomicSequenceConverter {
         final ConversionRules rules = config.getConversionRules();
         final Converter untypedConverter = new Converter() {
             // called when an untyped atomic value is encountered
+            @Override
             public ConversionResult convert(/*@NotNull*/ AtomicValue input) {
                 ValidationFailure vf = new ValidationFailure(
                         "Implicit conversion of untypedAtomic value to " + requiredItemType.toString() + " is not allowed");
@@ -150,6 +151,7 @@ public final class UntypedSequenceConverter extends AtomicSequenceConverter {
      * @return {@link net.sf.saxon.expr.StaticProperty#NO_NODES_NEWLY_CREATED}.
      */
 
+    @Override
     public int computeSpecialProperties() {
         int p = super.computeSpecialProperties();
         return p | StaticProperty.NO_NODES_NEWLY_CREATED | StaticProperty.NOT_UNTYPED_ATOMIC;
@@ -163,6 +165,7 @@ public final class UntypedSequenceConverter extends AtomicSequenceConverter {
      */
 
     /*@NotNull*/
+    @Override
     public Expression copy(RebindingMap rebindings) {
         UntypedSequenceConverter atomicConverter = new UntypedSequenceConverter(getBaseExpression().copy(rebindings), getRequiredItemType());
         ExpressionTool.copyLocationInfo(this, atomicConverter);
@@ -180,6 +183,7 @@ public final class UntypedSequenceConverter extends AtomicSequenceConverter {
      */
 
     /*@NotNull*/
+    @Override
     public ItemType getItemType() {
         if (getBaseExpression().getItemType() == BuiltInAtomicType.UNTYPED_ATOMIC) {
             return getRequiredItemType();
@@ -193,6 +197,7 @@ public final class UntypedSequenceConverter extends AtomicSequenceConverter {
      * Determine the static cardinality of the expression
      */
 
+    @Override
     public int computeCardinality() {
         return getBaseExpression().getCardinality();
     }
@@ -242,6 +247,7 @@ public final class UntypedSequenceConverter extends AtomicSequenceConverter {
      * is written to the supplied output destination.
      */
 
+    @Override
     public void export(ExpressionPresenter destination) throws XPathException {
         destination.startElement("cvUntyped", this);
         destination.emitAttribute("to", AlphaCode.fromItemType(getRequiredItemType()));

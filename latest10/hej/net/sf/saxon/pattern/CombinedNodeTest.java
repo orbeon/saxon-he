@@ -59,6 +59,7 @@ public class CombinedNodeTest extends NodeTest {
      *
      * @return the smallest UType that subsumes this item type
      */
+    @Override
     public UType getUType() {
         UType u1 = nodetest1.getUType();
         UType u2 = nodetest2.getUType();
@@ -130,6 +131,7 @@ public class CombinedNodeTest extends NodeTest {
      * @param node the node to be matched
      */
 
+    @Override
     public boolean test(/*@NotNull*/ NodeInfo node) {
         switch (operator) {
             case Token.UNION:
@@ -249,6 +251,7 @@ public class CombinedNodeTest extends NodeTest {
      * @return the node kind matched by this node test
      */
 
+    @Override
     public int getPrimitiveType() {
         UType mask = getUType();
         if (mask.equals(UType.ELEMENT)) {
@@ -269,6 +272,7 @@ public class CombinedNodeTest extends NodeTest {
      */
 
     /*@NotNull*/
+    @Override
     public Optional<IntSet> getRequiredNodeNames() {
         Optional<IntSet> os1 = nodetest1.getRequiredNodeNames();
         Optional<IntSet> os2 = nodetest2.getRequiredNodeNames();
@@ -298,6 +302,7 @@ public class CombinedNodeTest extends NodeTest {
      * Return AnyType if there are no restrictions. The default implementation returns AnyType.
      */
 
+    @Override
     public SchemaType getContentType() {
         SchemaType type1 = nodetest1.getContentType();
         SchemaType type2 = nodetest2.getContentType();
@@ -321,6 +326,7 @@ public class CombinedNodeTest extends NodeTest {
      */
 
     /*@NotNull*/
+    @Override
     public AtomicType getAtomizedItemType() {
         AtomicType type1 = nodetest1.getAtomizedItemType();
         AtomicType type2 = nodetest2.getAtomizedItemType();
@@ -346,6 +352,7 @@ public class CombinedNodeTest extends NodeTest {
      * @param th the type hierarchy cache
      */
 
+    @Override
     public boolean isAtomizable(TypeHierarchy th) {
         switch (operator) {
             case Token.UNION:
@@ -364,6 +371,7 @@ public class CombinedNodeTest extends NodeTest {
      * Return -1 if the node test matches nodes of more than one name
      */
 
+    @Override
     public int getFingerprint() {
         int fp1 = nodetest1.getFingerprint();
         int fp2 = nodetest2.getFingerprint();
@@ -401,6 +409,7 @@ public class CombinedNodeTest extends NodeTest {
      * @return true if the content test (when present) can match nodes that are nilled
      */
 
+    @Override
     public boolean isNillable() {
         // this should err on the safe side
         return nodetest1.isNillable() && nodetest2.isNillable();
@@ -430,6 +439,7 @@ public class CombinedNodeTest extends NodeTest {
      * is 0.25, reflecting the common usage of an intersection to represent the pattern element(E, T).
      */
 
+    @Override
     public double getDefaultPriority() {
         if (operator == Token.UNION) {
             return nodetest1.getDefaultPriority();

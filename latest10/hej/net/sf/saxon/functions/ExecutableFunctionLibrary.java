@@ -71,6 +71,7 @@ public class ExecutableFunctionLibrary implements FunctionLibrary {
      *         null if no extension function was found matching the required name and arity.
      */
 
+    @Override
     public Expression bind(SymbolicName.F functionName, Expression[] staticArgs, StaticContext env, List<String> reasons) {
         UserFunction fn = functions.get(functionName);
         if (fn == null) {
@@ -98,6 +99,7 @@ public class ExecutableFunctionLibrary implements FunctionLibrary {
      *          in the event of certain errors, for example attempting to get a function
      *          that is private
      */
+    @Override
     public Function getFunctionItem(SymbolicName.F functionName, StaticContext staticContext) throws XPathException {
         UserFunction fn = functions.get(functionName);
         if (fn != null && fn.isUpdating()) {
@@ -114,6 +116,7 @@ public class ExecutableFunctionLibrary implements FunctionLibrary {
      * @return true if a function of this name and arity is available for calling
      */
 
+    @Override
     public boolean isAvailable(SymbolicName.F functionName) {
         return functions.get(functionName) != null;
     }
@@ -126,6 +129,7 @@ public class ExecutableFunctionLibrary implements FunctionLibrary {
      * @return a copy of this function library. This must be an instance of the original class.
      */
 
+    @Override
     public FunctionLibrary copy() {
         ExecutableFunctionLibrary efl = new ExecutableFunctionLibrary(config);
         efl.functions = new HashMap<>(functions);

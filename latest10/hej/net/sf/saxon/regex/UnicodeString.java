@@ -225,6 +225,7 @@ public abstract class UnicodeString implements CharSequence, Comparable<UnicodeS
      * @return less than 0, 0, or greater than 0 depending on the ordering of the two strings
      */
 
+    @Override
     public int compareTo(UnicodeString other) {
         int alen = uLength();
         int blen = other.uLength();

@@ -71,6 +71,7 @@ public class ARegularExpression implements RegularExpression {
      * @param input the string to match
      * @return true if the string matches, false otherwise
      */
+    @Override
     public boolean matches(CharSequence input) {
         if (StringValue.isEmpty(input) && regex.isNullable()) {
             return true;
@@ -85,6 +86,7 @@ public class ARegularExpression implements RegularExpression {
      * @param input the string to match
      * @return true if the string matches, false otherwise
      */
+    @Override
     public boolean containsMatch(CharSequence input) {
         REMatcher matcher = new REMatcher(regex);
         return matcher.match(UnicodeString.makeUnicodeString(input), 0);
@@ -96,6 +98,7 @@ public class ARegularExpression implements RegularExpression {
      * @param input the string to be tokenized
      * @return a SequenceIterator containing the resulting tokens, as objects of type StringValue
      */
+    @Override
     public AtomicIterator tokenize(CharSequence input) {
         return new ATokenIterator(UnicodeString.makeUnicodeString(input), new REMatcher(regex));
     }
@@ -109,6 +112,7 @@ public class ARegularExpression implements RegularExpression {
      * @param input the character string to be analyzed using the regular expression
      * @return an iterator over matched and unmatched substrings
      */
+    @Override
     public RegexIterator analyze(CharSequence input) {
         return new ARegexIterator(UnicodeString.makeUnicodeString(input), rawPattern, new REMatcher(regex));
     }
@@ -123,6 +127,7 @@ public class ARegularExpression implements RegularExpression {
      * @throws net.sf.saxon.trans.XPathException
      *          if the replacement string is invalid
      */
+    @Override
     public CharSequence replace(CharSequence input, CharSequence replacement) throws XPathException {
         REMatcher matcher = new REMatcher(regex);
         UnicodeString in = UnicodeString.makeUnicodeString(input);
@@ -143,6 +148,7 @@ public class ARegularExpression implements RegularExpression {
      * @return the result of performing the replacement
      * @throws net.sf.saxon.trans.XPathException if the replacement string is invalid
      */
+    @Override
     public CharSequence replaceWith(CharSequence input, Function<CharSequence, CharSequence> replacer) throws XPathException {
         REMatcher matcher = new REMatcher(regex);
         UnicodeString in = UnicodeString.makeUnicodeString(input);

@@ -69,10 +69,12 @@ public class String_1 extends ScalarSystemFunction {
         return null;
     }
 
+    @Override
     public String getCompilerName() {
         return "StringFnCompiler";
     }
 
+    @Override
     public String getStreamerName() {
         return "StringFn";
     }

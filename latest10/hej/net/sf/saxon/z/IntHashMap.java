@@ -251,6 +251,7 @@ public class IntHashMap<T> {
 
     public Iterable<T> valueSet() {
         return new Iterable<T>() {
+            @Override
             public Iterator<T> iterator() {
                 return valueIterator();
             }
@@ -297,6 +298,7 @@ public class IntHashMap<T> {
             i = 0;
         }
 
+        @Override
         public boolean hasNext() {
             while (i < _key.length) {
                 if (_value[i] != null) {
@@ -308,6 +310,7 @@ public class IntHashMap<T> {
             return false;
         }
 
+        @Override
         public int next() {
             return _key[i++];
         }
@@ -324,6 +327,7 @@ public class IntHashMap<T> {
             i = 0;
         }
 
+        @Override
         public boolean hasNext() {
             while (i < _key.length) {
                 if (_value[i] != null) {
@@ -335,6 +339,7 @@ public class IntHashMap<T> {
             return false;
         }
 
+        @Override
         public T next() {
             T temp = _value[i++];
             if (temp == null) {
@@ -350,6 +355,7 @@ public class IntHashMap<T> {
          * @throws UnsupportedOperationException if the <tt>remove</tt>
          *                                       operation is not supported by this Iterator.
          */
+        @Override
         public void remove() {
             throw new UnsupportedOperationException("remove");
         }
@@ -363,10 +369,12 @@ public class IntHashMap<T> {
 
     public IntSet keySet() {
         return new IntSet() {
+            @Override
             public void clear() {
                 throw new UnsupportedOperationException("Immutable set");
             }
 
+            @Override
             public IntSet copy() {
                 IntHashSet s = new IntHashSet();
                 IntIterator ii = iterator();
@@ -376,50 +384,62 @@ public class IntHashMap<T> {
                 return s;
             }
 
+            @Override
             public IntSet mutableCopy() {
                 return copy();
             }
 
+            @Override
             public boolean isMutable() {
                 return false;
             }
 
+            @Override
             public int size() {
                 return _n;
             }
 
+            @Override
             public boolean isEmpty() {
                 return _n == 0;
             }
 
+            @Override
             public boolean contains(int key) {
                 return _value[indexOf(key)] != null;
             }
 
+            @Override
             public boolean remove(int value) {
                 throw new UnsupportedOperationException("Immutable set");
             }
 
+            @Override
             public boolean add(int value) {
                 throw new UnsupportedOperationException("Immutable set");
             }
 
+            @Override
             public IntIterator iterator() {
                 return new IntHashMapKeyIterator();
             }
 
+            @Override
             public IntSet union(IntSet other) {
                 return copy().union(other);
             }
 
+            @Override
             public IntSet intersect(IntSet other) {
                 return copy().intersect(other);
             }
 
+            @Override
             public IntSet except(IntSet other) {
                 return copy().except(other);
             }
 
+            @Override
             public boolean containsAll(IntSet other) {
                 return copy().containsAll(other);
             }

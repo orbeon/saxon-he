@@ -21,6 +21,7 @@ import net.sf.saxon.value.AnyURIValue;
 
 public class BaseUri_1 extends SystemFunction implements Callable {
 
+    @Override
     public ZeroOrOne call(XPathContext context, Sequence[] arguments) throws XPathException {
         NodeInfo node = (NodeInfo)arguments[0].head();
         if (node == null) {
@@ -34,6 +35,7 @@ public class BaseUri_1 extends SystemFunction implements Callable {
 
     }
 
+    @Override
     public String getCompilerName() {
         return "BaseURICompiler";
     }

@@ -35,6 +35,7 @@ public class SQLElementFactory implements ExtensionElementFactory {
      */
 
     /*@Nullable*/
+    @Override
     public Class<? extends StyleElement> getExtensionClass(String localname) {
         if (localname.equals("connect")) return SQLConnect.class;
         if (localname.equals("insert")) return SQLInsert.class;

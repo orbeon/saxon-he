@@ -58,6 +58,7 @@ public final class Operand implements Iterable<Operand>, ExpressionOwner {
      *
      * @return the child expression
      */
+    @Override
     public Expression getChildExpression() {
         return childExpression;
     }
@@ -69,6 +70,7 @@ public final class Operand implements Iterable<Operand>, ExpressionOwner {
      * @param childExpression the new child expression
      */
 
+    @Override
     public void setChildExpression(Expression childExpression) {
         if (childExpression != this.childExpression) {
             if (role.isConstrainedClass()) {
@@ -201,6 +203,7 @@ public final class Operand implements Iterable<Operand>, ExpressionOwner {
      * @return a singleton iterator
      */
 
+    @Override
     public Iterator<Operand> iterator() {
         return new MonoIterator<>(this);
     }

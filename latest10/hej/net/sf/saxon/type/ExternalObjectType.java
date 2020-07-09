@@ -45,6 +45,7 @@ public abstract class ExternalObjectType extends AnyExternalObjectType {
      * @return false. External object types are not considered to be atomic types
      */
 
+    @Override
     public final boolean isPlainType() {
         return false;
     }

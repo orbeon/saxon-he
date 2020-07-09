@@ -35,6 +35,7 @@ public class XSLPreserveSpace extends StyleElement {
         return true;
     }
 
+    @Override
     public void prepareAttributes() {
 
         for (AttributeInfo att : attributes()) {
@@ -52,6 +53,7 @@ public class XSLPreserveSpace extends StyleElement {
         }
     }
 
+    @Override
     public void validate(ComponentDeclaration decl) throws XPathException {
         checkEmpty();
         checkTopLevel("XTSE0010", false);
@@ -69,6 +71,7 @@ public class XSLPreserveSpace extends StyleElement {
         }
     }
 
+    @Override
     public void compileDeclaration(Compilation compilation, ComponentDeclaration decl)  {
         Stripper.StripRuleTarget preserve =
                 getFingerprint() == StandardNames.XSL_PRESERVE_SPACE ? Stripper.PRESERVE : Stripper.STRIP;

@@ -36,6 +36,7 @@ public class BreakInstr extends Instruction implements TailCallLoop.TailCallInfo
     }
 
     /*@NotNull*/
+    @Override
     public Expression copy(RebindingMap rebindings) {
         BreakInstr b2 = new BreakInstr();
         ExpressionTool.copyLocationInfo(this, b2);
@@ -43,6 +44,7 @@ public class BreakInstr extends Instruction implements TailCallLoop.TailCallInfo
     }
 
 
+    @Override
     public boolean mayCreateNewNodes() {
         // this is a fiction, but it prevents the instruction being moved to a global variable,
         // which would be pointless and possibly harmful
@@ -55,6 +57,7 @@ public class BreakInstr extends Instruction implements TailCallLoop.TailCallInfo
      * @param forStreaming
      */
 
+    @Override
     public boolean isLiftable(boolean forStreaming) {
         return false;
     }
@@ -71,6 +74,7 @@ public class BreakInstr extends Instruction implements TailCallLoop.TailCallInfo
     }
 
     /*@Nullable*/
+    @Override
     public TailCall processLeavingTail(Outputter output, XPathContext context) throws XPathException {
         markContext(context);
         return null;
@@ -89,6 +93,7 @@ public class BreakInstr extends Instruction implements TailCallLoop.TailCallInfo
         return "xsl:break";
     }
 
+    @Override
     public void export(ExpressionPresenter out) throws XPathException {
         out.startElement("break", this);
         out.endElement();

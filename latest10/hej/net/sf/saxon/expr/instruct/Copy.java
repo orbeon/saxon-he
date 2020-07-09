@@ -91,6 +91,7 @@ public class Copy extends ElementCreator {
      */
 
     /*@NotNull*/
+    @Override
     public Expression simplify() throws XPathException {
         preservingTypes |= !getPackageData().isSchemaAware();
         return super.simplify();
@@ -98,6 +99,7 @@ public class Copy extends ElementCreator {
 
 
     /*@NotNull*/
+    @Override
     public Expression typeCheck(ExpressionVisitor visitor, ContextItemStaticInfo contextInfo) throws XPathException {
 
         typeCheckChildren(visitor, contextInfo);
@@ -150,6 +152,7 @@ public class Copy extends ElementCreator {
      */
 
     /*@NotNull*/
+    @Override
     public Expression copy(RebindingMap rebindings) {
         Copy copy = new Copy(
                 copyNamespaces, bequeathNamespacesToChildren, getSchemaType(), getValidationAction());
@@ -180,6 +183,7 @@ public class Copy extends ElementCreator {
      *         the expression
      */
 
+    @Override
     public int getIntrinsicDependencies() {
         return StaticProperty.DEPENDS_ON_CONTEXT_ITEM;
     }
@@ -188,6 +192,7 @@ public class Copy extends ElementCreator {
      * Get the name of this instruction for diagnostic and tracing purposes
      */
 
+    @Override
     public int getInstructionNameCode() {
         return StandardNames.XSL_COPY;
     }
@@ -213,6 +218,7 @@ public class Copy extends ElementCreator {
      */
 
     /*@NotNull*/
+    @Override
     public ItemType getItemType() {
         if (resultItemType != null) {
             return resultItemType;
@@ -320,6 +326,7 @@ public class Copy extends ElementCreator {
     }
 
     /*@NotNull*/
+    @Override
     public Expression optimize(ExpressionVisitor visitor, ContextItemStaticInfo contextItemType) throws XPathException {
         Expression exp = super.optimize(visitor, contextItemType);
         if (exp == this) {
@@ -361,6 +368,7 @@ public class Copy extends ElementCreator {
      * @return the name of the element to be constructed
      */
 
+    @Override
     public NodeName getElementName(XPathContext context, NodeInfo copiedNode) {
         return NameOfNode.makeName(copiedNode);
     }
@@ -373,6 +381,7 @@ public class Copy extends ElementCreator {
      * @return the base URI
      */
 
+    @Override
     public String getNewBaseURI(XPathContext context, NodeInfo copiedNode) {
         return copiedNode.getBaseURI();
     }
@@ -386,6 +395,7 @@ public class Copy extends ElementCreator {
      * @throws XPathException if any error occurs
      */
 
+    @Override
     public void outputNamespaceNodes(Outputter receiver, NodeName nodeName, NodeInfo copiedNode)
             throws XPathException {
         if (copyNamespaces) {
@@ -399,6 +409,7 @@ public class Copy extends ElementCreator {
         }
     }
 
+    @Override
     public TailCall processLeavingTail(Outputter out, XPathContext context) throws XPathException {
         Controller controller = context.getController();
         Item item = context.getContextItem();
@@ -487,6 +498,7 @@ public class Copy extends ElementCreator {
      * Evaluate as an item
      */
 
+    @Override
     public Item evaluateItem(XPathContext context) throws XPathException {
         Controller controller = context.getController();
         SequenceCollector seq = controller.allocateSequenceOutputter(1);
@@ -514,6 +526,7 @@ public class Copy extends ElementCreator {
      * is written to the supplied output destination.
      */
 
+    @Override
     public void export(ExpressionPresenter out) throws XPathException {
         out.startElement("copy", this);
         exportValidationAndType(out);

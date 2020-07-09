@@ -29,6 +29,7 @@ public class CountClause extends Clause {
         return COUNT;
     }
 
+    @Override
     public CountClause copy(FLWORExpression flwor, RebindingMap rebindings) {
         CountClause c2 = new CountClause();
         c2.rangeVariable = rangeVariable.copy();

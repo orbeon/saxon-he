@@ -35,9 +35,11 @@ public class TEXTEmitter extends XMLEmitter {
      * Start of the document.
      */
 
+    @Override
     public void open() throws XPathException {
     }
 
+    @Override
     protected void openDocument() throws XPathException {
 
         if (writer == null) {
@@ -75,6 +77,7 @@ public class TEXTEmitter extends XMLEmitter {
      * Output the XML declaration. This implementation does nothing.
      */
 
+    @Override
     public void writeDeclaration() {
     }
 
@@ -86,6 +89,7 @@ public class TEXTEmitter extends XMLEmitter {
      * @param properties bit fields holding special properties of the characters  @throws XPathException for any failure
      */
 
+    @Override
     public void characters(CharSequence chars, Location locationId, int properties) throws XPathException {
         if (!started) {
             openDocument();
@@ -112,6 +116,7 @@ public class TEXTEmitter extends XMLEmitter {
      * Does nothing with this output method.
      */
 
+    @Override
     public void startElement(NodeName elemName, SchemaType type,
                              AttributeMap attributes, NamespaceMap namespaces,
                              Location location, int properties) throws XPathException {
@@ -123,6 +128,7 @@ public class TEXTEmitter extends XMLEmitter {
      * Does nothing  with this output method.
      */
 
+    @Override
     public void endElement() {
         // no-op
     }
@@ -132,6 +138,7 @@ public class TEXTEmitter extends XMLEmitter {
      * Does nothing with this output method.
      */
 
+    @Override
     public void processingInstruction(String name, /*@NotNull*/ CharSequence value, Location locationId, int properties)
             throws XPathException {
     }
@@ -141,6 +148,7 @@ public class TEXTEmitter extends XMLEmitter {
      * Does nothing with this output method.
      */
 
+    @Override
     public void comment(CharSequence chars, Location locationId, int properties) throws XPathException {
     }
 

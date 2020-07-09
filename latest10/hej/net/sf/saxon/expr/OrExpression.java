@@ -59,6 +59,7 @@ public class OrExpression extends BooleanExpression {
      */
 
     /*@NotNull*/
+    @Override
     public Expression optimize(ExpressionVisitor visitor, ContextItemStaticInfo contextItemType) throws XPathException {
 
         final Expression e = super.optimize(visitor, contextItemType);
@@ -91,6 +92,7 @@ public class OrExpression extends BooleanExpression {
      */
 
     /*@NotNull*/
+    @Override
     public Expression copy(RebindingMap rebindings) {
         OrExpression exp = new OrExpression(getLhsExpression().copy(rebindings), getRhsExpression().copy(rebindings));
         ExpressionTool.copyLocationInfo(this, exp);
@@ -105,6 +107,7 @@ public class OrExpression extends BooleanExpression {
      * @return the negation of this expression
      */
 
+    @Override
     public Expression negate() {
         // Apply de Morgan's laws
         // not(A or B) => not(A) and not(B)
@@ -129,6 +132,7 @@ public class OrExpression extends BooleanExpression {
      * Evaluate as a boolean.
      */
 
+    @Override
     public boolean effectiveBooleanValue(XPathContext c) throws XPathException {
         return getLhsExpression().effectiveBooleanValue(c) || getRhsExpression().effectiveBooleanValue(c);
     }

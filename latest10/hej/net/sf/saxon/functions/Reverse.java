@@ -26,6 +26,7 @@ import net.sf.saxon.value.SequenceExtent;
 
 public class Reverse extends SystemFunction {
 
+    @Override
     public int getSpecialProperties(Expression[] arguments) {
         int baseProps = arguments[0].getSpecialProperties();
         if ((baseProps & StaticProperty.REVERSE_DOCUMENT_ORDER) != 0) {
@@ -80,6 +81,7 @@ public class Reverse extends SystemFunction {
     }
 
 
+    @Override
     public Sequence call(XPathContext context, Sequence[] arguments) throws XPathException {
         return SequenceTool.toLazySequence(getReverseIterator(arguments[0].iterate()));
     }
@@ -108,6 +110,7 @@ public class Reverse extends SystemFunction {
 
     }
 
+    @Override
     public String getStreamerName() {
         return "Reverse";
     }

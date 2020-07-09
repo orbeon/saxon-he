@@ -75,6 +75,7 @@ public class ObjectValue<T> implements ExternalObject<T> {
      * @see #getStringValueCS
      * @since 8.4
      */
+    @Override
     public String getStringValue() {
         return value.toString();
     }
@@ -96,6 +97,7 @@ public class ObjectValue<T> implements ExternalObject<T> {
      * @see #getStringValue
      * @since 8.4
      */
+    @Override
     public CharSequence getStringValueCS() {
         return value.toString();
     }
@@ -106,6 +108,7 @@ public class ObjectValue<T> implements ExternalObject<T> {
      * @return the result of atomization. For an external object this is defined
      * to be the result of the toString() method, as an xs:string value.
      */
+    @Override
     public StringValue atomize() {
         return new StringValue(getStringValue());
     }
@@ -118,6 +121,7 @@ public class ObjectValue<T> implements ExternalObject<T> {
      */
 
     /*@NotNull*/
+    @Override
     public ItemType getItemType(/*@Nullable*/ TypeHierarchy th) {
         return th.getConfiguration().getJavaExternalObjectType(value.getClass());
     }
@@ -139,6 +143,7 @@ public class ObjectValue<T> implements ExternalObject<T> {
      *
      * @return true (always)
      */
+    @Override
     public boolean effectiveBooleanValue() {
         return true;
     }

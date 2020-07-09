@@ -41,6 +41,7 @@ public class XSLCopy extends StyleElement {
      * @return true - it is an instruction
      */
 
+    @Override
     public boolean isInstruction() {
         return true;
     }
@@ -51,10 +52,12 @@ public class XSLCopy extends StyleElement {
      * @return true: yes, it may contain a template-body
      */
 
+    @Override
     public boolean mayContainSequenceConstructor() {
         return true;
     }
 
+    @Override
     public void prepareAttributes() {
 
         String copyNamespacesAtt = null;
@@ -124,6 +127,7 @@ public class XSLCopy extends StyleElement {
 
     }
 
+    @Override
     public void validate(ComponentDeclaration decl) throws XPathException {
         if (use != null) {
             // get the names of referenced attribute sets
@@ -136,6 +140,7 @@ public class XSLCopy extends StyleElement {
         }
     }
 
+    @Override
     public Expression compile(Compilation exec, ComponentDeclaration decl) throws XPathException {
 
         select = typeCheck("select", select);

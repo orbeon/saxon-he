@@ -44,6 +44,7 @@ final class DescendantIteratorSansText implements AxisIterator {
     }
 
     /*@Nullable*/
+    @Override
     public NodeInfo next() {
         do {
             nextNodeNr++;

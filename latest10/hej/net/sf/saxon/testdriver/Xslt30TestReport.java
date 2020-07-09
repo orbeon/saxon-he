@@ -24,6 +24,7 @@ public class Xslt30TestReport extends TestReport {
         super(testDriver, sp);
     }
 
+    @Override
     public void writeResultFilePreamble(Processor processor, XdmNode catalog)
             throws IOException, SaxonApiException, XMLStreamException {
         createWriter(processor);

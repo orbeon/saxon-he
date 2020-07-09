@@ -52,6 +52,7 @@ public abstract class XSLGeneralIncorporate extends StyleElement {
 
     public abstract boolean isImport();
 
+    @Override
     public void prepareAttributes() {
 
         for (AttributeInfo att : attributes()) {
@@ -70,6 +71,7 @@ public abstract class XSLGeneralIncorporate extends StyleElement {
         }
     }
 
+    @Override
     public void validate(ComponentDeclaration decl) throws XPathException {
         validateInstruction();
     }
@@ -194,6 +196,7 @@ public abstract class XSLGeneralIncorporate extends StyleElement {
         return false;
     }
 
+    @Override
     public void compileDeclaration(Compilation compilation, ComponentDeclaration decl) {
         // no action. The node will never be compiled, because it replaces itself
         // by the contents of the included file.

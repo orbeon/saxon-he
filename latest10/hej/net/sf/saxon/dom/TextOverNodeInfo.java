@@ -29,6 +29,7 @@ public class TextOverNodeInfo extends NodeOverNodeInfo implements Text, Comment 
      * DOM method.
      */
 
+    @Override
     public String getData() {
         return node.getStringValue();
     }
@@ -38,6 +39,7 @@ public class TextOverNodeInfo extends NodeOverNodeInfo implements Text, Comment 
      * DOM method: always fails, Saxon tree is immutable.
      */
 
+    @Override
     public void setData(String data) throws DOMException {
         disallowUpdate();
     }
@@ -47,6 +49,7 @@ public class TextOverNodeInfo extends NodeOverNodeInfo implements Text, Comment 
      * DOM method.
      */
 
+    @Override
     public int getLength() {
         return node.getStringValue().length();
     }
@@ -65,6 +68,7 @@ public class TextOverNodeInfo extends NodeOverNodeInfo implements Text, Comment 
      *                                  negative.
      */
 
+    @Override
     public String substringData(int offset, int count) throws DOMException {
         try {
             return node.getStringValue().substring(offset, offset + count);
@@ -82,6 +86,7 @@ public class TextOverNodeInfo extends NodeOverNodeInfo implements Text, Comment 
      * @throws org.w3c.dom.DOMException NO_MODIFICATION_ALLOWED_ERR: Raised if this node is readonly.
      */
 
+    @Override
     public void appendData(String arg) throws DOMException {
         disallowUpdate();
     }
@@ -95,6 +100,7 @@ public class TextOverNodeInfo extends NodeOverNodeInfo implements Text, Comment 
      * @throws UnsupportedOperationException always
      */
 
+    @Override
     public void insertData(int offset, String arg) throws DOMException {
         disallowUpdate();
     }
@@ -108,6 +114,7 @@ public class TextOverNodeInfo extends NodeOverNodeInfo implements Text, Comment 
      * @throws UnsupportedOperationException always
      */
 
+    @Override
     public void deleteData(int offset, int count) throws DOMException {
         disallowUpdate();
     }
@@ -123,6 +130,7 @@ public class TextOverNodeInfo extends NodeOverNodeInfo implements Text, Comment 
      * @throws org.w3c.dom.DOMException NO_MODIFICATION_ALLOWED_ERR: Raised if this node is readonly.
      */
 
+    @Override
     public void replaceData(int offset,
                             int count,
                             String arg) throws DOMException {
@@ -139,6 +147,7 @@ public class TextOverNodeInfo extends NodeOverNodeInfo implements Text, Comment 
      * @throws org.w3c.dom.DOMException
      */
 
+    @Override
     public Text splitText(int offset) throws DOMException {
         disallowUpdate();
         return null;
@@ -187,6 +196,7 @@ public class TextOverNodeInfo extends NodeOverNodeInfo implements Text, Comment 
      * @since DOM Level 3
      */
     /*@Nullable*/
+    @Override
     public Text replaceWholeText(String content) throws DOMException {
         disallowUpdate();
         return null;
@@ -201,6 +211,7 @@ public class TextOverNodeInfo extends NodeOverNodeInfo implements Text, Comment 
      *
      * @since DOM Level 3
      */
+    @Override
     public boolean isElementContentWhitespace() {
         if (node.getNodeKind() != Type.TEXT) {
             throw new UnsupportedOperationException("Method is defined only on text nodes");
@@ -225,6 +236,7 @@ public class TextOverNodeInfo extends NodeOverNodeInfo implements Text, Comment 
      *
      * @since DOM Level 3
      */
+    @Override
     public String getWholeText() {
         if (node.getNodeKind() != Type.TEXT) {
             throw new UnsupportedOperationException("Method is defined only on text nodes");

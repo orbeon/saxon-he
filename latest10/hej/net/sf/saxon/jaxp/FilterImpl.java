@@ -51,6 +51,7 @@ public class FilterImpl extends AbstractXMLFilter {
      * @see #setErrorHandler
      */
 
+    @Override
     public void parse(InputSource input) throws IOException, SAXException {
         if (parser == null) {
             try {

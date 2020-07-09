@@ -29,6 +29,7 @@ public abstract class TreatFn extends SystemFunction implements Callable {
      * Return the error code to be used for type errors
      */
 
+    @Override
     public abstract String getErrorCodeForTypeErrors();
 
     public abstract int getRequiredCardinality();
@@ -36,6 +37,7 @@ public abstract class TreatFn extends SystemFunction implements Callable {
 
 
 
+    @Override
     public Sequence call(XPathContext context, Sequence[] arguments) throws XPathException {
         SequenceIterator iterator = arguments[0].iterate();
         int card = getRequiredCardinality();
@@ -50,35 +52,42 @@ public abstract class TreatFn extends SystemFunction implements Callable {
         return role;
     }
 
+    @Override
     public String getStreamerName() {
         return "TreatFn";
     }
 
     public static class ExactlyOne extends TreatFn {
+        @Override
         public int getRequiredCardinality() {
             return StaticProperty.EXACTLY_ONE;
         }
 
+        @Override
         public String getErrorCodeForTypeErrors() {
             return "FORG0005";
         }
     }
 
     public static class OneOrMore extends TreatFn {
+        @Override
         public int getRequiredCardinality() {
             return StaticProperty.ALLOWS_ONE_OR_MORE;
         }
 
+        @Override
         public String getErrorCodeForTypeErrors() {
             return "FORG0004";
         }
     }
 
     public static class ZeroOrOne extends TreatFn {
+        @Override
         public int getRequiredCardinality() {
             return StaticProperty.ALLOWS_ZERO_OR_ONE;
         }
 
+        @Override
         public String getErrorCodeForTypeErrors() {
             return "FORG0003";
         }

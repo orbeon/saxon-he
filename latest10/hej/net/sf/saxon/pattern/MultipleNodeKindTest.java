@@ -70,6 +70,7 @@ public final class MultipleNodeKindTest extends NodeTest {
      *
      * @return the smallest UType that subsumes this item type
      */
+    @Override
     public UType getUType() {
         return uType;
     }
@@ -94,6 +95,7 @@ public final class MultipleNodeKindTest extends NodeTest {
         return (nodeKindMask & (1<<nodeKind)) != 0;
     }
 
+    @Override
     public IntPredicate getMatcher(final NodeVectorTree tree) {
         final byte[] nodeKindArray = tree.getNodeKindArray();
         return nodeNr -> {
@@ -113,6 +115,7 @@ public final class MultipleNodeKindTest extends NodeTest {
      * @param node the node to be matched
      */
 
+    @Override
     public boolean test(NodeInfo node) {
         int nodeKind = node.getNodeKind();
         return (nodeKindMask & (1<<nodeKind)) != 0;
@@ -124,6 +127,7 @@ public final class MultipleNodeKindTest extends NodeTest {
      * for a template with no explicit priority attribute.
      */
 
+    @Override
     public double getDefaultPriority() {
         return -0.5;
     }
@@ -136,6 +140,7 @@ public final class MultipleNodeKindTest extends NodeTest {
         return fsb.toString();
     }
 
+    @Override
     public String toExportString() {
         FastStringBuffer fsb = new FastStringBuffer(FastStringBuffer.C64);
         LinkedList<PrimitiveUType> types = new LinkedList<>(uType.decompose());

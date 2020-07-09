@@ -24,10 +24,12 @@ public class IntSetCharacterClass implements CharacterClass {
         this.intSet = intSet;
     }
 
+    @Override
     public IntSet getIntSet() {
         return intSet;
     }
 
+    @Override
     public boolean test(int value) {
         return intSet.contains(value);
     }
@@ -40,6 +42,7 @@ public class IntSetCharacterClass implements CharacterClass {
      * be characters in common between the two classes
      */
 
+    @Override
     public boolean isDisjoint(CharacterClass other) {
         if (other instanceof IntSetCharacterClass) {
             return intSet.intersect(((IntSetCharacterClass) other).intSet).isEmpty();

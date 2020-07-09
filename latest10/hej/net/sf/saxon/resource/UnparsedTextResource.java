@@ -65,11 +65,13 @@ public class UnparsedTextResource implements Resource {
     }
 
     public final static ResourceFactory FACTORY = new ResourceFactory() {
+        @Override
         public Resource makeResource(Configuration config, AbstractResourceCollection.InputDetails details) throws XPathException {
             return new UnparsedTextResource(details);
         }
     };
 
+    @Override
     public String getResourceURI() {
         return href;
     }
@@ -99,6 +101,7 @@ public class UnparsedTextResource implements Resource {
         return unparsedText;
     }
 
+    @Override
     public Item getItem(XPathContext context) throws XPathException {
         return new StringValue(getContent());
     }
@@ -109,6 +112,7 @@ public class UnparsedTextResource implements Resource {
      * @return the string "text/plain"
      */
 
+    @Override
     public String getContentType() {
         return contentType == null ? "text/plain" : contentType;
     }

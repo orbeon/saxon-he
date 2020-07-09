@@ -23,66 +23,82 @@ public class IntEmptySet implements IntSet {
         // no action
     }
 
+    @Override
     public IntSet copy() {
         return this;
     }
 
+    @Override
     public IntSet mutableCopy() {
         return new IntHashSet();
     }
 
+    @Override
     public boolean isMutable() {
         return false;
     }
 
+    @Override
     public void clear() {
         throw new UnsupportedOperationException("IntEmptySet is immutable");
     }
 
+    @Override
     public int size() {
         return 0;
     }
 
+    @Override
     public boolean isEmpty() {
         return true;
     }
 
+    @Override
     public boolean contains(int value) {
         return false;
     }
 
+    @Override
     public boolean remove(int value) {
         throw new UnsupportedOperationException("IntEmptySet is immutable");
     }
 
+    @Override
     public boolean add(int value) {
         throw new UnsupportedOperationException("IntEmptySet is immutable");
     }
 
+    @Override
     public IntIterator iterator() {
         return new IntIterator() {
+            @Override
             public boolean hasNext() {
                 return false;
             }
 
+            @Override
             public int next() {
                 return Integer.MIN_VALUE;
             }
         };
     }
 
+    @Override
     public IntSet union(IntSet other) {
         return other.copy();
     }
 
+    @Override
     public IntSet intersect(IntSet other) {
         return this;
     }
 
+    @Override
     public IntSet except(IntSet other) {
         return this;
     }
 
+    @Override
     public boolean containsAll(/*@NotNull*/ IntSet other) {
         return other.isEmpty();
     }

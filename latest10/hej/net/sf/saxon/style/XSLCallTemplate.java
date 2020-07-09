@@ -39,10 +39,12 @@ public class XSLCallTemplate extends StyleElement {
      * @return true - it is an instruction
      */
 
+    @Override
     public boolean isInstruction() {
         return true;
     }
 
+    @Override
     public void prepareAttributes() {
 
         String nameAttribute = null;
@@ -67,6 +69,7 @@ public class XSLCallTemplate extends StyleElement {
         calledTemplateName = makeQName(nameAttribute, null, "name");
     }
 
+    @Override
     public void validate(ComponentDeclaration decl) throws XPathException {
         for (NodeInfo child : children()) {
             if (child instanceof XSLWithParam) {
@@ -88,6 +91,7 @@ public class XSLCallTemplate extends StyleElement {
         }
     }
 
+    @Override
     public void postValidate() throws XPathException {
         // check that a parameter is supplied for each required parameter
         // of the called template
@@ -161,12 +165,14 @@ public class XSLCallTemplate extends StyleElement {
      * For most instructions, this does nothing.
      */
 
+    @Override
     public boolean markTailCalls() {
         useTailRecursion = true;
         return true;
     }
 
 
+    @Override
     public Expression compile(Compilation exec, ComponentDeclaration decl) throws XPathException {
         if (template == null) {
             return null;   // error already reported

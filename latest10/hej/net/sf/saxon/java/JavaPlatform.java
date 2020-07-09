@@ -71,6 +71,7 @@ public class JavaPlatform implements Platform {
      * @since 9.7.0.5
      */
 
+    @Override
     public boolean JAXPStaticContextCheck(RetainedStaticContext retainedStaticContext, StaticContext sc) {
         if (sc instanceof JAXPXPathStaticContext && !(((JAXPXPathStaticContext) sc).getNamespaceContext() instanceof NamespaceResolver)) {
             setNamespacesFromJAXP(retainedStaticContext, (JAXPXPathStaticContext) sc);
@@ -110,6 +111,7 @@ public class JavaPlatform implements Platform {
      * Perform platform-specific initialization of the configuration
      */
 
+    @Override
     public void initialize(Configuration config) {
         config.registerExternalObjectModel(DOMEnvelope.getInstance());
         config.registerExternalObjectModel(DOMObjectModel.getInstance());
@@ -120,6 +122,7 @@ public class JavaPlatform implements Platform {
      * Return true if this is the Java platform
      */
 
+    @Override
     public boolean isJava() {
         return true;
     }
@@ -128,6 +131,7 @@ public class JavaPlatform implements Platform {
      * Return true if this is the .NET platform
      */
 
+    @Override
     public boolean isDotNet() {
         return false;
     }
@@ -136,6 +140,7 @@ public class JavaPlatform implements Platform {
      * Get the platform version
      */
 
+    @Override
     public String getPlatformVersion() {
         return "Java version " + System.getProperty("java.version");
     }
@@ -144,6 +149,7 @@ public class JavaPlatform implements Platform {
      * Get a suffix letter to add to the Saxon version number to identify the platform
      */
 
+    @Override
     public String getPlatformSuffix() {
         return "J";
     }
@@ -155,6 +161,7 @@ public class JavaPlatform implements Platform {
      * @return the parser (XMLReader)
      */
 
+    @Override
     public XMLReader loadParser() {
         XMLReader parser;
         try {
@@ -180,6 +187,7 @@ public class JavaPlatform implements Platform {
      *
      * @return the parser (XMLReader)
      */
+    @Override
     public XMLReader loadParserForXmlFragments() {
         SAXParserFactory factory = null;
         if (tryJdk9) {
@@ -227,6 +235,7 @@ public class JavaPlatform implements Platform {
      * always returns the original input unchanged.
      */
 
+    @Override
     public Source getParserSource(PipelineConfiguration pipe, StreamSource input, int validation,
                                   boolean dtdValidation) {
         return input;
@@ -247,6 +256,7 @@ public class JavaPlatform implements Platform {
      */
 
     /*@Nullable*/
+    @Override
     public StringCollator makeCollation(Configuration config, Properties props, String uri) throws XPathException {
         return JavaCollationFactory.makeCollation(config, uri, props);
     }
@@ -261,6 +271,7 @@ public class JavaPlatform implements Platform {
      * @return true if this collation can supply collation keys
      */
 
+    @Override
     public boolean canReturnCollationKeys(StringCollator collation) {
         return !(collation instanceof SimpleCollation) ||
                 ((SimpleCollation) collation).getComparator() instanceof Collator;
@@ -275,6 +286,7 @@ public class JavaPlatform implements Platform {
      *                            collation keys (this should have been checked in advance)
      */
 
+    @Override
     public AtomicMatchKey getCollationKey(SimpleCollation namedCollation, String value) {
         CollationKey ck = ((Collator) namedCollation.getComparator()).getCollationKey(value);
         return new CollationMatchKey(ck);
@@ -284,10 +296,12 @@ public class JavaPlatform implements Platform {
      * No ICU features
      */
 
+    @Override
     public boolean hasICUCollator() {
         return false;
     }
 
+    @Override
     public boolean hasICUNumberer() {
         return false;
     }
@@ -301,6 +315,7 @@ public class JavaPlatform implements Platform {
      * @throws XPathException if the URI is malformed in some way
      */
 
+    @Override
     public StringCollator makeUcaCollator(String uri, Configuration config) throws XPathException {
         UcaCollatorUsingJava collator = new UcaCollatorUsingJava(uri);
         if ("yes".equals(collator.getProperties().getProperty("numeric"))) {
@@ -321,6 +336,7 @@ public class JavaPlatform implements Platform {
      * @return the compiled regular expression
      * @throws net.sf.saxon.trans.XPathException if the regular expression or the flags are invalid
      */
+    @Override
     public RegularExpression compileRegularExpression(Configuration config, CharSequence regex, String flags, String hostLanguage, List<String> warnings) throws XPathException {
         // recognize "!" as a flag to mean: use native Java regex syntax
         if (flags.contains("!")) {
@@ -360,6 +376,7 @@ public class JavaPlatform implements Platform {
         // do nothing
     }
 
+    @Override
     public ExternalObjectType getExternalObjectType(Configuration config, String uri, String localName) {
         throw new UnsupportedOperationException("getExternalObjectType for Java");
     }
@@ -372,6 +389,7 @@ public class JavaPlatform implements Platform {
      * @return the name of the directory in which Saxon is installed, if available, or null otherwise
      */
 
+    @Override
     public String getInstallationDirectory(String edition, Configuration config) {
         try {
             return System.getenv("SAXON_HOME");
@@ -387,6 +405,7 @@ public class JavaPlatform implements Platform {
      * @since 9.3
      */
 
+    @Override
     public void registerAllBuiltInObjectModels(Configuration config) {
         // No action for Saxon-HE
     }
@@ -399,10 +418,12 @@ public class JavaPlatform implements Platform {
      * @since 9.4
      */
 
+    @Override
     public void setDefaultSAXParserFactory(Configuration config) {
         // No action for Saxon on Java
     }
 
+    @Override
     public ModuleURIResolver makeStandardModuleURIResolver(Configuration config) {
         return new StandardModuleURIResolver(config);
     }
@@ -418,6 +439,7 @@ public class JavaPlatform implements Platform {
      * @return the class loader object
      * @since 9.6.0.3
      */
+    @Override
     public ClassLoader makeGeneratedClassLoader(Configuration config, Class thisClass) {
         ClassLoader parentClassLoader = config.getDynamicLoader().getClassLoader();
         if (parentClassLoader == null) {

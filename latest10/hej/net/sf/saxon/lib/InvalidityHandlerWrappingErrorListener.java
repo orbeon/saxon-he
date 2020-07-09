@@ -32,10 +32,12 @@ public class InvalidityHandlerWrappingErrorListener implements InvalidityHandler
      * @param systemId optional; may be used to represent the destination of any report produced
      * @throws XPathException if initialization of the invalidity handler fails for any reason
      */
+    @Override
     public void startReporting(String systemId) throws XPathException {
         // no action
     }
 
+    @Override
     public void reportInvalidity(Invalidity failure) throws XPathException {
         try {
             errorListener.error((((ValidationFailure) failure).makeException()));
@@ -56,6 +58,7 @@ public class InvalidityHandlerWrappingErrorListener implements InvalidityHandler
      * @return a value (or null). This will be the value returned as the value of
      * the variable $err:value during try/catch processing
      */
+    @Override
     public Sequence endReporting() {
         return null;
     }

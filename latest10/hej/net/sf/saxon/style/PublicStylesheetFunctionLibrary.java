@@ -58,6 +58,7 @@ public class PublicStylesheetFunctionLibrary implements FunctionLibrary {
      *         null if no extension function was found matching the required name and arity.
      */
 
+    @Override
     public Expression bind(SymbolicName.F functionName, Expression[] staticArgs, StaticContext env, List<String> reasons) {
         Expression baseCall = base.bind(functionName, staticArgs, env, reasons);
         if (baseCall instanceof UserFunctionCall) {
@@ -87,6 +88,7 @@ public class PublicStylesheetFunctionLibrary implements FunctionLibrary {
      *          in the event of certain errors, for example attempting to get a function
      *          that is private
      */
+    @Override
     public Function getFunctionItem(SymbolicName.F functionName, StaticContext staticContext) throws XPathException {
         Function baseFunction = base.getFunctionItem(functionName, staticContext);
         if (baseFunction instanceof UserFunction) {
@@ -105,6 +107,7 @@ public class PublicStylesheetFunctionLibrary implements FunctionLibrary {
      * @param functionName the qualified name of the function being called
      * @return true if a function of this name and arity is available for calling
      */
+    @Override
     public boolean isAvailable(SymbolicName.F functionName) {
         if (base instanceof StylesheetFunctionLibrary) {
             StylesheetPackage pack = ((StylesheetFunctionLibrary)base).getStylesheetPackage();
@@ -128,6 +131,7 @@ public class PublicStylesheetFunctionLibrary implements FunctionLibrary {
      * @return a copy of this function library. This must be an instance of the original class.
      */
 
+    @Override
     public FunctionLibrary copy() {
         return this;
     }

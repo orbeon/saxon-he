@@ -35,6 +35,7 @@ public class XSLIf extends StyleElement {
      * @return true - it is an instruction
      */
 
+    @Override
     public boolean isInstruction() {
         return true;
     }
@@ -45,10 +46,12 @@ public class XSLIf extends StyleElement {
      * @return true: yes, it may contain a template-body
      */
 
+    @Override
     public boolean mayContainSequenceConstructor() {
         return true;
     }
 
+    @Override
     public void prepareAttributes() {
         for (AttributeInfo att : attributes()) {
             NodeName attName = att.getNodeName();
@@ -106,6 +109,7 @@ public class XSLIf extends StyleElement {
         }
     }
 
+    @Override
     public void validate(ComponentDeclaration decl) throws XPathException {
         test = typeCheck("test", test);
         if (thenExp != null && hasChildNodes()) {
@@ -117,11 +121,13 @@ public class XSLIf extends StyleElement {
      * Mark tail-recursive calls on stylesheet functions. For most instructions, this does nothing.
      */
 
+    @Override
     public boolean markTailCalls() {
         StyleElement last = getLastChildInstruction();
         return last != null && last.markTailCalls();
     }
 
+    @Override
     public Expression compile(Compilation exec, ComponentDeclaration decl) throws XPathException {
         if (test instanceof Literal) {
             GroundedValue testVal = ((Literal) test).getValue();
@@ -159,6 +165,7 @@ public class XSLIf extends StyleElement {
         return choose;
     }
 
+    @Override
     public Expression compileSequenceConstructor(Compilation compilation, ComponentDeclaration decl,
                                                  boolean includeParams) throws XPathException {
         if (thenExp == null) {

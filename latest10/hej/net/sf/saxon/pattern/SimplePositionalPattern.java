@@ -65,6 +65,7 @@ public final class SimplePositionalPattern extends Pattern {
      * @return true if the pattern matches, else false
      */
 
+    @Override
     public boolean matches(Item item, XPathContext context) {
         return item instanceof NodeInfo && matchesBeneathAnchor((NodeInfo) item, null, context);
     }
@@ -86,6 +87,7 @@ public final class SimplePositionalPattern extends Pattern {
      * @return the fingerprint of nodes matched by this pattern.
      */
 
+    @Override
     public int getFingerprint() {
         return nodeTest.getFingerprint();
     }
@@ -94,6 +96,7 @@ public final class SimplePositionalPattern extends Pattern {
      * Get an ItemType that all the nodes matching this pattern must satisfy
      */
 
+    @Override
     public ItemType getItemType() {
         return nodeTest.getPrimitiveItemType();
     }
@@ -117,6 +120,7 @@ public final class SimplePositionalPattern extends Pattern {
      * hashcode supporting equals()
      */
 
+    @Override
     public int computeHashCode() {
         return nodeTest.hashCode() ^ (position<<3);
     }
@@ -130,6 +134,7 @@ public final class SimplePositionalPattern extends Pattern {
      *         node without changing the position in the streamed input file
      */
 
+    @Override
     public boolean isMotionless() {
         return false;
     }
@@ -145,6 +150,7 @@ public final class SimplePositionalPattern extends Pattern {
      * @return true if the node matches the Pattern, false otherwise
      */
 
+    @Override
     public boolean matchesBeneathAnchor(NodeInfo node, NodeInfo anchor, XPathContext context) {
         if (!nodeTest.test(node)) {
             return false;
@@ -166,6 +172,7 @@ public final class SimplePositionalPattern extends Pattern {
      */
 
     /*@NotNull*/
+    @Override
     public Pattern copy(RebindingMap rebindings) {
         SimplePositionalPattern n = new SimplePositionalPattern(nodeTest.copy(), position);
         ExpressionTool.copyLocationInfo(this, n);
@@ -180,6 +187,7 @@ public final class SimplePositionalPattern extends Pattern {
         return nodeTest + "[" + position + "]";
     }
 
+    @Override
     public void export(ExpressionPresenter presenter) {
         presenter.startElement("p.simPos");
         presenter.emitAttribute("test", AlphaCode.fromItemType(nodeTest));

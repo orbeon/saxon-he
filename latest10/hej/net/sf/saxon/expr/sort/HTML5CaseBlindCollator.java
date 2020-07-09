@@ -33,6 +33,7 @@ public class HTML5CaseBlindCollator implements StringCollator, SubstringMatcher 
      *
      * @return a collation URI that can be used to reconstruct the collation when an XSLT package is reloaded.
      */
+    @Override
     public String getCollationURI() {
         return NamespaceConstant.HTML5_CASE_BLIND_COLLATION_URI;
     }
@@ -44,6 +45,7 @@ public class HTML5CaseBlindCollator implements StringCollator, SubstringMatcher 
      * @throws ClassCastException if the objects are of the wrong type for this Comparer
      */
 
+    @Override
     public int compareStrings(CharSequence a, CharSequence b) {
         // Note that Java does UTF-16 code unit comparison, which is not the same as Unicode codepoint comparison
         // except in the "equals" case. So we have to do a character-by-character comparison
@@ -103,6 +105,7 @@ public class HTML5CaseBlindCollator implements StringCollator, SubstringMatcher 
      * @return true iff s1 equals s2
      */
 
+    @Override
     public boolean comparesEqual(CharSequence s1, CharSequence s2) {
         return compareCS(s1, s2) == 0;
     }
@@ -116,6 +119,7 @@ public class HTML5CaseBlindCollator implements StringCollator, SubstringMatcher 
      * @return true iff s1 contains s2
      */
 
+    @Override
     public boolean contains(String s1, String s2) {
         return normalize(s1).contains(normalize(s2));
     }
@@ -129,6 +133,7 @@ public class HTML5CaseBlindCollator implements StringCollator, SubstringMatcher 
      * @return true iff s1 ends with s2
      */
 
+    @Override
     public boolean endsWith(String s1, String s2) {
         return normalize(s1).endsWith(normalize(s2));
     }
@@ -142,6 +147,7 @@ public class HTML5CaseBlindCollator implements StringCollator, SubstringMatcher 
      * @return true iff s1 starts with s2
      */
 
+    @Override
     public boolean startsWith(String s1, String s2) {
         return normalize(s1).startsWith(normalize(s2));
     }
@@ -155,6 +161,7 @@ public class HTML5CaseBlindCollator implements StringCollator, SubstringMatcher 
      * @return the part of s1 that follows the first occurrence of s2
      */
 
+    @Override
     public String substringAfter(String s1, String s2) {
         int i = normalize(s1).indexOf(normalize(s2));
         if (i < 0) {
@@ -172,6 +179,7 @@ public class HTML5CaseBlindCollator implements StringCollator, SubstringMatcher 
      * @return the part of s1 that precedes the first occurrence of s2
      */
 
+    @Override
     public String substringBefore(/*@NotNull*/ String s1, String s2) {
         int j = normalize(s1).indexOf(normalize(s2));
         if (j < 0) {
@@ -187,6 +195,7 @@ public class HTML5CaseBlindCollator implements StringCollator, SubstringMatcher 
      * @param s the string whose collation key is required
      */
 
+    @Override
     public AtomicMatchKey getCollationKey(CharSequence s) {
         return UnicodeString.makeUnicodeString(normalize(s));
     }

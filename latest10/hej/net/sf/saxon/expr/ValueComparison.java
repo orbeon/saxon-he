@@ -51,6 +51,7 @@ public final class ValueComparison extends BinaryExpression implements Compariso
      *         in explain() output displaying the expression.
      */
 
+    @Override
     public String getExpressionName() {
         return "ValueComparison";
     }
@@ -70,6 +71,7 @@ public final class ValueComparison extends BinaryExpression implements Compariso
      * Note that the comparer is always known at compile time.
      */
 
+    @Override
     public AtomicComparer getAtomicComparer() {
         return comparer;
     }
@@ -79,6 +81,7 @@ public final class ValueComparison extends BinaryExpression implements Compariso
      * Token.FLE, Token.FGE
      */
 
+    @Override
     public int getSingletonOperator() {
         return operator;
     }
@@ -90,6 +93,7 @@ public final class ValueComparison extends BinaryExpression implements Compariso
      *         should be converted to strings.
      */
 
+    @Override
     public boolean convertsUntypedToOther() {
         return comparer instanceof UntypedNumericComparer;
     }
@@ -130,6 +134,7 @@ public final class ValueComparison extends BinaryExpression implements Compariso
      */
 
     /*@NotNull*/
+    @Override
     public Expression typeCheck(ExpressionVisitor visitor, ContextItemStaticInfo contextInfo) throws XPathException {
 
         resetLocalStaticProperties();
@@ -260,6 +265,7 @@ public final class ValueComparison extends BinaryExpression implements Compariso
      */
 
     /*@NotNull*/
+    @Override
     public Expression optimize(ExpressionVisitor visitor, ContextItemStaticInfo contextInfo) throws XPathException {
 
         getLhs().optimize(visitor, contextInfo);
@@ -279,6 +285,7 @@ public final class ValueComparison extends BinaryExpression implements Compariso
      * @param th the type hierarchy
      */
 
+    @Override
     public boolean isNegatable(TypeHierarchy th) {
         // Expression is not negatable if it might involve NaN
         return isNeverNaN(getLhsExpression(), th) && isNeverNaN(getRhsExpression(), th);
@@ -297,6 +304,7 @@ public final class ValueComparison extends BinaryExpression implements Compariso
      * @return the inverted comparison
      */
 
+    @Override
     public Expression negate() {
         ValueComparison vc = new ValueComparison(getLhsExpression(), Token.negate(operator), getRhsExpression());
         vc.comparer = comparer;
@@ -326,6 +334,7 @@ public final class ValueComparison extends BinaryExpression implements Compariso
      */
 
     /*@NotNull*/
+    @Override
     public Expression copy(RebindingMap rebindings) {
         ValueComparison vc = new ValueComparison(getLhsExpression().copy(rebindings), operator, getRhsExpression().copy(rebindings));
         ExpressionTool.copyLocationInfo(this, vc);
@@ -342,6 +351,7 @@ public final class ValueComparison extends BinaryExpression implements Compariso
      * @return a boolean representing the result of the comparison of the two operands
      */
 
+    @Override
     public boolean effectiveBooleanValue(XPathContext context) throws XPathException {
         try {
             AtomicValue v0 = (AtomicValue) getLhsExpression().evaluateItem(context);
@@ -425,6 +435,7 @@ public final class ValueComparison extends BinaryExpression implements Compariso
      *         or null representing the empty sequence
      */
 
+    @Override
     public BooleanValue evaluateItem(XPathContext context) throws XPathException {
         try {
             AtomicValue v0 = (AtomicValue) getLhsExpression().evaluateItem(context);
@@ -451,6 +462,7 @@ public final class ValueComparison extends BinaryExpression implements Compariso
      */
 
     /*@NotNull*/
+    @Override
     public ItemType getItemType() {
         return BuiltInAtomicType.BOOLEAN;
     }
@@ -471,6 +483,7 @@ public final class ValueComparison extends BinaryExpression implements Compariso
      * Determine the static cardinality.
      */
 
+    @Override
     public int computeCardinality() {
         if (resultWhenEmpty != null) {
             return StaticProperty.EXACTLY_ONE;

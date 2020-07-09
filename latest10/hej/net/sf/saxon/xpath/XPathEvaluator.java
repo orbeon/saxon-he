@@ -94,6 +94,7 @@ public class XPathEvaluator implements XPath {
     }
 
 
+    @Override
     public void reset() {
         staticContext = new JAXPXPathStaticContext(config);
     }
@@ -104,6 +105,7 @@ public class XPathEvaluator implements XPath {
      * @param xPathVariableResolver a resolver for variables
      */
 
+    @Override
     public void setXPathVariableResolver(XPathVariableResolver xPathVariableResolver) {
         staticContext.setXPathVariableResolver(xPathVariableResolver);
     }
@@ -113,6 +115,7 @@ public class XPathEvaluator implements XPath {
      *
      * @return the resolver, if one has been set
      */
+    @Override
     public XPathVariableResolver getXPathVariableResolver() {
         return staticContext.getXPathVariableResolver();
     }
@@ -123,6 +126,7 @@ public class XPathEvaluator implements XPath {
      * @param xPathFunctionResolver a resolver for XPath function calls
      */
 
+    @Override
     public void setXPathFunctionResolver(XPathFunctionResolver xPathFunctionResolver) {
         staticContext.setXPathFunctionResolver(xPathFunctionResolver);
     }
@@ -134,6 +138,7 @@ public class XPathEvaluator implements XPath {
      */
 
     /*@Nullable*/
+    @Override
     public XPathFunctionResolver getXPathFunctionResolver() {
         return staticContext.getXPathFunctionResolver();
     }
@@ -144,6 +149,7 @@ public class XPathEvaluator implements XPath {
      * @param namespaceContext The namespace context
      */
 
+    @Override
     public void setNamespaceContext(NamespaceContext namespaceContext) {
         staticContext.setNamespaceContext(namespaceContext);
     }
@@ -154,6 +160,7 @@ public class XPathEvaluator implements XPath {
      * @return the namespace context if set, or null otherwise
      */
 
+    @Override
     public NamespaceContext getNamespaceContext() {
         return staticContext.getNamespaceContext();
     }
@@ -184,6 +191,7 @@ public class XPathEvaluator implements XPath {
      *                                  variables are not pre-declared using this API.
      */
     /*@NotNull*/
+    @Override
     public XPathExpression compile(String expr) throws XPathExpressionException {
         if (expr == null) {
             throw new NullPointerException("expr");
@@ -226,6 +234,7 @@ public class XPathEvaluator implements XPath {
      *                                  in evaluating the expression.
      */
 
+    @Override
     public Object evaluate(String expr, Object node, QName qName) throws XPathExpressionException {
         XPathExpression exp = compile(expr);
         return exp.evaluate(node, qName);
@@ -252,6 +261,7 @@ public class XPathEvaluator implements XPath {
      *                                  in evaluating the expression.
      */
 
+    @Override
     public String evaluate(String expr, Object node) throws XPathExpressionException {
         XPathExpression exp = compile(expr);
         return exp.evaluate(node);
@@ -274,6 +284,7 @@ public class XPathEvaluator implements XPath {
      * @throws NullPointerException     if any of the three arguments is null
      */
 
+    @Override
     public Object evaluate(/*@Nullable*/ String expr, /*@Nullable*/ InputSource inputSource, /*@Nullable*/ QName qName) throws XPathExpressionException {
         if (expr == null) {
             throw new NullPointerException("expr");
@@ -304,6 +315,7 @@ public class XPathEvaluator implements XPath {
      * @throws NullPointerException     if either of the two arguments is null
      */
 
+    @Override
     public String evaluate(/*@Nullable*/ String expr, /*@Nullable*/ InputSource inputSource) throws XPathExpressionException {
         if (expr == null) {
             throw new NullPointerException("expr");

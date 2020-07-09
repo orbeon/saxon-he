@@ -37,6 +37,7 @@ public class TinyAttributeMap implements AttributeMap {
      * @return The number of attributes in the list.
      */
 
+    @Override
     public int size() {
         int i = firstAttribute;
         while (i < tree.numberOfAttributes && tree.attParent[i] == element) {

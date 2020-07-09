@@ -33,10 +33,12 @@ public class MappingJavaIterator<S, T> implements Iterator<T> {
         this.mapper = mapper;
     }
 
+    @Override
     public boolean hasNext() {
         return input.hasNext();
     }
 
+    @Override
     public T next() {
         while (true) {
             T next = mapper.apply(input.next());
@@ -46,6 +48,7 @@ public class MappingJavaIterator<S, T> implements Iterator<T> {
         }
     }
 
+    @Override
     public void remove() {
         input.remove();
     }

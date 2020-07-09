@@ -50,6 +50,7 @@ public class TinyElementImpl extends TinyParentNodeImpl {
      * @return Type.ELEMENT
      */
 
+    @Override
     public final int getNodeKind() {
         return Type.ELEMENT;
     }
@@ -59,6 +60,7 @@ public class TinyElementImpl extends TinyParentNodeImpl {
      * xml:base has been used.
      */
 
+    @Override
     public String getBaseURI() {
         if (tree.getUniformBaseUri() != null) {
             return tree.getUniformBaseUri();
@@ -101,6 +103,7 @@ public class TinyElementImpl extends TinyParentNodeImpl {
      *         values.
      */
 
+    @Override
     public AtomicSequence atomize() throws XPathException {
         return tree.getTypedValueOfElement(this);
     }
@@ -119,6 +122,7 @@ public class TinyElementImpl extends TinyParentNodeImpl {
      */
 
     /*@Nullable*/
+    @Override
     public NamespaceBinding[] getDeclaredNamespaces(NamespaceBinding[] buffer) {
         TinyNodeImpl parent = getParent();
         if (parent != null && parent.getNodeKind() == Type.ELEMENT) {
@@ -128,6 +132,7 @@ public class TinyElementImpl extends TinyParentNodeImpl {
         }
     }
 
+    @Override
     public NamespaceMap getAllNamespaces() {
         return tree.namespaceMaps[tree.beta[nodeNr]];
     }
@@ -236,6 +241,7 @@ public class TinyElementImpl extends TinyParentNodeImpl {
      * @param location location information associated with the event
      */
 
+    @Override
     public void copy(/*@NotNull*/ Receiver receiver, int copyOptions, Location location) throws XPathException {
 
         boolean copyTypes = CopyOptions.includes(copyOptions, CopyOptions.TYPE_ANNOTATIONS);
@@ -570,6 +576,7 @@ public class TinyElementImpl extends TinyParentNodeImpl {
      * @return true if the node is an ID
      */
 
+    @Override
     public boolean isId() {
         // this looks very inefficient, but the method isn't actually used...
         return tree.isIdElement(nodeNr);
@@ -581,6 +588,7 @@ public class TinyElementImpl extends TinyParentNodeImpl {
      * @return true if the node is an IDREF or IDREFS element or attribute
      */
 
+    @Override
     public boolean isIdref() {
         return tree.isIdrefElement(nodeNr);
     }

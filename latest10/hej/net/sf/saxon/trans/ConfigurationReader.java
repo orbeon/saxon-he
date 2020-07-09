@@ -171,14 +171,17 @@ public class ConfigurationReader implements ContentHandler, NamespaceResolver {
         return config;
     }
 
+    @Override
     public void setDocumentLocator(Locator locator) {
         this.locator = locator;
     }
 
+    @Override
     public void startDocument() {
         namespaceStack.push(new ArrayList<>());
     }
 
+    @Override
     public void endDocument() {
         namespaceStack.pop();
         if (config != null) {
@@ -186,14 +189,17 @@ public class ConfigurationReader implements ContentHandler, NamespaceResolver {
         }
     }
 
+    @Override
     public void startPrefixMapping(String prefix, String uri) {
         namespaceStack.peek().add(new String[]{prefix, uri});
     }
 
+    @Override
     public void endPrefixMapping(String prefix) {
 
     }
 
+    @Override
     public void startElement(String uri, String localName, String qName, Attributes atts) {
         buffer.setLength(0);
         if (NamespaceConstant.SAXON_CONFIGURATION.equals(uri)) {
@@ -738,6 +744,7 @@ public class ConfigurationReader implements ContentHandler, NamespaceResolver {
         errors.add(err);
     }
 
+    @Override
     public void endElement(String uri, String localName, String qName) {
         if (level == 3 && "resources".equals(section)) {
             String content = buffer.toString();
@@ -792,18 +799,22 @@ public class ConfigurationReader implements ContentHandler, NamespaceResolver {
         }
     }
 
+    @Override
     public void characters(char ch[], int start, int length) {
         buffer.append(ch, start, length);
     }
 
+    @Override
     public void ignorableWhitespace(char ch[], int start, int length) {
 
     }
 
+    @Override
     public void processingInstruction(String target, String data) {
 
     }
 
+    @Override
     public void skippedEntity(String name) {
 
     }
@@ -825,6 +836,7 @@ public class ConfigurationReader implements ContentHandler, NamespaceResolver {
      * The "null namespace" is represented by the pseudo-URI "".
      */
 
+    @Override
     public String getURIForPrefix(String prefix, boolean useDefault) {
         for (int i = namespaceStack.size() - 1; i >= 0; i--) {
             List<String[]> list = namespaceStack.get(i);
@@ -842,6 +854,7 @@ public class ConfigurationReader implements ContentHandler, NamespaceResolver {
      * the default namespace (prefix="") and the XML namespace where appropriate
      */
     
+    @Override
     public Iterator<String> iteratePrefixes() {
         Set<String> prefixes = new HashSet<>();
         for (List<String[]> list : namespaceStack) {

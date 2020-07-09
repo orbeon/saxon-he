@@ -48,11 +48,13 @@ public class NodeWrappingAxisIterator<B>
     }
 
 
+    @Override
     public boolean hasNext() {
         return base.hasNext();
     }
 
     /*@Nullable*/
+    @Override
     public NodeInfo next() {
         while (base.hasNext()) {
             B next = base.next();
@@ -77,6 +79,7 @@ public class NodeWrappingAxisIterator<B>
      *         It is acceptable for the properties of the iterator to change depending on its state.
      */
 
+    @Override
     public EnumSet<Property> getProperties() {
         return EnumSet.of(Property.LOOKAHEAD);
     }

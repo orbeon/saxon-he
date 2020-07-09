@@ -43,6 +43,7 @@ public class AnalyzeMappingFunction implements ContextMappingFunction {
      *         sequence.
      */
 
+    @Override
     public SequenceIterator map(XPathContext context) throws XPathException {
         if (base.isMatching()) {
             if (matchingExpr != null) {

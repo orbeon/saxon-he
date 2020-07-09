@@ -22,11 +22,13 @@ public class ASCIICharacterSet implements CharacterSet {
         return theInstance;
     }
 
+    @Override
     public final boolean inCharset(int c) {
         return c <= 0x7f;
     }
 
     /*@NotNull*/
+    @Override
     public String getCanonicalName() {
         return "US-ASCII";
     }

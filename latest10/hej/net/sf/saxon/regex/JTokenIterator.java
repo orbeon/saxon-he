@@ -41,6 +41,7 @@ public class JTokenIterator implements AtomicIterator<StringValue> {
         prevEnd = 0;
     }
 
+    @Override
     public StringValue next() {
         if (prevEnd < 0) {
             current = null;

@@ -94,6 +94,7 @@ public class TypeCheckingFilter extends ProxyOutputter {
      * Character data
      */
 
+    @Override
     public void characters(CharSequence chars, Location locationId, int properties) throws XPathException {
         if (level == 0) {
             if (++count == 2) {
@@ -108,6 +109,7 @@ public class TypeCheckingFilter extends ProxyOutputter {
      * Output a comment
      */
 
+    @Override
     public void comment(CharSequence chars, Location locationId, int properties) throws XPathException {
         if (level == 0) {
             if (++count == 2) {
@@ -122,6 +124,7 @@ public class TypeCheckingFilter extends ProxyOutputter {
      * Processing Instruction
      */
 
+    @Override
     public void processingInstruction(String target, CharSequence data, Location locationId, int properties) throws XPathException {
         if (level == 0) {
             if (++count == 2) {
@@ -137,6 +140,7 @@ public class TypeCheckingFilter extends ProxyOutputter {
      * Start of a document node.
      */
 
+    @Override
     public void startDocument(int properties) throws XPathException {
         if (level == 0) {
             if (++count == 2) {
@@ -212,6 +216,7 @@ public class TypeCheckingFilter extends ProxyOutputter {
      * Notify the end of a document node
      */
 
+    @Override
     public void endDocument() throws XPathException {
         level--;
         getNextOutputter().endDocument();
@@ -221,6 +226,7 @@ public class TypeCheckingFilter extends ProxyOutputter {
      * End of element
      */
 
+    @Override
     public void endElement() throws XPathException {
         level--;
         getNextOutputter().endElement();
@@ -230,6 +236,7 @@ public class TypeCheckingFilter extends ProxyOutputter {
      * End of event stream
      */
 
+    @Override
     public void close() throws XPathException {
         finalCheck();
         super.close();
@@ -265,6 +272,7 @@ public class TypeCheckingFilter extends ProxyOutputter {
      * Output an item (atomic value or node) to the sequence
      */
 
+    @Override
     public void append(Item item, Location locationId, int copyNamespaces) throws XPathException {
         if (level == 0) {
             if (++count == 2) {
@@ -279,6 +287,7 @@ public class TypeCheckingFilter extends ProxyOutputter {
      * Output an item (atomic value or node) to the sequence
      */
 
+    @Override
     public void append(Item item) throws XPathException {
         if (level == 0) {
             if (++count == 2) {
@@ -297,6 +306,7 @@ public class TypeCheckingFilter extends ProxyOutputter {
      *         may supply untyped nodes instead of supplying the type annotation
      */
 
+    @Override
     public boolean usesTypeAnnotations() {
         return true;
     }

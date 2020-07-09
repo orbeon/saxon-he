@@ -46,10 +46,12 @@ public class Trace extends SystemFunction implements Traceable {
      * @param arguments the actual arguments
      */
 
+    @Override
     public int getSpecialProperties(Expression[] arguments) {
         return arguments[0].getSpecialProperties();
     }
 
+    @Override
     public int getCardinality(Expression[] arguments) {
         return arguments[0].getCardinality();
     }
@@ -109,6 +111,7 @@ public class Trace extends SystemFunction implements Traceable {
      * @throws net.sf.saxon.trans.XPathException
      *          if a dynamic error occurs during the evaluation of the expression
      */
+    @Override
     public Sequence call(XPathContext context, Sequence[] arguments) throws XPathException {
         Controller controller = context.getController();
         String label = arguments.length == 1 ? "*" : arguments[1].head().getStringValue();
@@ -157,6 +160,7 @@ public class Trace extends SystemFunction implements Traceable {
             this.out = out;
         }
 
+        @Override
         public Item next() throws XPathException {
             Item n = base.next();
             position++;
@@ -171,12 +175,14 @@ public class Trace extends SystemFunction implements Traceable {
             return n;
         }
 
+        @Override
         public void close() {
             base.close();
         }
 
     }
 
+    @Override
     public String getStreamerName() {
         return "Trace";
     }

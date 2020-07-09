@@ -327,6 +327,7 @@ public class Accumulator extends Actor {
         initialValueExpression.export(out);
 
         SimpleMode.RuleAction action = new SimpleMode.RuleAction() {
+            @Override
             public void processRule(Rule r) throws XPathException {
                 out.startElement("accRule");
                 out.emitAttribute("slots", ((AccumulatorRule)r.getAction()).getStackFrameMap().getNumberOfVariables()+"");

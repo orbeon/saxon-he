@@ -181,6 +181,7 @@ public final class Int64Value extends IntegerValue {
      */
 
     /*@NotNull*/
+    @Override
     public AtomicValue copyAsSubType(/*@NotNull*/ AtomicType typeLabel) {
         if (typeLabel.getPrimitiveType() == StandardNames.XS_INTEGER) {
             Int64Value v = new Int64Value(value);
@@ -201,6 +202,7 @@ public final class Int64Value extends IntegerValue {
      */
 
     /*@Nullable*/
+    @Override
     public ValidationFailure convertToSubType(/*@NotNull*/ BuiltInAtomicType subtype, boolean validate) {
         if (!validate) {
             setSubType(subtype);
@@ -225,6 +227,7 @@ public final class Int64Value extends IntegerValue {
      */
 
     /*@Nullable*/
+    @Override
     public ValidationFailure validateAgainstSubType(/*@NotNull*/ BuiltInAtomicType type) {
         if (checkRange(value, type)) {
             return null;
@@ -264,6 +267,7 @@ public final class Int64Value extends IntegerValue {
      */
 
     /*@NotNull*/
+    @Override
     public Comparable getSchemaComparable() {
         return new Int64Comparable(this);
     }
@@ -285,6 +289,7 @@ public final class Int64Value extends IntegerValue {
             return value.longValue();
         }
 
+        @Override
         public int compareTo(/*@NotNull*/ Object o) {
             if (o instanceof Int64Comparable) {
                 long long0 = value.longValue();
@@ -342,6 +347,7 @@ public final class Int64Value extends IntegerValue {
      * @return the value of the xs:integer, as a Java long
      */
 
+    @Override
     public long longValue() {
         return value;
     }
@@ -351,6 +357,7 @@ public final class Int64Value extends IntegerValue {
      *
      * @return false if the integer is zero, otherwise true
      */
+    @Override
     public boolean effectiveBooleanValue() {
         return value != 0;
     }
@@ -363,6 +370,7 @@ public final class Int64Value extends IntegerValue {
      *         +1 if this value is greater
      */
 
+    @Override
     public int compareTo(NumericValue other) {
         if (other instanceof Int64Value) {
             return Long.compare(value, ((Int64Value) other).value);
@@ -382,6 +390,7 @@ public final class Int64Value extends IntegerValue {
      * @return -1 if this is less, 0 if this is equal, +1 if this is greater or if this is NaN
      */
 
+    @Override
     public int compareTo(long other) {
         return Long.compare(value, other);
     }
@@ -392,6 +401,7 @@ public final class Int64Value extends IntegerValue {
      * @return a String representation of the value
      */
 
+    @Override
     public String getPrimitiveStringValue() {
         return Long.toString(value);
     }
@@ -402,6 +412,7 @@ public final class Int64Value extends IntegerValue {
      * @return A double representing this numeric value; NaN if it cannot be
      *         converted
      */
+    @Override
     public double getDoubleValue() {
         return (double) value;
     }
@@ -412,6 +423,7 @@ public final class Int64Value extends IntegerValue {
      * @return a float representing this numeric value; NaN if it cannot be converted
      */
 
+    @Override
     public float getFloatValue() {
         return (float) value;
     }
@@ -422,6 +434,7 @@ public final class Int64Value extends IntegerValue {
      * @return a decimal representing this numeric value;
      */
 
+    @Override
     public BigDecimal getDecimalValue() {
         return BigDecimal.valueOf(value);
     }
@@ -432,6 +445,7 @@ public final class Int64Value extends IntegerValue {
      * @return the result of inverting the sign of the value
      */
 
+    @Override
     public NumericValue negate() {
         if (value == Long.MIN_VALUE) {
             return BigIntegerValue.makeIntegerValue(BigInteger.valueOf(value)).negate();
@@ -447,6 +461,7 @@ public final class Int64Value extends IntegerValue {
      */
 
     /*@NotNull*/
+    @Override
     public NumericValue floor() {
         return this;
     }
@@ -458,6 +473,7 @@ public final class Int64Value extends IntegerValue {
      */
 
     /*@NotNull*/
+    @Override
     public NumericValue ceiling() {
         return this;
     }
@@ -470,6 +486,7 @@ public final class Int64Value extends IntegerValue {
      * @return the integer value, unchanged
      */
 
+    @Override
     public NumericValue round(int scale) {
         if (scale >= 0 || value == 0) {
             return this;
@@ -510,6 +527,7 @@ public final class Int64Value extends IntegerValue {
      *         round it to a multiple of 10**-scale
      */
 
+    @Override
     public NumericValue roundHalfToEven(int scale) {
         if (scale >= 0) {
             return this;
@@ -550,6 +568,7 @@ public final class Int64Value extends IntegerValue {
      * @return -1 if negative, 0 if zero, +1 if positive, NaN if NaN
      */
 
+    @Override
     public int signum() {
         if (value > 0) return +1;
         if (value == 0) return 0;
@@ -562,6 +581,7 @@ public final class Int64Value extends IntegerValue {
      * @return the absolute value
      */
 
+    @Override
     public NumericValue abs() {
         if (value > 0) {
             return this;
@@ -576,6 +596,7 @@ public final class Int64Value extends IntegerValue {
      * Add another integer
      */
 
+    @Override
     public IntegerValue plus(/*@NotNull*/ IntegerValue other) {
         // if either of the values is large, we use BigInteger arithmetic to be on the safe side
         if (other instanceof Int64Value) {
@@ -597,6 +618,7 @@ public final class Int64Value extends IntegerValue {
      * Subtract another integer
      */
 
+    @Override
     public IntegerValue minus(/*@NotNull*/ IntegerValue other) {
         // if either of the values is large, we use BigInteger arithmetic to be on the safe side
         if (other instanceof Int64Value) {
@@ -618,6 +640,7 @@ public final class Int64Value extends IntegerValue {
      * Multiply by another integer
      */
 
+    @Override
     public IntegerValue times(/*@NotNull*/ IntegerValue other) {
         // if either of the values is large, we use BigInteger arithmetic to be on the safe side
         if (other instanceof Int64Value) {
@@ -635,6 +658,7 @@ public final class Int64Value extends IntegerValue {
      * Divide by another integer
      */
 
+    @Override
     public NumericValue div(/*@NotNull*/ IntegerValue other) throws XPathException {
         // if either of the values is large, we use BigInteger arithmetic to be on the safe side
         if (other instanceof Int64Value) {
@@ -662,6 +686,7 @@ public final class Int64Value extends IntegerValue {
      * Take modulo another integer
      */
 
+    @Override
     public IntegerValue mod(/*@NotNull*/ IntegerValue other) throws XPathException {
         // if either of the values is large, we use BigInteger arithmetic to be on the safe side
         if (other instanceof Int64Value) {
@@ -683,6 +708,7 @@ public final class Int64Value extends IntegerValue {
      * Integer divide by another integer
      */
 
+    @Override
     public IntegerValue idiv(/*@NotNull*/ IntegerValue other) throws XPathException {
         // if either of the values is large, we use BigInteger arithmetic to be on the safe side
         if (other instanceof Int64Value) {
@@ -720,6 +746,7 @@ public final class Int64Value extends IntegerValue {
      * Get the value as a BigInteger
      */
 
+    @Override
     public BigInteger asBigInteger() {
         return BigInteger.valueOf(value);
     }

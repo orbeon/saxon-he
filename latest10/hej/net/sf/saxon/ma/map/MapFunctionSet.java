@@ -137,6 +137,7 @@ public class MapFunctionSet extends BuiltInFunctionSet {
      */
     public static class MapContains extends SystemFunction {
 
+        @Override
         public BooleanValue call(XPathContext context, Sequence[] arguments) throws XPathException {
             MapItem map = (MapItem) arguments[0].head();
             AtomicValue key = (AtomicValue) arguments[1].head();
@@ -262,6 +263,7 @@ public class MapFunctionSet extends BuiltInFunctionSet {
             }
         }
 
+        @Override
         public Sequence call(XPathContext context, Sequence[] arguments) throws XPathException {
             MapItem map = (MapItem) arguments[0].head();
             assert map != null;
@@ -281,6 +283,7 @@ public class MapFunctionSet extends BuiltInFunctionSet {
      */
     public static class MapFind extends SystemFunction {
 
+        @Override
         public ArrayItem call(XPathContext context, Sequence[] arguments) throws XPathException {
             List<GroundedValue> result = new ArrayList<>();
             AtomicValue key = (AtomicValue) arguments[1].head();
@@ -313,6 +316,7 @@ public class MapFunctionSet extends BuiltInFunctionSet {
      */
     public static class MapEntry extends SystemFunction {
 
+        @Override
         public Sequence call(XPathContext context, Sequence[] arguments) throws XPathException {
             AtomicValue key = (AtomicValue) arguments[0].head();
             assert key != null;
@@ -339,6 +343,7 @@ public class MapFunctionSet extends BuiltInFunctionSet {
                                SequenceType.makeSequenceType(args[1].getItemType(), args[1].getCardinality()));
         }
 
+        @Override
         public String getStreamerName() {
             return "MapEntry";
         }
@@ -350,6 +355,7 @@ public class MapFunctionSet extends BuiltInFunctionSet {
      */
     public static class MapForEach extends SystemFunction {
 
+        @Override
         public Sequence call(XPathContext context, Sequence[] arguments) throws XPathException {
             MapItem map = (MapItem) arguments[0].head();
             Function fn = (Function) arguments[1].head();
@@ -367,6 +373,7 @@ public class MapFunctionSet extends BuiltInFunctionSet {
      */
     public static class MapKeys extends SystemFunction {
 
+        @Override
         public Sequence call(XPathContext context, Sequence[] arguments) throws XPathException {
             MapItem map = (MapItem) arguments[0].head();
             assert map != null;
@@ -467,6 +474,7 @@ public class MapFunctionSet extends BuiltInFunctionSet {
             }
         }
 
+        @Override
         public MapItem call(XPathContext context, Sequence[] arguments) throws XPathException {
             String duplicates = this.duplicates;
             String duplicatesErrorCode = this.duplicatesErrorCode;
@@ -596,6 +604,7 @@ public class MapFunctionSet extends BuiltInFunctionSet {
 
         }
 
+        @Override
         public String getStreamerName() {
             return "NewMap";
         }
@@ -622,6 +631,7 @@ public class MapFunctionSet extends BuiltInFunctionSet {
 
     public static class MapPut extends SystemFunction {
 
+        @Override
         public MapItem call(XPathContext context, Sequence[] arguments) throws XPathException {
 
             MapItem baseMap = (MapItem) arguments[0].head();
@@ -642,6 +652,7 @@ public class MapFunctionSet extends BuiltInFunctionSet {
      */
     public static class MapRemove extends SystemFunction {
 
+        @Override
         public MapItem call(XPathContext context, Sequence[] arguments) throws XPathException {
             MapItem map = (MapItem) arguments[0].head();
             SequenceIterator iter = arguments[1].iterate();
@@ -659,6 +670,7 @@ public class MapFunctionSet extends BuiltInFunctionSet {
      */
     public static class MapSize extends SystemFunction {
 
+        @Override
         public IntegerValue call(XPathContext context, Sequence[] arguments) throws XPathException {
             MapItem map = (MapItem) arguments[0].head();
             return new Int64Value(map.size());

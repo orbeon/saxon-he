@@ -41,10 +41,12 @@ public class SQLConnect extends ExtensionInstruction {
     Expression password;
     Expression autoCommit = Literal.makeEmptySequence();
 
+    @Override
     public boolean mayContainSequenceConstructor() {
         return false;
     }
 
+    @Override
     public void prepareAttributes() {
 
         // Get mandatory database attribute
@@ -101,6 +103,7 @@ public class SQLConnect extends ExtensionInstruction {
         }
     }
 
+    @Override
     public void validate(ComponentDeclaration decl) throws XPathException {
         super.validate(decl);
         getConfiguration().checkLicensedFeature(Configuration.LicenseFeature.PROFESSIONAL_EDITION,
@@ -113,6 +116,7 @@ public class SQLConnect extends ExtensionInstruction {
         autoCommit = typeCheck("auto-commit", autoCommit);
     }
 
+    @Override
     public Expression compile(Compilation exec, ComponentDeclaration decl) throws XPathException {
         return new ConnectInstruction(database, driver, user, password, autoCommit);
     }
@@ -141,22 +145,27 @@ public class SQLConnect extends ExtensionInstruction {
          * This method indicates which of the three is provided.
          */
 
+        @Override
         public int getImplementationMethod() {
             return Expression.EVALUATE_METHOD;
         }
 
+        @Override
         public int computeCardinality() {
             return StaticProperty.EXACTLY_ONE;
         }
 
+        @Override
         public String getExpressionType() {
             return "sql:connect";
         }
 
+        @Override
         public ConnectInstruction copy(RebindingMap rebindings) {
             return (ConnectInstruction)new ConnectInstruction().copyOperandsFrom(this);
         }
 
+        @Override
         public ExternalObject<Connection> call(XPathContext context, Sequence[] arguments) throws XPathException {
 
             // Establish the JDBC connection

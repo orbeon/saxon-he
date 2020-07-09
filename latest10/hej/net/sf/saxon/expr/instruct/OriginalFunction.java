@@ -37,6 +37,7 @@ public class OriginalFunction extends AbstractFunction implements Function, Cont
      * @return the result of invoking the function
      * @throws XPathException if a dynamic error occurs within the function
      */
+    @Override
     public Sequence call(XPathContext context, Sequence[] args) throws XPathException {
         XPathContextMajor c2 = userFunction.makeNewContext(context, this);
         c2.setCurrentComponent(component);
@@ -48,6 +49,7 @@ public class OriginalFunction extends AbstractFunction implements Function, Cont
      *
      * @return the function item's type
      */
+    @Override
     public FunctionItemType getFunctionItemType() {
         return userFunction.getFunctionItemType();
     }
@@ -57,6 +59,7 @@ public class OriginalFunction extends AbstractFunction implements Function, Cont
      *
      * @return the function name, or null for an anonymous inline function
      */
+    @Override
     public StructuredQName getFunctionName() {
         return userFunction.getFunctionName();
     }
@@ -66,6 +69,7 @@ public class OriginalFunction extends AbstractFunction implements Function, Cont
      *
      * @return the number of arguments in the function signature
      */
+    @Override
     public int getArity() {
         return userFunction.getArity();
     }
@@ -77,6 +81,7 @@ public class OriginalFunction extends AbstractFunction implements Function, Cont
      *
      * @return a description of the function for use in error messages
      */
+    @Override
     public String getDescription() {
         return userFunction.getDescription();
     }

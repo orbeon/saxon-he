@@ -52,6 +52,7 @@ public class XSLDecimalFormat extends StyleElement {
         return true;
     }
 
+    @Override
     public void prepareAttributes() {
 
         if (prepared) {
@@ -107,6 +108,7 @@ public class XSLDecimalFormat extends StyleElement {
         }
     }
 
+    @Override
     public void validate(ComponentDeclaration decl) throws XPathException {
         checkTopLevel("XTSE0010", false);
         checkEmpty();
@@ -168,6 +170,7 @@ public class XSLDecimalFormat extends StyleElement {
      * @param top  the outermost XSLStylesheet element
      */
 
+    @Override
     public void index(ComponentDeclaration decl, PrincipalStylesheetModule top) {
         prepareAttributes();
         DecimalFormatManager dfm = getCompilation().getPrincipalStylesheetModule().getDecimalFormatManager();
@@ -180,6 +183,7 @@ public class XSLDecimalFormat extends StyleElement {
         }
     }
 
+    @Override
     public void compileDeclaration(Compilation compilation, ComponentDeclaration decl) throws XPathException {
         // no action
     }

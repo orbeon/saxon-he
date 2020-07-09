@@ -96,6 +96,7 @@ public class XMLIndenter extends ProxyReceiver {
      * Start of document
      */
 
+    @Override
     public void open() throws XPathException {
         emitter.open();
     }
@@ -104,6 +105,7 @@ public class XMLIndenter extends ProxyReceiver {
      * Output element start tag
      */
 
+    @Override
     public void startElement(NodeName nameCode, SchemaType type,
                              AttributeMap attributes, NamespaceMap namespaces,
                              Location location, int properties) throws XPathException {
@@ -174,6 +176,7 @@ public class XMLIndenter extends ProxyReceiver {
      * Output element end tag
      */
 
+    @Override
     public void endElement() throws XPathException {
         level--;
         if (afterEndTag && !sameline) {
@@ -196,6 +199,7 @@ public class XMLIndenter extends ProxyReceiver {
      * Output a processing instruction
      */
 
+    @Override
     public void processingInstruction(String target, CharSequence data, Location locationId, int properties) throws XPathException {
         if (afterEndTag) {
             indent();
@@ -211,6 +215,7 @@ public class XMLIndenter extends ProxyReceiver {
      * Output character data
      */
 
+    @Override
     public void characters(CharSequence chars, Location locationId, int properties) throws XPathException {
         if (suppressedAtLevel < 0 && Whitespace.isWhite(chars)) {
             pendingWhitespace = new Event.Text(chars, locationId, properties);
@@ -235,6 +240,7 @@ public class XMLIndenter extends ProxyReceiver {
      * Output a comment
      */
 
+    @Override
     public void comment(CharSequence chars, Location locationId, int properties) throws XPathException {
         if (afterEndTag) {
             indent();
@@ -254,6 +260,7 @@ public class XMLIndenter extends ProxyReceiver {
      *         may supply untyped nodes instead of supplying the type annotation
      */
 
+    @Override
     public boolean usesTypeAnnotations() {
         return true;
     }

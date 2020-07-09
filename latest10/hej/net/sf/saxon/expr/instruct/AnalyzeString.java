@@ -122,6 +122,7 @@ public class AnalyzeString extends Instruction implements ContextOriginator {
         }
     }
 
+    @Override
     public int getInstructionNameCode() {
         return StandardNames.XSL_ANALYZE_STRING;
     }
@@ -136,6 +137,7 @@ public class AnalyzeString extends Instruction implements ContextOriginator {
      * This method indicates which of these methods is prefered.
      */
 
+    @Override
     public int getImplementationMethod() {
         return Expression.PROCESS_METHOD | Expression.ITERATE_METHOD;
     }
@@ -161,6 +163,7 @@ public class AnalyzeString extends Instruction implements ContextOriginator {
     }
 
     /*@NotNull*/
+    @Override
     public Expression typeCheck(ExpressionVisitor visitor, ContextItemStaticInfo contextInfo) throws XPathException {
 
         Configuration config = visitor.getConfiguration();
@@ -193,6 +196,7 @@ public class AnalyzeString extends Instruction implements ContextOriginator {
 
 
     /*@NotNull*/
+    @Override
     public Expression optimize(ExpressionVisitor visitor, ContextItemStaticInfo contextInfo) throws XPathException {
 
         Configuration config = visitor.getConfiguration();
@@ -253,6 +257,7 @@ public class AnalyzeString extends Instruction implements ContextOriginator {
      */
 
     /*@NotNull*/
+    @Override
     public Expression copy(RebindingMap rm) {
         AnalyzeString a2 = new AnalyzeString(
                 copy(getSelect(), rm), copy(getRegex(), rm), copy(getFlags(), rm), copy(getMatching(), rm), copy(getNonMatching(), rm), pattern);
@@ -273,6 +278,7 @@ public class AnalyzeString extends Instruction implements ContextOriginator {
      * static validation can continue recursively.
      */
 
+    @Override
     public void checkPermittedContents(SchemaType parentType, boolean whole) throws XPathException {
         if (getMatching() != null) {
             getMatching().checkPermittedContents(parentType, false);
@@ -289,6 +295,7 @@ public class AnalyzeString extends Instruction implements ContextOriginator {
      */
 
     /*@NotNull*/
+    @Override
     public ItemType getItemType() {
         if (getMatching() != null) {
             if (getNonMatching() != null) {
@@ -316,6 +323,7 @@ public class AnalyzeString extends Instruction implements ContextOriginator {
      * @return the depencies, as a bit-mask
      */
 
+    @Override
     public int computeDependencies() {
         // some of the dependencies in the "action" part and in the grouping and sort keys aren't relevant,
         // because they don't depend on values set outside the for-each-group expression
@@ -349,6 +357,7 @@ public class AnalyzeString extends Instruction implements ContextOriginator {
      *         been unwound so as to save stack space.
      */
 
+    @Override
     public TailCall processLeavingTail(Outputter output, XPathContext context) throws XPathException {
         RegexIterator iter = getRegexIterator(context);
         XPathContextMajor c2 = context.newContext();
@@ -415,6 +424,7 @@ public class AnalyzeString extends Instruction implements ContextOriginator {
      */
 
     /*@NotNull*/
+    @Override
     public SequenceIterator iterate(XPathContext context) throws XPathException {
         RegexIterator iter = getRegexIterator(context);
         XPathContextMajor c2 = context.newContext();
@@ -443,6 +453,7 @@ public class AnalyzeString extends Instruction implements ContextOriginator {
      * is written to the supplied output destination.
      */
 
+    @Override
     public void export(ExpressionPresenter out) throws XPathException {
         out.startElement("analyzeString", this);
         out.setChildRole("select");

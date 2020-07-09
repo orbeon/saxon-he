@@ -121,6 +121,7 @@ public class XdmFunctionItem extends XdmItem {
     public Step<XdmItem> asStep(Processor processor) {
         if (getArity() == 1) {
             return new Step<XdmItem>() {
+                @Override
                 public Stream<? extends XdmItem> apply(XdmItem arg) {
                     try {
                         return XdmFunctionItem.this.call(processor, arg).stream();

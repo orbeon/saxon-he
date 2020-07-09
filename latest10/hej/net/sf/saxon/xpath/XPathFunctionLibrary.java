@@ -79,6 +79,7 @@ public class XPathFunctionLibrary implements FunctionLibrary {
      */
 
     /*@Nullable*/
+    @Override
     public Expression bind(/*@NotNull*/ SymbolicName.F functionName, /*@NotNull*/  Expression[] staticArgs, StaticContext env, List<String> reasons) {
         if (resolver == null) {
             return null;
@@ -108,6 +109,7 @@ public class XPathFunctionLibrary implements FunctionLibrary {
      *          in the event of certain errors, for example attempting to get a function
      *          that is private
      */
+    @Override
     public Function getFunctionItem(SymbolicName.F symbolicName, StaticContext staticContext) throws XPathException {
         if (resolver == null) {
             return null;
@@ -133,6 +135,7 @@ public class XPathFunctionLibrary implements FunctionLibrary {
      * @param functionName the qualified name of the function being called
      * @return true if a function of this name and arity is available for calling
      */
+    @Override
     public boolean isAvailable(SymbolicName.F functionName) {
         return resolver != null &&
                 resolver.resolveFunction(
@@ -149,6 +152,7 @@ public class XPathFunctionLibrary implements FunctionLibrary {
      */
 
     /*@NotNull*/
+    @Override
     public FunctionLibrary copy() {
         XPathFunctionLibrary xfl = new XPathFunctionLibrary();
         xfl.resolver = resolver;

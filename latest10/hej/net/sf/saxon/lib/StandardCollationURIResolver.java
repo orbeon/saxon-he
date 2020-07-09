@@ -53,6 +53,7 @@ public class StandardCollationURIResolver implements CollationURIResolver {
      */
 
     /*@Nullable*/
+    @Override
     public StringCollator resolve(String uri, Configuration config) throws XPathException {
         if (uri.equals("http://saxon.sf.net/collation")) {
             return Version.platform.makeCollation(config, new Properties(), uri);

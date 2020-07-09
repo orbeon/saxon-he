@@ -43,6 +43,7 @@ public class GroupStartingIterator extends GroupMatchingIterator implements Look
         return Count.steppingCount(another);
     }
 
+    @Override
     protected void advance() throws XPathException {
         currentMembers = new ArrayList<>(10);
         currentMembers.add(current);

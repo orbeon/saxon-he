@@ -162,6 +162,7 @@ public abstract class ContextStackFrame {
      */
 
     public static class CallingApplication extends ContextStackFrame {
+        @Override
         public void print(Logger out) {
             //out.println("  (called from external application)");
         }
@@ -176,6 +177,7 @@ public abstract class ContextStackFrame {
         public BuiltInTemplateRule(XPathContext context) {
             this.context = context;
         }
+        @Override
         public void print(Logger out) {
             Item contextItem = context.getContextItem();
             String diag;
@@ -230,6 +232,7 @@ public abstract class ContextStackFrame {
          * @param out the output stream
          */
 
+        @Override
         public void print(Logger out) {
             out.error("  at " + (functionName == null ? "(anonymous)" : functionName.getDisplayName()) + "() " + showLocation());
         }
@@ -248,6 +251,7 @@ public abstract class ContextStackFrame {
          * @param out the output stream
          */
 
+        @Override
         public void print(Logger out) {
             out.error("  at xsl:apply-templates " + showLocation());
             Item node = getContextItem();
@@ -290,6 +294,7 @@ public abstract class ContextStackFrame {
          * @param out the output stream
          */
 
+        @Override
         public void print(Logger out) {
             String name = templateName == null ? "??" : templateName.getDisplayName();
             out.error("  at xsl:call-template name=\"" + name + "\" " + showLocation());
@@ -328,6 +333,7 @@ public abstract class ContextStackFrame {
          * @param out the output stream
          */
 
+        @Override
         public void print(Logger out) {
             out.error("  in " + displayContainer(getContainer()) + " " + showLocation());
         }

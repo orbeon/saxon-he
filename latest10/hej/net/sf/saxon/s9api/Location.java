@@ -31,6 +31,7 @@ public interface Location extends SourceLocator, Locator {
      * @return the system ID, or null if the information is not available.
      */
 
+    @Override
     String getSystemId();
 
     /**
@@ -39,6 +40,7 @@ public interface Location extends SourceLocator, Locator {
      * @return usually null
      */
 
+    @Override
     String getPublicId();
 
     /**
@@ -49,6 +51,7 @@ public interface Location extends SourceLocator, Locator {
      * @return the line number, or -1 if the information is not available.
      */
 
+    @Override
     int getLineNumber();
 
     /**
@@ -58,6 +61,7 @@ public interface Location extends SourceLocator, Locator {
      * @return the column number, or -1 if the information is not available.
      */
 
+    @Override
     int getColumnNumber();
 
     /**

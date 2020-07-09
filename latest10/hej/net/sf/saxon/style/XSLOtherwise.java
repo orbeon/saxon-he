@@ -21,6 +21,7 @@ public class XSLOtherwise extends StyleElement {
 
     private Expression select;
 
+    @Override
     public void prepareAttributes() {
         for (AttributeInfo att : attributes()) {
             NodeName attName = att.getNodeName();
@@ -35,6 +36,7 @@ public class XSLOtherwise extends StyleElement {
         }
     }
 
+    @Override
     public void validate(ComponentDeclaration decl) throws XPathException {
         if (!(getParent() instanceof XSLChoose)) {
             compileError("xsl:otherwise must be immediately within xsl:choose", "XTSE0010");
@@ -48,16 +50,19 @@ public class XSLOtherwise extends StyleElement {
      * Mark tail-recursive calls on stylesheet functions. For most instructions, this does nothing.
      */
 
+    @Override
     public boolean markTailCalls() {
         StyleElement last = getLastChildInstruction();
         return last != null && last.markTailCalls();
     }
 
     /*@NotNull*/
+    @Override
     public Expression compile(Compilation exec, ComponentDeclaration decl) throws XPathException {
         throw new UnsupportedOperationException("XSLOtherwise#compile() should not be called");
     }
 
+    @Override
     public Expression compileSequenceConstructor(Compilation compilation, ComponentDeclaration decl,
                                                  boolean includeParams) throws XPathException {
         if (select == null) {

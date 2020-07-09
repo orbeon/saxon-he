@@ -91,16 +91,19 @@ public class Count extends SystemFunction {
      * @throws net.sf.saxon.trans.XPathException
      *          if a dynamic error occurs during the evaluation of the expression
      */
+    @Override
     public IntegerValue call(XPathContext context, Sequence[] arguments) throws XPathException {
         Sequence arg = arguments[0];
         int size = arg instanceof GroundedValue ? ((GroundedValue)arg).getLength() : count(arg.iterate());
         return Int64Value.makeIntegerValue(size);
     }
 
+    @Override
     public String getCompilerName() {
         return "CountCompiler";
     }
 
+    @Override
     public String getStreamerName() {
         return "Count";
     }

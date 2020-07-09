@@ -103,6 +103,7 @@ public class CopyOf extends Instruction implements ValidatingInstruction {
      * @return the validation mode
      */
 
+    @Override
     public int getValidationAction() {
         return validation;
     }
@@ -123,6 +124,7 @@ public class CopyOf extends Instruction implements ValidatingInstruction {
      * @return the schema type, or null if not validating against a type
      */
 
+    @Override
     public SchemaType getSchemaType() {
         return schemaType;
     }
@@ -153,6 +155,7 @@ public class CopyOf extends Instruction implements ValidatingInstruction {
      * The result depends on the type of the select expression.
      */
 
+    @Override
     public final boolean mayCreateNewNodes() {
         return !getSelect().getItemType().isPlainType();
     }
@@ -161,6 +164,7 @@ public class CopyOf extends Instruction implements ValidatingInstruction {
      * Get the name of this instruction, for diagnostics and tracing
      */
 
+    @Override
     public int getInstructionNameCode() {
         return StandardNames.XSL_COPY_OF;
     }
@@ -211,6 +215,7 @@ public class CopyOf extends Instruction implements ValidatingInstruction {
      * process() methods natively.
      */
 
+    @Override
     public int getImplementationMethod() {
         return ITERATE_METHOD | PROCESS_METHOD | WATCH_METHOD;
     }
@@ -253,6 +258,7 @@ public class CopyOf extends Instruction implements ValidatingInstruction {
      */
 
     /*@NotNull*/
+    @Override
     public Expression copy(RebindingMap rebindings) {
         CopyOf c = new CopyOf(getSelect().copy(rebindings), copyNamespaces, validation, schemaType, rejectDuplicateAttributes);
         ExpressionTool.copyLocationInfo(this, c);
@@ -264,6 +270,7 @@ public class CopyOf extends Instruction implements ValidatingInstruction {
     }
 
     /*@NotNull*/
+    @Override
     public ItemType getItemType() {
         ItemType in = getSelect().getItemType();
         if (!isSchemaAware) {
@@ -357,15 +364,18 @@ public class CopyOf extends Instruction implements ValidatingInstruction {
         return getSelect().getItemType();
     }
 
+    @Override
     public int getCardinality() {
         return getSelect().getCardinality();
     }
 
+    @Override
     public int getDependencies() {
         return getSelect().getDependencies();
     }
 
     /*@NotNull*/
+    @Override
     public Expression typeCheck(ExpressionVisitor visitor, ContextItemStaticInfo contextInfo) throws XPathException {
         typeCheckChildren(visitor, contextInfo);
         if (isDocumentOrElementRequired()) {
@@ -398,6 +408,7 @@ public class CopyOf extends Instruction implements ValidatingInstruction {
     }
 
     /*@NotNull*/
+    @Override
     public Expression optimize(ExpressionVisitor visitor, ContextItemStaticInfo contextItemType) throws XPathException {
         selectOp.optimize(visitor, contextItemType);
         if (Literal.isEmptySequence(getSelect())) {
@@ -415,6 +426,7 @@ public class CopyOf extends Instruction implements ValidatingInstruction {
      * is written to the supplied output destination.
      */
 
+    @Override
     public void export(ExpressionPresenter out) throws XPathException {
         out.startElement("copyOf", this);
         if (validation != Validation.SKIP) {
@@ -487,6 +499,7 @@ public class CopyOf extends Instruction implements ValidatingInstruction {
      * expressions, it is the same as the input pathMapNode.
      */
 
+    @Override
     public PathMap.PathMapNodeSet addToPathMap(PathMap pathMap, PathMap.PathMapNodeSet pathMapNodeSet) {
         PathMap.PathMapNodeSet result = super.addToPathMap(pathMap, pathMapNodeSet);
         result.setReturnable(false);
@@ -508,6 +521,7 @@ public class CopyOf extends Instruction implements ValidatingInstruction {
      * @return null - this implementation of the method never returns a TailCall
      */
 
+    @Override
     public TailCall processLeavingTail(Outputter out, XPathContext context) throws XPathException {
 
         if (copyAccumulators) {
@@ -819,6 +833,7 @@ public class CopyOf extends Instruction implements ValidatingInstruction {
     }
 
     /*@NotNull*/
+    @Override
     public SequenceIterator iterate(XPathContext context) throws XPathException {
         final Controller controller = context.getController();
         assert controller != null;

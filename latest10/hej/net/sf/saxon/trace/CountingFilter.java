@@ -76,6 +76,7 @@ public class CountingFilter extends ProxyReceiver {
 *                       need to be copied. Values are {@link ReceiverOption#ALL_NAMESPACES}; the default (0) means
      */
 
+    @Override
     public void append(Item item, Location locationId, int copyNamespaces) throws XPathException {
         count("append");
         if (nextReceiver instanceof SequenceReceiver) {
@@ -89,6 +90,7 @@ public class CountingFilter extends ProxyReceiver {
      * Character data
      */
 
+    @Override
     public void characters(CharSequence chars, Location locationId, int properties) throws XPathException {
         count("characters");
         nextReceiver.characters(chars, locationId, properties);
@@ -98,6 +100,7 @@ public class CountingFilter extends ProxyReceiver {
      * End of document
      */
 
+    @Override
     public void close() throws XPathException {
         count("close");
         nextReceiver.close();
@@ -107,6 +110,7 @@ public class CountingFilter extends ProxyReceiver {
      * Output a comment
      */
 
+    @Override
     public void comment(CharSequence chars, Location locationId, int properties) throws XPathException {
         count("comment");
         nextReceiver.comment(chars, locationId, properties);
@@ -116,6 +120,7 @@ public class CountingFilter extends ProxyReceiver {
      * Notify the end of a document node
      */
 
+    @Override
     public void endDocument() throws XPathException {
         count("endDocument");
         nextReceiver.endDocument();
@@ -125,6 +130,7 @@ public class CountingFilter extends ProxyReceiver {
      * End of element
      */
 
+    @Override
     public void endElement() throws XPathException {
         count("endElement");
         nextReceiver.endElement();
@@ -134,6 +140,7 @@ public class CountingFilter extends ProxyReceiver {
      * Start of event stream
      */
 
+    @Override
     public void open() throws XPathException {
         count("open");
         nextReceiver.open();
@@ -143,6 +150,7 @@ public class CountingFilter extends ProxyReceiver {
      * Processing Instruction
      */
 
+    @Override
     public void processingInstruction(String target, CharSequence data, Location locationId, int properties) throws XPathException {
         count("processingInstruction");
         nextReceiver.processingInstruction(target, data, locationId, properties);
@@ -153,6 +161,7 @@ public class CountingFilter extends ProxyReceiver {
      * @param properties
      */
 
+    @Override
     public void startDocument(int properties) throws XPathException {
         count("startDocument");
         nextReceiver.startDocument(properties);
@@ -162,6 +171,7 @@ public class CountingFilter extends ProxyReceiver {
      * Notify the start of an element
      */
 
+    @Override
     public void startElement(NodeName elemName, SchemaType type,
                              AttributeMap attributes, NamespaceMap namespaces,
                              Location location, int properties) throws XPathException {

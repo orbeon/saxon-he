@@ -44,6 +44,7 @@ public class AccumulatorData implements IAccumulatorData {
      * @return the accumulator
      */
 
+    @Override
     public Accumulator getAccumulator() {
         return accumulator;
     }
@@ -181,6 +182,7 @@ public class AccumulatorData implements IAccumulatorData {
 //        return search(0, values.size(), visit);
 //    }
 
+    @Override
     public Sequence getValue(NodeInfo node, boolean postDescent) {
         Visit visit = new Visit(node, postDescent);
         return search(0, values.size(), visit);
@@ -243,6 +245,7 @@ public class AccumulatorData implements IAccumulatorData {
          * @return -1 if this visit is earlier, 0 if they are the same visit, +1 if this visit is later
          */
 
+        @Override
         public int compareTo(Visit other) {
             int relation = Navigator.comparePosition(node, other.node);
             switch (relation) {

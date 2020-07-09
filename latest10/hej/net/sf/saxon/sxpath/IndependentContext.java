@@ -241,6 +241,7 @@ public class IndependentContext extends AbstractStaticContext
      * @param resolver the external NamespaceResolver
      */
 
+    @Override
     public void setNamespaceResolver(NamespaceResolver resolver) {
         externalResolver = resolver;
     }
@@ -282,6 +283,7 @@ public class IndependentContext extends AbstractStaticContext
      *         declared.
      */
 
+    @Override
     public XPathVariable declareVariable(QNameValue qname) {
         return declareVariable(qname.getStructuredQName());
     }
@@ -297,6 +299,7 @@ public class IndependentContext extends AbstractStaticContext
      *         declared.
      */
 
+    @Override
     public XPathVariable declareVariable(String namespaceURI, String localName) {
         StructuredQName qName = new StructuredQName("", namespaceURI, localName);
         return declareVariable(qName);
@@ -368,6 +371,7 @@ public class IndependentContext extends AbstractStaticContext
         return var.getLocalSlotNumber();
     }
 
+    @Override
     public NamespaceResolver getNamespaceResolver() {
         if (externalResolver != null) {
             return externalResolver;
@@ -388,6 +392,7 @@ public class IndependentContext extends AbstractStaticContext
      *         Return "" if the prefix maps to the null namespace.
      */
 
+    @Override
     public String getURIForPrefix(String prefix, boolean useDefault) {
         if (externalResolver != null) {
             return externalResolver.getURIForPrefix(prefix, useDefault);
@@ -404,6 +409,7 @@ public class IndependentContext extends AbstractStaticContext
      * the default namespace (prefix="") and the XML namespace where appropriate
      */
 
+    @Override
     public Iterator<String> iteratePrefixes() {
         if (externalResolver != null) {
             return externalResolver.iteratePrefixes();
@@ -422,6 +428,7 @@ public class IndependentContext extends AbstractStaticContext
      * @return the resulting variable reference
      */
 
+    @Override
     public Expression bindVariable(StructuredQName qName) throws XPathException {
         XPathVariable var = variables.get(qName);
         if (var == null) {
@@ -441,6 +448,7 @@ public class IndependentContext extends AbstractStaticContext
      * the static context itself.
      */
 
+    @Override
     public SlotManager getStackFrameMap() {
         SlotManager map = getConfiguration().makeSlotManager();
         XPathVariable[] va = new XPathVariable[variables.size()];
@@ -459,6 +467,7 @@ public class IndependentContext extends AbstractStaticContext
     }
 
 
+    @Override
     public boolean isImportedSchema(String namespace) {
         return importedSchemaNamespaces.contains(namespace);
     }
@@ -469,6 +478,7 @@ public class IndependentContext extends AbstractStaticContext
      * @return a Set, the set of URIs representing the names of imported schemas
      */
 
+    @Override
     public Set<String> getImportedSchemaNamespaces() {
         return importedSchemaNamespaces;
     }
@@ -508,6 +518,7 @@ public class IndependentContext extends AbstractStaticContext
      * @since 9.3
      */
 
+    @Override
     public ItemType getRequiredContextItemType() {
         return requiredContextItemType;
     }
@@ -529,6 +540,7 @@ public class IndependentContext extends AbstractStaticContext
      * @return the optimizer options being used
      */
 
+    @Override
     public OptimizerOptions getOptimizerOptions() {
         return this.optimizerOptions;
     }

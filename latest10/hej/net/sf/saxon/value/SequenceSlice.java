@@ -53,10 +53,12 @@ public class SequenceSlice implements GroundedValue {
         }
     }
 
+    @Override
     public String getStringValue() throws XPathException {
         return SequenceTool.getStringValue(this);
     }
 
+    @Override
     public CharSequence getStringValueCS() throws XPathException {
         return SequenceTool.getStringValue(this);
     }
@@ -67,6 +69,7 @@ public class SequenceSlice implements GroundedValue {
      * @return the first item in the sequence if there is one, or null if the sequence
      *         is empty
      */
+    @Override
     public Item head() {
         return itemAt(0);
     }
@@ -77,6 +80,7 @@ public class SequenceSlice implements GroundedValue {
      * @return the number of items in the sequence
      */
 
+    @Override
     public int getLength() {
         return length;
     }
@@ -108,6 +112,7 @@ public class SequenceSlice implements GroundedValue {
      */
 
     /*@Nullable*/
+    @Override
     public Item itemAt(int n) {
         if (n < 0 || n >= getLength()) {
             return null;
@@ -124,6 +129,7 @@ public class SequenceSlice implements GroundedValue {
      */
 
     /*@NotNull*/
+    @Override
     public ListIterator<? extends Item> iterate() {
         return new ListIterator<>(value.subList(offset, offset+length));
     }
@@ -142,6 +148,7 @@ public class SequenceSlice implements GroundedValue {
      */
 
     /*@NotNull*/
+    @Override
     public GroundedValue subsequence(int start, int length) {
         if (start < 0) {
             start = 0;
@@ -186,6 +193,7 @@ public class SequenceSlice implements GroundedValue {
      *
      * @return the simplified sequence
      */
+    @Override
     public GroundedValue reduce() {
         int len = getLength();
         if (len == 0) {
@@ -203,6 +211,7 @@ public class SequenceSlice implements GroundedValue {
      * @return an Iterable containing the same sequence of items
      */
 
+    @Override
     public Iterable<? extends Item> asIterable() {
         return value.subList(offset, offset+length);
     }

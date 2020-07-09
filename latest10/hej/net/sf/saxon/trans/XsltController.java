@@ -84,6 +84,7 @@ public class XsltController extends Controller {
      * @since 1.5
      */
 
+    @Override
     public void reset() {
         super.reset();
         Configuration config = getConfiguration();
@@ -113,6 +114,7 @@ public class XsltController extends Controller {
      * is serially reused
      */
 
+    @Override
     protected synchronized void clearPerTransformationData() {
         super.clearPerTransformationData();
         principalResult = null;
@@ -1026,6 +1028,7 @@ public class XsltController extends Controller {
 
         final Outputter finalResult = dest;
         return new ProxyReceiver(despatcher) {
+            @Override
             public void close() throws XPathException {
                 if (traceListener != null) {
                     traceListener.close();

@@ -67,6 +67,7 @@ public class DotNetReceiver extends Outputter {
      *                                start tag
      */
 
+    @Override
     public void attribute(NodeName nameCode, SimpleType typeCode, CharSequence value, Location locationId, int properties) throws XPathException {
         writer.WriteAttributeString(
                 nameCode.getPrefix(),
@@ -86,6 +87,7 @@ public class DotNetReceiver extends Outputter {
      * @param properties Bit significant value. The following bits are defined:
      */
 
+    @Override
     public void characters(CharSequence chars, Location locationId, int properties) throws XPathException {
         writer.WriteString(chars.toString());
     }
@@ -94,6 +96,7 @@ public class DotNetReceiver extends Outputter {
      * Notify the end of the event stream
      */
 
+    @Override
     public void close() throws XPathException {
         if (closeAfterUse) {
             writer.Close();
@@ -117,6 +120,7 @@ public class DotNetReceiver extends Outputter {
      * @throws IllegalArgumentException the content is invalid for an XML comment
      */
 
+    @Override
     public void comment(CharSequence content, Location locationId, int properties) throws XPathException {
         writer.WriteComment(content.toString());
     }
@@ -125,6 +129,7 @@ public class DotNetReceiver extends Outputter {
      * Notify the end of a document node
      */
 
+    @Override
     public void endDocument() throws XPathException {
         writer.WriteEndDocument();
     }
@@ -134,6 +139,7 @@ public class DotNetReceiver extends Outputter {
      * element is ending.
      */
 
+    @Override
     public void endElement() throws XPathException {
         writer.WriteEndElement();
     }
@@ -143,6 +149,7 @@ public class DotNetReceiver extends Outputter {
      */
 
     /*@NotNull*/
+    @Override
     public PipelineConfiguration getPipelineConfiguration() {
         return pipe;
     }
@@ -159,6 +166,7 @@ public class DotNetReceiver extends Outputter {
      * @param properties       The most important property is REJECT_DUPLICATES. If this property is set, the
      */
 
+    @Override
     public void namespace(String prefix, String namespaceUri, int properties) throws XPathException {
             if (prefix.isEmpty()) {
                 writer.WriteAttributeString("", "xmlns", null, namespaceUri);
@@ -171,6 +179,7 @@ public class DotNetReceiver extends Outputter {
      * Notify the start of the event stream
      */
 
+    @Override
     public void open() throws XPathException {
         // no-op
     }
@@ -191,6 +200,7 @@ public class DotNetReceiver extends Outputter {
      * @throws IllegalArgumentException the content is invalid for an XML processing instruction
      */
 
+    @Override
     public void processingInstruction(String name, CharSequence data, Location locationId, int properties) throws XPathException {
         writer.WriteProcessingInstruction(name, data.toString());
     }
@@ -199,6 +209,7 @@ public class DotNetReceiver extends Outputter {
      * Set the pipeline configuration
      */
 
+    @Override
     public void setPipelineConfiguration(/*@NotNull*/ PipelineConfiguration pipe) {
         this.pipe = pipe;
     }
@@ -207,6 +218,7 @@ public class DotNetReceiver extends Outputter {
      * Set the System ID of the destination tree
      */
 
+    @Override
     public void setSystemId(String systemId) {
         this.systemId = systemId;
     }
@@ -219,6 +231,7 @@ public class DotNetReceiver extends Outputter {
      * @param publicID The public identifier of the unparsed entity
      */
 
+    @Override
     public void setUnparsedEntity(String name, String systemID, String publicID) throws XPathException {
         // no-op
     }
@@ -230,6 +243,7 @@ public class DotNetReceiver extends Outputter {
      * no attributes, no namespaces, and no content.
      */
 
+    @Override
     public void startContent() throws XPathException {
         // no-op
     }
@@ -239,6 +253,7 @@ public class DotNetReceiver extends Outputter {
      * @param properties
      */
 
+    @Override
     public void startDocument(int properties) throws XPathException {
         writer.WriteStartDocument();
     }
@@ -253,6 +268,7 @@ public class DotNetReceiver extends Outputter {
      *                   properties, zero is supplied. The definitions of the bits are in class ReceiverOption
      */
 
+    @Override
     public void startElement(NodeName nameCode, SchemaType typeCode, Location location, int properties) throws XPathException {
         writer.WriteStartElement(
                 nameCode.getPrefix(),
@@ -267,6 +283,7 @@ public class DotNetReceiver extends Outputter {
      * @return The system identifier that was set with setSystemId,
      *         or null if setSystemId was not called.
      */
+    @Override
     public String getSystemId() {
         return systemId;
     }
@@ -279,6 +296,7 @@ public class DotNetReceiver extends Outputter {
      *         may supply untyped nodes instead of supplying the type annotation
      */
 
+    @Override
     public boolean usesTypeAnnotations() {
         return false;
     }

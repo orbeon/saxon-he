@@ -87,19 +87,23 @@ public class TailIterator
     }
 
 
+    @Override
     public Item next() throws XPathException {
         return base.next();
     }
 
+    @Override
     public boolean hasNext() {
         return ((LookaheadIterator) base).hasNext();
     }
 
+    @Override
     public int getLength() throws XPathException {
         int bl = ((LastPositionFinder) base).getLength() - start + 1;
         return bl > 0 ? bl : 0;
     }
 
+    @Override
     public void close() {
         base.close();
     }
@@ -114,6 +118,7 @@ public class TailIterator
      *         It is acceptable for the properties of the iterator to change depending on its state.
      */
 
+    @Override
     public EnumSet<Property> getProperties() {
         return EnumSetTool.intersect(
                 base.getProperties(),

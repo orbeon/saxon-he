@@ -29,6 +29,7 @@ public class LowerCase extends ScalarSystemFunction {
         return ZERO_LENGTH_STRING;
     }
 
+    @Override
     public String getCompilerName() {
         return "ForceCaseCompiler";
     }

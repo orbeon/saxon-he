@@ -3282,6 +3282,7 @@ public class Configuration implements SourceResolver, NotationSet {
      * @since 9.3
      */
 
+    @Override
     public boolean isDeclaredNotation(String uri, String local) {
         return false;
     }
@@ -4067,6 +4068,7 @@ public class Configuration implements SourceResolver, NotationSet {
      */
 
     /*@Nullable*/
+    @Override
     public Source resolveSource(Source source, Configuration config) throws XPathException {
         if (source instanceof AugmentedSource) {
             return source;

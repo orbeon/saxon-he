@@ -34,10 +34,12 @@ public class UTF16CharacterSet implements CharacterSet {
         return theInstance;
     }
 
+    @Override
     public boolean inCharset(int c) {
         return true;
     }
 
+    @Override
     public String getCanonicalName() {
         return "UTF-16";
     }

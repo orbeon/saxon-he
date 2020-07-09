@@ -104,6 +104,7 @@ public class SaxonTransformerFactory extends SAXTransformerFactory implements Co
      *          when it is constructing the Templates object and fails.
      */
 
+    @Override
     public Transformer newTransformer(Source source)
             throws TransformerConfigurationException {
         Templates templates = newTemplates(source);
@@ -118,6 +119,7 @@ public class SaxonTransformerFactory extends SAXTransformerFactory implements Co
      *         in a single thread, never null.
      */
 
+    @Override
     public Transformer newTransformer() {
         return new IdentityTransformer(processor.getUnderlyingConfiguration());
     }
@@ -139,6 +141,7 @@ public class SaxonTransformerFactory extends SAXTransformerFactory implements Co
      *          is constructing the Templates object and fails.
      */
 
+    @Override
     public synchronized Templates newTemplates(Source source)
             throws TransformerConfigurationException {
 
@@ -207,6 +210,7 @@ public class SaxonTransformerFactory extends SAXTransformerFactory implements Co
      *          if any problems occur
      */
 
+    @Override
     public Source getAssociatedStylesheet(
             Source source, String media, String title, String charset)
             throws TransformerConfigurationException {
@@ -230,6 +234,7 @@ public class SaxonTransformerFactory extends SAXTransformerFactory implements Co
      *                 or null.
      */
 
+    @Override
     public void setURIResolver(URIResolver resolver) {
         getConfiguration().setURIResolver(resolver);
     }
@@ -241,6 +246,7 @@ public class SaxonTransformerFactory extends SAXTransformerFactory implements Co
      * @return The URIResolver that was set with setURIResolver.
      */
 
+    @Override
     public URIResolver getURIResolver() {
         return getConfiguration().getURIResolver();
     }
@@ -258,6 +264,7 @@ public class SaxonTransformerFactory extends SAXTransformerFactory implements Co
      * @return The current state of the feature (true or false).
      */
 
+    @Override
     public boolean getFeature(String name) {
         switch (name) {
             case SAXSource.FEATURE:
@@ -298,6 +305,7 @@ public class SaxonTransformerFactory extends SAXTransformerFactory implements Co
      * @see net.sf.saxon.lib.FeatureKeys
      */
 
+    @Override
     public void setAttribute(String name, Object value) throws IllegalArgumentException {
         switch (name) {
             case FeatureKeys.CONFIGURATION:
@@ -328,6 +336,7 @@ public class SaxonTransformerFactory extends SAXTransformerFactory implements Co
      *                                  implementation doesn't recognize the attribute.
      */
     /*@Nullable*/
+    @Override
     public Object getAttribute(String name) throws IllegalArgumentException {
         return getConfiguration().getConfigurationProperty(name);
     }
@@ -345,6 +354,7 @@ public class SaxonTransformerFactory extends SAXTransformerFactory implements Co
      * @throws IllegalArgumentException if listener is null.
      */
 
+    @Override
     public void setErrorListener(ErrorListener listener) throws IllegalArgumentException {
         if (listener == null) {
             throw new IllegalArgumentException();
@@ -357,6 +367,7 @@ public class SaxonTransformerFactory extends SAXTransformerFactory implements Co
      *
      * @return The current error listener, which should never be null.
      */
+    @Override
     public ErrorListener getErrorListener() {
         return errorListener;
     }
@@ -378,6 +389,7 @@ public class SaxonTransformerFactory extends SAXTransformerFactory implements Co
      *          TransformerHandler can not be created.
      */
 
+    @Override
     public TransformerHandler newTransformerHandler(Source src)
             throws TransformerConfigurationException {
         Templates tmpl = newTemplates(src);
@@ -395,6 +407,7 @@ public class SaxonTransformerFactory extends SAXTransformerFactory implements Co
      *          TransformerHandler can not be created.
      */
 
+    @Override
     public TransformerHandler newTransformerHandler(Templates templates)
             throws TransformerConfigurationException {
         if (!(templates instanceof TemplatesImpl)) {
@@ -414,6 +427,7 @@ public class SaxonTransformerFactory extends SAXTransformerFactory implements Co
      *         be used as a ContentHandler for SAX parse events.
      */
 
+    @Override
     public TransformerHandler newTransformerHandler() {
         IdentityTransformer transformer = new IdentityTransformer(getConfiguration());
         return new IdentityTransformerHandler(transformer);
@@ -427,6 +441,7 @@ public class SaxonTransformerFactory extends SAXTransformerFactory implements Co
      *         be used as a ContentHandler for SAX parse events.
      */
 
+    @Override
     public TemplatesHandler newTemplatesHandler() {
         return new TemplatesHandlerImpl(processor);
     }
@@ -442,6 +457,7 @@ public class SaxonTransformerFactory extends SAXTransformerFactory implements Co
      *          XMLFilter cannot be created.
      */
 
+    @Override
     public XMLFilter newXMLFilter(Source src)
             throws TransformerConfigurationException {
         Templates tmpl = newTemplates(src);
@@ -457,6 +473,7 @@ public class SaxonTransformerFactory extends SAXTransformerFactory implements Co
      *          if (for example) the <code>templates</code> object was not created by Saxon.
      */
 
+    @Override
     public XMLFilter newXMLFilter(Templates templates)
             throws TransformerConfigurationException {
         if (!(templates instanceof TemplatesImpl)) {
@@ -501,6 +518,7 @@ public class SaxonTransformerFactory extends SAXTransformerFactory implements Co
      * @throws NullPointerException If the <code>name</code> parameter is null.
      */
 
+    @Override
     public void setFeature(String name, boolean value) throws TransformerConfigurationException {
         if (name.equals(FEATURE_SECURE_PROCESSING)) {
             getConfiguration().setBooleanProperty(Feature.ALLOW_EXTERNAL_FUNCTIONS, !value);

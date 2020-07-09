@@ -114,6 +114,7 @@ public class MetaTagAdjuster extends ProxyReceiver {
      * Notify the start of an element
      */
 
+    @Override
     public void startElement(NodeName elemName, SchemaType type,
                              AttributeMap attributes, NamespaceMap namespaces,
                              Location location, int properties)
@@ -165,6 +166,7 @@ public class MetaTagAdjuster extends ProxyReceiver {
      * End of element
      */
 
+    @Override
     public void endElement() throws XPathException {
         if (inMetaTag) {
             inMetaTag = false;

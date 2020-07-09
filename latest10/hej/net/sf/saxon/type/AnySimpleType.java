@@ -37,6 +37,7 @@ public enum AnySimpleType implements SimpleType {
      */
 
     /*@NotNull*/
+    @Override
     public String getName() {
         return "anySimpleType";
     }
@@ -48,6 +49,7 @@ public enum AnySimpleType implements SimpleType {
      *         of an anonymous type, and in the case of a global type defined in a no-namespace schema.
      */
 
+    @Override
     public String getTargetNamespace() {
         return NamespaceConstant.SCHEMA;
     }
@@ -58,6 +60,7 @@ public enum AnySimpleType implements SimpleType {
      * @return an EQName identifying the type. In the case of an anonymous type, an internally-generated
      *         name is returned
      */
+    @Override
     public String getEQName() {
         return "Q{" + NamespaceConstant.SCHEMA + "}anySimpleType";
     }
@@ -66,6 +69,7 @@ public enum AnySimpleType implements SimpleType {
      * Determine whether this is a built-in type or a user-defined type
      */
 
+    @Override
     public boolean isBuiltInType() {
         return true;
     }
@@ -78,6 +82,7 @@ public enum AnySimpleType implements SimpleType {
      * node, however, can still allow a list.
      */
 
+    @Override
     public boolean isIdType() {
         return false;
     }
@@ -88,6 +93,7 @@ public enum AnySimpleType implements SimpleType {
      * from IDREF or IDREFS by restriction, list, or union
      */
 
+    @Override
     public boolean isIdRefType() {
         return false;
     }
@@ -102,6 +108,7 @@ public enum AnySimpleType implements SimpleType {
      * @return the redefinition level
      */
 
+    @Override
     public int getRedefinitionLevel() {
         return 0;
     }
@@ -113,6 +120,7 @@ public enum AnySimpleType implements SimpleType {
      */
 
     /*@Nullable*/
+    @Override
     public String getSystemId() {
         return null;
     }
@@ -131,6 +139,7 @@ public enum AnySimpleType implements SimpleType {
     /**
      * Get the validation status - always valid
      */
+    @Override
     public ValidationStatus getValidationStatus() {
         return VALIDATED;
     }
@@ -141,6 +150,7 @@ public enum AnySimpleType implements SimpleType {
      * @return AnyType
      */
 
+    @Override
     public SchemaType getBaseType() {
         return AnyType.getInstance();
     }
@@ -151,6 +161,7 @@ public enum AnySimpleType implements SimpleType {
      * @return true if this SchemaType is a complex type
      */
 
+    @Override
     public boolean isComplexType() {
         return false;
     }
@@ -161,6 +172,7 @@ public enum AnySimpleType implements SimpleType {
      * @return true if this SchemaType is a simple type
      */
 
+    @Override
     public boolean isSimpleType() {
         return true;
     }
@@ -171,6 +183,7 @@ public enum AnySimpleType implements SimpleType {
      * @return the fingerprint.
      */
 
+    @Override
     public int getFingerprint() {
         return StandardNames.XS_ANY_SIMPLE_TYPE;
     }
@@ -181,6 +194,7 @@ public enum AnySimpleType implements SimpleType {
      * @return a StructuredQName identifying the type.  In the case of an anonymous type, an internally-generated
      * name is returned
      */
+    @Override
     public StructuredQName getStructuredQName() {
         return NAME;
     }
@@ -194,6 +208,7 @@ public enum AnySimpleType implements SimpleType {
      */
 
     /*@NotNull*/
+    @Override
     public String getDescription() {
         return "xs:anySimpleType";
     }
@@ -205,6 +220,7 @@ public enum AnySimpleType implements SimpleType {
      */
 
     /*@NotNull*/
+    @Override
     public String getDisplayName() {
         return "xs:anySimpleType";
     }
@@ -215,6 +231,7 @@ public enum AnySimpleType implements SimpleType {
      * can happen when there are multiple includes of the same file)
      */
 
+    @Override
     public boolean isSameType(SchemaType other) {
         return other == INSTANCE;
     }
@@ -228,6 +245,7 @@ public enum AnySimpleType implements SimpleType {
      */
 
     /*@NotNull*/
+    @Override
     public AtomicSequence atomize(/*@NotNull*/ NodeInfo node) {
         return new UntypedAtomicValue(node.getStringValueCS());
     }
@@ -240,6 +258,7 @@ public enum AnySimpleType implements SimpleType {
      * @throws SchemaException if the derivation is not allowed
      */
 
+    @Override
     public void checkTypeDerivationIsOK(SchemaType type, int block) throws SchemaException {
         if (type == this) {
             return;
@@ -253,10 +272,12 @@ public enum AnySimpleType implements SimpleType {
      * @return false, this is not (necessarily) an atomic type
      */
 
+    @Override
     public boolean isAtomicType() {
         return false;
     }
 
+    @Override
     public boolean isAnonymousType() {
         return false;
     }
@@ -267,6 +288,7 @@ public enum AnySimpleType implements SimpleType {
      *
      * @return false (it isn't a list type)
      */
+    @Override
     public boolean isListType() {
         return false;
     }
@@ -276,6 +298,7 @@ public enum AnySimpleType implements SimpleType {
      *
      * @return false (it isn't a union type)
      */
+    @Override
     public boolean isUnionType() {
         return false;
     }
@@ -286,6 +309,7 @@ public enum AnySimpleType implements SimpleType {
      * @return this type itself
      */
     /*@NotNull*/
+    @Override
     public SchemaType getBuiltInBaseType() {
         return this;
     }
@@ -304,6 +328,7 @@ public enum AnySimpleType implements SimpleType {
      */
 
     /*@NotNull*/
+    @Override
     public AtomicSequence getTypedValue(CharSequence value, NamespaceResolver resolver, ConversionRules rules) {
         return new UntypedAtomicValue(value);
     }
@@ -321,6 +346,7 @@ public enum AnySimpleType implements SimpleType {
      *                                       resolver is supplied
      */
     /*@Nullable*/
+    @Override
     public ValidationFailure validateContent(/*@NotNull*/ CharSequence value, NamespaceResolver nsResolver, /*@NotNull*/ ConversionRules rules) {
         return null;
     }
@@ -330,6 +356,7 @@ public enum AnySimpleType implements SimpleType {
      *
      * @return false
      */
+    @Override
     public boolean isNamespaceSensitive() {
         return false;
     }
@@ -341,6 +368,7 @@ public enum AnySimpleType implements SimpleType {
      * @return the value of the 'block' attribute for this type
      */
 
+    @Override
     public int getBlock() {
         return 0;
     }
@@ -352,6 +380,7 @@ public enum AnySimpleType implements SimpleType {
      * @return a numeric code representing the derivation method, for example {@link SchemaType#DERIVATION_RESTRICTION}
      */
 
+    @Override
     public int getDerivationMethod() {
         return SchemaType.DERIVATION_RESTRICTION;
     }
@@ -364,6 +393,7 @@ public enum AnySimpleType implements SimpleType {
      * @return true if this kind of derivation is allowed
      */
 
+    @Override
     public boolean allowsDerivation(int derivation) {
         return true;
     }
@@ -374,6 +404,7 @@ public enum AnySimpleType implements SimpleType {
      * @return the types of derivation that are not permitted, as a bit-significant integer
      *         containing bits such as {@link net.sf.saxon.type.SchemaType#DERIVATION_EXTENSION}
      */
+    @Override
     public int getFinalProhibitions() {
         return 0;
     }
@@ -385,6 +416,7 @@ public enum AnySimpleType implements SimpleType {
      *         {@link net.sf.saxon.value.Whitespace#REPLACE}.
      */
 
+    @Override
     public int getWhitespaceAction() {
         return Whitespace.PRESERVE;
     }
@@ -398,6 +430,7 @@ public enum AnySimpleType implements SimpleType {
 *                   {@link Type#ATTRIBUTE}, or {@link Type#DOCUMENT}
      */
 
+    @Override
     public void analyzeContentExpression(Expression expression, int kind) {
         //return;
     }
@@ -410,6 +443,7 @@ public enum AnySimpleType implements SimpleType {
      * @return the value after preprocessing
      */
 
+    @Override
     public CharSequence preprocess(CharSequence input) {
         return input;
     }
@@ -424,6 +458,7 @@ public enum AnySimpleType implements SimpleType {
      * @return the value after postprocessing
      */
 
+    @Override
     public CharSequence postprocess(CharSequence input) throws ValidationException {
         return input;
     }
@@ -439,6 +474,7 @@ public enum AnySimpleType implements SimpleType {
      *
      * @return the schema component represented as a function from property names to property values.
      */
+    @Override
     public Function getComponentAsFunction() {
         return UserSimpleType.getComponentAsFunction(this);
     }

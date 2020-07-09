@@ -46,6 +46,7 @@ public class SystemFunctionWithBoundContextItem extends AbstractFunction {
      * @throws XPathException
      *          if a dynamic error occurs during the evaluation of the expression
      */
+    @Override
     public Sequence call(XPathContext context, Sequence[] arguments) throws XPathException {
         XPathContext c2 = context.newMinorContext();
         c2.setCurrentIterator(new ManualIterator(contextItem));

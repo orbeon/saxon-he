@@ -84,6 +84,7 @@ public class Literal extends Expression {
      */
 
     /*@NotNull*/
+    @Override
     public Expression typeCheck(ExpressionVisitor visitor, ContextItemStaticInfo contextInfo) throws XPathException {
         return this;
     }
@@ -95,6 +96,7 @@ public class Literal extends Expression {
      */
 
     /*@NotNull*/
+    @Override
     public Expression optimize(ExpressionVisitor visitor, ContextItemStaticInfo contextItemType) throws XPathException {
         return this;
     }
@@ -120,6 +122,7 @@ public class Literal extends Expression {
      */
 
     /*@NotNull*/
+    @Override
     public ItemType getItemType() {
         // Avoid getting the configuration if we can: it's a common source of NPE's
         if (value instanceof AtomicValue) {
@@ -158,6 +161,7 @@ public class Literal extends Expression {
      * Determine the cardinality
      */
 
+    @Override
     public int computeCardinality() {
         if (value.getLength() == 0) {
             return StaticProperty.EMPTY;
@@ -190,6 +194,7 @@ public class Literal extends Expression {
      */
 
 
+    @Override
     public int computeSpecialProperties() {
         if (value.getLength() == 0) {
             // An empty sequence has all special properties except "has side effects".
@@ -231,6 +236,7 @@ public class Literal extends Expression {
      * @return true if this expression is vacuous
      */
 
+    @Override
     public boolean isVacuousExpression() {
         return value.getLength() == 0;
     }
@@ -245,6 +251,7 @@ public class Literal extends Expression {
      */
 
     /*@NotNull*/
+    @Override
     public Expression copy(RebindingMap rebindings) {
         Literal l2 = new Literal(value);
         ExpressionTool.copyLocationInfo(this, l2);
@@ -277,6 +284,7 @@ public class Literal extends Expression {
      * expression is the first operand of a path expression or filter expression
      */
 
+    @Override
     public PathMap.PathMapNodeSet addToPathMap(PathMap pathMap, PathMap.PathMapNodeSet pathMapNodeSet) {
         return pathMapNodeSet;
     }
@@ -289,6 +297,7 @@ public class Literal extends Expression {
      * @return for a Value, this always returns zero.
      */
 
+    @Override
     public final int getDependencies() {
         return 0;
     }
@@ -309,6 +318,7 @@ public class Literal extends Expression {
      */
 
     /*@NotNull*/
+    @Override
     public SequenceIterator iterate(XPathContext context) throws XPathException {
         return value.iterate();
     }
@@ -337,6 +347,7 @@ public class Literal extends Expression {
      * has been done to ensure that the value will be a singleton.
      */
 
+    @Override
     public Item evaluateItem(XPathContext context) throws XPathException {
         return value.head();
     }
@@ -349,6 +360,7 @@ public class Literal extends Expression {
      * @param context The dynamic context, giving access to the current node,
      */
 
+    @Override
     public void process(Outputter output, XPathContext context) throws XPathException {
         if (value instanceof Item) {
             output.append((Item) value, getLocation(), ReceiverOption.ALL_NAMESPACES);
@@ -379,6 +391,7 @@ public class Literal extends Expression {
       *     expression is (), this method returns "".
       */
 
+    @Override
     public CharSequence evaluateAsString(XPathContext context) throws XPathException {
         AtomicValue value = (AtomicValue) evaluateItem(context);
         if (value == null) {
@@ -399,6 +412,7 @@ public class Literal extends Expression {
      *                                           expression
      */
 
+    @Override
     public boolean effectiveBooleanValue(XPathContext context) throws XPathException {
         return value.effectiveBooleanValue();
     }
@@ -414,6 +428,7 @@ public class Literal extends Expression {
      * @param pul     the pending update list to which the results should be written
      */
 
+    @Override
     public void evaluatePendingUpdates(XPathContext context, PendingUpdateList pul) throws XPathException {
         if (value.getLength() == 0) {
             // do nothing
@@ -490,6 +505,7 @@ public class Literal extends Expression {
      * Return a hash code to support the equals() function
      */
 
+    @Override
     public int computeHashCode() {
         if (value instanceof AtomicSequence) {
             return ((AtomicSequence) value).getSchemaComparable().hashCode();
@@ -513,6 +529,7 @@ public class Literal extends Expression {
      * is written to the supplied output destination.
      */
 
+    @Override
     public void export(ExpressionPresenter out) throws XPathException {
         exportValue(value, out);
     }
@@ -760,6 +777,7 @@ public class Literal extends Expression {
      * axes.
      */
 
+    @Override
     public boolean isSubtreeExpression() {
         return true;
     }

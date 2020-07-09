@@ -75,11 +75,13 @@ public class SingletonIterator<T extends Item> implements SequenceIterator, Unfa
      * @return true if there are more items
      */
 
+    @Override
     public boolean hasNext() {
         return !gone;
     }
 
     /*@Nullable*/
+    @Override
     public T next() {
         if (gone) {
             return null;
@@ -89,11 +91,13 @@ public class SingletonIterator<T extends Item> implements SequenceIterator, Unfa
         }
     }
 
+    @Override
     public int getLength() {
         return 1;
     }
 
     /*@NotNull*/
+    @Override
     public SingletonIterator<T> getReverseIterator() {
         return new SingletonIterator<>(item);
     }
@@ -111,6 +115,7 @@ public class SingletonIterator<T extends Item> implements SequenceIterator, Unfa
      */
 
     /*@NotNull*/
+    @Override
     public GroundedValue materialize() {
         if (item != null) {
             return item;
@@ -134,6 +139,7 @@ public class SingletonIterator<T extends Item> implements SequenceIterator, Unfa
      *         It is acceptable for the properties of the iterator to change depending on its state.
      */
 
+    @Override
     public EnumSet<Property> getProperties() {
         return EnumSet.of(Property.LOOKAHEAD, Property.GROUNDED, Property.LAST_POSITION_FINDER);
     }

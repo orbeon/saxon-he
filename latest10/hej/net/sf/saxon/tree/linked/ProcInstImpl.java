@@ -50,6 +50,7 @@ public class ProcInstImpl extends NodeImpl {
 
 
 
+    @Override
     public String getStringValue() {
         return content;
     }
@@ -60,10 +61,12 @@ public class ProcInstImpl extends NodeImpl {
      */
 
     /*@NotNull*/
+    @Override
     public AtomicSequence atomize() {
         return new StringValue(getStringValue());
     }
 
+    @Override
     public final int getNodeKind() {
         return Type.PROCESSING_INSTRUCTION;
     }
@@ -87,6 +90,7 @@ public class ProcInstImpl extends NodeImpl {
      * @return the system identifier
      */
 
+    @Override
     public String getSystemId() {
         return systemId;
     }
@@ -95,6 +99,7 @@ public class ProcInstImpl extends NodeImpl {
      * Get the line number of the node within its source entity
      */
 
+    @Override
     public int getLineNumber() {
         return lineNumber;
     }
@@ -103,6 +108,7 @@ public class ProcInstImpl extends NodeImpl {
      * Get the column number of the node within its source entity
      */
 
+    @Override
     public int getColumnNumber() {
         return columnNumber;
     }
@@ -112,6 +118,7 @@ public class ProcInstImpl extends NodeImpl {
      * Copy this node to a given outputter
      */
 
+    @Override
     public void copy(/*@NotNull*/ Receiver out, int copyOptions, Location locationId) throws XPathException {
         out.processingInstruction(getLocalPart(), content, locationId, ReceiverOption.NONE);
     }
@@ -122,6 +129,7 @@ public class ProcInstImpl extends NodeImpl {
      * @param newNameCode the new name
      */
 
+    @Override
     public void rename(NodeName newNameCode) {
         name = newNameCode.getLocalPart();
     }
@@ -133,6 +141,7 @@ public class ProcInstImpl extends NodeImpl {
      * @param stringValue the new string value
      */
 
+    @Override
     public void replaceStringValue(/*@NotNull*/ CharSequence stringValue) {
         content = stringValue.toString();
     }

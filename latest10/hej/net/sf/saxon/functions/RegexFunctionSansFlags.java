@@ -55,6 +55,7 @@ public class RegexFunctionSansFlags extends SystemFunction {
      * @return the result of invoking the function
      * @throws net.sf.saxon.trans.XPathException if a dynamic error occurs within the function
      */
+    @Override
     public Sequence call(XPathContext context, Sequence[] args) throws XPathException {
         SystemFunction withFlags = addFlagsArgument();
         Sequence[] newArgs = new Sequence[args.length + 1];

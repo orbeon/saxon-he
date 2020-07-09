@@ -97,6 +97,7 @@ public final class LocalParam extends Instruction implements LocalBinding {
      * @return the required type
      */
 
+    @Override
     public SequenceType getRequiredType() {
         return requiredType;
     }
@@ -178,14 +179,17 @@ public final class LocalParam extends Instruction implements LocalBinding {
      * @return the empty cardinality.
      */
 
+    @Override
     public int getCardinality() {
         return StaticProperty.EMPTY;
     }
 
+    @Override
     public boolean isAssignable() {
         return false;
     }
 
+    @Override
     public boolean isGlobal() {
         return false;
     }
@@ -195,6 +199,7 @@ public final class LocalParam extends Instruction implements LocalBinding {
      * In other cases, return -1.
      */
 
+    @Override
     public int getLocalSlotNumber() {
         return slotNumber;
     }
@@ -231,6 +236,7 @@ public final class LocalParam extends Instruction implements LocalBinding {
     }
 
 
+    @Override
     public Expression typeCheck(ExpressionVisitor visitor, ContextItemStaticInfo contextItemType) throws XPathException {
         Expression e2 = super.typeCheck(visitor, contextItemType);
         if (e2 != this) {
@@ -240,6 +246,7 @@ public final class LocalParam extends Instruction implements LocalBinding {
         return this;
     }
 
+    @Override
     public Expression optimize(ExpressionVisitor visitor, ContextItemStaticInfo contextItemType) throws XPathException {
         Expression e2 = super.optimize(visitor, contextItemType);
         if (e2 != this) {
@@ -270,6 +277,7 @@ public final class LocalParam extends Instruction implements LocalBinding {
      * @return the copy of the original expression
      */
 
+    @Override
     public LocalParam copy(RebindingMap rebindings) {
         LocalParam p2 = new LocalParam();
         if (conversionOp != null) {
@@ -290,6 +298,7 @@ public final class LocalParam extends Instruction implements LocalBinding {
         return p2;
     }
 
+    @Override
     public void addReference(VariableReference ref, boolean isLoopingReference) {
 
     }
@@ -383,6 +392,7 @@ public final class LocalParam extends Instruction implements LocalBinding {
      * @return the name of this variable (a QName)
      */
 
+    @Override
     public StructuredQName getVariableQName() {
         return variableQName;
     }
@@ -429,6 +439,7 @@ public final class LocalParam extends Instruction implements LocalBinding {
      * @return the integer name code
      */
 
+    @Override
     public int getInstructionNameCode() {
         return StandardNames.XSL_PARAM;
     }
@@ -457,6 +468,7 @@ public final class LocalParam extends Instruction implements LocalBinding {
      *          if a dynamic error occurs in the evaluation
      */
 
+    @Override
     public TailCall processLeavingTail(Outputter output, XPathContext context) throws XPathException {
         int wasSupplied = context.useLocalParameter(variableQName, slotNumber, isTunnelParam());
         switch (wasSupplied) {
@@ -510,6 +522,7 @@ public final class LocalParam extends Instruction implements LocalBinding {
      * Return null if unknown or not applicable
      */
 
+    @Override
     public IntegerValue[] getIntegerBoundsForVariable() {
         return null;
     }
@@ -518,6 +531,7 @@ public final class LocalParam extends Instruction implements LocalBinding {
      * Evaluate the variable
      */
 
+    @Override
     public Sequence evaluateVariable(XPathContext c) {
         return c.evaluateLocalVariable(slotNumber);
     }
@@ -629,6 +643,7 @@ public final class LocalParam extends Instruction implements LocalBinding {
      * is written to the supplied output destination.
      */
 
+    @Override
     public void export(ExpressionPresenter out) throws XPathException {
         out.startElement("param", this);
         out.emitAttribute("name", getVariableQName());

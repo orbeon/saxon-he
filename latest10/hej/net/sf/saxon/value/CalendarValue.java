@@ -259,6 +259,7 @@ public abstract class CalendarValue extends AtomicValue implements AtomicMatchKe
      */
 
     /*@Nullable*/
+    @Override
     public AtomicMatchKey getXPathComparable(boolean ordered, StringCollator collator, int implicitTimezone)
     throws NoDynamicContextException {
         if (ordered && !(this instanceof Comparable)) {
@@ -307,6 +308,7 @@ public abstract class CalendarValue extends AtomicValue implements AtomicMatchKe
 
     public abstract int compareTo(CalendarValue other, int implicitTimezone) throws NoDynamicContextException;
 
+    @Override
     public boolean isIdentical(/*@NotNull*/ AtomicValue v) {
         return super.isIdentical(v) && tzMinutes == ((CalendarValue) v).tzMinutes;
     }
@@ -386,6 +388,7 @@ public abstract class CalendarValue extends AtomicValue implements AtomicMatchKe
          *
          * @return an atomic value that encapsulates this match key
          */
+        @Override
         public CalendarValue asAtomic() {
             return CalendarValue.this;
         }

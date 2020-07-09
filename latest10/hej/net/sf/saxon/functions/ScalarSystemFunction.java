@@ -61,6 +61,7 @@ public abstract class ScalarSystemFunction extends SystemFunction {
      * @throws net.sf.saxon.trans.XPathException
      *          if a dynamic error occurs during the evaluation of the expression
      */
+    @Override
     public final ZeroOrOne call(XPathContext context, Sequence[] arguments) throws XPathException {
         Item val0 = arguments[0].head();
         if (val0 == null) {

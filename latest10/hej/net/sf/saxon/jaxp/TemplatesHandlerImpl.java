@@ -82,6 +82,7 @@ public class TemplatesHandlerImpl extends ReceivingContentHandler implements Tem
      */
 
     /*@Nullable*/
+    @Override
     public Templates getTemplates() {
         if (templates == null) {
             DocumentImpl doc = (DocumentImpl) builder.getCurrentRoot();
@@ -116,23 +117,28 @@ public class TemplatesHandlerImpl extends ReceivingContentHandler implements Tem
      *            the static base URI in the static context of XPath expressions.
      */
 
+    @Override
     public void setSystemId(String url) {
         systemId = url;
         builder.setSystemId(url);
         super.setDocumentLocator(new Locator() {
+            @Override
             public int getColumnNumber() {
                 return -1;
             }
 
+            @Override
             public int getLineNumber() {
                 return -1;
             }
 
             /*@Nullable*/
+            @Override
             public String getPublicId() {
                 return null;
             }
 
+            @Override
             public String getSystemId() {
                 return systemId;
             }
@@ -143,6 +149,7 @@ public class TemplatesHandlerImpl extends ReceivingContentHandler implements Tem
      * Callback interface for SAX: not for application use
      */
 
+    @Override
     public void setDocumentLocator(final Locator locator) {
         // If the user has called setSystemId(), we use that system ID in preference to this one,
         // which probably comes from the XML parser possibly via some chain of SAX filters
@@ -155,6 +162,7 @@ public class TemplatesHandlerImpl extends ReceivingContentHandler implements Tem
      * Get the systemId of the document
      */
 
+    @Override
     public String getSystemId() {
         return systemId;
     }

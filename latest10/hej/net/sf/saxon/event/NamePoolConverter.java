@@ -48,6 +48,7 @@ public class NamePoolConverter extends ProxyReceiver {
      * Output element start tag
      */
 
+    @Override
     public void startElement(NodeName elemName, SchemaType type,
                              AttributeMap attributes, NamespaceMap namespaces,
                              Location location, int properties) throws XPathException {

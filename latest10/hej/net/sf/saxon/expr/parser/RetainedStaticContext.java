@@ -280,6 +280,7 @@ public class RetainedStaticContext implements NamespaceResolver {
      * @return the uri for the namespace, or null if the prefix is not in scope.
      * The "null namespace" is represented by the pseudo-URI "".
      */
+    @Override
     public String getURIForPrefix(String prefix, boolean useDefault) {
         return namespaces.getURIForPrefix(prefix, useDefault);
     }
@@ -291,6 +292,7 @@ public class RetainedStaticContext implements NamespaceResolver {
      * @return an iterator over all the prefixes for which a namespace binding exists, including
      * the zero-length string to represent the null/absent prefix if it is bound
      */
+    @Override
     public Iterator<String> iteratePrefixes() {
         return namespaces.iteratePrefixes();
     }

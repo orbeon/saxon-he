@@ -58,6 +58,7 @@ public class BinaryTextDecoder extends ProxyReceiver {
      * of the output method is assumed.
      */
 
+    @Override
     public void processingInstruction(String name, /*@NotNull*/ CharSequence value, Location locationId, int properties)
             throws XPathException {
         String encoding;

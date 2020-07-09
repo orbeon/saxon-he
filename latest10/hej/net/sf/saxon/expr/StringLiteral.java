@@ -59,6 +59,7 @@ public class StringLiteral extends Literal {
     }
 
     /*@NotNull*/
+    @Override
     public Expression copy(RebindingMap rebindings) {
         StringLiteral stringLiteral = new StringLiteral(getValue());
         ExpressionTool.copyLocationInfo(this, stringLiteral);

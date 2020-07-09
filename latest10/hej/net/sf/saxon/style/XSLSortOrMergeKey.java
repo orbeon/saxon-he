@@ -45,6 +45,7 @@ public abstract class XSLSortOrMergeKey extends StyleElement {
      * @return true: yes, it may contain a sequence constructor
      */
 
+    @Override
     public boolean mayContainSequenceConstructor() {
         return true;
     }
@@ -224,6 +225,7 @@ public abstract class XSLSortOrMergeKey extends StyleElement {
 
 
     /*@Nullable*/
+    @Override
     public Expression compile(Compilation exec, ComponentDeclaration decl) throws XPathException {
         if (select == null) {
             Expression b = compileSequenceConstructor(exec, decl, true);

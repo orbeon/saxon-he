@@ -50,6 +50,7 @@ public enum AnyType implements ComplexType {
      */
 
     /*@NotNull*/
+    @Override
     public String getName() {
         return "anyType";
     }
@@ -59,6 +60,7 @@ public enum AnyType implements ComplexType {
      *
      * @return an EQName identifying the type, specifically "Q{http://www.w3.org/2001/XMLSchema}anyType"
      */
+    @Override
     public String getEQName() {
         return "Q{" + NamespaceConstant.SCHEMA + "}anyType";
     }
@@ -70,6 +72,7 @@ public enum AnyType implements ComplexType {
      *         of an anonymous type, and in the case of a global type defined in a no-namespace schema.
      */
 
+    @Override
     public String getTargetNamespace() {
         return NamespaceConstant.SCHEMA;
     }
@@ -80,6 +83,7 @@ public enum AnyType implements ComplexType {
      * {@link #VARIETY_ELEMENT_ONLY}
      */
 
+    @Override
     public int getVariety() {
         return VARIETY_MIXED;
     }
@@ -87,6 +91,7 @@ public enum AnyType implements ComplexType {
     /**
      * Get the validation status - always valid
      */
+    @Override
     public ValidationStatus getValidationStatus() {
         return VALIDATED;
     }
@@ -101,6 +106,7 @@ public enum AnyType implements ComplexType {
      * @return the redefinition level
      */
 
+    @Override
     public int getRedefinitionLevel() {
         return 0;
     }
@@ -112,6 +118,7 @@ public enum AnyType implements ComplexType {
      */
 
     /*@Nullable*/
+    @Override
     public SchemaType getBaseType() {
         return null;
     }
@@ -138,6 +145,7 @@ public enum AnyType implements ComplexType {
      *         {@link SchemaType#DERIVATION_RESTRICTION}
      */
 
+    @Override
     public int getDerivationMethod() {
         return 0;
     }
@@ -150,6 +158,7 @@ public enum AnyType implements ComplexType {
      * @return true if this kind of derivation is allowed
      */
 
+    @Override
     public boolean allowsDerivation(int derivation) {
         return true;
     }
@@ -160,6 +169,7 @@ public enum AnyType implements ComplexType {
      * @return the types of derivation that are not permitted, as a bit-significant integer
      *         containing bits such as {@link net.sf.saxon.type.SchemaType#DERIVATION_EXTENSION}
      */
+    @Override
     public int getFinalProhibitions() {
         return 0;
     }
@@ -175,6 +185,7 @@ public enum AnyType implements ComplexType {
      *
      * @return the schema component represented as a function from property names to property values.
      */
+    @Override
     public Function getComponentAsFunction() {
         return UserComplexType.getComponentAsFunction(this);
     }
@@ -186,6 +197,7 @@ public enum AnyType implements ComplexType {
      * @return false: this class is not abstract.
      */
 
+    @Override
     public boolean isAbstract() {
         return false;
     }
@@ -196,6 +208,7 @@ public enum AnyType implements ComplexType {
      * @return true if this SchemaType is a complex type
      */
 
+    @Override
     public boolean isComplexType() {
         return true;
     }
@@ -206,6 +219,7 @@ public enum AnyType implements ComplexType {
      * @return true if this SchemaType is an anonymous type
      */
 
+    @Override
     public boolean isAnonymousType() {
         return false;
     }
@@ -216,6 +230,7 @@ public enum AnyType implements ComplexType {
      * @return true if this SchemaType is a simple type
      */
 
+    @Override
     public boolean isSimpleType() {
         return false;
     }
@@ -226,6 +241,7 @@ public enum AnyType implements ComplexType {
      * @return true if this SchemaType is an atomic type
      */
 
+    @Override
     public boolean isAtomicType() {
         return false;
     }
@@ -238,6 +254,7 @@ public enum AnyType implements ComplexType {
      * node, however, can still allow a list.
      */
 
+    @Override
     public boolean isIdType() {
         return false;
     }
@@ -248,6 +265,7 @@ public enum AnyType implements ComplexType {
      * from IDREF or IDREFS by restriction, list, or union
      */
 
+    @Override
     public boolean isIdRefType() {
         return false;
     }
@@ -259,6 +277,7 @@ public enum AnyType implements ComplexType {
      * @return the value of the 'block' attribute for this type
      */
 
+    @Override
     public int getBlock() {
         return 0;
     }
@@ -268,6 +287,7 @@ public enum AnyType implements ComplexType {
      *
      * @return true: this complex type has complex content
      */
+    @Override
     public boolean isComplexContent() {
         return true;
     }
@@ -278,6 +298,7 @@ public enum AnyType implements ComplexType {
      * @return false: this complex type has complex content
      */
 
+    @Override
     public boolean isSimpleContent() {
         return false;
     }
@@ -289,6 +310,7 @@ public enum AnyType implements ComplexType {
      * @return false: this complex type does not use an "all" compositor
      */
 
+    @Override
     public boolean isAllContent() {
         return false;
     }
@@ -301,6 +323,7 @@ public enum AnyType implements ComplexType {
      */
 
     /*@Nullable*/
+    @Override
     public SimpleType getSimpleContentType() {
         return null;
     }
@@ -310,6 +333,7 @@ public enum AnyType implements ComplexType {
      *
      * @return false: this type is not a restriction
      */
+    @Override
     public boolean isRestricted() {
         return false;
     }
@@ -320,6 +344,7 @@ public enum AnyType implements ComplexType {
      * @return false: the content model is not empty
      */
 
+    @Override
     public boolean isEmptyContent() {
         return false;
     }
@@ -330,6 +355,7 @@ public enum AnyType implements ComplexType {
      * @return true: the content is allowed to be empty
      */
 
+    @Override
     public boolean isEmptiable() {
         return true;
     }
@@ -340,6 +366,7 @@ public enum AnyType implements ComplexType {
      * @return true: mixed content is allowed
      */
 
+    @Override
     public boolean isMixedContent() {
         return true;
     }
@@ -350,6 +377,7 @@ public enum AnyType implements ComplexType {
      * @return the fingerprint.
      */
 
+    @Override
     public int getFingerprint() {
         return StandardNames.XS_ANY_TYPE;
     }
@@ -360,6 +388,7 @@ public enum AnyType implements ComplexType {
      * @return a StructuredQName identifying the type.  In the case of an anonymous type, an internally-generated
      * name is returned
      */
+    @Override
     public StructuredQName getStructuredQName() {
         return QNAME;
     }
@@ -373,6 +402,7 @@ public enum AnyType implements ComplexType {
      */
 
     /*@NotNull*/
+    @Override
     public String getDescription() {
         return "xs:anyType";
     }
@@ -384,6 +414,7 @@ public enum AnyType implements ComplexType {
      */
 
     /*@NotNull*/
+    @Override
     public String getDisplayName() {
         return "xs:anyType";
     }
@@ -396,6 +427,7 @@ public enum AnyType implements ComplexType {
      */
 
     /*@Nullable*/
+    @Override
     public String getSystemId() {
         return null;
     }
@@ -406,6 +438,7 @@ public enum AnyType implements ComplexType {
      * can happen when there are multiple includes of the same file)
      */
 
+    @Override
     public boolean isSameType(SchemaType other) {
         return other instanceof AnyType;
     }
@@ -419,6 +452,7 @@ public enum AnyType implements ComplexType {
 *                   {@link Type#ATTRIBUTE}, or {@link Type#DOCUMENT}
      */
 
+    @Override
     public void analyzeContentExpression(Expression expression, int kind) {
         //return;
     }
@@ -432,6 +466,7 @@ public enum AnyType implements ComplexType {
      */
 
     /*@NotNull*/
+    @Override
     public AtomicSequence atomize(/*@NotNull*/ NodeInfo node) {
         return new UntypedAtomicValue(node.getStringValue());
     }
@@ -444,6 +479,7 @@ public enum AnyType implements ComplexType {
      * @throws SchemaException if the derivation is not allowed
      */
 
+    @Override
     public void checkTypeDerivationIsOK(SchemaType type, int block) throws SchemaException {
         if (!(type instanceof AnyType)) {
             throw new SchemaException("Cannot derive xs:anyType from another type");
@@ -461,6 +497,7 @@ public enum AnyType implements ComplexType {
      */
 
     /*@NotNull*/
+    @Override
     public SchemaType getElementParticleType(int elementName, boolean considerExtensions) {
         return this;
     }
@@ -476,6 +513,7 @@ public enum AnyType implements ComplexType {
      * @param considerExtensions  true if the analysis should take into account types derived by extension
      */
 
+    @Override
     public int getElementParticleCardinality(int elementName, boolean considerExtensions) {
         return StaticProperty.ALLOWS_ZERO_OR_MORE;
     }
@@ -491,6 +529,7 @@ public enum AnyType implements ComplexType {
      */
 
     /*@NotNull*/
+    @Override
     public SimpleType getAttributeUseType(StructuredQName attributeName) {
         return AnySimpleType.getInstance();
     }
@@ -509,6 +548,7 @@ public enum AnyType implements ComplexType {
      *         If there is no such attribute use, return null.
      */
 
+    @Override
     public int getAttributeUseCardinality(StructuredQName attributeName) {
         return StaticProperty.ALLOWS_ZERO_OR_ONE;
     }
@@ -520,6 +560,7 @@ public enum AnyType implements ComplexType {
      * @return true if attributes are allowed
      */
 
+    @Override
     public boolean allowsAttributes() {
         return true;
     }
@@ -534,6 +575,7 @@ public enum AnyType implements ComplexType {
      * @param ignoreWildcards  true if wildcards are to be ignored, rather than a wildcard causing the result to be considered
      */
 
+    @Override
     public void gatherAllPermittedChildren(/*@NotNull*/ IntHashSet children, boolean ignoreWildcards) {
         children.add(-1);
     }
@@ -549,6 +591,7 @@ public enum AnyType implements ComplexType {
      *                    be ignored.
      */
 
+    @Override
     public void gatherAllPermittedDescendants(/*@NotNull*/ IntHashSet descendants) {
         descendants.add(-1);
     }
@@ -564,6 +607,7 @@ public enum AnyType implements ComplexType {
      */
 
     /*@NotNull*/
+    @Override
     public SchemaType getDescendantElementType(int fingerprint) {
         return this;
     }
@@ -576,6 +620,7 @@ public enum AnyType implements ComplexType {
      * @return the cardinality of the descendant element within this complex type
      */
 
+    @Override
     public int getDescendantElementCardinality(int elementFingerprint) {
         return StaticProperty.ALLOWS_ZERO_OR_MORE;
     }
@@ -587,6 +632,7 @@ public enum AnyType implements ComplexType {
      * @return true if the content model of this type, or its extensions, contains an element wildcard
      */
 
+    @Override
     public boolean containsElementWildcard() {
         return true;
     }
@@ -596,6 +642,7 @@ public enum AnyType implements ComplexType {
      *
      * @return true if there are any assertions
      */
+    @Override
     public boolean hasAssertions() {
         return false;
     }

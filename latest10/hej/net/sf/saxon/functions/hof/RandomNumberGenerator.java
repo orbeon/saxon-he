@@ -87,6 +87,7 @@ public class RandomNumberGenerator extends SystemFunction implements Callable {
          * @throws net.sf.saxon.trans.XPathException if a dynamic error occurs during the evaluation of the expression
          */
 
+        @Override
         public Sequence call(XPathContext context, Sequence[] arguments) throws XPathException {
             Sequence input = (Sequence)arguments[0];
             SequenceIterator iterator = input.iterate();
@@ -137,6 +138,7 @@ public class RandomNumberGenerator extends SystemFunction implements Callable {
          * @throws net.sf.saxon.trans.XPathException if a dynamic error occurs during the evaluation of the expression
          */
 
+        @Override
         public Sequence call(XPathContext context, Sequence[] arguments) throws XPathException {
             return generator(nextSeed, context);
         }
@@ -152,6 +154,7 @@ public class RandomNumberGenerator extends SystemFunction implements Callable {
 
 
 
+    @Override
     public Sequence call(XPathContext context, Sequence[] arguments) throws XPathException {
         long seed;
         if (arguments.length == 0) {

@@ -714,6 +714,7 @@ public final class DateTimeValue extends CalendarValue
      */
 
     /*@NotNull*/
+    @Override
     public BuiltInAtomicType getPrimitiveType() {
         return BuiltInAtomicType.DATE_TIME;
     }
@@ -807,6 +808,7 @@ public final class DateTimeValue extends CalendarValue
      */
 
     /*@NotNull*/
+    @Override
     public DateTimeValue toDateTime() {
         return this;
     }
@@ -915,6 +917,7 @@ public final class DateTimeValue extends CalendarValue
      */
 
     /*@NotNull*/
+    @Override
     public GregorianCalendar getCalendar() {
         int tz = hasTimezone() ? getTimezoneInMinutes() * 60000 : 0;
         TimeZone zone = new SimpleTimeZone(tz, "LLL");
@@ -1009,6 +1012,7 @@ public final class DateTimeValue extends CalendarValue
      */
 
     /*@NotNull*/
+    @Override
     public CharSequence getPrimitiveStringValue() {
 
         FastStringBuffer sb = new FastStringBuffer(30);
@@ -1081,6 +1085,7 @@ public final class DateTimeValue extends CalendarValue
      * @return the canonical lexical representation as defined in XML Schema
      */
 
+    @Override
     public CharSequence getCanonicalLexicalRepresentation() {
         if (hasTimezone() && getTimezoneInMinutes() != 0) {
             return adjustTimezone(0).getStringValueCS();
@@ -1097,6 +1102,7 @@ public final class DateTimeValue extends CalendarValue
      */
 
     /*@NotNull*/
+    @Override
     public DateTimeValue copyAsSubType(AtomicType typeLabel) {
         DateTimeValue v = new DateTimeValue(year, month, day,
                 hour, minute, second, nanosecond, getTimezoneInMinutes());
@@ -1115,6 +1121,7 @@ public final class DateTimeValue extends CalendarValue
      */
 
     /*@NotNull*/
+    @Override
     public DateTimeValue adjustTimezone(int timezone) {
         if (!hasTimezone()) {
             DateTimeValue in = copyAsSubType(typeLabel);
@@ -1171,6 +1178,7 @@ public final class DateTimeValue extends CalendarValue
      */
 
     /*@NotNull*/
+    @Override
     public DateTimeValue add(/*@NotNull*/ DurationValue duration) throws XPathException {
         if (duration instanceof DayTimeDurationValue) {
             BigDecimal seconds = ((DayTimeDurationValue) duration).getTotalSeconds();
@@ -1216,6 +1224,7 @@ public final class DateTimeValue extends CalendarValue
      *          for example if one value is a date and the other is a time
      */
 
+    @Override
     public DayTimeDurationValue subtract(/*@NotNull*/ CalendarValue other, XPathContext context) throws XPathException {
         if (!(other instanceof DateTimeValue)) {
             XPathException err = new XPathException("First operand of '-' is a dateTime, but the second is not");
@@ -1244,6 +1253,7 @@ public final class DateTimeValue extends CalendarValue
      */
 
     /*@Nullable*/
+    @Override
     public AtomicValue getComponent(AccessorFn.Component component) throws XPathException {
         switch (component) {
             case YEAR_ALLOWING_ZERO:
@@ -1412,6 +1422,7 @@ public final class DateTimeValue extends CalendarValue
      * @throws NoDynamicContextException if the implicit timezone is needed and is not available
      */
 
+    @Override
     public int compareTo(/*@NotNull*/ CalendarValue other, int implicitTimezone) throws NoDynamicContextException {
         if (!(other instanceof DateTimeValue)) {
             throw new ClassCastException("DateTime values are not comparable to " + other.getClass());
@@ -1456,6 +1467,7 @@ public final class DateTimeValue extends CalendarValue
      *                            no timezone is available)
      */
 
+    @Override
     public int compareTo(Object v2) {
         try {
             return compareTo((DateTimeValue) v2, MISSING_TIMEZONE);
@@ -1465,6 +1477,7 @@ public final class DateTimeValue extends CalendarValue
     }
 
     /*@NotNull*/
+    @Override
     public Comparable getSchemaComparable() {
         return new DateTimeComparable();
     }
@@ -1481,6 +1494,7 @@ public final class DateTimeValue extends CalendarValue
         }
 
         // Rules from XML Schema Part 2
+        @Override
         public int compareTo(/*@NotNull*/ Object o) {
             if (o instanceof DateTimeComparable) {
                 DateTimeValue dt0 = DateTimeValue.this;

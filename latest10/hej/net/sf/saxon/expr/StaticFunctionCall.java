@@ -76,6 +76,7 @@ public class StaticFunctionCall extends FunctionCall implements Callable {
      * @return true if the expression is a call on the function
      */
 
+    @Override
     public boolean isCallOn(Class<? extends SystemFunction> function) {
         return function.isAssignableFrom(target.getClass());
     }
@@ -175,6 +176,7 @@ public class StaticFunctionCall extends FunctionCall implements Callable {
      * of the callee to ensure that the type of result conforms to the expected result type.
      * @throws net.sf.saxon.trans.XPathException if a dynamic error occurs during the evaluation of the expression
      */
+    @Override
     public Sequence call(XPathContext context, Sequence[] arguments) throws XPathException {
         return target.call(context, arguments);
     }

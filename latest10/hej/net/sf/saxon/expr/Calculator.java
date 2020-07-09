@@ -408,6 +408,7 @@ public abstract class Calculator {
      */
 
     public static class AnyPlusAny extends Calculator {
+        @Override
         public AtomicValue compute(AtomicValue a, AtomicValue b, XPathContext c) throws XPathException {
             Calculator calc = getCalculator(
                     a.getItemType().getPrimitiveType(), b.getItemType().getPrimitiveType(), PLUS, true);
@@ -419,6 +420,7 @@ public abstract class Calculator {
             }
         }
 
+        @Override
         public AtomicType getResultType(AtomicType typeA, AtomicType typeB) {
             return BuiltInAtomicType.ANY_ATOMIC;
         }
@@ -429,6 +431,7 @@ public abstract class Calculator {
      */
 
     public static class AnyMinusAny extends Calculator {
+        @Override
         public AtomicValue compute(AtomicValue a, AtomicValue b, XPathContext c) throws XPathException {
             Calculator calc = getCalculator(
                     a.getItemType().getPrimitiveType(), b.getItemType().getPrimitiveType(), MINUS, true);
@@ -440,6 +443,7 @@ public abstract class Calculator {
             }
         }
 
+        @Override
         public AtomicType getResultType(AtomicType typeA, AtomicType typeB) {
             return BuiltInAtomicType.ANY_ATOMIC;
         }
@@ -450,6 +454,7 @@ public abstract class Calculator {
      */
 
     public static class AnyTimesAny extends Calculator {
+        @Override
         public AtomicValue compute(AtomicValue a, AtomicValue b, XPathContext c) throws XPathException {
             Calculator calc = getCalculator(
                     a.getItemType().getPrimitiveType(), b.getItemType().getPrimitiveType(), TIMES, true);
@@ -461,6 +466,7 @@ public abstract class Calculator {
             }
         }
 
+        @Override
         public AtomicType getResultType(AtomicType typeA, AtomicType typeB) {
             return BuiltInAtomicType.ANY_ATOMIC;
         }
@@ -471,6 +477,7 @@ public abstract class Calculator {
      */
 
     public static class AnyDivAny extends Calculator {
+        @Override
         public AtomicValue compute(AtomicValue a, AtomicValue b, XPathContext c) throws XPathException {
             Calculator calc = getCalculator(
                     a.getItemType().getPrimitiveType(), b.getItemType().getPrimitiveType(), DIV, true);
@@ -482,6 +489,7 @@ public abstract class Calculator {
             }
         }
 
+        @Override
         public AtomicType getResultType(AtomicType typeA, AtomicType typeB) {
             return BuiltInAtomicType.ANY_ATOMIC;
         }
@@ -492,6 +500,7 @@ public abstract class Calculator {
      */
 
     public static class AnyModAny extends Calculator {
+        @Override
         public AtomicValue compute(AtomicValue a, AtomicValue b, XPathContext c) throws XPathException {
             Calculator calc = getCalculator(
                     a.getItemType().getPrimitiveType(), b.getItemType().getPrimitiveType(), MOD, true);
@@ -503,6 +512,7 @@ public abstract class Calculator {
             }
         }
 
+        @Override
         public AtomicType getResultType(AtomicType typeA, AtomicType typeB) {
             return BuiltInAtomicType.ANY_ATOMIC;
         }
@@ -513,6 +523,7 @@ public abstract class Calculator {
      */
 
     public static class AnyIdivAny extends Calculator {
+        @Override
         public AtomicValue compute(AtomicValue a, AtomicValue b, XPathContext c) throws XPathException {
             Calculator calc = getCalculator(
                     a.getItemType().getPrimitiveType(), b.getItemType().getPrimitiveType(), IDIV, true);
@@ -524,6 +535,7 @@ public abstract class Calculator {
             }
         }
 
+        @Override
         public AtomicType getResultType(AtomicType typeA, AtomicType typeB) {
             return BuiltInAtomicType.ANY_ATOMIC;
         }
@@ -534,10 +546,12 @@ public abstract class Calculator {
      */
 
     public static class DoublePlusDouble extends Calculator {
+        @Override
         public AtomicValue compute(AtomicValue a, AtomicValue b, XPathContext c) throws XPathException {
             return new DoubleValue(((NumericValue) a).getDoubleValue() + ((NumericValue) b).getDoubleValue());
         }
 
+        @Override
         public AtomicType getResultType(AtomicType typeA, AtomicType typeB) {
             return BuiltInAtomicType.DOUBLE;
         }
@@ -548,10 +562,12 @@ public abstract class Calculator {
      */
 
     public static class DoubleMinusDouble extends Calculator {
+        @Override
         public AtomicValue compute(AtomicValue a, AtomicValue b, XPathContext c) throws XPathException {
             return new DoubleValue(((NumericValue) a).getDoubleValue() - ((NumericValue) b).getDoubleValue());
         }
 
+        @Override
         public AtomicType getResultType(AtomicType typeA, AtomicType typeB) {
             return BuiltInAtomicType.DOUBLE;
         }
@@ -562,10 +578,12 @@ public abstract class Calculator {
      */
 
     public static class DoubleTimesDouble extends Calculator {
+        @Override
         public AtomicValue compute(AtomicValue a, AtomicValue b, XPathContext c) throws XPathException {
             return new DoubleValue(((NumericValue) a).getDoubleValue() * ((NumericValue) b).getDoubleValue());
         }
 
+        @Override
         public AtomicType getResultType(AtomicType typeA, AtomicType typeB) {
             return BuiltInAtomicType.DOUBLE;
         }
@@ -576,10 +594,12 @@ public abstract class Calculator {
      */
 
     public static class DoubleDivDouble extends Calculator {
+        @Override
         public AtomicValue compute(AtomicValue a, AtomicValue b, XPathContext c) throws XPathException {
             return new DoubleValue(((NumericValue) a).getDoubleValue() / ((NumericValue) b).getDoubleValue());
         }
 
+        @Override
         public AtomicType getResultType(AtomicType typeA, AtomicType typeB) {
             return BuiltInAtomicType.DOUBLE;
         }
@@ -590,10 +610,12 @@ public abstract class Calculator {
      */
 
     public static class DoubleModDouble extends Calculator {
+        @Override
         public AtomicValue compute(AtomicValue a, AtomicValue b, XPathContext c) throws XPathException {
             return new DoubleValue(((NumericValue) a).getDoubleValue() % ((NumericValue) b).getDoubleValue());
         }
 
+        @Override
         public AtomicType getResultType(AtomicType typeA, AtomicType typeB) {
             return BuiltInAtomicType.DOUBLE;
         }
@@ -604,6 +626,7 @@ public abstract class Calculator {
      */
 
     private static class DoubleIdivDouble extends Calculator {
+        @Override
         public AtomicValue compute(AtomicValue a, AtomicValue b, XPathContext c) throws XPathException {
             double A = ((NumericValue) a).getDoubleValue();
             double B = ((NumericValue) b).getDoubleValue();
@@ -619,6 +642,7 @@ public abstract class Calculator {
             return IntegerValue.makeIntegerValue(new DoubleValue(A / B)).asAtomic();
         }
 
+        @Override
         public AtomicType getResultType(AtomicType typeA, AtomicType typeB) {
             return BuiltInAtomicType.INTEGER;
         }
@@ -629,10 +653,12 @@ public abstract class Calculator {
      */
 
     public static class FloatPlusFloat extends Calculator {
+        @Override
         public AtomicValue compute(AtomicValue a, AtomicValue b, XPathContext c) throws XPathException {
             return new FloatValue(((NumericValue) a).getFloatValue() + ((NumericValue) b).getFloatValue());
         }
 
+        @Override
         public AtomicType getResultType(AtomicType typeA, AtomicType typeB) {
             return BuiltInAtomicType.FLOAT;
         }
@@ -643,10 +669,12 @@ public abstract class Calculator {
      */
 
     public static class FloatMinusFloat extends Calculator {
+        @Override
         public AtomicValue compute(AtomicValue a, AtomicValue b, XPathContext c) throws XPathException {
             return new FloatValue(((NumericValue) a).getFloatValue() - ((NumericValue) b).getFloatValue());
         }
 
+        @Override
         public AtomicType getResultType(AtomicType typeA, AtomicType typeB) {
             return BuiltInAtomicType.FLOAT;
         }
@@ -657,10 +685,12 @@ public abstract class Calculator {
      */
 
     public static class FloatTimesFloat extends Calculator {
+        @Override
         public AtomicValue compute(AtomicValue a, AtomicValue b, XPathContext c) throws XPathException {
             return new FloatValue(((NumericValue) a).getFloatValue() * ((NumericValue) b).getFloatValue());
         }
 
+        @Override
         public AtomicType getResultType(AtomicType typeA, AtomicType typeB) {
             return BuiltInAtomicType.FLOAT;
         }
@@ -671,10 +701,12 @@ public abstract class Calculator {
      */
 
     public static class FloatDivFloat extends Calculator {
+        @Override
         public AtomicValue compute(AtomicValue a, AtomicValue b, XPathContext c) throws XPathException {
             return new FloatValue(((NumericValue) a).getFloatValue() / ((NumericValue) b).getFloatValue());
         }
 
+        @Override
         public AtomicType getResultType(AtomicType typeA, AtomicType typeB) {
             return BuiltInAtomicType.FLOAT;
         }
@@ -685,10 +717,12 @@ public abstract class Calculator {
      */
 
     public static class FloatModFloat extends Calculator {
+        @Override
         public AtomicValue compute(AtomicValue a, AtomicValue b, XPathContext c) throws XPathException {
             return new FloatValue(((NumericValue) a).getFloatValue() % ((NumericValue) b).getFloatValue());
         }
 
+        @Override
         public AtomicType getResultType(AtomicType typeA, AtomicType typeB) {
             return BuiltInAtomicType.FLOAT;
         }
@@ -699,6 +733,7 @@ public abstract class Calculator {
      */
 
     public static class FloatIdivFloat extends Calculator {
+        @Override
         public IntegerValue compute(AtomicValue a, AtomicValue b, XPathContext c) throws XPathException {
             float A = ((NumericValue) a).getFloatValue();
             float B = ((NumericValue) b).getFloatValue();
@@ -723,6 +758,7 @@ public abstract class Calculator {
             }
         }
 
+        @Override
         public AtomicType getResultType(AtomicType typeA, AtomicType typeB) {
             return BuiltInAtomicType.INTEGER;
         }
@@ -733,6 +769,7 @@ public abstract class Calculator {
      */
 
     public static class DecimalPlusDecimal extends Calculator {
+        @Override
         public AtomicValue compute(AtomicValue a, AtomicValue b, XPathContext c) throws XPathException {
             if (a instanceof IntegerValue && b instanceof IntegerValue) {
                 return ((IntegerValue) a).plus((IntegerValue) b);
@@ -742,6 +779,7 @@ public abstract class Calculator {
             }
         }
 
+        @Override
         public AtomicType getResultType(AtomicType typeA, AtomicType typeB) {
             return BuiltInAtomicType.DECIMAL;
         }
@@ -752,6 +790,7 @@ public abstract class Calculator {
      */
 
     public static class DecimalMinusDecimal extends Calculator {
+        @Override
         public AtomicValue compute(AtomicValue a, AtomicValue b, XPathContext c) throws XPathException {
             if (a instanceof IntegerValue && b instanceof IntegerValue) {
                 return ((IntegerValue) a).minus((IntegerValue) b);
@@ -761,6 +800,7 @@ public abstract class Calculator {
             }
         }
 
+        @Override
         public AtomicType getResultType(AtomicType typeA, AtomicType typeB) {
             return BuiltInAtomicType.DECIMAL;
         }
@@ -771,6 +811,7 @@ public abstract class Calculator {
      */
 
     public static class DecimalTimesDecimal extends Calculator {
+        @Override
         public AtomicValue compute(AtomicValue a, AtomicValue b, XPathContext c) throws XPathException {
             if (a instanceof IntegerValue && b instanceof IntegerValue) {
                 return ((IntegerValue) a).times((IntegerValue) b);
@@ -780,6 +821,7 @@ public abstract class Calculator {
             }
         }
 
+        @Override
         public AtomicType getResultType(AtomicType typeA, AtomicType typeB) {
             return BuiltInAtomicType.DECIMAL;
         }
@@ -790,10 +832,12 @@ public abstract class Calculator {
      */
 
     public static class DecimalDivDecimal extends Calculator {
+        @Override
         public AtomicValue compute(AtomicValue a, AtomicValue b, XPathContext c) throws XPathException {
             return decimalDivide((NumericValue) a, (NumericValue) b);
         }
 
+        @Override
         public AtomicType getResultType(AtomicType typeA, AtomicType typeB) {
             return BuiltInAtomicType.DECIMAL;
         }
@@ -823,6 +867,7 @@ public abstract class Calculator {
      */
 
     public static class DecimalModDecimal extends Calculator {
+        @Override
         public AtomicValue compute(AtomicValue a, AtomicValue b, XPathContext c) throws XPathException {
             if (a instanceof IntegerValue && b instanceof IntegerValue) {
                 return ((IntegerValue) a).mod((IntegerValue) b);
@@ -843,6 +888,7 @@ public abstract class Calculator {
             }
         }
 
+        @Override
         public AtomicType getResultType(AtomicType typeA, AtomicType typeB) {
             return BuiltInAtomicType.DECIMAL;
         }
@@ -853,6 +899,7 @@ public abstract class Calculator {
      */
 
     public static class DecimalIdivDecimal extends Calculator {
+        @Override
         public IntegerValue compute(AtomicValue a, AtomicValue b, XPathContext c) throws XPathException {
             if (a instanceof IntegerValue && b instanceof IntegerValue) {
                 return ((IntegerValue) a).idiv((IntegerValue) b);
@@ -868,6 +915,7 @@ public abstract class Calculator {
             return BigIntegerValue.makeIntegerValue(quot);
         }
 
+        @Override
         public AtomicType getResultType(AtomicType typeA, AtomicType typeB) {
             return BuiltInAtomicType.INTEGER;
         }
@@ -878,10 +926,12 @@ public abstract class Calculator {
      */
 
     public static class IntegerPlusInteger extends Calculator {
+        @Override
         public AtomicValue compute(AtomicValue a, AtomicValue b, XPathContext c) throws XPathException {
             return ((IntegerValue) a).plus((IntegerValue) b);
         }
 
+        @Override
         public AtomicType getResultType(AtomicType typeA, AtomicType typeB) {
             return BuiltInAtomicType.INTEGER;
         }
@@ -892,10 +942,12 @@ public abstract class Calculator {
      */
 
     public static class IntegerMinusInteger extends Calculator {
+        @Override
         public AtomicValue compute(AtomicValue a, AtomicValue b, XPathContext c) throws XPathException {
             return ((IntegerValue) a).minus((IntegerValue) b);
         }
 
+        @Override
         public AtomicType getResultType(AtomicType typeA, AtomicType typeB) {
             return BuiltInAtomicType.INTEGER;
         }
@@ -906,10 +958,12 @@ public abstract class Calculator {
      */
 
     public static class IntegerTimesInteger extends Calculator {
+        @Override
         public AtomicValue compute(AtomicValue a, AtomicValue b, XPathContext c) throws XPathException {
             return ((IntegerValue) a).times((IntegerValue) b);
         }
 
+        @Override
         public AtomicType getResultType(AtomicType typeA, AtomicType typeB) {
             return BuiltInAtomicType.INTEGER;
         }
@@ -920,10 +974,12 @@ public abstract class Calculator {
      */
 
     public static class IntegerDivInteger extends Calculator {
+        @Override
         public AtomicValue compute(AtomicValue a, AtomicValue b, XPathContext c) throws XPathException {
             return ((IntegerValue) a).div((IntegerValue) b);
         }
 
+        @Override
         public AtomicType getResultType(AtomicType typeA, AtomicType typeB) {
             return BuiltInAtomicType.DECIMAL;
         }
@@ -934,10 +990,12 @@ public abstract class Calculator {
      */
 
     public static class IntegerModInteger extends Calculator {
+        @Override
         public AtomicValue compute(AtomicValue a, AtomicValue b, XPathContext c) throws XPathException {
             return ((IntegerValue) a).mod((IntegerValue) b);
         }
 
+        @Override
         public AtomicType getResultType(AtomicType typeA, AtomicType typeB) {
             return BuiltInAtomicType.INTEGER;
         }
@@ -948,10 +1006,12 @@ public abstract class Calculator {
      */
 
     public static class IntegerIdivInteger extends Calculator {
+        @Override
         public AtomicValue compute(AtomicValue a, AtomicValue b, XPathContext c) throws XPathException {
             return ((IntegerValue) a).idiv((IntegerValue) b);
         }
 
+        @Override
         public AtomicType getResultType(AtomicType typeA, AtomicType typeB) {
             return BuiltInAtomicType.INTEGER;
         }
@@ -962,10 +1022,12 @@ public abstract class Calculator {
      */
 
     private static class DateTimeMinusDateTime extends Calculator {
+        @Override
         public AtomicValue compute(AtomicValue a, AtomicValue b, XPathContext c) throws XPathException {
             return ((CalendarValue) a).subtract((CalendarValue) b, c);
         }
 
+        @Override
         public AtomicType getResultType(AtomicType typeA, AtomicType typeB) {
             return BuiltInAtomicType.DAY_TIME_DURATION;
         }
@@ -976,10 +1038,12 @@ public abstract class Calculator {
      */
 
     private static class DateTimePlusDuration extends Calculator {
+        @Override
         public AtomicValue compute(AtomicValue a, AtomicValue b, XPathContext c) throws XPathException {
             return ((CalendarValue) a).add((DurationValue) b);
         }
 
+        @Override
         public AtomicType getResultType(AtomicType typeA, AtomicType typeB) {
             return typeA;
         }
@@ -990,10 +1054,12 @@ public abstract class Calculator {
      */
 
     private static class DateTimeMinusDuration extends Calculator {
+        @Override
         public AtomicValue compute(AtomicValue a, AtomicValue b, XPathContext c) throws XPathException {
             return ((CalendarValue) a).add(((DurationValue) b).negate());
         }
 
+        @Override
         public AtomicType getResultType(AtomicType typeA, AtomicType typeB) {
             return typeA;
         }
@@ -1004,10 +1070,12 @@ public abstract class Calculator {
      */
 
     private static class DurationPlusDateTime extends Calculator {
+        @Override
         public AtomicValue compute(AtomicValue a, AtomicValue b, XPathContext c) throws XPathException {
             return ((CalendarValue) b).add((DurationValue) a);
         }
 
+        @Override
         public AtomicType getResultType(AtomicType typeA, AtomicType typeB) {
             return typeB;
         }
@@ -1018,10 +1086,12 @@ public abstract class Calculator {
      */
 
     private static class DurationPlusDuration extends Calculator {
+        @Override
         public AtomicValue compute(AtomicValue a, AtomicValue b, XPathContext c) throws XPathException {
             return ((DurationValue) a).add((DurationValue) b);
         }
 
+        @Override
         public AtomicType getResultType(AtomicType typeA, AtomicType typeB) {
             return typeA;
         }
@@ -1032,10 +1102,12 @@ public abstract class Calculator {
      */
 
     private static class DurationMinusDuration extends Calculator {
+        @Override
         public AtomicValue compute(AtomicValue a, AtomicValue b, XPathContext c) throws XPathException {
             return ((DurationValue) a).subtract((DurationValue) b);
         }
 
+        @Override
         public AtomicType getResultType(AtomicType typeA, AtomicType typeB) {
             return typeA;
         }
@@ -1046,10 +1118,12 @@ public abstract class Calculator {
      */
 
     private static class DurationDivDuration extends Calculator {
+        @Override
         public AtomicValue compute(AtomicValue a, AtomicValue b, XPathContext c) throws XPathException {
             return ((DurationValue) a).divide((DurationValue) b);
         }
 
+        @Override
         public AtomicType getResultType(AtomicType typeA, AtomicType typeB) {
             return BuiltInAtomicType.DECIMAL;
         }
@@ -1060,6 +1134,7 @@ public abstract class Calculator {
      */
 
     private static class DurationTimesNumeric extends Calculator {
+        @Override
         public AtomicValue compute(AtomicValue a, AtomicValue b, XPathContext c) throws XPathException {
             if (b instanceof Int64Value) {
                 return ((DurationValue) a).multiply(((Int64Value) b).longValue());
@@ -1068,6 +1143,7 @@ public abstract class Calculator {
             }
         }
 
+        @Override
         public AtomicType getResultType(AtomicType typeA, AtomicType typeB) {
             return typeA;
         }
@@ -1078,6 +1154,7 @@ public abstract class Calculator {
      */
 
     private static class NumericTimesDuration extends Calculator {
+        @Override
         public AtomicValue compute(AtomicValue a, AtomicValue b, XPathContext c) throws XPathException {
             if (a instanceof Int64Value) {
                 return ((DurationValue) b).multiply(((Int64Value) a).longValue());
@@ -1086,6 +1163,7 @@ public abstract class Calculator {
             }
         }
 
+        @Override
         public AtomicType getResultType(AtomicType typeA, AtomicType typeB) {
             return typeB;
         }
@@ -1096,11 +1174,13 @@ public abstract class Calculator {
      */
 
     private static class DurationDivNumeric extends Calculator {
+        @Override
         public AtomicValue compute(AtomicValue a, AtomicValue b, XPathContext c) throws XPathException {
             double d = 1.0 / ((NumericValue) b).getDoubleValue();
             return ((DurationValue) a).multiply(d);
         }
 
+        @Override
         public AtomicType getResultType(AtomicType typeA, AtomicType typeB) {
             return typeA;
         }

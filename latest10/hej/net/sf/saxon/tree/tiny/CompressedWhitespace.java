@@ -120,6 +120,7 @@ public class CompressedWhitespace implements CharSequence {
         return value;
     }
 
+    @Override
     public int length() {
         int count = 0;
         long val = value;
@@ -147,6 +148,7 @@ public class CompressedWhitespace implements CharSequence {
      * @throws IndexOutOfBoundsException if the <tt>index</tt> argument is negative or not less than
      *                                   <tt>length()</tt>
      */
+    @Override
     public char charAt(int index) {
         int count = 0;
         final long val = value;
@@ -178,6 +180,7 @@ public class CompressedWhitespace implements CharSequence {
      *                                   if <tt>end</tt> is greater than <tt>length()</tt>,
      *                                   or if <tt>start</tt> is greater than <tt>end</tt>
      */
+    @Override
     public CharSequence subSequence(int start, int end) {
         return uncompress(null).subSequence(start, end);
     }

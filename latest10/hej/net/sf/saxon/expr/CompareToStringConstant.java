@@ -60,6 +60,7 @@ public class CompareToStringConstant extends CompareToConstant {
      * @return a Literal representing the RHS expression
      */
 
+    @Override
     public Expression getRhsExpression() {
         return new StringLiteral(comparand);
     }
@@ -72,6 +73,7 @@ public class CompareToStringConstant extends CompareToConstant {
      */
 
     /*@NotNull*/
+    @Override
     public Expression copy(RebindingMap rebindings) {
         CompareToStringConstant c2 = new CompareToStringConstant(getLhsExpression().copy(rebindings), operator, comparand);
         ExpressionTool.copyLocationInfo(this, c2);
@@ -95,6 +97,7 @@ public class CompareToStringConstant extends CompareToConstant {
      * Hashcode supporting equals()
      */
 
+    @Override
     public int computeHashCode() {
         int h = 0x884b12a0;
         return h + getLhsExpression().hashCode() ^ comparand.hashCode();
@@ -113,6 +116,7 @@ public class CompareToStringConstant extends CompareToConstant {
      *          expression
      */
 
+    @Override
     public boolean effectiveBooleanValue(XPathContext context) throws XPathException {
         CharSequence s = getLhsExpression().evaluateAsString(context);
         int c = CodepointCollator.compareCS(s, comparand);
@@ -121,6 +125,7 @@ public class CompareToStringConstant extends CompareToConstant {
 
 
 
+    @Override
     public int computeCardinality() {
         return StaticProperty.EXACTLY_ONE;
     }
@@ -143,6 +148,7 @@ public class CompareToStringConstant extends CompareToConstant {
      * is written to the supplied output destination.
      */
 
+    @Override
     public void export(ExpressionPresenter destination) throws XPathException {
         destination.startElement("compareToString", this);
         destination.emitAttribute("op", Token.tokens[operator]);
@@ -179,6 +185,7 @@ public class CompareToStringConstant extends CompareToConstant {
      * Get the AtomicComparer used to compare atomic values. This encapsulates any collation that is used
      */
 
+    @Override
     public AtomicComparer getAtomicComparer() {
         return CodepointCollatingComparer.getInstance();
         // Note: this treats NaN=NaN as true, but it doesn't matter, because the rhs will never be NaN.

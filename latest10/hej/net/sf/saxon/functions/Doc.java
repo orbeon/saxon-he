@@ -48,6 +48,7 @@ public class Doc extends SystemFunction implements Callable {
         this.parseOptions = parseOptions;
     }
 
+    @Override
     public int getCardinality(Expression[] arguments) {
         return arguments[0].getCardinality() & ~StaticProperty.ALLOWS_MANY;
     }
@@ -119,6 +120,7 @@ public class Doc extends SystemFunction implements Callable {
      * @return the result of the evaluation, in the form of a SequenceIterator
      * @throws net.sf.saxon.trans.XPathException if a dynamic error occurs during the evaluation of the expression
      */
+    @Override
     public ZeroOrOne call(XPathContext context, Sequence[] arguments) throws XPathException {
         AtomicValue hrefVal = (AtomicValue) arguments[0].head();
         if (hrefVal == null) {
@@ -148,6 +150,7 @@ public class Doc extends SystemFunction implements Callable {
      * @param arguments the expressions supplied as arguments to the function
      */
 
+    @Override
     public int getSpecialProperties(Expression[] arguments) {
         return StaticProperty.ORDERED_NODESET |
                 StaticProperty.PEER_NODESET |

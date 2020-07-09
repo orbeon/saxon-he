@@ -39,10 +39,12 @@ public class InverseCharacterClass implements CharacterClass {
         return complement;
     }
 
+    @Override
     public boolean test(int value) {
         return !complement.test(value);
     }
 
+    @Override
     public boolean isDisjoint(CharacterClass other) {
         return other == complement;
     }

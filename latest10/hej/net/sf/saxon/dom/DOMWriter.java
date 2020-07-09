@@ -46,6 +46,7 @@ public class DOMWriter extends Builder {
      * Set the pipelineConfiguration
      */
 
+    @Override
     public void setPipelineConfiguration(/*@NotNull*/ PipelineConfiguration pipe) {
         this.pipe = pipe;
         config = pipe.getConfiguration();
@@ -56,6 +57,7 @@ public class DOMWriter extends Builder {
      */
 
     /*@NotNull*/
+    @Override
     public PipelineConfiguration getPipelineConfiguration() {
         return pipe;
     }
@@ -64,6 +66,7 @@ public class DOMWriter extends Builder {
      * Set the System ID of the destination tree
      */
 
+    @Override
     public void setSystemId(String systemId) {
         this.systemId = systemId;
     }
@@ -76,6 +79,7 @@ public class DOMWriter extends Builder {
      * @param publicID The public identifier of the unparsed entity
      */
 
+    @Override
     public void setUnparsedEntity(String name, String systemID, String publicID) throws XPathException {
         // no-op
     }
@@ -86,6 +90,7 @@ public class DOMWriter extends Builder {
      * @return The system identifier that was set with setSystemId,
      *         or null if setSystemId was not called.
      */
+    @Override
     public String getSystemId() {
         return systemId;
     }
@@ -94,6 +99,7 @@ public class DOMWriter extends Builder {
      * Start of the document.
      */
 
+    @Override
     public void open() {
     }
 
@@ -101,6 +107,7 @@ public class DOMWriter extends Builder {
      * End of the document.
      */
 
+    @Override
     public void close() {
     }
 
@@ -108,6 +115,7 @@ public class DOMWriter extends Builder {
      * Start of a document node.
      */
 
+    @Override
     public void startDocument(int properties) throws XPathException {
         if (document == null) {
             try {
@@ -125,6 +133,7 @@ public class DOMWriter extends Builder {
      * Notify the end of a document node
      */
 
+    @Override
     public void endDocument() throws XPathException {
     }
 
@@ -132,6 +141,7 @@ public class DOMWriter extends Builder {
      * Start of an element.
      */
 
+    @Override
     public void startElement(NodeName elemName, SchemaType type,
                              AttributeMap attributes, NamespaceMap namespaces,
                              Location location, int properties) throws XPathException {
@@ -186,6 +196,7 @@ public class DOMWriter extends Builder {
      * End of an element.
      */
 
+    @Override
     public void endElement() throws XPathException {
         nsStack.pop();
         if (canNormalize) {
@@ -205,6 +216,7 @@ public class DOMWriter extends Builder {
      * Character data.
      */
 
+    @Override
     public void characters(CharSequence chars, Location locationId, int properties) throws XPathException {
         if (level == 0 && nextSibling == null && Whitespace.isWhite(chars)) {
             return; // no action for top-level whitespace
@@ -226,6 +238,7 @@ public class DOMWriter extends Builder {
      * Handle a processing instruction.
      */
 
+    @Override
     public void processingInstruction(String target, CharSequence data, Location locationId, int properties)
             throws XPathException {
         try {
@@ -245,6 +258,7 @@ public class DOMWriter extends Builder {
      * Handle a comment.
      */
 
+    @Override
     public void comment(CharSequence chars, Location locationId, int properties) throws XPathException {
         try {
             Comment comment = document.createComment(chars.toString());
@@ -266,6 +280,7 @@ public class DOMWriter extends Builder {
      *         may supply untyped nodes instead of supplying the type annotation
      */
 
+    @Override
     public boolean usesTypeAnnotations() {
         return false;
     }

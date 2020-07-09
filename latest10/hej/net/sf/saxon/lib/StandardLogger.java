@@ -116,6 +116,7 @@ public class StandardLogger extends Logger {
      *                 {@link Logger#DISASTER}
      */
 
+    @Override
     public void println(String message, int severity) {
         if (severity >= threshold) {
             out.println(message);

@@ -44,11 +44,13 @@ public class BigRangeIterator implements AtomicIterator<IntegerValue>, LastPosit
         limit = end;
     }
 
+    @Override
     public boolean hasNext() {
         return currentValue.compareTo(limit) < 0;
     }
 
     /*@Nullable*/
+    @Override
     public IntegerValue next() {
         currentValue = currentValue.add(BigInteger.valueOf(1));
         if (currentValue.compareTo(limit) > 0) {
@@ -57,6 +59,7 @@ public class BigRangeIterator implements AtomicIterator<IntegerValue>, LastPosit
         return IntegerValue.makeIntegerValue(currentValue);
     }
 
+    @Override
     public int getLength() {
         BigInteger len = limit.subtract(start).add(BigInteger.valueOf(1));
         if (len.compareTo(BigInteger.valueOf(Integer.MAX_VALUE)) > 0) {
@@ -75,6 +78,7 @@ public class BigRangeIterator implements AtomicIterator<IntegerValue>, LastPosit
      *         It is acceptable for the properties of the iterator to change depending on its state.
      */
 
+    @Override
     public EnumSet<Property> getProperties() {
         return EnumSet.of(Property.LOOKAHEAD, Property.LAST_POSITION_FINDER);
     }

@@ -36,6 +36,7 @@ final class FollowingEnumeration extends TreeEnumeration {
         }
     }
 
+    @Override
     protected void step() {
         next = next.getNextInDocument(root);
     }

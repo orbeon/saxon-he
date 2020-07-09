@@ -49,6 +49,7 @@ public class EarlyEvaluationContext implements XPathContext {
      */
 
     /*@Nullable*/
+    @Override
     public Sequence evaluateLocalVariable(int slotnumber) {
         notAllowed();
         return null;
@@ -59,6 +60,7 @@ public class EarlyEvaluationContext implements XPathContext {
      * if the bottom of the stack has been reached.
      */
 
+    @Override
     public XPathContext getCaller() {
         return null;
     }
@@ -71,6 +73,7 @@ public class EarlyEvaluationContext implements XPathContext {
      * @return the user-supplied URI resolver if there is one, or null otherwise.
      * @since 9.6
      */
+    @Override
     public URIResolver getURIResolver() {
         return config.getURIResolver();
     }
@@ -84,6 +87,7 @@ public class EarlyEvaluationContext implements XPathContext {
      *         which is a Saxon subclass of ErrorListener that throws no exceptions.
      * @since 9.6
      */
+    @Override
     public ErrorReporter getErrorReporter() {
         return config.makeErrorReporter();
     }
@@ -91,6 +95,7 @@ public class EarlyEvaluationContext implements XPathContext {
     /**
      * Get the current component
      */
+    @Override
     public Component getCurrentComponent() {
         notAllowed();
         return null;
@@ -100,6 +105,7 @@ public class EarlyEvaluationContext implements XPathContext {
      * Get the Configuration
      */
 
+    @Override
     public Configuration getConfiguration() {
         return config;
     }
@@ -110,6 +116,7 @@ public class EarlyEvaluationContext implements XPathContext {
      * @return the context item, or null if the context item is undefined
      */
 
+    @Override
     public Item getContextItem() {
         return null;
     }
@@ -118,6 +125,7 @@ public class EarlyEvaluationContext implements XPathContext {
      * Get the Controller. May return null when running outside XSLT or XQuery
      */
 
+    @Override
     public Controller getController() {
         return null;
     }
@@ -129,6 +137,7 @@ public class EarlyEvaluationContext implements XPathContext {
      * @return the current grouped collection
      */
 
+    @Override
     public GroupIterator getCurrentGroupIterator() {
         notAllowed();
         return null;
@@ -141,6 +150,7 @@ public class EarlyEvaluationContext implements XPathContext {
      * @return the current grouped collection
      */
 
+    @Override
     public GroupIterator getCurrentMergeGroupIterator() {
         notAllowed();
         return null;
@@ -155,6 +165,7 @@ public class EarlyEvaluationContext implements XPathContext {
      *         (which means the context item, position, and size are undefined).
      */
 
+    @Override
     public FocusTrackingIterator getCurrentIterator() {
         return null;
     }
@@ -165,6 +176,7 @@ public class EarlyEvaluationContext implements XPathContext {
      * @return the current mode
      */
 
+    @Override
     public Component.M getCurrentMode() {
         notAllowed();
         return null;
@@ -177,6 +189,7 @@ public class EarlyEvaluationContext implements XPathContext {
      * @return the current regular expressions iterator
      */
 
+    @Override
     public RegexIterator getCurrentRegexIterator() {
         return null;
     }
@@ -187,6 +200,7 @@ public class EarlyEvaluationContext implements XPathContext {
      * @return the current template
      */
 
+    @Override
     public Rule getCurrentTemplateRule() {
         return null;
     }
@@ -199,6 +213,7 @@ public class EarlyEvaluationContext implements XPathContext {
      *          if the context position is undefined
      */
 
+    @Override
     public int getLast() throws XPathException {
         XPathException err = new XPathException("The context item is absent");
         err.setErrorCode("XPDY0002");
@@ -211,6 +226,7 @@ public class EarlyEvaluationContext implements XPathContext {
      * @return a ParameterSet containing the local parameters
      */
 
+    @Override
     public ParameterSet getLocalParameters() {
         notAllowed();
         return null;
@@ -220,6 +236,7 @@ public class EarlyEvaluationContext implements XPathContext {
      * Get the Name Pool
      */
 
+    @Override
     public NamePool getNamePool() {
         return config.getNamePool();
     }
@@ -232,6 +249,7 @@ public class EarlyEvaluationContext implements XPathContext {
      * @return array of variables.
      */
 
+    @Override
     public StackFrame getStackFrame() {
         notAllowed();
         return null;
@@ -244,6 +262,7 @@ public class EarlyEvaluationContext implements XPathContext {
      * @return a ParameterSet containing the tunnel parameters
      */
 
+    @Override
     public ParameterSet getTunnelParameters() {
         notAllowed();
         return null;
@@ -254,6 +273,7 @@ public class EarlyEvaluationContext implements XPathContext {
      * that is, whether position()=last()
      */
 
+    @Override
     public boolean isAtLast() throws XPathException {
         XPathException err = new XPathException("The context item is absent");
         err.setErrorCode("XPDY0002");
@@ -264,6 +284,7 @@ public class EarlyEvaluationContext implements XPathContext {
      * Construct a new context without copying (used for the context in a function call)
      */
 
+    @Override
     public XPathContextMajor newCleanContext() {
         notAllowed();
         return null;
@@ -274,6 +295,7 @@ public class EarlyEvaluationContext implements XPathContext {
      * to the top of a stack, and contains a pointer to the previous context
      */
 
+    @Override
     public XPathContextMajor newContext() {
         Controller controller = new Controller(config);
         return controller.newXPathContext();
@@ -284,6 +306,7 @@ public class EarlyEvaluationContext implements XPathContext {
      * (currentIterator) and current output destination.
      */
 
+    @Override
     public XPathContextMinor newMinorContext() {
         return newContext().newMinorContext();
     }
@@ -292,6 +315,7 @@ public class EarlyEvaluationContext implements XPathContext {
      * Set the calling XPathContext
      */
 
+    @Override
     public void setCaller(XPathContext caller) {
         // no-op
     }
@@ -300,6 +324,7 @@ public class EarlyEvaluationContext implements XPathContext {
      * Set a new sequence iterator.
      */
 
+    @Override
     public void setCurrentIterator(FocusIterator iter) {
         notAllowed();
     }
@@ -314,6 +339,7 @@ public class EarlyEvaluationContext implements XPathContext {
      * Set the value of a local variable, identified by its slot number
      */
 
+    @Override
     public void setLocalVariable(int slotNumber, Sequence value) {
         notAllowed();
     }
@@ -328,6 +354,7 @@ public class EarlyEvaluationContext implements XPathContext {
      * @param isTunnel    True if a tunnel parameter is required, else false  @return true if a parameter of this name was supplied, false if not
      */
 
+    @Override
     public int useLocalParameter(StructuredQName parameterId, int slotNumber, boolean isTunnel) {
         return ParameterSet.NOT_SUPPLIED;
     }
@@ -340,6 +367,7 @@ public class EarlyEvaluationContext implements XPathContext {
      *         will return the same value
      */
 
+    @Override
     public DateTimeValue getCurrentDateTime() throws NoDynamicContextException {
         throw new NoDynamicContextException("current-dateTime");
     }
@@ -352,6 +380,7 @@ public class EarlyEvaluationContext implements XPathContext {
      * @return the implicit timezone, as an offset from UTC in minutes
      */
 
+    @Override
     public int getImplicitTimezone() {
         return CalendarValue.MISSING_TIMEZONE;
     }
@@ -365,6 +394,7 @@ public class EarlyEvaluationContext implements XPathContext {
      * @return an iterator over a copy of the run-time call stack
      */
 
+    @Override
     public Iterator iterateStackFrames() {
         return Collections.EMPTY_LIST.iterator();
     }
@@ -375,14 +405,17 @@ public class EarlyEvaluationContext implements XPathContext {
      * @return the current exception, or null if there is none defined
      */
 
+    @Override
     public XPathException getCurrentException() {
         return null;
     }
 
+    @Override
     public void waitForChildThreads() throws XPathException {
         getCaller().waitForChildThreads();
     }
 
+    @Override
     public void setTemporaryOutputState(int temporary) {
         // no action
     }
@@ -392,6 +425,7 @@ public class EarlyEvaluationContext implements XPathContext {
      *
      * @return non-zero in temporary output state; zero in final output state
      */
+    @Override
     public int getTemporaryOutputState() {
         return 0;
     }
@@ -402,6 +436,7 @@ public class EarlyEvaluationContext implements XPathContext {
      * @param uri the current output URI, or null if in temporary output state
      */
 
+    @Override
     public void setCurrentOutputUri(String uri) {
         // no action
     }
@@ -411,6 +446,7 @@ public class EarlyEvaluationContext implements XPathContext {
      * @return the current output URI, or null if in temporary output state
      */
 
+    @Override
     public String getCurrentOutputUri() {
         return null;
     }
@@ -430,10 +466,12 @@ public class EarlyEvaluationContext implements XPathContext {
      *
      * @return the current thread manager; or null if multithreading is not supported
      */
+    @Override
     public XPathContextMajor.ThreadManager getThreadManager() {
         return null;
     }
 
+    @Override
     public Component getTargetComponent(int bindingSlot) {
         return null;
     }

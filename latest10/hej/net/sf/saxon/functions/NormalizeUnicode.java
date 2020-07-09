@@ -30,6 +30,7 @@ public class NormalizeUnicode extends SystemFunction {
      * @throws net.sf.saxon.trans.XPathException
      *          if a dynamic error occurs during the evaluation of the expression
      */
+    @Override
     public StringValue call(XPathContext context, Sequence[] arguments) throws XPathException {
         StringValue sv = (StringValue) arguments[0].head();
         if (sv == null) {

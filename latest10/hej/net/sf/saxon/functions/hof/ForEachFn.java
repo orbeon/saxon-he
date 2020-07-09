@@ -38,6 +38,7 @@ public class ForEachFn extends SystemFunction {
         }
     }
 
+    @Override
     public Sequence call(XPathContext context, Sequence[] arguments) throws XPathException {
         return SequenceTool.toLazySequence(
                 evalMap((Function) arguments[1].head(), arguments[0].iterate(), context));
@@ -47,6 +48,7 @@ public class ForEachFn extends SystemFunction {
         MappingFunction map = new MappingFunction() {
             private final Sequence[] args = new Sequence[1];
 
+            @Override
             public SequenceIterator map(Item item) throws XPathException {
                 args[0] = item;
                 return dynamicCall(function, context, args).iterate();

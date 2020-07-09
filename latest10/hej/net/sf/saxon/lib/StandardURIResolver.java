@@ -166,6 +166,7 @@ public class StandardURIResolver implements NonDelegatingURIResolver {
      * @return a Source object representing an XML document
      */
 
+    @Override
     public Source resolve(String href, String base)
             throws XPathException {
 
@@ -288,6 +289,7 @@ public class StandardURIResolver implements NonDelegatingURIResolver {
         if (id != null) {
             final String idFinal = id;
             FilterFactory factory = new FilterFactory() {
+                @Override
                 public ProxyReceiver makeFilter(Receiver next) {
                     return new IDFilter(next, idFinal);
                 }

@@ -22,6 +22,7 @@ public class XSLBreak extends XSLBreakOrContinue {
 
     private Expression select;
 
+    @Override
     public void prepareAttributes() {
 
         String selectAtt = null;
@@ -46,6 +47,7 @@ public class XSLBreak extends XSLBreakOrContinue {
      * @return true if this instruction is allowed to contain a sequence constructor
      */
 
+    @Override
     protected boolean mayContainSequenceConstructor() {
         return true;
     }
@@ -59,6 +61,7 @@ public class XSLBreak extends XSLBreakOrContinue {
      * @param decl
      */
 
+    @Override
     public void validate(ComponentDeclaration decl) throws XPathException {
         validatePosition();
         if (xslIterate == null) {
@@ -71,6 +74,7 @@ public class XSLBreak extends XSLBreakOrContinue {
     }
 
 
+    @Override
     public Expression compile(Compilation exec, ComponentDeclaration decl) throws XPathException {
         // xsl:break containing a sequence constructor is compiled into a call on the sequence constructor, then
         // the break instruction

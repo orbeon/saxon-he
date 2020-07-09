@@ -133,6 +133,7 @@ public class ArrayItemType extends AnyFunctionType {
      * @return the list of argument types of this array, viewed as a function
      */
 
+    @Override
     public SequenceType[] getArgumentTypes() {
         // regardless of the key type, a function call on this map can supply any atomic value
         return new SequenceType[]{BuiltInAtomicType.INTEGER.one()};
@@ -178,6 +179,7 @@ public class ArrayItemType extends AnyFunctionType {
      * @return the result type of this array, viewed as a function
      */
 
+    @Override
     public SequenceType getResultType() {
         return memberType;
     }
@@ -247,6 +249,7 @@ public class ArrayItemType extends AnyFunctionType {
      * @return for example {@link Affinity#SUBSUMES}, {@link Affinity#SAME_TYPE}
      */
 
+    @Override
     public Affinity relationship(FunctionItemType other, TypeHierarchy th) {
         if (other == AnyFunctionType.getInstance()) {
             return Affinity.SUBSUMED_BY;

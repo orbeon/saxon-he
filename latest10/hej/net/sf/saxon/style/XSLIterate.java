@@ -35,6 +35,7 @@ public class XSLIterate extends StyleElement {
      * @return true - it is an instruction
      */
 
+    @Override
     public boolean isInstruction() {
         return true;
     }
@@ -43,6 +44,7 @@ public class XSLIterate extends StyleElement {
      * Specify that xsl:param is a permitted child
      */
 
+    @Override
     protected boolean isPermittedChild(StyleElement child) {
         return child instanceof XSLLocalParam || child instanceof XSLOnCompletion;
     }
@@ -53,6 +55,7 @@ public class XSLIterate extends StyleElement {
      * @return true: yes, it may contain a sequence constructor
      */
 
+    @Override
     public boolean mayContainSequenceConstructor() {
         return true;
     }
@@ -63,10 +66,12 @@ public class XSLIterate extends StyleElement {
      * @return true if this element is allowed to contain an xsl:param
      */
 
+    @Override
     protected boolean mayContainParam() {
         return true;
     }
 
+    @Override
     public void prepareAttributes() {
 
         String selectAtt = null;
@@ -97,6 +102,7 @@ public class XSLIterate extends StyleElement {
         return compilable;
     }
 
+    @Override
     public void validate(ComponentDeclaration decl) throws XPathException {
         //checkParamComesFirst(false);
         select = typeCheck("select", select);
@@ -106,6 +112,7 @@ public class XSLIterate extends StyleElement {
     }
 
     /*@Nullable*/
+    @Override
     public Expression compile(Compilation exec, ComponentDeclaration decl) throws XPathException {
         List<NodeInfo> nonFinallyChildren = new ArrayList<>();
         Expression finallyExp = null;

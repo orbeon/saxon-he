@@ -100,10 +100,12 @@ public class InvalidityReportGenerator extends StandardInvalidityHandler {
      * @param systemId optional; may be used to represent the destination of any report produced
      * @throws XPathException if initialization of the invalidity handler fails for any reason
      */
+    @Override
     public void startReporting(String systemId) throws XPathException {
         // no action
     }
 
+    @Override
     public Sequence endReporting() throws XPathException {
        return null;
 

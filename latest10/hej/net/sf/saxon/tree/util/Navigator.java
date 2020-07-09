@@ -1189,6 +1189,7 @@ public final class Navigator {
         }
 
         /*@Nullable*/
+        @Override
         public NodeInfo next() {
             while (true) {
                 NodeInfo next = base.next();
@@ -1223,6 +1224,7 @@ public final class Navigator {
         }
 
         /*@Nullable*/
+        @Override
         public NodeInfo next() {
             while (true) {
                 NodeInfo next = base.next();
@@ -1261,6 +1263,7 @@ public final class Navigator {
             atStart = true;
         }
 
+        @Override
         public final NodeInfo next() {
             if (atStart) {
                 atStart = false;
@@ -1306,6 +1309,7 @@ public final class Navigator {
             this.forwards = forwards;
         }
 
+         @Override
          public final NodeInfo next() {
             if (descendants != null) {
                 NodeInfo nextd = descendants.next();
@@ -1419,6 +1423,7 @@ public final class Navigator {
             }
         }
 
+        @Override
         public final NodeInfo next() {
             if (descendEnum != null) {
                 NodeInfo nextd = descendEnum.next();
@@ -1496,6 +1501,7 @@ public final class Navigator {
             }
         }
 
+        @Override
         public final NodeInfo next() {
             if (descendEnum != null) {
                 NodeInfo nextd = descendEnum.next();

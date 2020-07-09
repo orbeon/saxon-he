@@ -54,14 +54,17 @@ public class JsonReceiver implements Receiver {
         this.output = output;
     }
 
+    @Override
     public void setPipelineConfiguration(PipelineConfiguration pipe) {
         this.pipe = pipe;
     }
 
+    @Override
     public PipelineConfiguration getPipelineConfiguration() {
         return pipe;
     }
 
+    @Override
     public void setSystemId(String systemId) {
         // no action
     }
@@ -74,24 +77,29 @@ public class JsonReceiver implements Receiver {
         return indenting;
     }
 
+    @Override
     public void open() throws XPathException {
         output.open();
     }
 
+    @Override
     public void startDocument(int properties) throws XPathException {
 //        if (output == null) {
 //            output = new FastStringBuffer(2048);
 //        }
     }
 
+    @Override
     public void endDocument() throws XPathException {
         // no action
     }
 
+    @Override
     public void setUnparsedEntity(String name, String systemID, String publicID) throws XPathException {
         // no action
     }
 
+    @Override
     public void startElement(NodeName elemName, SchemaType type,
                              AttributeMap attributes, NamespaceMap namespaces,
                              Location location, int properties) throws XPathException {
@@ -227,6 +235,7 @@ public class JsonReceiver implements Receiver {
         }
     }
 
+    @Override
     public void endElement() throws XPathException {
         NodeName name = stack.pop();
         String local = name.getLocalPart();
@@ -373,23 +382,28 @@ public class JsonReceiver implements Receiver {
     }
 
     private static class ControlChar implements IntPredicate {
+        @Override
         public boolean test(int c) {
             return c < 31 || (c >= 127 && c <= 159);
         }
     }
 
+    @Override
     public void characters(CharSequence chars, Location locationId, int properties) throws XPathException {
         textBuffer.cat(chars);
     }
 
+    @Override
     public void processingInstruction(String name, CharSequence data, Location locationId, int properties) throws XPathException {
         // no action
     }
 
+    @Override
     public void comment(CharSequence content, Location locationId, int properties) throws XPathException {
         // no action
     }
 
+    @Override
     public void close() throws XPathException {
         if (output != null) {
             output.close();
@@ -397,10 +411,12 @@ public class JsonReceiver implements Receiver {
         }
     }
 
+    @Override
     public boolean usesTypeAnnotations() {
         return false;
     }
 
+    @Override
     public String getSystemId() {
         return null;
     }

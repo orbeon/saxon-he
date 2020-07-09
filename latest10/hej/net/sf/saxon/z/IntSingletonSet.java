@@ -22,54 +22,66 @@ public class IntSingletonSet implements IntSet {
         return value;
     }
 
+    @Override
     public void clear() {
         throw new UnsupportedOperationException("IntSingletonSet is immutable");
     }
 
+    @Override
     public IntSet copy() {
         return this;
     }
 
+    @Override
     public IntSet mutableCopy() {
         IntHashSet intHashSet = new IntHashSet();
         intHashSet.add(value);
         return intHashSet;
     }
 
+    @Override
     public boolean isMutable() {
         return false;
     }
 
+    @Override
     public int size() {
         return 1;
     }
 
+    @Override
     public boolean isEmpty() {
         return false;
     }
 
+    @Override
     public boolean contains(int value) {
         return this.value == value;
     }
 
+    @Override
     public boolean remove(int value) {
         throw new UnsupportedOperationException("IntSingletonSet is immutable");
     }
 
+    @Override
     public boolean add(int value) {
         throw new UnsupportedOperationException("IntSingletonSet is immutable");
     }
 
+    @Override
     public IntIterator iterator() {
         return new IntSingletonIterator(value);
     }
 
+    @Override
     public IntSet union(IntSet other) {
         IntSet n = other.mutableCopy();
         n.add(value);
         return n;
     }
 
+    @Override
     public IntSet intersect(IntSet other) {
         if (other.contains(value)) {
             return this;
@@ -78,6 +90,7 @@ public class IntSingletonSet implements IntSet {
         }
     }
 
+    @Override
     public IntSet except(IntSet other) {
         if (other.contains(value)) {
             return IntEmptySet.getInstance();
@@ -86,6 +99,7 @@ public class IntSingletonSet implements IntSet {
         }
     }
 
+    @Override
     public boolean containsAll(/*@NotNull*/ IntSet other) {
         if (other.size() > 1) {
             return false;

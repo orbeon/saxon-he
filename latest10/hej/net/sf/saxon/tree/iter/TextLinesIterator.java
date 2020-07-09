@@ -62,6 +62,7 @@ public abstract class TextLinesIterator implements SequenceIterator {
 //    }
 
     /*@Nullable*/
+    @Override
     public StringValue next() throws XPathException {
         if (position < 0) {
             // input already exhausted
@@ -100,6 +101,7 @@ public abstract class TextLinesIterator implements SequenceIterator {
         }
     }
 
+    @Override
     public void close() {
         try {
             reader.close();

@@ -38,6 +38,7 @@ public class SQLInsert extends ExtensionInstruction {
     Expression connection;
     String table;
 
+    @Override
     public void prepareAttributes() {
 
         table = attributes().getValue("", "table");
@@ -55,6 +56,7 @@ public class SQLInsert extends ExtensionInstruction {
         }
     }
 
+    @Override
     public void validate(ComponentDeclaration decl) throws XPathException {
         super.validate(decl);
         connection = typeCheck("connection", connection);
@@ -70,6 +72,7 @@ public class SQLInsert extends ExtensionInstruction {
 
     }
 
+    @Override
     public Expression compile(Compilation exec, ComponentDeclaration decl) throws XPathException {
 
         // Collect names of columns to be added
@@ -131,14 +134,17 @@ public class SQLInsert extends ExtensionInstruction {
          * This method indicates which of the three is provided.
          */
 
+        @Override
         public int getImplementationMethod() {
             return Expression.EVALUATE_METHOD;
         }
 
+        @Override
         public String getExpressionType() {
             return "sql:insert";
         }
 
+        @Override
         public Sequence call(XPathContext context, Sequence[] arguments) throws XPathException {
 
             // Prepare the SQL statement (only do this once)

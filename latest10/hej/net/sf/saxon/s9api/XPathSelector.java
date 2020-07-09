@@ -215,6 +215,7 @@ public class XPathSelector implements Iterable<XdmItem> {
      *                                    be thrown by the <code>hasNext()</code> method of the returned iterator.
      */
 
+    @Override
     public XdmSequenceIterator<XdmItem> iterator() throws SaxonApiUncheckedException {
         try {
             return new XdmSequenceIterator(exp.iterate(dynamicContext));

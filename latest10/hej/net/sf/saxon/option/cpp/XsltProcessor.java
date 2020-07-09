@@ -123,6 +123,7 @@ public class XsltProcessor extends SaxonCAPI {
         //TODO: This is not ideal. We should output the xsl-message to the System.err as they happen.
         //Second option is to write them out to a file.
 
+        @Override
         public void message(XdmNode content, boolean terminate, SourceLocator locator) {
             xslMessages.add(content);
         }

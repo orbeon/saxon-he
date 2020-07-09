@@ -53,6 +53,7 @@ public final class LocalNameTest extends NodeTest implements QNameTest {
      *
      * @return the smallest UType that subsumes this item type
      */
+    @Override
     public UType getUType() {
         return uType;
     }
@@ -95,6 +96,7 @@ public final class LocalNameTest extends NodeTest implements QNameTest {
         return name != null && nodeKind == this.nodeKind && localName.equals(name.getLocalPart());
     }
 
+    @Override
     public IntPredicate getMatcher(final NodeVectorTree tree) {
         final byte[] nodeKindArray = tree.getNodeKindArray();
         final int[] nameCodeArray = tree.getNameCodeArray();
@@ -121,6 +123,7 @@ public final class LocalNameTest extends NodeTest implements QNameTest {
      * @param node the node to be matched
      */
 
+    @Override
     public boolean test(NodeInfo node) {
         return localName.equals(node.getLocalPart()) && nodeKind == node.getNodeKind();
     }
@@ -132,6 +135,7 @@ public final class LocalNameTest extends NodeTest implements QNameTest {
      * @return true if the name matches, false if not
      */
 
+    @Override
     public boolean matches(StructuredQName qname) {
         return localName.equals(qname.getLocalPart());
     }
@@ -140,6 +144,7 @@ public final class LocalNameTest extends NodeTest implements QNameTest {
      * Determine the default priority of this node test when used on its own as a Pattern
      */
 
+    @Override
     public final double getDefaultPriority() {
         return -0.25;
     }
@@ -161,6 +166,7 @@ public final class LocalNameTest extends NodeTest implements QNameTest {
      * @return the type of node matched by this pattern. e.g. Type.ELEMENT or Type.TEXT
      */
 
+    @Override
     public int getPrimitiveType() {
         return nodeKind;
     }
@@ -216,6 +222,7 @@ public final class LocalNameTest extends NodeTest implements QNameTest {
      * uri and local.
      * @param targetVersion the version of Saxon-JS being targeted
      */
+    @Override
     public String generateJavaScriptNameTest(int targetVersion) {
         return "q.local==='" + localName + "'";
     }

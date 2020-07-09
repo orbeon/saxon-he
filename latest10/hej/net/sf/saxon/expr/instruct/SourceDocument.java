@@ -174,6 +174,7 @@ public class SourceDocument extends Instruction {
      * @return the depencies, as a bit-mask
      */
 
+    @Override
     public int computeDependencies() {
         // Focus-dependency in the body is not relevant.
         int dependencies = 0;

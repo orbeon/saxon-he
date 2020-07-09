@@ -39,6 +39,7 @@ public class ReturnClauseIterator implements SequenceIterator {
         this.context = context;
     }
 
+    @Override
     public Item next() throws XPathException {
         Item nextItem;
         while (true) {
@@ -70,6 +71,7 @@ public class ReturnClauseIterator implements SequenceIterator {
     }
 
 
+    @Override
     public void close() {
         if (results != null) {
             results.close();

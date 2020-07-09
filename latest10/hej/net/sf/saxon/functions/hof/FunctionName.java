@@ -33,6 +33,7 @@ public class FunctionName extends SystemFunction {
      * @throws net.sf.saxon.trans.XPathException
      *          if a dynamic error occurs during the evaluation of the expression
      */
+    @Override
     public ZeroOrOne call(XPathContext context, Sequence[] arguments) throws XPathException {
         Function f = (Function) arguments[0].head();
         assert f != null;

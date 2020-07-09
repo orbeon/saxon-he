@@ -23,6 +23,7 @@ import net.sf.saxon.value.StringValue;
 
 public class Matches extends RegexFunction {
 
+    @Override
     protected boolean allowRegexMatchingEmptyString() {
         return true;
     }
@@ -71,6 +72,7 @@ public class Matches extends RegexFunction {
      * @throws net.sf.saxon.trans.XPathException
      *          if a dynamic error occurs during the evaluation of the expression
      */
+    @Override
     public BooleanValue call(XPathContext context, Sequence[] arguments) throws XPathException {
         RegularExpression re = getRegularExpression(arguments);
         StringValue arg = (StringValue)arguments[0].head();
@@ -79,6 +81,7 @@ public class Matches extends RegexFunction {
         return BooleanValue.get(result);
     }
 
+    @Override
     public String getCompilerName() {
         return "MatchesCompiler";
     }

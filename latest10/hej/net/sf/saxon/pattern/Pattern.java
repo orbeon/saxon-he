@@ -98,6 +98,7 @@ public abstract class Pattern extends PseudoExpression {
      * @param forStreaming true if we are generating code for streaming
      */
 
+    @Override
     public boolean isLiftable(boolean forStreaming) {
         return false;
     }
@@ -184,6 +185,7 @@ public abstract class Pattern extends PseudoExpression {
      *
      */
 
+    @Override
     public Pattern simplify() throws XPathException {
         return this;
     }
@@ -197,6 +199,7 @@ public abstract class Pattern extends PseudoExpression {
      * @return the optimised Pattern
      */
 
+    @Override
     public Pattern typeCheck(ExpressionVisitor visitor, ContextItemStaticInfo contextInfo) throws XPathException {
         typeCheckChildren(visitor, contextInfo);
         return this;
@@ -210,6 +213,7 @@ public abstract class Pattern extends PseudoExpression {
      * @return the dependencies, as a bit-significant mask
      */
 
+    @Override
     public int getDependencies() {
         return 0;
     }
@@ -247,6 +251,7 @@ public abstract class Pattern extends PseudoExpression {
      * @throws XPathException if an error occurs during pattern matching
      */
 
+    @Override
     public final boolean effectiveBooleanValue(XPathContext context) throws XPathException {
         return matches(context.getContextItem(), context);
     }
@@ -375,6 +380,7 @@ public abstract class Pattern extends PseudoExpression {
      * @return an ItemType, as specific as possible, which all the matching items satisfy
      */
 
+    @Override
     public abstract ItemType getItemType();
 
     /**
@@ -433,10 +439,12 @@ public abstract class Pattern extends PseudoExpression {
         return null;
     }
 
+    @Override
     public Pattern toPattern(Configuration config) {
         return this;
     }
 
+    @Override
     public abstract void export(ExpressionPresenter presenter) throws XPathException;
 
 //    /**
@@ -457,6 +465,7 @@ public abstract class Pattern extends PseudoExpression {
 //        }
 //    }
 
+    @Override
     public abstract Pattern copy(RebindingMap rebindings);
 
     /**

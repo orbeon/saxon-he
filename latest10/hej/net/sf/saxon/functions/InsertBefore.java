@@ -35,6 +35,7 @@ public class InsertBefore extends SystemFunction {
      * @throws net.sf.saxon.trans.XPathException
      *          if a dynamic error occurs during the evaluation of the expression
      */
+    @Override
     public Sequence call(XPathContext context, Sequence[] arguments) throws XPathException {
         NumericValue n = (NumericValue) arguments[1].head();
         int pos = (int) n.longValue();
@@ -73,6 +74,7 @@ public class InsertBefore extends SystemFunction {
         }
 
 
+        @Override
         public Item next() throws XPathException {
             Item nextItem;
             if (inserting) {
@@ -106,6 +108,7 @@ public class InsertBefore extends SystemFunction {
             }
         }
 
+        @Override
         public void close() {
             base.close();
             insert.close();
@@ -113,6 +116,7 @@ public class InsertBefore extends SystemFunction {
 
     }
 
+    @Override
     public String getStreamerName() {
         return "InsertBefore";
     }

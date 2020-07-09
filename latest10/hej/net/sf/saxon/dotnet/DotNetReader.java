@@ -45,6 +45,7 @@ public class DotNetReader extends java.io.Reader {
      *
      * @throws java.io.IOException If an I/O error occurs
      */
+    @Override
     public void close() throws IOException {
         reader.Close();
     }
@@ -61,6 +62,7 @@ public class DotNetReader extends java.io.Reader {
      *         stream has been reached
      * @throws java.io.IOException If an I/O error occurs
      */
+    @Override
     public int read(char cbuf[], int off, int len) throws IOException {
         int n = reader.Read(cbuf, off, len);
         return (n == 0 ? -1 : n);
@@ -77,6 +79,7 @@ public class DotNetReader extends java.io.Reader {
      *         been reached
      * @throws java.io.IOException If an I/O error occurs
      */
+    @Override
     public int read() throws IOException {
         return reader.Read();
     }

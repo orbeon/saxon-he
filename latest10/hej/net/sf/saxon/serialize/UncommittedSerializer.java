@@ -50,6 +50,7 @@ public class UncommittedSerializer extends ProxyReceiver {
         this.properties = params;
     }
 
+    @Override
     public void open() throws XPathException {
         committed = false;
     }
@@ -58,6 +59,7 @@ public class UncommittedSerializer extends ProxyReceiver {
      * End of document
      */
 
+    @Override
     public void close() throws XPathException {
         // empty output: must send a beginDocument()/endDocument() pair to the content handler
         if (!committed) {
@@ -70,6 +72,7 @@ public class UncommittedSerializer extends ProxyReceiver {
      * Produce character output using the current Writer. <BR>
      */
 
+    @Override
     public void characters(CharSequence chars, Location locationId, int properties) throws XPathException {
         if (committed) {
             getNextReceiver().characters(chars, locationId, properties);
@@ -88,6 +91,7 @@ public class UncommittedSerializer extends ProxyReceiver {
      * Processing Instruction
      */
 
+    @Override
     public void processingInstruction(String target, CharSequence data, Location locationId, int properties) throws XPathException {
         if (committed) {
             getNextReceiver().processingInstruction(target, data, locationId, properties);
@@ -103,6 +107,7 @@ public class UncommittedSerializer extends ProxyReceiver {
      * Output a comment
      */
 
+    @Override
     public void comment(CharSequence chars, Location locationId, int properties) throws XPathException {
         if (committed) {
             getNextReceiver().comment(chars, locationId, properties);
@@ -120,6 +125,7 @@ public class UncommittedSerializer extends ProxyReceiver {
      * depending on the element name.
      */
 
+    @Override
     public void startElement(NodeName elemName, SchemaType type,
                              AttributeMap attributes, NamespaceMap namespaces,
                              Location location, int properties)

@@ -61,6 +61,7 @@ public class IntersectionEnumeration implements SequenceIterator {
         // rely on type-checking to prevent a ClassCastException
     }
 
+    @Override
     public NodeInfo next() throws XPathException {
         // main merge loop: iterate whichever sequence has the lower value, returning when a pair
         // is found that match.
@@ -85,6 +86,7 @@ public class IntersectionEnumeration implements SequenceIterator {
         return null;
     }
 
+    @Override
     public void close() {
         e1.close();
         e2.close();

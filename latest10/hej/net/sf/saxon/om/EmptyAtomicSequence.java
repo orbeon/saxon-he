@@ -26,18 +26,22 @@ public enum EmptyAtomicSequence implements AtomicSequence {
         return INSTANCE;
     }
 
+    @Override
     public AtomicValue head() {
         return null;
     }
 
+    @Override
     public AtomicIterator<AtomicValue> iterate() {
         return EmptyIterator.ofAtomic();
     }
 
+    @Override
     public AtomicValue itemAt(int n) {
         return null;
     }
 
+    @Override
     public int getLength() {
         return 0;
     }
@@ -49,6 +53,7 @@ public enum EmptyAtomicSequence implements AtomicSequence {
      * @return the canonical lexical representation if defined in XML Schema; otherwise, the result
      *         of casting to string according to the XPath 2.0 rules
      */
+    @Override
     public CharSequence getCanonicalLexicalRepresentation() {
         return "";
     }
@@ -63,14 +68,17 @@ public enum EmptyAtomicSequence implements AtomicSequence {
      *
      * @return a Comparable that follows XML Schema comparison rules
      */
+    @Override
     public Comparable getSchemaComparable() {
         return null;
     }
 
+    @Override
     public CharSequence getStringValueCS() {
         return "";
     }
 
+    @Override
     public String getStringValue() {
         return "";
     }
@@ -87,10 +95,12 @@ public enum EmptyAtomicSequence implements AtomicSequence {
      *               of the sequence
      * @return the required subsequence. If min is
      */
+    @Override
     public EmptyAtomicSequence subsequence(int start, int length) {
         return this;
     }
 
+    @Override
     public boolean effectiveBooleanValue() {
         return false;
     }
@@ -103,6 +113,7 @@ public enum EmptyAtomicSequence implements AtomicSequence {
      *
      * @return the simplified sequence
      */
+    @Override
     public EmptyAtomicSequence reduce() {
         return this;
     }
@@ -112,6 +123,7 @@ public enum EmptyAtomicSequence implements AtomicSequence {
      * @return an Iterator.
      */
 
+    @Override
     public Iterator<AtomicValue> iterator() {
         return Collections.<AtomicValue>emptyList().iterator();
     }

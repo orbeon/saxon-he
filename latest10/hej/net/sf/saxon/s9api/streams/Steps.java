@@ -46,6 +46,7 @@ public class Steps {
 
     public static Step<XdmNode> root() {
         return new Step<XdmNode>() {
+            @Override
             public Stream<XdmNode> apply(XdmItem origin) {
                 return origin instanceof XdmNode
                         ? Stream.of(((XdmNode)origin).getRoot())
@@ -100,6 +101,7 @@ public class Steps {
         final ConversionRules rules = type.getConversionRules();
 
         return atomize().then(new Step<XdmAtomicValue>() {
+            @Override
             public Stream<? extends XdmAtomicValue> apply(XdmItem xdmItem) {
                 try {
                     AtomicValue source = ((XdmAtomicValue)xdmItem).getUnderlyingValue();
@@ -189,6 +191,7 @@ public class Steps {
 
     public static <U extends XdmItem> Step<U> nothing() {
         return new Step<U>() {
+            @Override
             public Stream<U> apply(XdmItem xdmItem) {
                 return Stream.empty();
             }

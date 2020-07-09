@@ -35,6 +35,7 @@ public final class XSLAttribute extends XSLLeafNodeConstructor {
     private int validationAction = Validation.PRESERVE;
     private SimpleType schemaType;
 
+    @Override
     public void prepareAttributes() {
 
         String nameAtt = null;
@@ -158,6 +159,7 @@ public final class XSLAttribute extends XSLLeafNodeConstructor {
 //        }
     }
 
+    @Override
     public void validate(ComponentDeclaration decl) throws XPathException {
         if (schemaType != null) {
             if (schemaType.isNamespaceSensitive()) {
@@ -180,10 +182,12 @@ public final class XSLAttribute extends XSLLeafNodeConstructor {
      * @return the error code defined for this condition, for this particular instruction
      */
 
+    @Override
     protected String getErrorCodeForSelectPlusContent() {
         return "XTSE0840";
     }
 
+    @Override
     public Instruction compile(Compilation compilation, ComponentDeclaration decl) throws XPathException {
         NamespaceResolver nsContext = null;
 

@@ -50,6 +50,7 @@ public class XHTML1Emitter extends XMLEmitter {
      * Close an empty element tag.
      */
 
+    @Override
     protected String emptyElementTagCloser(String displayName, /*@NotNull*/ NodeName name) {
         if (isRecognizedHtmlElement(name) && emptyTags1.contains(name.getLocalPart())) {
             return " />";

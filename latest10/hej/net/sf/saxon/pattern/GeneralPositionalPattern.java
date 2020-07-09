@@ -90,6 +90,7 @@ public class GeneralPositionalPattern extends Pattern {
      *
      */
 
+    @Override
     public Pattern simplify() throws XPathException {
         positionExpr = positionExpr.simplify();
         return this;
@@ -103,6 +104,7 @@ public class GeneralPositionalPattern extends Pattern {
      * @return the optimised Pattern
      */
 
+    @Override
     public Pattern typeCheck(ExpressionVisitor visitor, ContextItemStaticInfo contextItemType) throws XPathException {
 
         // analyze each component of the pattern
@@ -172,6 +174,7 @@ public class GeneralPositionalPattern extends Pattern {
      * @return the dependencies, as a bit-significant mask
      */
 
+    @Override
     public int getDependencies() {
         // the only dependency that's interesting is a dependency on local variables
         return positionExpr.getDependencies() &
@@ -185,6 +188,7 @@ public class GeneralPositionalPattern extends Pattern {
      * @param nextFree    the next slot that is free to be allocated @return the next slot that is free to be allocated
      */
 
+    @Override
     public int allocateSlots(SlotManager slotManager, int nextFree) {
         return ExpressionTool.allocateSlots(positionExpr, nextFree, slotManager);
     }
@@ -196,6 +200,7 @@ public class GeneralPositionalPattern extends Pattern {
      * @return true if the pattern matches, else false
      */
 
+    @Override
     public boolean matches(Item item, XPathContext context) throws XPathException {
         return item instanceof NodeInfo && matchesBeneathAnchor((NodeInfo) item, null, context);
     }
@@ -211,6 +216,7 @@ public class GeneralPositionalPattern extends Pattern {
      * @return true if the node matches the Pattern, false otherwise
      */
 
+    @Override
     public boolean matchesBeneathAnchor(NodeInfo node, NodeInfo anchor, XPathContext context) throws XPathException {
         return internalMatches(node, anchor, context);
     }
@@ -284,6 +290,7 @@ public class GeneralPositionalPattern extends Pattern {
      * @return the fingerprint of nodes matched by this pattern.
      */
 
+    @Override
     public int getFingerprint() {
         return nodeTest.getFingerprint();
     }
@@ -292,6 +299,7 @@ public class GeneralPositionalPattern extends Pattern {
      * Get an ItemType that all the nodes matching this pattern must satisfy
      */
 
+    @Override
     public ItemType getItemType() {
         return nodeTest;
     }
@@ -315,6 +323,7 @@ public class GeneralPositionalPattern extends Pattern {
      * hashcode supporting equals()
      */
 
+    @Override
     public int computeHashCode() {
         return nodeTest.hashCode() ^ positionExpr.hashCode();
     }
@@ -330,6 +339,7 @@ public class GeneralPositionalPattern extends Pattern {
      * node without changing the position in the streamed input file
      */
 
+    @Override
     public boolean isMotionless() {
 //        ContextItemStaticInfoEE csi = (ContextItemStaticInfoEE)getConfiguration().makeContextItemStaticInfo(getItemType(), false);
 //        csi.setContextPostureStriding();
@@ -347,6 +357,7 @@ public class GeneralPositionalPattern extends Pattern {
      */
 
     /*@NotNull*/
+    @Override
     public Pattern copy(RebindingMap rebindings) {
         GeneralPositionalPattern n = new GeneralPositionalPattern(nodeTest.copy(), positionExpr.copy(rebindings));
         ExpressionTool.copyLocationInfo(this, n);
@@ -363,6 +374,7 @@ public class GeneralPositionalPattern extends Pattern {
         return nodeTest + "[" + positionExpr + "]";
     }
 
+    @Override
     public void export(ExpressionPresenter presenter) throws XPathException {
         presenter.startElement("p.genPos");
         presenter.emitAttribute("test", AlphaCode.fromItemType(nodeTest));

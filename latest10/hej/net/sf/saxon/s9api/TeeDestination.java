@@ -54,6 +54,7 @@ public class TeeDestination extends AbstractDestination {
      */
 
     /*@NotNull*/
+    @Override
     public Receiver getReceiver(PipelineConfiguration pipe, SerializationProperties params) throws SaxonApiException {
         return new TeeOutputter(dest0.getReceiver(pipe, params), dest1.getReceiver(pipe, params));
     }
@@ -63,6 +64,7 @@ public class TeeDestination extends AbstractDestination {
      * it has finished writing to the destination.
      */
 
+    @Override
     public void close() throws SaxonApiException {
         dest0.close();
         dest1.close();

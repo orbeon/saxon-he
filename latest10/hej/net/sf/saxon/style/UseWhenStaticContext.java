@@ -77,6 +77,7 @@ public class UseWhenStaticContext extends AbstractStaticContext implements Stati
      * @return a RetainedStaticContext object: either a newly created one, or one that is
      * reused from a previous invocation.
      */
+    @Override
     public RetainedStaticContext makeRetainedStaticContext() {
         return new RetainedStaticContext(this);
     }
@@ -90,6 +91,7 @@ public class UseWhenStaticContext extends AbstractStaticContext implements Stati
      * Issue a compile-time warning
      */
 
+    @Override
     public void issueWarning(String s, Location locator) {
         compilation.getCompilerInfo().getErrorReporter().report(
                 new XmlProcessingIncident(s, SaxonErrorCode.SXWN9000, locator).asWarning());
@@ -101,6 +103,7 @@ public class UseWhenStaticContext extends AbstractStaticContext implements Stati
      * the base URI, which may be different.
      */
 
+    @Override
     public String getSystemId() {
         return getStaticBaseURI();
     }
@@ -115,6 +118,7 @@ public class UseWhenStaticContext extends AbstractStaticContext implements Stati
      *         the value of the variable is known statically, so the returned expression is a literal containing the variable's value.
      */
 
+    @Override
     public Expression bindVariable(StructuredQName qName) throws XPathException {
         GroundedValue val = compilation.getStaticVariable(qName);
         if (val != null) {
@@ -134,6 +138,7 @@ public class UseWhenStaticContext extends AbstractStaticContext implements Stati
      * context
      */
 
+    @Override
     public FunctionLibrary getFunctionLibrary() {
         return functionLibrary;
     }
@@ -145,6 +150,7 @@ public class UseWhenStaticContext extends AbstractStaticContext implements Stati
      *         if no default collation has been defined
      */
 
+    @Override
     public String getDefaultCollationName() {
         return NamespaceConstant.CODEPOINT_COLLATION_URI;
     }
@@ -153,6 +159,7 @@ public class UseWhenStaticContext extends AbstractStaticContext implements Stati
      * Get the default function namespace
      */
 
+    @Override
     public String getDefaultFunctionNamespace() {
         return NamespaceConstant.FN;
     }
@@ -161,6 +168,7 @@ public class UseWhenStaticContext extends AbstractStaticContext implements Stati
      * Determine whether Backwards Compatible Mode is used
      */
 
+    @Override
     public boolean isInBackwardsCompatibleMode() {
         return false;
     }
@@ -174,6 +182,7 @@ public class UseWhenStaticContext extends AbstractStaticContext implements Stati
      * null namespace).
      */
 
+    @Override
     public boolean isImportedSchema(String namespace) {
         return false;
     }
@@ -184,6 +193,7 @@ public class UseWhenStaticContext extends AbstractStaticContext implements Stati
      * @return a Set, the set of URIs representing the names of imported schemas
      */
 
+    @Override
     public Set<String> getImportedSchemaNamespaces() {
         return Collections.emptySet();
     }
@@ -194,6 +204,7 @@ public class UseWhenStaticContext extends AbstractStaticContext implements Stati
      * @return a namespace resolver.
      */
 
+    @Override
     public NamespaceResolver getNamespaceResolver() {
         return namespaceContext;
     }
@@ -206,6 +217,7 @@ public class UseWhenStaticContext extends AbstractStaticContext implements Stati
      *         formats are not supported in this environment.
      */
 
+    @Override
     public DecimalFormatManager getDecimalFormatManager() {
         return null;
     }

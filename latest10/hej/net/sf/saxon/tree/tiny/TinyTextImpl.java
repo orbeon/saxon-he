@@ -41,6 +41,7 @@ public final class TinyTextImpl extends TinyNodeImpl {
      * @return the string value of the node
      */
 
+    @Override
     public String getStringValue() {
         return getStringValueCS().toString();
     }
@@ -50,6 +51,7 @@ public final class TinyTextImpl extends TinyNodeImpl {
      * the version of the method that returns a String.
      */
 
+    @Override
     public CharSequence getStringValueCS() {
         int start = tree.alpha[nodeNr];
         int len = tree.beta[nodeNr];
@@ -76,6 +78,7 @@ public final class TinyTextImpl extends TinyNodeImpl {
      * @return Type.TEXT
      */
 
+    @Override
     public final int getNodeKind() {
         return Type.TEXT;
     }
@@ -84,6 +87,7 @@ public final class TinyTextImpl extends TinyNodeImpl {
      * Copy this node to a given outputter
      */
 
+    @Override
     public void copy(Receiver out, int copyOptions, Location locationId) throws XPathException {
         out.characters(getStringValueCS(), locationId, ReceiverOption.NONE);
     }
@@ -98,6 +102,7 @@ public final class TinyTextImpl extends TinyNodeImpl {
      */
 
     /*@NotNull*/
+    @Override
     public AtomicSequence atomize() throws XPathException {
         return new UntypedAtomicValue(getStringValueCS());
     }

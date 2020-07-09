@@ -34,6 +34,7 @@ public class DotNetDomBuilder implements Receiver {
      * Set the namePool in which all name codes can be found
      */
 
+    @Override
     public void setPipelineConfiguration(/*@NotNull*/ PipelineConfiguration pipe) {
         this.pipe = pipe;
         this.namePool = pipe.getConfiguration().getNamePool();
@@ -44,6 +45,7 @@ public class DotNetDomBuilder implements Receiver {
      */
 
     /*@NotNull*/
+    @Override
     public PipelineConfiguration getPipelineConfiguration() {
         return pipe;
     }
@@ -62,6 +64,7 @@ public class DotNetDomBuilder implements Receiver {
      * Set the System ID
      */
 
+    @Override
     public void setSystemId(String systemId) {
         this.systemId = systemId;
     }
@@ -70,6 +73,7 @@ public class DotNetDomBuilder implements Receiver {
      * Get the System ID
      */
 
+    @Override
     public String getSystemId() {
         return systemId;
     }
@@ -79,6 +83,7 @@ public class DotNetDomBuilder implements Receiver {
      * Start of the document.
      */
 
+    @Override
     public void open() {
     }
 
@@ -86,6 +91,7 @@ public class DotNetDomBuilder implements Receiver {
      * End of the document.
      */
 
+    @Override
     public void close() {
     }
 
@@ -93,6 +99,7 @@ public class DotNetDomBuilder implements Receiver {
      * Start of a document node.
      */
 
+    @Override
     public void startDocument(int properties) throws XPathException {
         if (document == null) {
             document = new XmlDocument();
@@ -104,6 +111,7 @@ public class DotNetDomBuilder implements Receiver {
      * Notify the end of a document node
      */
 
+    @Override
     public void endDocument() throws XPathException {
     }
 
@@ -111,6 +119,7 @@ public class DotNetDomBuilder implements Receiver {
      * Start of an element.
      */
 
+    @Override
     public void startElement(NodeName elemName, SchemaType type,
                              AttributeMap attributes, NamespaceMap namespaces,
                              Location location, int properties) throws XPathException {
@@ -157,6 +166,7 @@ public class DotNetDomBuilder implements Receiver {
      * End of an element.
      */
 
+    @Override
     public void endElement() throws XPathException {
         currentNode.Normalize();
         currentNode = currentNode.get_ParentNode();
@@ -168,6 +178,7 @@ public class DotNetDomBuilder implements Receiver {
      * Character data.
      */
 
+    @Override
     public void characters(CharSequence chars, Location locationId, int properties) throws XPathException {
         try {
             XmlText text = document.CreateTextNode(chars.toString());
@@ -182,6 +193,7 @@ public class DotNetDomBuilder implements Receiver {
      * Handle a processing instruction.
      */
 
+    @Override
     public void processingInstruction(String target, CharSequence data, Location locationId, int properties)
             throws XPathException {
         try {
@@ -197,6 +209,7 @@ public class DotNetDomBuilder implements Receiver {
      * Handle a comment.
      */
 
+    @Override
     public void comment(CharSequence chars, Location locationId, int properties) throws XPathException {
         try {
             XmlComment comment = document.CreateComment(chars.toString());
@@ -214,6 +227,7 @@ public class DotNetDomBuilder implements Receiver {
      *         may supply untyped nodes instead of supplying the type annotation
      */
 
+    @Override
     public boolean usesTypeAnnotations() {
         return false;
     }
@@ -226,6 +240,7 @@ public class DotNetDomBuilder implements Receiver {
      * @param publicID The public identifier of the unparsed entity
      */
 
+    @Override
     public void setUnparsedEntity(String name, String systemID, String publicID) throws XPathException {
         // no-op
     }

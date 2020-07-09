@@ -42,6 +42,7 @@ public class XSLImportSchema extends StyleElement {
         return true;
     }
 
+    @Override
     public void prepareAttributes() {
 
         String namespace = null;
@@ -65,10 +66,12 @@ public class XSLImportSchema extends StyleElement {
         }
     }
 
+    @Override
     public void validate(ComponentDeclaration decl) throws XPathException {
         checkTopLevel("XTSE0010", false);
     }
 
+    @Override
     public void index(ComponentDeclaration decl, PrincipalStylesheetModule top) throws XPathException {
         //
     }
@@ -157,6 +160,7 @@ public class XSLImportSchema extends StyleElement {
     }
 
 
+    @Override
     public void compileDeclaration(Compilation compilation, ComponentDeclaration decl) throws XPathException {
         // No action. The effect of import-schema is compile-time only
     }

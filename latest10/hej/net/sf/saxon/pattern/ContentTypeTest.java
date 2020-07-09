@@ -56,6 +56,7 @@ public class ContentTypeTest extends NodeTest {
      *
      * @return the smallest UType that subsumes this item type
      */
+    @Override
     public UType getUType() {
         return kind == Type.ELEMENT ? UType.ELEMENT : UType.ATTRIBUTE;
     }
@@ -75,6 +76,7 @@ public class ContentTypeTest extends NodeTest {
      * @return true if the test is nillable
      */
 
+    @Override
     public boolean isNillable() {
         return nillable;
     }
@@ -123,6 +125,7 @@ public class ContentTypeTest extends NodeTest {
      * @param node the node to be matched
      */
 
+    @Override
     public boolean test(/*@NotNull*/ NodeInfo node) {
         return node.getNodeKind() == kind &&
                 matchesAnnotation(node.getSchemaType())
@@ -150,6 +153,7 @@ public class ContentTypeTest extends NodeTest {
      * Determine the default priority of this node test when used on its own as a Pattern
      */
 
+    @Override
     public final double getDefaultPriority() {
         return 0;
     }
@@ -160,6 +164,7 @@ public class ContentTypeTest extends NodeTest {
      * @return the type of node matched by this pattern. e.g. Type.ELEMENT or Type.TEXT
      */
 
+    @Override
     public int getPrimitiveType() {
         return kind;
     }
@@ -169,6 +174,7 @@ public class ContentTypeTest extends NodeTest {
      * Return AnyType if there are no restrictions. The default implementation returns AnyType.
      */
 
+    @Override
     public SchemaType getContentType() {
         return schemaType;
     }
@@ -179,6 +185,7 @@ public class ContentTypeTest extends NodeTest {
      */
 
     /*@NotNull*/
+    @Override
     public AtomicType getAtomizedItemType() {
         SchemaType type = schemaType;
         try {
@@ -215,6 +222,7 @@ public class ContentTypeTest extends NodeTest {
      * @param th The type hierarchy cache
      */
 
+    @Override
     public boolean isAtomizable(TypeHierarchy th) {
         return !(schemaType.isComplexType() &&
                 ((ComplexType) schemaType).getVariety() == ComplexType.VARIETY_ELEMENT_ONLY);

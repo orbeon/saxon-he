@@ -53,5 +53,6 @@ public interface ImmutableMap<K, V> extends Iterable<Tuple2<K, V>>{
      * @return an iterator over the key-value pairs held in the map
      */
 
+    @Override
     Iterator<Tuple2<K, V>> iterator();
 }

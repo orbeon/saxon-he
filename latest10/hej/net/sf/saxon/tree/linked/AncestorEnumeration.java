@@ -24,6 +24,7 @@ final class AncestorEnumeration extends TreeEnumeration {
         }
     }
 
+    @Override
     protected void step() {
         next = next.getParent();
     }

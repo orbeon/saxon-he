@@ -52,6 +52,7 @@ public class ShallowCopyRuleSet implements BuiltInRuleSet {
      * @param locationId   location of the instruction (apply-templates, apply-imports etc) that caused
      */
 
+    @Override
     public void process(Item item, ParameterSet parameters,
                         ParameterSet tunnelParams, Outputter out, XPathContext context,
                         Location locationId) throws XPathException {
@@ -161,6 +162,7 @@ public class ShallowCopyRuleSet implements BuiltInRuleSet {
      * @param nodeKind the node kind
      * @return the default action for unmatched nodes: one of DEEP_COPY, APPLY_TEMPLATES, DEEP_SKIP, FAIL
      */
+    @Override
     public int[] getActionForParentNodes(int nodeKind) {
         return new int[]{SHALLOW_COPY, APPLY_TEMPLATES_TO_ATTRIBUTES, APPLY_TEMPLATES_TO_CHILDREN};
     }

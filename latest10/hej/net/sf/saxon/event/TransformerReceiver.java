@@ -45,6 +45,7 @@ public class TransformerReceiver extends ProxyReceiver {
      * Start of event stream
      */
 
+    @Override
     public void open() throws XPathException {
         builder.setSystemId(systemId);
         Receiver stripper = controller.makeStripper(builder);
@@ -69,6 +70,7 @@ public class TransformerReceiver extends ProxyReceiver {
      * Set the SystemId of the document
      */
 
+    @Override
     public void setSystemId(String systemId) {
         super.setSystemId(systemId);
         controller.setBaseOutputURI(systemId);
@@ -101,6 +103,7 @@ public class TransformerReceiver extends ProxyReceiver {
      * the transformation of the constructed document
      */
 
+    @Override
     public void close() throws XPathException {
         if (builder == null) {
             // already closed

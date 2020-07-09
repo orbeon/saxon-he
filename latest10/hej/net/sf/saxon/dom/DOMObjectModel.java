@@ -76,6 +76,7 @@ public class DOMObjectModel extends TreeModel implements ExternalObjectModel {
      * @return by convention (but not necessarily) the class that implements a document node in the relevant
      * external model
      */
+    @Override
     public String getDocumentClassName() {
         return "org.w3c.dom.Document";
     }
@@ -85,10 +86,12 @@ public class DOMObjectModel extends TreeModel implements ExternalObjectModel {
      * an XPath implementation
      */
 
+    @Override
     public String getIdentifyingURI() {
         return XPathConstants.DOM_OBJECT_MODEL;
     }
 
+    @Override
     public String getName() {
         return "DOM";
     }
@@ -104,15 +107,18 @@ public class DOMObjectModel extends TreeModel implements ExternalObjectModel {
      *         otherwise null
      */
 
+    @Override
     public PJConverter getPJConverter(Class<?> targetClass) {
         if (Node.class.isAssignableFrom(targetClass) && !NodeOverNodeInfo.class.isAssignableFrom(targetClass)) {
             return new PJConverter() {
+                @Override
                 public Object convert(Sequence value, Class<?> targetClass, XPathContext context) throws XPathException {
                     return convertXPathValueToObject(value, targetClass);
                 }
             };
         } else if (NodeList.class == targetClass) {
             return new PJConverter() {
+                @Override
                 public Object convert(Sequence value, Class<?> targetClass, XPathContext context) throws XPathException {
                     return convertXPathValueToObject(value, targetClass);
                 }
@@ -123,19 +129,23 @@ public class DOMObjectModel extends TreeModel implements ExternalObjectModel {
     }
 
     //public NodeSet ns;
+    @Override
     public JPConverter getJPConverter(Class sourceClass, Configuration config) {
         if (Node.class.isAssignableFrom(sourceClass) && !NodeOverNodeInfo.class.isAssignableFrom(sourceClass)) {
             return new JPConverter() {
+                @Override
                 public Sequence convert(Object obj, XPathContext context) {
                     return wrapOrUnwrapNode((Node) obj, context.getConfiguration());
                 }
 
+                @Override
                 public ItemType getItemType() {
                     return AnyNodeTest.getInstance();
                 }
             };
         } else if (NodeList.class.isAssignableFrom(sourceClass)) {
             return new JPConverter() {
+                @Override
                 public Sequence convert(Object obj, XPathContext context) {
                     Configuration config = context.getConfiguration();
                     NodeList list = (NodeList) obj;
@@ -147,30 +157,36 @@ public class DOMObjectModel extends TreeModel implements ExternalObjectModel {
                     return new SequenceExtent(nodes);
                 }
 
+                @Override
                 public ItemType getItemType() {
                     return AnyNodeTest.getInstance();
                 }
 
+                @Override
                 public int getCardinality() {
                     return StaticProperty.ALLOWS_ZERO_OR_MORE;
                 }
             };
         } else if (DOMSource.class.isAssignableFrom(sourceClass)) {
             return new JPConverter() {
+                @Override
                 public Sequence convert(Object obj, XPathContext context) {
                     return unravel((DOMSource) obj, context.getConfiguration());
                 }
 
+                @Override
                 public ItemType getItemType() {
                     return AnyNodeTest.getInstance();
                 }
             };
         } else if (DocumentWrapper.class == sourceClass) {
             return new JPConverter() {
+                @Override
                 public Sequence convert(Object obj, XPathContext context) {
                     return ((DocumentWrapper) obj).getRootNode();
                 }
 
+                @Override
                 public ItemType getItemType() {
                     return AnyNodeTest.getInstance();
                 }
@@ -190,6 +206,7 @@ public class DOMObjectModel extends TreeModel implements ExternalObjectModel {
      *         returns a collection of nodes in this object model
      */
 
+    @Override
     public PJConverter getNodeListCreator(Object node) {
         if (node == null ||
                 node instanceof Node ||
@@ -198,6 +215,7 @@ public class DOMObjectModel extends TreeModel implements ExternalObjectModel {
                 (node instanceof VirtualNode && ((VirtualNode) node).getRealNode() instanceof Node)) {
             return new PJConverter() {
                 /*@Nullable*/
+                @Override
                 public Object convert(Sequence value, Class<?> targetClass, XPathContext context) throws XPathException {
                     return convertXPathValueToObject(value, NodeList.class);
                 }
@@ -214,6 +232,7 @@ public class DOMObjectModel extends TreeModel implements ExternalObjectModel {
      * @return either a Receiver that can be used to build a DOM instance, or null
      */
 
+    @Override
     public Receiver getDocumentBuilder(Result result) throws XPathException {
         if (result instanceof DOMResult) {
             DOMWriter emitter = new DOMWriter();
@@ -257,6 +276,7 @@ public class DOMObjectModel extends TreeModel implements ExternalObjectModel {
      * Otherwise, return false
      */
 
+    @Override
     public boolean sendSource(Source source, Receiver receiver) throws XPathException {
         if (source instanceof DOMSource) {
             sendDOMSource((DOMSource)source, receiver);
@@ -330,6 +350,7 @@ public class DOMObjectModel extends TreeModel implements ExternalObjectModel {
      * source does not belong to this object model, return null
      */
 
+    @Override
     public NodeInfo unravel(Source source, Configuration config) {
 
         if (source instanceof DOMSource) {

@@ -23,6 +23,7 @@ public interface AtomicIterator<T extends AtomicValue> extends UnfailingIterator
      * @return the next Item. If there are no more items, return null.
      */
 
+    @Override
     T next();
 
 

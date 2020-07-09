@@ -53,6 +53,7 @@ public class ShallowSkipRuleSet implements BuiltInRuleSet {
      * @throws XPathException if any dynamic error occurs
      */
 
+    @Override
     public void process(Item item, ParameterSet parameters,
                         ParameterSet tunnelParams, /*@NotNull*/ Outputter output, XPathContext context,
                         Location locationId) throws XPathException {
@@ -121,6 +122,7 @@ public class ShallowSkipRuleSet implements BuiltInRuleSet {
      * @param nodeKind the node kind
      * @return the default action for unmatched nodes: one of DEEP_COPY, APPLY_TEMPLATES, DEEP_SKIP, FAIL
      */
+    @Override
     public int[] getActionForParentNodes(int nodeKind) {
         return new int[]{APPLY_TEMPLATES_TO_ATTRIBUTES, APPLY_TEMPLATES_TO_CHILDREN};
     }

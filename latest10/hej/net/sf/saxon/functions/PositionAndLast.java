@@ -122,12 +122,14 @@ public abstract class PositionAndLast extends ContextAccessorFunction {
      * @throws net.sf.saxon.trans.XPathException
      *          if a dynamic error occurs during the evaluation of the expression
      */
+    @Override
     public IntegerValue call(XPathContext context, Sequence[] arguments) throws XPathException {
         return evaluateItem(context);
     }
 
 
     public static class Position extends PositionAndLast {
+        @Override
         public Int64Value evaluateItem(XPathContext c) throws XPathException {
             FocusIterator currentIterator = c.getCurrentIterator();
             if (currentIterator == null) {
@@ -139,6 +141,7 @@ public abstract class PositionAndLast extends ContextAccessorFunction {
             return Int64Value.makeIntegerValue(currentIterator.position());
         }
 
+        @Override
         public String getCompilerName() {
             return "PositionCompiler";
         }
@@ -146,14 +149,17 @@ public abstract class PositionAndLast extends ContextAccessorFunction {
     }
 
     public static class Last extends PositionAndLast {
+        @Override
         public Int64Value evaluateItem(XPathContext c) throws XPathException {
             return Int64Value.makeIntegerValue(c.getLast());
         }
 
+        @Override
         public String getCompilerName() {
             return "LastCompiler";
         }
 
+        @Override
         public String getStreamerName() {
             return "Last";
         }

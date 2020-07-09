@@ -47,11 +47,13 @@ public class XSLApplyTemplates extends StyleElement {
      * @return true - it is an instruction
      */
 
+    @Override
     public boolean isInstruction() {
         return true;
     }
 
 
+    @Override
     public void prepareAttributes() {
 
         String selectAtt;
@@ -97,6 +99,7 @@ public class XSLApplyTemplates extends StyleElement {
         }
     }
 
+    @Override
     public void validate(ComponentDeclaration decl) throws XPathException {
 
         // get the Mode object
@@ -174,12 +177,14 @@ public class XSLApplyTemplates extends StyleElement {
      * For most instructions, this does nothing.
      */
 
+    @Override
     public boolean markTailCalls() {
         useTailRecursion = true;
         return true;
     }
 
 
+    @Override
     public Expression compile(Compilation compilation, ComponentDeclaration decl) throws XPathException {
         SortKeyDefinitionList sortKeys = makeSortKeys(compilation, decl);
         if (sortKeys != null) {

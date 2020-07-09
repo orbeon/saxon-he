@@ -79,12 +79,14 @@ public class StartsWith extends CollatingFunctionFixed {
      * Evaluate the function
      */
 
+    @Override
     public BooleanValue call(XPathContext context, Sequence[] arguments) throws XPathException {
         StringValue s0 = (StringValue) arguments[0].head();
         StringValue s1 = (StringValue) arguments[1].head();
         return BooleanValue.get(startsWith(s0, s1, (SubstringMatcher)getStringCollator()));
     }
 
+    @Override
     public String getCompilerName() {
         return "StartsWithCompiler";
     }

@@ -42,6 +42,7 @@ public class NextMatch extends ApplyNextMatchingTemplate {
      * Get the name of this instruction for diagnostic and tracing purposes
      */
 
+    @Override
     public int getInstructionNameCode() {
         return StandardNames.XSL_NEXT_MATCH;
     }
@@ -54,6 +55,7 @@ public class NextMatch extends ApplyNextMatchingTemplate {
      */
 
     /*@NotNull*/
+    @Override
     public Expression copy(RebindingMap rebindings) {
         NextMatch nm2 = new NextMatch(useTailRecursion);
         nm2.setActualParams(WithParam.copy(nm2, getActualParams(), rebindings));
@@ -64,6 +66,7 @@ public class NextMatch extends ApplyNextMatchingTemplate {
 
 
     /*@Nullable*/
+    @Override
     public TailCall processLeavingTail(Outputter output, XPathContext context) throws XPathException {
 
         Controller controller = context.getController();
@@ -121,6 +124,7 @@ public class NextMatch extends ApplyNextMatchingTemplate {
      * is written to the supplied output destination.
      */
 
+    @Override
     public void export(ExpressionPresenter out) throws XPathException {
         out.startElement("nextMatch", this);
         String flags = "i";
@@ -185,6 +189,7 @@ public class NextMatch extends ApplyNextMatchingTemplate {
          * @throws XPathException if a dynamic error occurs
          */
 
+        @Override
         public TailCall processLeavingTail() throws XPathException {
             TemplateRule nh = (TemplateRule) rule.getAction();
             nh.initialize();

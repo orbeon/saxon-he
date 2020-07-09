@@ -62,6 +62,7 @@ public class GYearMonthValue extends GDateValue {
      * @param typeLabel
      */
 
+    @Override
     public AtomicValue copyAsSubType(AtomicType typeLabel) {
         GYearMonthValue v = new GYearMonthValue(year, month, getTimezoneInMinutes(), hasNoYearZero);
         v.typeLabel = typeLabel;
@@ -75,11 +76,13 @@ public class GYearMonthValue extends GDateValue {
      * and xs:untypedAtomic. For external objects, the result is AnyAtomicType.
      */
 
+    @Override
     public BuiltInAtomicType getPrimitiveType() {
         return BuiltInAtomicType.G_YEAR_MONTH;
     }
 
     /*@NotNull*/
+    @Override
     public CharSequence getPrimitiveStringValue() {
 
         FastStringBuffer sb = new FastStringBuffer(FastStringBuffer.C16);
@@ -113,6 +116,7 @@ public class GYearMonthValue extends GDateValue {
      *
      */
 
+    @Override
     public CalendarValue add(DurationValue duration) throws XPathException {
         XPathException err = new XPathException("Cannot add a duration to an xs:gYearMonth");
         err.setErrorCode("XPTY0004");
@@ -127,6 +131,7 @@ public class GYearMonthValue extends GDateValue {
      * @return the date/time in the new timezone
      */
 
+    @Override
     public CalendarValue adjustTimezone(int tz) {
         DateTimeValue dt = (DateTimeValue) toDateTime().adjustTimezone(tz);
         return new GYearMonthValue(dt.getYear(), dt.getMonth(), dt.getTimezoneInMinutes(), hasNoYearZero);

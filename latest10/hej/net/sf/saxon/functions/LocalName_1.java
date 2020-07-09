@@ -31,6 +31,7 @@ public class LocalName_1 extends ScalarSystemFunction {
         return ZERO_LENGTH_STRING;
     }
 
+    @Override
     public String getCompilerName() {
         return "LocalNameCompiler";
     }

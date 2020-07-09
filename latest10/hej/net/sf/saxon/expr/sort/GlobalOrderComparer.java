@@ -29,6 +29,7 @@ public final class GlobalOrderComparer implements ItemOrderComparer {
         return instance;
     }
 
+    @Override
     public int compare(Item a, /*@NotNull*/ Item b) {
         if (a == b) {
             return 0;

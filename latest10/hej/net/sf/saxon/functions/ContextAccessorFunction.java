@@ -38,6 +38,7 @@ public abstract class ContextAccessorFunction extends SystemFunction {
      * @return the result of the evaluation, in the form of a Sequence
      * @throws net.sf.saxon.trans.XPathException if a dynamic error occurs during the evaluation of the expression
      */
+    @Override
     public Sequence call(XPathContext context, Sequence[] arguments) throws XPathException {
         return bindContext(context).call(context, arguments);
     }

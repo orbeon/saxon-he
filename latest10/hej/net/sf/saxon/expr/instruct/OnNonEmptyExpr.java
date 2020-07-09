@@ -50,6 +50,7 @@ public class OnNonEmptyExpr extends UnaryExpression {
     }
 
     /*@NotNull*/
+    @Override
     public Expression copy(RebindingMap rebindings) {
         return new OnNonEmptyExpr(getBaseExpression().copy(rebindings));
     }
@@ -87,6 +88,7 @@ public class OnNonEmptyExpr extends UnaryExpression {
      */
 
     /*@NotNull*/
+    @Override
     public Expression typeCheck(ExpressionVisitor visitor, ContextItemStaticInfo contextInfo) throws XPathException {
         getOperand().typeCheck(visitor, contextInfo);
         return this;
@@ -108,6 +110,7 @@ public class OnNonEmptyExpr extends UnaryExpression {
      */
 
     /*@NotNull*/
+    @Override
     public Expression optimize(ExpressionVisitor visitor, ContextItemStaticInfo contextInfo) throws XPathException {
         getOperand().optimize(visitor, contextInfo);
         if (visitor.isOptimizeForStreaming()) {
@@ -175,6 +178,7 @@ public class OnNonEmptyExpr extends UnaryExpression {
 
 
 
+    @Override
     public void export(ExpressionPresenter out) throws XPathException {
         out.startElement("onNonEmpty", this);
         getBaseExpression().export(out);

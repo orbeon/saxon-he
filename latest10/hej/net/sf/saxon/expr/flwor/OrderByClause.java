@@ -26,13 +26,19 @@ import static net.sf.saxon.expr.flwor.Clause.ClauseName.ORDER_BY;
  */
 public class OrderByClause extends Clause {
 
+    public final static OperandRole SORT_KEYS_ROLE =
+            new OperandRole(OperandRole.HIGHER_ORDER | OperandRole.CONSTRAINED_CLASS,
+                            OperandUsage.NAVIGATION,
+                            SequenceType.ANY_SEQUENCE,
+                            expr -> expr instanceof SortKeyDefinitionList);
+
     Operand sortKeysOp; // Holds a SortKeyDefinitionList
     AtomicComparer[] comparators;
     Operand tupleOp; // Holds a TupleExpression
 
     public OrderByClause(FLWORExpression flwor, SortKeyDefinition[] sortKeys, TupleExpression tupleExpression) {
-        this.sortKeysOp = new Operand(flwor, new SortKeyDefinitionList(sortKeys), OperandRole.REPEAT_NAVIGATE_CONSTRAINED);
-        this.tupleOp = new Operand(flwor, tupleExpression, OperandRole.REPEAT_NAVIGATE_CONSTRAINED);
+        this.sortKeysOp = new Operand(flwor, new SortKeyDefinitionList(sortKeys), SORT_KEYS_ROLE);
+        this.tupleOp = new Operand(flwor, tupleExpression, OperandRole.FLWOR_TUPLE_CONSTRAINED);
     }
 
     @Override
@@ -45,6 +51,7 @@ public class OrderByClause extends Clause {
         return getTupleExpression().includesBinding(binding);
     }
 
+    @Override
     public OrderByClause copy(FLWORExpression flwor, RebindingMap rebindings) {
         SortKeyDefinitionList sortKeys = getSortKeyDefinitions();
         SortKeyDefinition[] sk2 = new SortKeyDefinition[sortKeys.size()];
@@ -116,6 +123,7 @@ public class OrderByClause extends Clause {
      * Type-check the expression
      */
 
+    @Override
     public void typeCheck(ExpressionVisitor visitor, ContextItemStaticInfo contextInfo) throws XPathException {
         boolean allKeysFixed = true;
         SortKeyDefinitionList sortKeys = getSortKeyDefinitions();
@@ -151,6 +159,7 @@ public class OrderByClause extends Clause {
         }
     }
 
+    @Override
     public void addToPathMap(PathMap pathMap, PathMap.PathMapNodeSet pathMapNodeSet) {
         SortKeyDefinitionList sortKeys = getSortKeyDefinitions();
         for (SortKeyDefinition skd : sortKeys) {

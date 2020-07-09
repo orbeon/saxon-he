@@ -73,6 +73,7 @@ public class RebasedDocument extends GenericTreeInfo {
      *
      * @return true if the document contains elements whose type is other than UNTYPED
      */
+    @Override
     public boolean isTyped() {
         return underlyingTree.isTyped();
     }
@@ -87,6 +88,7 @@ public class RebasedDocument extends GenericTreeInfo {
      */
 
     /*@Nullable*/
+    @Override
     public NodeInfo selectID(String id, boolean getParent) {
         NodeInfo n = underlyingTree.selectID(id, false);
         if (n == null) {

@@ -31,10 +31,12 @@ public class IntStepIterator implements IntIterator {
         this.limit = limit;
     }
 
+    @Override
     public boolean hasNext() {
         return step>0 ? current <= limit : current >= limit;
     }
 
+    @Override
     public int next() {
         int n = current;
         current += step;

@@ -139,6 +139,7 @@ public class SingletonIntersectExpression extends VennExpression {
         return false;
     }
 
+    @Override
     public String getExpressionName() {
         return "singleton-intersect";
     }
@@ -149,6 +150,7 @@ public class SingletonIntersectExpression extends VennExpression {
      * @return String representation of the operator (for diagnostic display only)
      */
 
+    @Override
     protected String displayOperator() {
         return "among";
     }

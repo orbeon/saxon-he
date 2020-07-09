@@ -41,6 +41,7 @@ public class BasePatternWithPredicate extends Pattern implements PatternWithPred
         adoptChildExpression(getPredicate());
     }
 
+    @Override
     public Expression getPredicate() {
         return predicateOp.getChildExpression();
     }
@@ -70,6 +71,7 @@ public class BasePatternWithPredicate extends Pattern implements PatternWithPred
      * treated as the anchor node
      */
 
+    @Override
     public boolean matchesCurrentGroup() {
         return getBasePattern().matchesCurrentGroup();
     }
@@ -96,6 +98,7 @@ public class BasePatternWithPredicate extends Pattern implements PatternWithPred
      * @param nextFree    the next slot that is free to be allocated @return the next slot that is free to be allocated
      */
 
+    @Override
     public int allocateSlots(SlotManager slotManager, int nextFree) {
         int n = ExpressionTool.allocateSlots(getPredicate(), nextFree, slotManager);
         return getBasePattern().allocateSlots(slotManager, n);
@@ -277,6 +280,7 @@ public class BasePatternWithPredicate extends Pattern implements PatternWithPred
      */
 
     /*@NotNull*/
+    @Override
     public Pattern copy(RebindingMap rebindings) {
         BasePatternWithPredicate n = new BasePatternWithPredicate(
                 getBasePattern().copy(rebindings), getPredicate().copy(rebindings));
@@ -296,6 +300,7 @@ public class BasePatternWithPredicate extends Pattern implements PatternWithPred
         return getBasePattern().hashCode() ^ getPredicate().hashCode();
     }
 
+    @Override
     public void export(ExpressionPresenter presenter) throws XPathException {
         presenter.startElement("p.withPredicate");
         getBasePattern().export(presenter);

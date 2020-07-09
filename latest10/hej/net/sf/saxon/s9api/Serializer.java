@@ -756,6 +756,7 @@ public class Serializer extends AbstractDestination {
      * @return a receiver to which XML events will be sent
      */
 
+    @Override
     public Receiver getReceiver(PipelineConfiguration pipe, SerializationProperties params) throws SaxonApiException {
         try {
             SerializerFactory sf = pipe.getConfiguration().getSerializerFactory();
@@ -844,6 +845,7 @@ public class Serializer extends AbstractDestination {
      * by the calling application.
      */
 
+    @Override
     public void close() throws SaxonApiException {
         if (mustClose) {
             // This relies on the fact that the SerializerFactory sets the OutputStream

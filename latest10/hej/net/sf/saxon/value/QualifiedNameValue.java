@@ -74,6 +74,7 @@ public abstract class QualifiedNameValue extends AtomicValue implements AtomicMa
      * prefix if available.
      */
 
+    @Override
     public final String getPrimitiveStringValue() {
         return qName.getDisplayName();
     }
@@ -149,6 +150,7 @@ public abstract class QualifiedNameValue extends AtomicValue implements AtomicMa
      */
 
     /*@Nullable*/
+    @Override
     public AtomicMatchKey getXPathComparable(boolean ordered, StringCollator collator, int implicitTimezone) {
         return ordered ? null : this;
     }
@@ -157,6 +159,7 @@ public abstract class QualifiedNameValue extends AtomicValue implements AtomicMa
         return qName.hashCode();
     }
 
+    @Override
     public boolean isIdentical(/*@NotNull*/ AtomicValue v) {
         return super.isIdentical(v) && qName.getPrefix().equals(((QualifiedNameValue) v).getPrefix());
     }

@@ -35,6 +35,7 @@ public class SQLColumn extends StyleElement {
      * @return false - it is not an instruction
      */
 
+    @Override
     public boolean isInstruction() {
         return false;
     }
@@ -45,14 +46,17 @@ public class SQLColumn extends StyleElement {
      * @return false: no, it may not contain a template-body
      */
 
+    @Override
     public boolean mayContainSequenceConstructor() {
         return false;
     }
 
+    @Override
     protected boolean mayContainFallback() {
         return false;
     }
 
+    @Override
     public void prepareAttributes() {
 
         String selectAtt = null;
@@ -82,6 +86,7 @@ public class SQLColumn extends StyleElement {
     }
 
 
+    @Override
     public void validate(ComponentDeclaration decl) throws XPathException {
         select = typeCheck("select", select);
         try {
@@ -96,6 +101,7 @@ public class SQLColumn extends StyleElement {
         }
     }
 
+    @Override
     public Expression compile(Compilation exec, ComponentDeclaration decl) throws XPathException {
         return select;
     }

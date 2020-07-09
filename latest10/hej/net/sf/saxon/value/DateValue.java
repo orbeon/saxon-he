@@ -210,6 +210,7 @@ public class DateValue extends GDateValue implements Comparable {
      * and xs:untypedAtomic. For external objects, the result is AnyAtomicType.
      */
 
+    @Override
     public BuiltInAtomicType getPrimitiveType() {
         return BuiltInAtomicType.DATE;
     }
@@ -262,6 +263,7 @@ public class DateValue extends GDateValue implements Comparable {
      * @return ISO 8601 representation.
      */
 
+    @Override
     public CharSequence getPrimitiveStringValue() {
 
         FastStringBuffer sb = new FastStringBuffer(FastStringBuffer.C16);
@@ -295,6 +297,7 @@ public class DateValue extends GDateValue implements Comparable {
      *         of casting to string according to the XPath 2.0 rules
      */
 
+    @Override
     public CharSequence getCanonicalLexicalRepresentation() {
         DateValue target = this;
         if (hasTimezone()) {
@@ -315,6 +318,7 @@ public class DateValue extends GDateValue implements Comparable {
      */
 
     /*@NotNull*/
+    @Override
     public AtomicValue copyAsSubType(AtomicType typeLabel) {
         DateValue v = new DateValue(year, month, day, getTimezoneInMinutes(), hasNoYearZero);
         v.typeLabel = typeLabel;
@@ -330,6 +334,7 @@ public class DateValue extends GDateValue implements Comparable {
      *         was required to the original value
      */
 
+    @Override
     public DateValue adjustTimezone(int timezone) {
         DateTimeValue dt = toDateTime().adjustTimezone(timezone);
         return new DateValue(dt.getYear(), dt.getMonth(), dt.getDay(), dt.getTimezoneInMinutes(), hasNoYearZero);
@@ -345,6 +350,7 @@ public class DateValue extends GDateValue implements Comparable {
      *          a subclass thereof
      */
 
+    @Override
     public DateValue add(DurationValue duration) throws XPathException {
         if (duration instanceof DayTimeDurationValue) {
             long microseconds = ((DayTimeDurationValue) duration).getLengthInMicroseconds();
@@ -395,6 +401,7 @@ public class DateValue extends GDateValue implements Comparable {
      * @throws XPathException for example if one value is a date and the other is a time
      */
 
+    @Override
     public DayTimeDurationValue subtract(/*@NotNull*/ CalendarValue other, /*@Nullable*/ XPathContext context) throws XPathException {
         if (!(other instanceof DateValue)) {
             XPathException err = new XPathException("First operand of '-' is a date, but the second is not");
@@ -417,6 +424,7 @@ public class DateValue extends GDateValue implements Comparable {
      *                            no timezone is available)
      */
 
+    @Override
     public int compareTo(Object v2) {
         try {
             return compareTo((DateValue) v2, MISSING_TIMEZONE);

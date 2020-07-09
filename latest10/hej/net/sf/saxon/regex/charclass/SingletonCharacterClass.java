@@ -24,10 +24,12 @@ public class SingletonCharacterClass implements CharacterClass {
         this.codepoint = codepoint;
     }
 
+    @Override
     public boolean test(int value) {
         return value == codepoint;
     }
 
+    @Override
     public boolean isDisjoint(CharacterClass other) {
         return !other.test(codepoint);
     }
@@ -36,6 +38,7 @@ public class SingletonCharacterClass implements CharacterClass {
         return codepoint;
     }
 
+    @Override
     public IntSet getIntSet() {
         return new IntSingletonSet(codepoint);
     }

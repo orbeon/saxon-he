@@ -121,7 +121,8 @@ public abstract class StringConverter extends Converter {
         }
 
         
-        public ConversionResult convertString( CharSequence input) {
+        @Override
+        public ConversionResult convertString(CharSequence input) {
             try {
                 input = phaseTwo.getTargetType().preprocess(input);
             } catch (ValidationException err) {
@@ -170,15 +171,18 @@ public abstract class StringConverter extends Converter {
         }
 
         
-        public ConversionResult convertString( CharSequence input) {
+        @Override
+        public ConversionResult convertString(CharSequence input) {
             return new StringValue(input);
         }
 
         /*@Nullable*/
-        public ValidationFailure validate( CharSequence input) {
+        @Override
+        public ValidationFailure validate(CharSequence input) {
             return null;
         }
 
+        @Override
         public boolean isAlwaysSuccessful() {
             return true;
         }
@@ -197,15 +201,18 @@ public abstract class StringConverter extends Converter {
         }
 
         
-        public ConversionResult convertString( CharSequence input) {
+        @Override
+        public ConversionResult convertString(CharSequence input) {
             return new UntypedAtomicValue(input);
         }
 
         /*@Nullable*/
-        public ValidationFailure validate( CharSequence input) {
+        @Override
+        public ValidationFailure validate(CharSequence input) {
             return null;
         }
 
+        @Override
         public boolean isAlwaysSuccessful() {
             return true;
         }
@@ -219,15 +226,18 @@ public abstract class StringConverter extends Converter {
     public static class StringToNormalizedString extends StringConverter {
         public static final StringToNormalizedString INSTANCE = new StringToNormalizedString();
 
-        public ConversionResult convertString( CharSequence input) {
+        @Override
+        public ConversionResult convertString(CharSequence input) {
             return new StringValue(Whitespace.normalizeWhitespace(input), BuiltInAtomicType.NORMALIZED_STRING);
         }
 
         /*@Nullable*/
-        public ValidationFailure validate( CharSequence input) {
+        @Override
+        public ValidationFailure validate(CharSequence input) {
             return null;
         }
 
+        @Override
         public boolean isAlwaysSuccessful() {
             return true;
         }
@@ -240,15 +250,18 @@ public abstract class StringConverter extends Converter {
     public static class StringToToken extends StringConverter {
         public static final StringToToken INSTANCE = new StringToToken();
 
-        public ConversionResult convertString( CharSequence input) {
+        @Override
+        public ConversionResult convertString(CharSequence input) {
             return new StringValue(Whitespace.collapseWhitespace(input), BuiltInAtomicType.TOKEN);
         }
 
         /*@Nullable*/
-        public ValidationFailure validate( CharSequence input) {
+        @Override
+        public ValidationFailure validate(CharSequence input) {
             return null;
         }
 
+        @Override
         public boolean isAlwaysSuccessful() {
             return true;
         }
@@ -264,7 +277,8 @@ public abstract class StringConverter extends Converter {
         public static final StringToLanguage INSTANCE = new StringToLanguage();
 
         
-        public ConversionResult convertString( CharSequence input) {
+        @Override
+        public ConversionResult convertString(CharSequence input) {
             CharSequence trimmed = Whitespace.trimWhitespace(input);
             if (!regex.matcher(trimmed).matches()) {
                 return new ValidationFailure("The value '" + input + "' is not a valid xs:language");
@@ -273,7 +287,8 @@ public abstract class StringConverter extends Converter {
         }
 
         /*@Nullable*/
-        public ValidationFailure validate( CharSequence input) {
+        @Override
+        public ValidationFailure validate(CharSequence input) {
             if (regex.matcher(Whitespace.trimWhitespace(input)).matches()) {
                 return null;
             } else {
@@ -300,7 +315,8 @@ public abstract class StringConverter extends Converter {
         }
 
         
-        public ConversionResult convertString( CharSequence input) {
+        @Override
+        public ConversionResult convertString(CharSequence input) {
             CharSequence trimmed = Whitespace.trimWhitespace(input);
             if (NameChecker.isValidNCName(trimmed)) {
                 return new StringValue(trimmed, targetType);
@@ -310,7 +326,8 @@ public abstract class StringConverter extends Converter {
         }
 
         /*@Nullable*/
-        public ValidationFailure validate( CharSequence input) {
+        @Override
+        public ValidationFailure validate(CharSequence input) {
             if (NameChecker.isValidNCName(Whitespace.trimWhitespace(input))) {
                 return null;
             } else {
@@ -328,7 +345,8 @@ public abstract class StringConverter extends Converter {
         public final static StringToNMTOKEN INSTANCE = new StringToNMTOKEN();
 
         
-        public ConversionResult convertString( CharSequence input) {
+        @Override
+        public ConversionResult convertString(CharSequence input) {
             CharSequence trimmed = Whitespace.trimWhitespace(input);
             if (NameChecker.isValidNmtoken(trimmed)) {
                 return new StringValue(trimmed, BuiltInAtomicType.NMTOKEN);
@@ -338,7 +356,8 @@ public abstract class StringConverter extends Converter {
         }
 
         /*@Nullable*/
-        public ValidationFailure validate( CharSequence input) {
+        @Override
+        public ValidationFailure validate(CharSequence input) {
             if (NameChecker.isValidNmtoken(Whitespace.trimWhitespace(input))) {
                 return null;
             } else {
@@ -360,7 +379,8 @@ public abstract class StringConverter extends Converter {
         }
 
         
-        public ConversionResult convertString( CharSequence input) {
+        @Override
+        public ConversionResult convertString(CharSequence input) {
             ValidationFailure vf = validate(input);
             if (vf == null) {
                 return new StringValue(Whitespace.trimWhitespace(input), BuiltInAtomicType.NAME);
@@ -370,7 +390,8 @@ public abstract class StringConverter extends Converter {
         }
 
         /*@Nullable*/
-        public ValidationFailure validate( CharSequence input) {
+        @Override
+        public ValidationFailure validate(CharSequence input) {
             // if it's valid as an NCName then it's OK
             CharSequence trimmed = Whitespace.trimWhitespace(input);
             if (NameChecker.isValidNCName(trimmed)) {
@@ -408,7 +429,8 @@ public abstract class StringConverter extends Converter {
         }
 
         
-        public ConversionResult convertString( CharSequence input) {
+        @Override
+        public ConversionResult convertString(CharSequence input) {
             CharSequence cs = Whitespace.applyWhitespaceNormalization(whitespaceAction, input);
             try {
                 cs = targetType.preprocess(cs);
@@ -425,7 +447,8 @@ public abstract class StringConverter extends Converter {
             }
         }
 
-        public ValidationFailure validate( CharSequence input) {
+        @Override
+        public ValidationFailure validate(CharSequence input) {
             CharSequence cs = Whitespace.applyWhitespaceNormalization(whitespaceAction, input);
             try {
                 cs = targetType.preprocess(cs);
@@ -453,7 +476,8 @@ public abstract class StringConverter extends Converter {
         }
 
         
-        public ConversionResult convertString( CharSequence input) {
+        @Override
+        public ConversionResult convertString(CharSequence input) {
             CharSequence cs = Whitespace.applyWhitespaceNormalization(whitespaceAction, input);
             ValidationFailure f = builtInValidator.validate(cs);
             if (f != null) {
@@ -486,7 +510,8 @@ public abstract class StringConverter extends Converter {
         }
 
         
-        public ConversionResult convertString( CharSequence input) {
+        @Override
+        public ConversionResult convertString(CharSequence input) {
             try {
                 float flt = (float) getConversionRules().getStringToDoubleConverter().stringToNumber(input);
                 return new FloatValue(flt);
@@ -505,7 +530,8 @@ public abstract class StringConverter extends Converter {
     public static class StringToDecimal extends StringConverter {
         public static final StringToDecimal INSTANCE = new StringToDecimal();
 
-        public ConversionResult convertString( CharSequence input) {
+        @Override
+        public ConversionResult convertString(CharSequence input) {
             return BigDecimalValue.makeDecimalValue(input, true);
         }
 
@@ -532,7 +558,8 @@ public abstract class StringConverter extends Converter {
         }
 
         
-        public ConversionResult convertString( CharSequence input) {
+        @Override
+        public ConversionResult convertString(CharSequence input) {
             return IntegerValue.stringToInteger(input);
         }
 
@@ -555,7 +582,8 @@ public abstract class StringConverter extends Converter {
         }
 
         
-        public ConversionResult convertString( CharSequence input) {
+        @Override
+        public ConversionResult convertString(CharSequence input) {
             ConversionResult iv = IntegerValue.stringToInteger(input);
             if (iv instanceof Int64Value) {
                 boolean ok = IntegerValue.checkRange(((Int64Value) iv).longValue(), targetType);
@@ -586,7 +614,8 @@ public abstract class StringConverter extends Converter {
     public static class StringToDuration extends StringConverter {
         public static final StringToDuration INSTANCE = new StringToDuration();
 
-        public ConversionResult convertString( CharSequence input) {
+        @Override
+        public ConversionResult convertString(CharSequence input) {
             return DurationValue.makeDuration(input);
         }
     }
@@ -599,6 +628,7 @@ public abstract class StringConverter extends Converter {
     public static class StringToDayTimeDuration extends StringConverter {
         public static final StringToDayTimeDuration INSTANCE = new StringToDayTimeDuration();
 
+        @Override
         public ConversionResult convertString(CharSequence input) {
             return DayTimeDurationValue.makeDayTimeDurationValue(input);
         }
@@ -611,7 +641,8 @@ public abstract class StringConverter extends Converter {
     public static class StringToYearMonthDuration extends StringConverter {
         public static final StringToYearMonthDuration INSTANCE = new StringToYearMonthDuration();
 
-        public ConversionResult convertString( CharSequence input) {
+        @Override
+        public ConversionResult convertString(CharSequence input) {
             return YearMonthDurationValue.makeYearMonthDurationValue(input);
         }
     }
@@ -626,7 +657,8 @@ public abstract class StringConverter extends Converter {
         }
 
         
-        public ConversionResult convertString( CharSequence input) {
+        @Override
+        public ConversionResult convertString(CharSequence input) {
             return DateTimeValue.makeDateTimeValue(input, getConversionRules());
         }
     }
@@ -641,7 +673,8 @@ public abstract class StringConverter extends Converter {
         }
 
         
-        public ConversionResult convertString( CharSequence input) {
+        @Override
+        public ConversionResult convertString(CharSequence input) {
             ConversionResult val = DateTimeValue.makeDateTimeValue(input, getConversionRules());
             if (val instanceof DateTimeValue) {
                 if (!((DateTimeValue) val).hasTimezone()) {
@@ -664,7 +697,8 @@ public abstract class StringConverter extends Converter {
         }
 
         
-        public ConversionResult convertString( CharSequence input) {
+        @Override
+        public ConversionResult convertString(CharSequence input) {
             return DateValue.makeDateValue(input, getConversionRules());
         }
     }
@@ -676,7 +710,8 @@ public abstract class StringConverter extends Converter {
     public static class StringToGMonth extends StringConverter {
         public static final StringToGMonth INSTANCE = new StringToGMonth();
 
-        public ConversionResult convertString( CharSequence input) {
+        @Override
+        public ConversionResult convertString(CharSequence input) {
             return GMonthValue.makeGMonthValue(input);
         }
     }
@@ -691,7 +726,8 @@ public abstract class StringConverter extends Converter {
         }
 
         
-        public ConversionResult convertString( CharSequence input) {
+        @Override
+        public ConversionResult convertString(CharSequence input) {
             return GYearMonthValue.makeGYearMonthValue(input, getConversionRules());
         }
     }
@@ -706,7 +742,8 @@ public abstract class StringConverter extends Converter {
         }
 
         
-        public ConversionResult convertString( CharSequence input) {
+        @Override
+        public ConversionResult convertString(CharSequence input) {
             return GYearValue.makeGYearValue(input, getConversionRules());
         }
     }
@@ -718,6 +755,7 @@ public abstract class StringConverter extends Converter {
     public static class StringToGMonthDay extends StringConverter {
         public static final StringToGMonthDay INSTANCE = new StringToGMonthDay();
 
+        @Override
         public ConversionResult convertString(CharSequence input) {
             return GMonthDayValue.makeGMonthDayValue(input);
         }
@@ -731,7 +769,8 @@ public abstract class StringConverter extends Converter {
         public static final StringToGDay INSTANCE = new StringToGDay();
 
         
-        public ConversionResult convertString( CharSequence input) {
+        @Override
+        public ConversionResult convertString(CharSequence input) {
             return GDayValue.makeGDayValue(input);
         }
     }
@@ -743,6 +782,7 @@ public abstract class StringConverter extends Converter {
     public static class StringToTime extends StringConverter {
         public static final StringToTime INSTANCE = new StringToTime();
 
+        @Override
         public ConversionResult convertString(CharSequence input) {
             return TimeValue.makeTimeValue(input);
         }
@@ -755,7 +795,8 @@ public abstract class StringConverter extends Converter {
     public static class StringToBoolean extends StringConverter {
         public static final StringToBoolean INSTANCE = new StringToBoolean();
 
-        public ConversionResult convertString( CharSequence input) {
+        @Override
+        public ConversionResult convertString(CharSequence input) {
             return BooleanValue.fromString(input);
         }
     }
@@ -767,7 +808,8 @@ public abstract class StringConverter extends Converter {
     public static class StringToHexBinary extends StringConverter {
         public static final StringToHexBinary INSTANCE = new StringToHexBinary();
 
-        public ConversionResult convertString( CharSequence input) {
+        @Override
+        public ConversionResult convertString(CharSequence input) {
             try {
                 return new HexBinaryValue(input);
             } catch (XPathException e) {
@@ -783,7 +825,8 @@ public abstract class StringConverter extends Converter {
     public static class StringToBase64Binary extends StringConverter {
         public static final StringToBase64Binary INSTANCE = new StringToBase64Binary();
 
-        public ConversionResult convertString( CharSequence input) {
+        @Override
+        public ConversionResult convertString(CharSequence input) {
             try {
                 return new Base64BinaryValue(input);
             } catch (XPathException e) {
@@ -805,6 +848,7 @@ public abstract class StringConverter extends Converter {
             super(rules);
         }
 
+        @Override
         public StringToQName setNamespaceResolver(NamespaceResolver resolver) {
             StringToQName c = new StringToQName(getConversionRules());
             c.nsResolver = resolver;
@@ -817,7 +861,8 @@ public abstract class StringConverter extends Converter {
         }
 
         
-        public ConversionResult convertString( CharSequence input) {
+        @Override
+        public ConversionResult convertString(CharSequence input) {
             if (nsResolver == null) {
                 throw new UnsupportedOperationException("Cannot validate a QName without a namespace resolver");
             }
@@ -864,7 +909,8 @@ public abstract class StringConverter extends Converter {
         }
 
         
-        public ConversionResult convertString( CharSequence input) {
+        @Override
+        public ConversionResult convertString(CharSequence input) {
             if (getNamespaceResolver() == null) {
                 throw new UnsupportedOperationException("Cannot validate a NOTATION without a namespace resolver");
             }
@@ -898,7 +944,8 @@ public abstract class StringConverter extends Converter {
         }
 
         
-        public ConversionResult convertString( CharSequence input) {
+        @Override
+        public ConversionResult convertString(CharSequence input) {
             if (getConversionRules().isValidURI(input)) {
                 return new AnyURIValue(input);
             } else {

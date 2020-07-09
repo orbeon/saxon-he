@@ -64,11 +64,13 @@ public class RangeIterator implements AtomicIterator<IntegerValue>,
         limit = end;
     }
 
+    @Override
     public boolean hasNext() {
         return currentValue < limit;
     }
 
     /*@Nullable*/
+    @Override
     public IntegerValue next() {
         if (++currentValue > limit) {
             return null;
@@ -76,6 +78,7 @@ public class RangeIterator implements AtomicIterator<IntegerValue>,
         return Int64Value.makeIntegerValue(currentValue);
     }
 
+    @Override
     public int getLength() {
         return (int) ((limit - start) + 1);
     }
@@ -90,10 +93,12 @@ public class RangeIterator implements AtomicIterator<IntegerValue>,
      *         It is acceptable for the properties of the iterator to change depending on its state.
      */
 
+    @Override
     public EnumSet<Property> getProperties() {
         return EnumSet.of(Property.LOOKAHEAD, Property.LAST_POSITION_FINDER, Property.GROUNDED);
     }
 
+    @Override
     public AtomicIterator<IntegerValue> getReverseIterator() {
         try {
             return new ReverseRangeIterator(limit, start);
@@ -109,6 +114,7 @@ public class RangeIterator implements AtomicIterator<IntegerValue>,
      * @return the corresponding Value
      */
 
+    @Override
     public GroundedValue materialize() {
         return new IntegerRange(start, limit);
     }

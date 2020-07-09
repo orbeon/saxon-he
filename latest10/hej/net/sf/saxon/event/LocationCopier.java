@@ -35,6 +35,7 @@ public class LocationCopier implements CopyInformee<Location> {
      * @param element the node being copied, which must be an element node
      */
 
+    @Override
     public Location notifyElementNode(NodeInfo element) {
         String systemId = wholeDocument ? element.getSystemId() : element.getBaseURI();
         // The logic behind this is that if we are copying the whole document, we will be copying all

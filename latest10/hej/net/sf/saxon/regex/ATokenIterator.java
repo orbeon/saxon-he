@@ -32,6 +32,7 @@ public class ATokenIterator implements AtomicIterator {
         prevEnd = 0;
     }
 
+    @Override
     public StringValue next() {
         if (prevEnd < 0) {
             current = null;

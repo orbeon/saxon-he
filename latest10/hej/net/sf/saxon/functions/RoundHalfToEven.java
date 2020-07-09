@@ -25,6 +25,7 @@ public final class RoundHalfToEven extends SystemFunction {
      * Determine the cardinality of the function.
      */
 
+    @Override
     public int getCardinality(Expression[] arguments) {
         return arguments[0].getCardinality();
     }
@@ -38,6 +39,7 @@ public final class RoundHalfToEven extends SystemFunction {
      * @throws net.sf.saxon.trans.XPathException
      *          if a dynamic error occurs during the evaluation of the expression
      */
+    @Override
     public ZeroOrOne call(XPathContext context, Sequence[] arguments) throws XPathException {
         NumericValue val0 = (NumericValue) arguments[0].head();
         if (val0 == null) {
@@ -58,6 +60,7 @@ public final class RoundHalfToEven extends SystemFunction {
         return new One(val0.roundHalfToEven(scale));
     }
 
+    @Override
     public String getCompilerName() {
         return "RoundingCompiler";
     }

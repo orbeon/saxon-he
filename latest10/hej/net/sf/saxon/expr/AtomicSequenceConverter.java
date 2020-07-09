@@ -79,6 +79,7 @@ public class AtomicSequenceConverter extends UnaryExpression {
             // source type not known statically; create a converter that decides at run-time
             converter = new Converter(rules) {
                 /*@NotNull*/
+                @Override
                 public ConversionResult convert(/*@NotNull*/ AtomicValue input) {
                     Converter converter = rules.getConverter(input.getPrimitiveType(), (AtomicType) requiredItemType);
                     if (converter == null) {
@@ -92,6 +93,7 @@ public class AtomicSequenceConverter extends UnaryExpression {
         return converter;
     }
 
+    @Override
     protected OperandRole getOperandRole() {
         return OperandRole.ATOMIC_SEQUENCE;
     }
@@ -156,6 +158,7 @@ public class AtomicSequenceConverter extends UnaryExpression {
      */
 
     /*@NotNull*/
+    @Override
     public Expression simplify() throws XPathException {
         Expression operand = getBaseExpression().simplify();
         setBaseExpression(operand);
@@ -178,6 +181,7 @@ public class AtomicSequenceConverter extends UnaryExpression {
      */
 
     /*@NotNull*/
+    @Override
     public Expression typeCheck(ExpressionVisitor visitor, ContextItemStaticInfo contextInfo) throws XPathException {
         typeCheckChildren(visitor, contextInfo);
         Configuration config = visitor.getConfiguration();
@@ -256,6 +260,7 @@ public class AtomicSequenceConverter extends UnaryExpression {
      * @return {@link StaticProperty#NO_NODES_NEWLY_CREATED}.
      */
 
+    @Override
     public int computeSpecialProperties() {
         int p = super.computeSpecialProperties() | StaticProperty.NO_NODES_NEWLY_CREATED;
         if (requiredItemType == BuiltInAtomicType.UNTYPED_ATOMIC) {
@@ -280,6 +285,7 @@ public class AtomicSequenceConverter extends UnaryExpression {
      */
 
     /*@NotNull*/
+    @Override
     public Expression copy(RebindingMap rebindings) {
         AtomicSequenceConverter atomicConverter = new AtomicSequenceConverter(getBaseExpression().copy(rebindings), requiredItemType);
         ExpressionTool.copyLocationInfo(this, atomicConverter);
@@ -293,6 +299,7 @@ public class AtomicSequenceConverter extends UnaryExpression {
      */
 
     /*@NotNull*/
+    @Override
     public SequenceIterator iterate(final XPathContext context) throws XPathException {
         SequenceIterator base = getBaseExpression().iterate(context);
         Converter conv = getConverterDynamically(context);
@@ -324,6 +331,7 @@ public class AtomicSequenceConverter extends UnaryExpression {
             this.errorCode = code;
         }
 
+        @Override
         public AtomicValue mapItem(Item item) throws XPathException {
             ConversionResult result = converter.convert((AtomicValue)item);
             if (errorCode != null && result instanceof ValidationFailure) {
@@ -339,6 +347,7 @@ public class AtomicSequenceConverter extends UnaryExpression {
 
     public static class ToStringMappingFunction
             implements ItemMappingFunction {
+        @Override
         public StringValue mapItem(Item item) {
             return StringValue.makeStringValue(item.getStringValueCS());
         }
@@ -349,6 +358,7 @@ public class AtomicSequenceConverter extends UnaryExpression {
      * Evaluate as an Item. This should only be called if the AtomicSequenceConverter has cardinality zero-or-one
      */
 
+    @Override
     public AtomicValue evaluateItem(XPathContext context) throws XPathException {
         Converter conv = getConverterDynamically(context);
         AtomicValue item = (AtomicValue) getBaseExpression().evaluateItem(context);
@@ -371,6 +381,7 @@ public class AtomicSequenceConverter extends UnaryExpression {
      */
 
     /*@NotNull*/
+    @Override
     public ItemType getItemType() {
         return requiredItemType;
     }
@@ -379,6 +390,7 @@ public class AtomicSequenceConverter extends UnaryExpression {
      * Determine the static cardinality of the expression
      */
 
+    @Override
     public int computeCardinality() {
         return getBaseExpression().getCardinality();
     }
@@ -425,6 +437,7 @@ public class AtomicSequenceConverter extends UnaryExpression {
      * is written to the supplied output destination.
      */
 
+    @Override
     public void export(ExpressionPresenter destination) throws XPathException {
         destination.startElement("convert", this);
         destination.emitAttribute("from", AlphaCode.fromItemType(getBaseExpression().getItemType()));

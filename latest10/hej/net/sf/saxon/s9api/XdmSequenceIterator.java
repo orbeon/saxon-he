@@ -69,6 +69,7 @@ public class XdmSequenceIterator<T extends XdmItem> implements Iterator<T> {
      * @throws SaxonApiUncheckedException if a dynamic error occurs during XPath evaluation that
      *                                    is detected at this point.
      */
+    @Override
     public boolean hasNext() throws SaxonApiUncheckedException {
         switch (state) {
             case ON_ITEM:
@@ -103,6 +104,7 @@ public class XdmSequenceIterator<T extends XdmItem> implements Iterator<T> {
      * @throws java.util.NoSuchElementException
      *          iteration has no more elements.
      */
+    @Override
     public T next() {
         switch (state) {
             case ON_ITEM:
@@ -128,6 +130,7 @@ public class XdmSequenceIterator<T extends XdmItem> implements Iterator<T> {
      * @throws UnsupportedOperationException always
      */
 
+    @Override
     public void remove() {
         throw new UnsupportedOperationException();
     }

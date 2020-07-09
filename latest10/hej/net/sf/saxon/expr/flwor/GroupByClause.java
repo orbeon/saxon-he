@@ -69,6 +69,7 @@ public class GroupByClause extends Clause {
     }
 
 
+    @Override
     public GroupByClause copy(FLWORExpression flwor, RebindingMap rebindings) {
         GroupByClause g2 = new GroupByClause(config);
         g2.setLocation(getLocation());
@@ -91,7 +92,7 @@ public class GroupByClause extends Clause {
      */
 
     public void initRetainedTupleExpression(FLWORExpression flwor, TupleExpression expr) {
-        retainedTupleOp = new Operand(flwor, expr, OperandRole.REPEAT_NAVIGATE_CONSTRAINED);
+        retainedTupleOp = new Operand(flwor, expr, OperandRole.FLWOR_TUPLE_CONSTRAINED);
     }
 
     /**
@@ -143,7 +144,7 @@ public class GroupByClause extends Clause {
      */
 
     public void initGroupingTupleExpression(FLWORExpression flwor, TupleExpression expr) {
-        groupingTupleOp = new Operand(flwor, expr, OperandRole.REPEAT_NAVIGATE_CONSTRAINED);
+        groupingTupleOp = new Operand(flwor, expr, OperandRole.FLWOR_TUPLE_CONSTRAINED);
     }
 
     /**
@@ -187,6 +188,7 @@ public class GroupByClause extends Clause {
      * @return the variable bindings
      */
 
+    @Override
     public LocalVariableBinding[] getRangeVariables() {
         return bindings;
     }

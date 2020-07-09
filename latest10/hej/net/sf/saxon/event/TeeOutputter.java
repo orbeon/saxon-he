@@ -85,6 +85,7 @@ public class TeeOutputter extends SequenceReceiver {
      * Output an item (atomic value or node) to the sequence
      */
 
+    @Override
     public void append(Item item, Location locationId, int properties) throws XPathException {
         seq1.append(item, locationId, properties);
         seq2.append(item, locationId, properties);
@@ -101,6 +102,7 @@ public class TeeOutputter extends SequenceReceiver {
      * Notify the start of a document node
      */
 
+    @Override
     public void startDocument(int properties) throws XPathException {
         seq1.startDocument(properties);
         seq2.startDocument(properties);
@@ -110,6 +112,7 @@ public class TeeOutputter extends SequenceReceiver {
      * Notify the end of a document node
      */
 
+    @Override
     public void endDocument() throws XPathException {
         seq1.endDocument();
         seq2.endDocument();
@@ -119,6 +122,7 @@ public class TeeOutputter extends SequenceReceiver {
      * Notify the start of an element
      */
 
+    @Override
     public void startElement(NodeName elemName, SchemaType type,
                              AttributeMap attributes, NamespaceMap namespaces,
                              Location location, int properties)
@@ -134,6 +138,7 @@ public class TeeOutputter extends SequenceReceiver {
      * element is ending.
      */
 
+    @Override
     public void endElement() throws XPathException {
         seq1.endElement();
         seq2.endElement();
@@ -149,6 +154,7 @@ public class TeeOutputter extends SequenceReceiver {
      * @param properties Bit significant value. The following bits are defined:
      */
 
+    @Override
     public void characters(CharSequence chars, Location locationId, int properties) throws XPathException {
         seq1.characters(chars, locationId, properties);
         seq2.characters(chars, locationId, properties);
@@ -170,6 +176,7 @@ public class TeeOutputter extends SequenceReceiver {
      * @throws IllegalArgumentException the content is invalid for an XML processing instruction
      */
 
+    @Override
     public void processingInstruction(String name, CharSequence data, Location locationId, int properties) throws XPathException {
         seq1.processingInstruction(name, data, locationId, properties);
         seq2.processingInstruction(name, data, locationId, properties);
@@ -190,6 +197,7 @@ public class TeeOutputter extends SequenceReceiver {
      * @throws IllegalArgumentException the content is invalid for an XML comment
      */
 
+    @Override
     public void comment(CharSequence content, Location locationId, int properties) throws XPathException {
         seq1.comment(content, locationId, properties);
         seq2.comment(content, locationId, properties);
@@ -199,6 +207,7 @@ public class TeeOutputter extends SequenceReceiver {
      * Notify the end of the event stream
      */
 
+    @Override
     public void close() throws XPathException {
         seq1.close();
         seq2.close();
@@ -212,6 +221,7 @@ public class TeeOutputter extends SequenceReceiver {
      *         may supply untyped nodes instead of supplying the type annotation
      */
 
+    @Override
     public boolean usesTypeAnnotations() {
         return seq1.usesTypeAnnotations() || seq2.usesTypeAnnotations();
     }

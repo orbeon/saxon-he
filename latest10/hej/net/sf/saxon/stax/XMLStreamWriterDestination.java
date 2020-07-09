@@ -64,6 +64,7 @@ public class XMLStreamWriterDestination extends AbstractDestination {
      * @throws SaxonApiException if the Receiver cannot be created
      */
 
+    @Override
     public Receiver getReceiver(PipelineConfiguration pipe, SerializationProperties params) throws SaxonApiException {
         Receiver r = new ReceiverToXMLStreamWriter(writer);
         r.setPipelineConfiguration(pipe);
@@ -81,6 +82,7 @@ public class XMLStreamWriterDestination extends AbstractDestination {
      */
 
 
+    @Override
     public void close() throws SaxonApiException {
         try {
             writer.close();

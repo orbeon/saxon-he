@@ -75,6 +75,7 @@ public class TraceExpression extends Instruction implements Traceable {
      * @return the value of the property
      */
 
+    @Override
     public Object getProperty(String name) {
         return properties.get(name);
     }
@@ -87,6 +88,7 @@ public class TraceExpression extends Instruction implements Traceable {
      * @return an iterator over the properties
      */
 
+    @Override
     public Iterator<String> getProperties() {
         return properties.keySet().iterator();
     }
@@ -115,6 +117,7 @@ public class TraceExpression extends Instruction implements Traceable {
     }
 
     /*@NotNull*/
+    @Override
     public Expression copy(RebindingMap rebindings) {
         TraceExpression t = new TraceExpression(getChild().copy(rebindings));
         t.setLocation(getLocation());   // Bug 3034
@@ -156,6 +159,7 @@ public class TraceExpression extends Instruction implements Traceable {
         getChild().checkForUpdatingSubexpressions();
     }
 
+    @Override
     public int getImplementationMethod() {
         return getChild().getImplementationMethod();
     }
@@ -171,6 +175,7 @@ public class TraceExpression extends Instruction implements Traceable {
      * @return either null, or a tail call that the caller must invoke on return
      * @throws XPathException if execution of the target expression fails
      */
+    @Override
     public TailCall processLeavingTail(Outputter output, XPathContext context) throws XPathException {
         Controller controller = context.getController();
         assert controller != null;
@@ -195,6 +200,7 @@ public class TraceExpression extends Instruction implements Traceable {
      */
 
     /*@NotNull*/
+    @Override
     public ItemType getItemType() {
         return getChild().getItemType();
     }
@@ -211,6 +217,7 @@ public class TraceExpression extends Instruction implements Traceable {
      * information).
      */
 
+    @Override
     public int getCardinality() {
         return getChild().getCardinality();
     }
@@ -228,6 +235,7 @@ public class TraceExpression extends Instruction implements Traceable {
      * the expression
      */
 
+    @Override
     public int getDependencies() {
         return getChild().getDependencies();
     }
@@ -236,6 +244,7 @@ public class TraceExpression extends Instruction implements Traceable {
      * Determine whether this instruction potentially creates new nodes.
      */
 
+    @Override
     public final boolean mayCreateNewNodes() {
         return !getChild().hasSpecialProperty(StaticProperty.NO_NODES_NEWLY_CREATED);
     }
@@ -266,6 +275,7 @@ public class TraceExpression extends Instruction implements Traceable {
      *                                           expression
      */
 
+    @Override
     public Item evaluateItem(XPathContext context) throws XPathException {
         Controller controller = context.getController();
         assert controller != null;
@@ -297,6 +307,7 @@ public class TraceExpression extends Instruction implements Traceable {
      */
 
     /*@NotNull*/
+    @Override
     public SequenceIterator iterate(XPathContext context) throws XPathException {
         Controller controller = context.getController();
         assert controller != null;
@@ -313,6 +324,7 @@ public class TraceExpression extends Instruction implements Traceable {
 
     }
 
+    @Override
     public int getInstructionNameCode() {
         if (getChild() instanceof Instruction) {
             return ((Instruction) getChild()).getInstructionNameCode();
@@ -327,6 +339,7 @@ public class TraceExpression extends Instruction implements Traceable {
      * are omitted from the generated SEF file.
      */
 
+    @Override
     public void export(ExpressionPresenter out) throws XPathException {
         getChild().export(out);
     }
@@ -340,6 +353,7 @@ public class TraceExpression extends Instruction implements Traceable {
      * @param pul     the pending update list to which the results should be written
      */
 
+    @Override
     public void evaluatePendingUpdates(XPathContext context, PendingUpdateList pul) throws XPathException {
         Controller controller = context.getController();
         assert controller != null;

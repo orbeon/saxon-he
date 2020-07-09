@@ -25,6 +25,7 @@ import java.util.EnumSet;
 
 public class XSLGlobalParam extends XSLGlobalVariable {
 
+    @Override
     protected EnumSet<SourceBinding.BindingProperty> getPermittedAttributes() {
         return EnumSet.of(
                 SourceBinding.BindingProperty.REQUIRED,
@@ -44,6 +45,7 @@ public class XSLGlobalParam extends XSLGlobalVariable {
      * @return the declared visibility, or "public" if not declared
      */
 
+    @Override
     public Visibility getVisibility()  {
         String statik = getAttributeValue("static");
         if (statik == null) {
@@ -54,6 +56,7 @@ public class XSLGlobalParam extends XSLGlobalVariable {
         }
     }
 
+    @Override
     public void validate(ComponentDeclaration decl) throws XPathException {
 
         if (sourceBinding.hasProperty(SourceBinding.BindingProperty.REQUIRED)) {
@@ -80,6 +83,7 @@ public class XSLGlobalParam extends XSLGlobalVariable {
      * this global variable
      */
 
+    @Override
     public void compileDeclaration(Compilation compilation, ComponentDeclaration decl) throws XPathException {
         if (sourceBinding.isStatic()) {
             super.compileDeclaration(compilation, decl);
@@ -118,6 +122,7 @@ public class XSLGlobalParam extends XSLGlobalVariable {
      * the actual value in advance.
      */
 
+    @Override
     public SequenceType getRequiredType() {
         SequenceType declaredType = sourceBinding.getDeclaredType();
         if (declaredType != null) {

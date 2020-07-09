@@ -32,10 +32,12 @@ public class TinyBuilderMonitor extends BuilderMonitor {
         this.builder = builder;
     }
 
+    @Override
     public void markNextNode(int nodeKind) {
         mark = nodeKind;
     }
 
+    @Override
     public void startDocument(int properties) throws XPathException {
         if (mark == Type.DOCUMENT) {
             markedNodeNr = builder.getTree().getNumberOfNodes();
@@ -44,6 +46,7 @@ public class TinyBuilderMonitor extends BuilderMonitor {
         super.startDocument(properties);
     }
 
+    @Override
     public void startElement(NodeName elemName, SchemaType type,
                              AttributeMap attributes, NamespaceMap namespaces,
                              Location location, int properties) throws XPathException {
@@ -54,6 +57,7 @@ public class TinyBuilderMonitor extends BuilderMonitor {
         super.startElement(elemName, type, attributes, namespaces, location, properties);
     }
 
+    @Override
     public void characters(CharSequence chars, Location locationId, int properties) throws XPathException {
         if (mark == Type.TEXT) {
             markedNodeNr = builder.getTree().getNumberOfNodes();
@@ -62,6 +66,7 @@ public class TinyBuilderMonitor extends BuilderMonitor {
         super.characters(chars, locationId, properties);
     }
 
+    @Override
     public void comment(CharSequence chars, Location locationId, int properties) throws XPathException {
         if (mark == Type.COMMENT) {
             markedNodeNr = builder.getTree().getNumberOfNodes();
@@ -70,6 +75,7 @@ public class TinyBuilderMonitor extends BuilderMonitor {
         super.comment(chars, locationId, properties);
     }
 
+    @Override
     public void processingInstruction(String target, CharSequence data, Location locationId, int properties) throws XPathException {
         if (mark == Type.PROCESSING_INSTRUCTION) {
             markedNodeNr = builder.getTree().getNumberOfNodes();
@@ -79,6 +85,7 @@ public class TinyBuilderMonitor extends BuilderMonitor {
     }
 
     /*@Nullable*/
+    @Override
     public NodeInfo getMarkedNode() {
         if (markedNodeNr != -1) {
             return builder.getTree().getNode(markedNodeNr);

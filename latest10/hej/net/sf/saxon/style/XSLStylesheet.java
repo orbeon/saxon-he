@@ -24,6 +24,7 @@ import net.sf.saxon.type.Type;
 public class XSLStylesheet extends XSLModuleRoot {
 
 
+    @Override
     protected boolean mayContainParam() {
         return true;
     }
@@ -33,6 +34,7 @@ public class XSLStylesheet extends XSLModuleRoot {
      * Prepare the attributes on the stylesheet element
      */
 
+    @Override
     public void prepareAttributes() {
 
         processDefaultCollationAttribute();
@@ -92,6 +94,7 @@ public class XSLStylesheet extends XSLModuleRoot {
      * @param decl Not used
      */
 
+    @Override
     public void validate(ComponentDeclaration decl) throws XPathException {
         if (validationError != null) {
             compileError(validationError);

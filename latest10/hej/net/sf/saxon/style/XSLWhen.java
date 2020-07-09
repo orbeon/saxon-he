@@ -28,6 +28,7 @@ public class XSLWhen extends StyleElement {
     }
 
 
+    @Override
     public void prepareAttributes() {
         for (AttributeInfo att : attributes()) {
             NodeName attName = att.getNodeName();
@@ -48,6 +49,7 @@ public class XSLWhen extends StyleElement {
         }
     }
 
+    @Override
     public void validate(ComponentDeclaration decl) throws XPathException {
         if (!(getParent() instanceof XSLChoose)) {
             compileError("xsl:when must be immediately within xsl:choose", "XTSE0010");
@@ -62,17 +64,20 @@ public class XSLWhen extends StyleElement {
      * Mark tail-recursive calls on stylesheet functions. For most instructions, this does nothing.
      */
 
+    @Override
     public boolean markTailCalls() {
         StyleElement last = getLastChildInstruction();
         return last != null && last.markTailCalls();
     }
 
     /*@Nullable*/
+    @Override
     public Expression compile(Compilation exec, ComponentDeclaration decl) throws XPathException {
         return null;
         // compilation is handled from the xsl:choose element
     }
 
+    @Override
     public Expression compileSequenceConstructor(Compilation compilation, ComponentDeclaration decl,
                                                  boolean includeParams) throws XPathException {
         if (select == null) {

@@ -63,6 +63,7 @@ final class NamedChildIterator implements AxisIterator, LookaheadIterator, Atomi
      */
 
     /*@Nullable*/
+    @Override
     public NodeInfo next() {
         if (needToAdvance) {
             final int thisNode = nextNodeNr;
@@ -90,6 +91,7 @@ final class NamedChildIterator implements AxisIterator, LookaheadIterator, Atomi
      * @throws XPathException
      *          if a failure occurs reading or atomizing the next value
      */
+    @Override
     public AtomicSequence nextAtomizedValue() throws XPathException {
         if (needToAdvance) {
             final int thisNode = nextNodeNr;
@@ -117,6 +119,7 @@ final class NamedChildIterator implements AxisIterator, LookaheadIterator, Atomi
      * @return true if there are more items in the sequence
      */
 
+    @Override
     public boolean hasNext() {
         int n = nextNodeNr;
         if (needToAdvance) {
@@ -133,6 +136,7 @@ final class NamedChildIterator implements AxisIterator, LookaheadIterator, Atomi
         }
     }
 
+    @Override
     public EnumSet<Property> getProperties() {
         return EnumSet.of(Property.LOOKAHEAD, Property.ATOMIZING);
     }

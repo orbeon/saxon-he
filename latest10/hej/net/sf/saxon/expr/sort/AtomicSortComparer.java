@@ -83,6 +83,7 @@ public class AtomicSortComparer implements AtomicComparer {
         this.itemType = itemType;
     }
 
+    @Override
     public StringCollator getCollator() {
         return collator;
     }
@@ -95,6 +96,7 @@ public class AtomicSortComparer implements AtomicComparer {
      *         is known. The original AtomicComparer is not modified
      */
 
+    @Override
     public AtomicComparer provideContext(XPathContext context) {
         return new AtomicSortComparer(collator, itemType, context);
     }
@@ -134,6 +136,7 @@ public class AtomicSortComparer implements AtomicComparer {
      * @throws ClassCastException if the objects are not comparable
      */
 
+    @Override
     public int compareAtomicValues(AtomicValue a, AtomicValue b) throws NoDynamicContextException {
 
         if (a == null) {
@@ -219,11 +222,13 @@ public class AtomicSortComparer implements AtomicComparer {
      * @throws ClassCastException if the objects are not comparable
      */
 
+    @Override
     public boolean comparesEqual(AtomicValue a, AtomicValue b) throws NoDynamicContextException {
         return compareAtomicValues(a, b) == 0;
     }
 
     public static AtomicMatchKey COLLATION_KEY_NaN = new AtomicMatchKey() {
+        @Override
         public AtomicValue asAtomic() {
         // The logic here is to choose a value that compares equal to itself but not equal to any other
         // number. We use StructuredQName because it has a simple equals() method.
@@ -238,6 +243,7 @@ public class AtomicSortComparer implements AtomicComparer {
      *
      * @return a string representation of the AtomicComparer
      */
+    @Override
     public String save() {
         return "AtSC|" + itemType + "|" + getCollator().getCollationURI();
     }

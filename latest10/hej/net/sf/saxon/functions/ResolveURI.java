@@ -36,6 +36,7 @@ public class ResolveURI extends SystemFunction {
      * @throws net.sf.saxon.trans.XPathException if a dynamic error occurs during the evaluation of the expression
      */
     /*@Nullable*/
+    @Override
     public ZeroOrOne call(XPathContext context, Sequence[] arguments) throws XPathException {
         AtomicValue arg0 = (AtomicValue) arguments[0].head();
         if (arg0 == null) {

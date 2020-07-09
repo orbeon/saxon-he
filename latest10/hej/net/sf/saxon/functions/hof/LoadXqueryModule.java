@@ -61,6 +61,7 @@ public class LoadXqueryModule extends SystemFunction implements Callable {
      * @return a suitable context for evaluating the function (which may or may
      * not be the same as the caller's context)
      */
+    @Override
     public XPathContext makeNewContext(XPathContext callingContext, ContextOriginator originator) {
         return callingContext;
     }
@@ -74,6 +75,7 @@ public class LoadXqueryModule extends SystemFunction implements Callable {
      * @throws net.sf.saxon.trans.XPathException if a dynamic error occurs within the function
      */
 
+    @Override
     public MapItem call(XPathContext context, Sequence[] args) throws XPathException {
         Sequence xqueryVersionOption = null;
         Sequence locationHintsOption = null;

@@ -36,6 +36,7 @@ public class Numberer_he extends Numberer_en {
      *         is invalid, the number is formatted as if the string() function were used.
      */
 
+    @Override
     public String format(long number,
                          UnicodeString picture,
                          NumericGroupFormatter numGroupFormatter,

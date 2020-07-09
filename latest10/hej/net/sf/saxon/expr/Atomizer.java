@@ -74,6 +74,7 @@ public final class Atomizer extends UnaryExpression {
         }
     }
 
+    @Override
     protected OperandRole getOperandRole() {
         return OperandRole.ATOMIC_SEQUENCE;
     }
@@ -87,6 +88,7 @@ public final class Atomizer extends UnaryExpression {
      *         {@link #PROCESS_METHOD}
      */
 
+    @Override
     public int getImplementationMethod() {
         return ITERATE_METHOD | WATCH_METHOD;
     }
@@ -108,6 +110,7 @@ public final class Atomizer extends UnaryExpression {
      */
 
     /*@NotNull*/
+    @Override
     public Expression simplify() throws XPathException {
         //untyped = !getContainer().getPackageData().isSchemaAware();
         untyped = !getPackageData().isSchemaAware();
@@ -160,6 +163,7 @@ public final class Atomizer extends UnaryExpression {
      */
 
     /*@NotNull*/
+    @Override
     public Expression typeCheck(ExpressionVisitor visitor, ContextItemStaticInfo contextInfo) throws XPathException {
         getOperand().typeCheck(visitor, contextInfo);
         untyped = untyped | !visitor.getStaticContext().getPackageData().isSchemaAware();
@@ -242,6 +246,7 @@ public final class Atomizer extends UnaryExpression {
      */
 
     /*@NotNull*/
+    @Override
     public Expression optimize(ExpressionVisitor visitor, ContextItemStaticInfo contextInfo) throws XPathException {
         Expression exp = super.optimize(visitor, contextInfo);
         if (exp == this) {
@@ -313,6 +318,7 @@ public final class Atomizer extends UnaryExpression {
      * @return {@link StaticProperty#NO_NODES_NEWLY_CREATED}.
      */
 
+    @Override
     public int computeSpecialProperties() {
         int p = super.computeSpecialProperties();
         p &= ~StaticProperty.NODESET_PROPERTIES;
@@ -337,6 +343,7 @@ public final class Atomizer extends UnaryExpression {
      */
 
     /*@NotNull*/
+    @Override
     public Expression copy(RebindingMap rebindings) {
         Atomizer copy = new Atomizer(getBaseExpression().copy(rebindings), roleDiagnostic);
         copy.untyped = untyped;
@@ -355,6 +362,7 @@ public final class Atomizer extends UnaryExpression {
      */
 
     /*@NotNull*/
+    @Override
     public SequenceIterator iterate(XPathContext context) throws XPathException {
         try {
             SequenceIterator base = getBaseExpression().iterate(context);
@@ -379,6 +387,7 @@ public final class Atomizer extends UnaryExpression {
      * which will only be the case if the underlying expression has cardinality zero-or-one.
      */
 
+    @Override
     public AtomicValue evaluateItem(XPathContext context) throws XPathException {
         Item i = getBaseExpression().evaluateItem(context);
         if (i == null) {
@@ -396,6 +405,7 @@ public final class Atomizer extends UnaryExpression {
      */
 
     /*@NotNull*/
+    @Override
     public ItemType getItemType() {
         operandItemType = getBaseExpression().getItemType();
         TypeHierarchy th = getConfiguration().getTypeHierarchy();
@@ -472,6 +482,7 @@ public final class Atomizer extends UnaryExpression {
      * Determine the static cardinality of the expression
      */
 
+    @Override
     public int computeCardinality() {
         ItemType in = getOperandItemType();
         Expression operand = getBaseExpression();
@@ -514,6 +525,7 @@ public final class Atomizer extends UnaryExpression {
      *         expressions, it is the same as the input pathMapNode.
      */
 
+    @Override
     public PathMap.PathMapNodeSet addToPathMap(PathMap pathMap, PathMap.PathMapNodeSet pathMapNodeSet) {
         PathMap.PathMapNodeSet result = getBaseExpression().addToPathMap(pathMap, pathMapNodeSet);
         if (result != null) {
@@ -576,6 +588,7 @@ public final class Atomizer extends UnaryExpression {
      * is written to the supplied output destination.
      */
 
+    @Override
     public String getExpressionName() {
         return "data";
     }

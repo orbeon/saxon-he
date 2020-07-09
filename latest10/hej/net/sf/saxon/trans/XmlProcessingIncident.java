@@ -92,6 +92,7 @@ public class XmlProcessingIncident implements XmlProcessingError {
         isWarning = warning;
     }
 
+    @Override
     public XmlProcessingIncident asWarning() {
         isWarning = true;
         return this;
@@ -107,6 +108,7 @@ public class XmlProcessingIncident implements XmlProcessingError {
      * will generally not be caught by any try/catch mechanism within the stylesheet or query.
      */
 
+    @Override
     public void setFatal(String message) {
         fatalErrorMessage = message;
     }
@@ -117,6 +119,7 @@ public class XmlProcessingIncident implements XmlProcessingError {
      * @return a non-null message if the error has been marked as a fatal error.
      */
 
+    @Override
     public String getFatalErrorMessage() {
         return fatalErrorMessage;
     }
@@ -126,6 +129,7 @@ public class XmlProcessingIncident implements XmlProcessingError {
      * @return true if the error has already been reported
      */
 
+    @Override
     public boolean isAlreadyReported() {
         return hasBeenReported;
     }
@@ -135,10 +139,12 @@ public class XmlProcessingIncident implements XmlProcessingError {
      * @param reported true if the error has been reported
      */
 
+    @Override
     public void setAlreadyReported(boolean reported) {
         this.hasBeenReported = reported;
     }
 
+    @Override
     public HostLanguage getHostLanguage() {
         return hostLanguage;
     }
@@ -147,6 +153,7 @@ public class XmlProcessingIncident implements XmlProcessingError {
         this.hostLanguage = language;
     }
 
+    @Override
     public boolean isTypeError() {
         return isTypeError;
     }
@@ -155,6 +162,7 @@ public class XmlProcessingIncident implements XmlProcessingError {
         this.isTypeError = isTypeError;
     }
 
+    @Override
     public boolean isStaticError() {
         return isStaticError;
     }
@@ -169,6 +177,7 @@ public class XmlProcessingIncident implements XmlProcessingError {
      *
      * @return QName
      */
+    @Override
     public QName getErrorCode() {
         if (errorCode == null) {
             return null;
@@ -192,6 +201,7 @@ public class XmlProcessingIncident implements XmlProcessingError {
      *
      * @return String
      */
+    @Override
     public String getMessage() {
         return message;
     }
@@ -204,10 +214,12 @@ public class XmlProcessingIncident implements XmlProcessingError {
      *
      * @return String
      */
+    @Override
     public String getModuleUri() {
         return getLocation().getSystemId();
     }
 
+    @Override
     public Location getLocation() {
         return locator;
     }
@@ -221,6 +233,7 @@ public class XmlProcessingIncident implements XmlProcessingError {
      *
      * @return int
      */
+    @Override
     public int getColumnNumber() {
         Location locator = getLocation();
         if (locator != null) {
@@ -234,6 +247,7 @@ public class XmlProcessingIncident implements XmlProcessingError {
      *
      * @return int
      */
+    @Override
     public int getLineNumber() {
         Location locator = getLocation();
         if (locator != null) {
@@ -251,6 +265,7 @@ public class XmlProcessingIncident implements XmlProcessingError {
      * The name will always be in the form of a lexical XML QName, and should match the name used
      * in explain() output displaying the instruction.
      */
+    @Override
     public String getInstructionName() {
         return ((NodeInfo) locator).getDisplayName();
     }
@@ -262,6 +277,7 @@ public class XmlProcessingIncident implements XmlProcessingError {
      *
      * @return boolean
      */
+    @Override
     public boolean isWarning() {
         return isWarning;
     }
@@ -272,6 +288,7 @@ public class XmlProcessingIncident implements XmlProcessingError {
      *
      * @return String - a path expression
      */
+    @Override
     public String getPath() {
         if (locator instanceof NodeInfo) {
             return Navigator.getPath((NodeInfo) locator);
@@ -285,6 +302,7 @@ public class XmlProcessingIncident implements XmlProcessingError {
      *
      * @return the underlying exception if there was one, or null otherwise
      */
+    @Override
     public Throwable getCause() {
         return cause;
     }

@@ -40,6 +40,7 @@ public class JsonHandlerMap extends JsonHandler {
         charChecker = context.getConfiguration().getValidCharacterChecker();
     }
 
+    @Override
     public Sequence getResult() {
         return stack.peek();
     }
@@ -54,6 +55,7 @@ public class JsonHandlerMap extends JsonHandler {
      *                  option is yes; if escape=no, the reEscaped form is the same as the unEscaped form.
      * @return true if the key is already present in the map, false if it is not
      */
+    @Override
     public boolean setKey(String unEscaped, String reEscaped) {
         this.keys.push(reEscaped);
         MapItem map = (MapItem) stack.peek();
@@ -64,6 +66,7 @@ public class JsonHandlerMap extends JsonHandler {
      * Open a new array
      *
      */
+    @Override
     public void startArray() {
         ArrayItem map = new SimpleArrayItem(new ArrayList<>());
         stack.push(map);
@@ -72,6 +75,7 @@ public class JsonHandlerMap extends JsonHandler {
     /**
      * Close the current array
      */
+    @Override
     public void endArray() {
         ArrayItem map = (ArrayItem) stack.pop();
         if (stack.empty()) {
@@ -84,6 +88,7 @@ public class JsonHandlerMap extends JsonHandler {
     /**
      * Start a new object/map
      */
+    @Override
     public void startMap() {
         DictionaryMap map = new DictionaryMap();
         stack.push(map);
@@ -92,6 +97,7 @@ public class JsonHandlerMap extends JsonHandler {
     /**
      * Close the current object/map
      */
+    @Override
     public void endMap() {
         DictionaryMap map = (DictionaryMap) stack.pop();
         if (stack.empty()) {
@@ -125,6 +131,7 @@ public class JsonHandlerMap extends JsonHandler {
      * @param asString the string representation of the value
      * @param asDouble the double representation of the value
      */
+    @Override
     public void writeNumeric(String asString, double asDouble) {
         writeItem(new DoubleValue(asDouble));
     }
@@ -136,6 +143,7 @@ public class JsonHandlerMap extends JsonHandler {
      * options that were set)
      * @throws XPathException if a dynamic error occurs
      */
+    @Override
     public void writeString(String val) throws XPathException {
         writeItem(new StringValue(reEscape(val)));
     }
@@ -145,6 +153,7 @@ public class JsonHandlerMap extends JsonHandler {
      *
      * @param value the boolean value to be written
      */
+    @Override
     public void writeBoolean(boolean value)  {
         writeItem(BooleanValue.get(value));
     }
@@ -152,6 +161,7 @@ public class JsonHandlerMap extends JsonHandler {
     /**
      * Write a null value
      */
+    @Override
     public void writeNull() {
         writeItem(EmptySequence.getInstance());
     }

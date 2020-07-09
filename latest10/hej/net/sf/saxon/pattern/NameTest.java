@@ -115,6 +115,7 @@ public class NameTest extends NodeTest implements QNameTest {
      *
      * @return the smallest UType that subsumes this item type
      */
+    @Override
     public UType getUType() {
         return uType;
     }
@@ -147,6 +148,7 @@ public class NameTest extends NodeTest implements QNameTest {
         }
     }
 
+    @Override
     public IntPredicate getMatcher(final NodeVectorTree tree) {
         final byte[] nodeKindArray = tree.getNodeKindArray();
         final int[] nameCodeArray = tree.getNameCodeArray();
@@ -162,6 +164,7 @@ public class NameTest extends NodeTest implements QNameTest {
      * @param node the node to be matched
      */
 
+    @Override
     public boolean test(NodeInfo node) {
         if (node.getNodeKind() != nodeKind) {
             return false;
@@ -195,6 +198,7 @@ public class NameTest extends NodeTest implements QNameTest {
      * @return true if the name matches
      */
 
+    @Override
     public boolean matches(StructuredQName qname) {
         computeUriAndLocal();
         return qname.getLocalPart().equals(localName) && qname.hasURI(uri);
@@ -204,6 +208,7 @@ public class NameTest extends NodeTest implements QNameTest {
      * Determine the default priority of this node test when used on its own as a Pattern
      */
 
+    @Override
     public final double getDefaultPriority() {
         return 0.0;
     }
@@ -212,6 +217,7 @@ public class NameTest extends NodeTest implements QNameTest {
      * Get the fingerprint required
      */
 
+    @Override
     public int getFingerprint() {
         return fingerprint;
     }
@@ -233,6 +239,7 @@ public class NameTest extends NodeTest implements QNameTest {
      * @return the type of node matched by this pattern. e.g. Type.ELEMENT or Type.TEXT
      */
 
+    @Override
     public int getPrimitiveType() {
         return nodeKind;
     }
@@ -244,6 +251,7 @@ public class NameTest extends NodeTest implements QNameTest {
      */
 
     /*@NotNull*/
+    @Override
     public Optional<IntSet> getRequiredNodeNames() {
         return Optional.of(new IntSingletonSet(fingerprint));
     }
@@ -329,6 +337,7 @@ public class NameTest extends NodeTest implements QNameTest {
      * uri and local.
      * @param targetVersion the version of Saxon-JS being targeted
      */
+    @Override
     public String generateJavaScriptNameTest(int targetVersion) {
         computeUriAndLocal();
         return "q.uri==='" + ExpressionPresenter.jsEscape(uri) + "'&&q.local==='" + localName + "'";
@@ -352,6 +361,7 @@ public class NameTest extends NodeTest implements QNameTest {
         return Optional.of("The node has the wrong name");
     }
 
+    @Override
     public String toShortString() {
         switch (nodeKind) {
             case Type.ELEMENT:

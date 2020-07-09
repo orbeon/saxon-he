@@ -80,6 +80,7 @@ public abstract class AbstractStaticContext implements StaticContext {
      * Get the system configuration
      */
 
+    @Override
     public Configuration getConfiguration() {
         return config;
     }
@@ -97,6 +98,7 @@ public abstract class AbstractStaticContext implements StaticContext {
      * Get data about the unit of compilation (XQuery module, XSLT package) to which this
      * container belongs
      */
+    @Override
     public PackageData getPackageData() {
         return packageData;
     }
@@ -119,6 +121,7 @@ public abstract class AbstractStaticContext implements StaticContext {
      * @return a RetainedStaticContext object: either a newly created one, or one that is
      * reused from a previous invocation.
      */
+    @Override
     public RetainedStaticContext makeRetainedStaticContext() {
         return new RetainedStaticContext(this);
     }
@@ -174,11 +177,13 @@ public abstract class AbstractStaticContext implements StaticContext {
      * Construct a dynamic context for early evaluation of constant subexpressions
      */
 
+    @Override
     public XPathContext makeEarlyEvaluationContext() {
         return new EarlyEvaluationContext(getConfiguration());
     }
 
 
+    @Override
     public Location getContainingLocation() {
         return containingLocation;
     }
@@ -212,6 +217,7 @@ public abstract class AbstractStaticContext implements StaticContext {
      * @return "" if no base URI has been set
      */
 
+    @Override
     public String getStaticBaseURI() {
         return baseURI == null ? "" : baseURI;
     }
@@ -222,6 +228,7 @@ public abstract class AbstractStaticContext implements StaticContext {
      * XPath expression to an implementation of the function.
      */
 
+    @Override
     public FunctionLibrary getFunctionLibrary() {
         return libraryList;
     }
@@ -253,6 +260,7 @@ public abstract class AbstractStaticContext implements StaticContext {
      *         if no default collation has been defined
      */
 
+    @Override
     public String getDefaultCollationName() {
         return defaultCollationName;
     }
@@ -293,6 +301,7 @@ public abstract class AbstractStaticContext implements StaticContext {
      * error reporter registered with the Configuration.
      */
 
+    @Override
     public void issueWarning(String s, Location locator) {
         getWarningHandler().accept(s, locator);
     }
@@ -303,6 +312,7 @@ public abstract class AbstractStaticContext implements StaticContext {
      * @return "" always
      */
 
+    @Override
     public String getSystemId() {
         return "";
     }
@@ -315,6 +325,7 @@ public abstract class AbstractStaticContext implements StaticContext {
      * @return the default namespace for elements and type
      */
 
+    @Override
     public String getDefaultElementNamespace() {
         return defaultElementNamespace;
     }
@@ -348,6 +359,7 @@ public abstract class AbstractStaticContext implements StaticContext {
      * @return the default namesapce for functions
      */
 
+    @Override
     public String getDefaultFunctionNamespace() {
         return defaultFunctionNamespace;
     }
@@ -375,6 +387,7 @@ public abstract class AbstractStaticContext implements StaticContext {
      * @since 9.7
      */
 
+    @Override
     public int getXPathVersion() {
         return xpathLanguageLevel;
     }
@@ -397,6 +410,7 @@ public abstract class AbstractStaticContext implements StaticContext {
      *         otherwise false
      */
 
+    @Override
     public boolean isInBackwardsCompatibleMode() {
         return backwardsCompatible;
     }
@@ -421,6 +435,7 @@ public abstract class AbstractStaticContext implements StaticContext {
      * @since 9.3
      */
 
+    @Override
     public ItemType getRequiredContextItemType() {
         return AnyItemType.getInstance();
     }
@@ -434,6 +449,7 @@ public abstract class AbstractStaticContext implements StaticContext {
      * @since 9.2
      */
 
+    @Override
     public DecimalFormatManager getDecimalFormatManager() {
         DecimalFormatManager manager = getPackageData().getDecimalFormatManager();
         if (manager == null) {
@@ -450,6 +466,7 @@ public abstract class AbstractStaticContext implements StaticContext {
      *         on key() used in XSLT, and system-generated calls on key() which may
      *         also appear in XQuery and XPath
      */
+    @Override
     public KeyManager getKeyManager() {
         return getPackageData().getKeyManager();
     }
@@ -494,6 +511,7 @@ public abstract class AbstractStaticContext implements StaticContext {
      * @return the policy to be used
      */
 
+    @Override
     public UnprefixedElementMatchingPolicy getUnprefixedElementMatchingPolicy() {
          return unprefixedElementPolicy;
     }

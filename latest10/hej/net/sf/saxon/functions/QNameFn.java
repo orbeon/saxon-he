@@ -62,6 +62,7 @@ public class QNameFn extends SystemFunction {
      * @throws net.sf.saxon.trans.XPathException
      *          if a dynamic error occurs during the evaluation of the expression
      */
+    @Override
     public QNameValue call(XPathContext context, Sequence[] arguments) throws XPathException {
         return expandedQName(
                 (StringValue) arguments[0].head(),
@@ -69,6 +70,7 @@ public class QNameFn extends SystemFunction {
         );
     }
 
+    @Override
     public String getCompilerName() {
         return "QNameFnCompiler";
     }

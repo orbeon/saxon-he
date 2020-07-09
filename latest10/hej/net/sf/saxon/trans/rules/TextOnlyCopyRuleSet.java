@@ -56,6 +56,7 @@ public class TextOnlyCopyRuleSet implements BuiltInRuleSet {
      *          if any dynamic error occurs
      */
 
+    @Override
     public void process(Item item, ParameterSet parameters,
                         ParameterSet tunnelParams, /*@NotNull*/ Outputter output, XPathContext context,
                         Location locationId) throws XPathException {
@@ -120,6 +121,7 @@ public class TextOnlyCopyRuleSet implements BuiltInRuleSet {
      * @param nodeKind the node kind
      * @return the default action for unmatched nodes: one of DEEP_COPY, SHALLOW_SKIP, DEEP_SKIP, FAIL, etc
      */
+    @Override
     public int[] getActionForParentNodes(int nodeKind) {
         return new int[]{APPLY_TEMPLATES_TO_CHILDREN};
     }

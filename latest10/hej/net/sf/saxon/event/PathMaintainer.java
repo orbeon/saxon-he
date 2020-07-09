@@ -33,6 +33,7 @@ public class PathMaintainer extends ProxyReceiver {
         siblingCounters.push(new HashMap<>());
     }
 
+    @Override
     public void startElement(NodeName elemName, SchemaType type,
                              AttributeMap attributes, NamespaceMap namespaces,
                              Location location, int properties)
@@ -56,6 +57,7 @@ public class PathMaintainer extends ProxyReceiver {
      * Handle an end-of-element event
      */
 
+    @Override
     public void endElement() throws XPathException {
         nextReceiver.endElement();
         siblingCounters.pop();

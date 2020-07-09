@@ -41,6 +41,7 @@ public abstract class AxiomParentNodeWrapper extends AbstractNodeWrapper
      * Get the underlying Axiom node, to implement the VirtualNode interface
      */
 
+    @Override
     public OMContainer getUnderlyingNode() {
         return node;
     }
@@ -53,6 +54,7 @@ public abstract class AxiomParentNodeWrapper extends AbstractNodeWrapper
      *         representing a sequence whose items are atomic values.
      */
 
+    @Override
     public AtomicSequence atomize() {
         return new UntypedAtomicValue(getStringValueCS());
     }
@@ -62,6 +64,7 @@ public abstract class AxiomParentNodeWrapper extends AbstractNodeWrapper
      * the version of the method that returns a String.
      */
 
+    @Override
     public CharSequence getStringValueCS() {
         FastStringBuffer buff = new FastStringBuffer(FastStringBuffer.C256);
         for (Iterator iter = node.getDescendants(false); iter.hasNext(); ) {
@@ -79,6 +82,7 @@ public abstract class AxiomParentNodeWrapper extends AbstractNodeWrapper
      * <code>getEnumeration(Axis.CHILD, AnyNodeTest.getInstance()).hasNext()</code></p>
      */
 
+    @Override
     public boolean hasChildNodes() {
         return node.getFirstOMChild() != null;
     }
@@ -90,6 +94,7 @@ public abstract class AxiomParentNodeWrapper extends AbstractNodeWrapper
      * @param buffer a buffer to contain a string that uniquely identifies this node, across all documents
      */
 
+    @Override
     public void generateId(FastStringBuffer buffer) {
         Navigator.appendSequentialKey(this, buffer, true);
     }
@@ -120,6 +125,7 @@ public abstract class AxiomParentNodeWrapper extends AbstractNodeWrapper
             this.nodeTest = nodeTest;
         }
 
+        @Override
         public NodeInfo next() {
             while (true) {
                 if (base.hasNext()) {
@@ -153,6 +159,7 @@ public abstract class AxiomParentNodeWrapper extends AbstractNodeWrapper
             this.includeSelf = includeSelf;
         }
 
+        @Override
         protected NodeInfo wrap(Object node) {
             if (node instanceof OMDocument) {
                 return docWrapper.getRootNode();
@@ -179,6 +186,7 @@ public abstract class AxiomParentNodeWrapper extends AbstractNodeWrapper
             this.docWrapper = (AxiomDocument)commonParent.getTreeInfo();
         }
 
+        @Override
         protected NodeInfo wrap(Object node) {
             return AxiomDocument.makeWrapper((OMNode) node, docWrapper, commonParent, index++);
         }

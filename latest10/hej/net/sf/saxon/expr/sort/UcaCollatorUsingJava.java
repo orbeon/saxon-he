@@ -303,6 +303,7 @@ public class UcaCollatorUsingJava implements SubstringMatcher {
      * @return true iff s1 contains s2
      */
 
+    @Override
     public boolean contains(String s1, String s2) {
         RuleBasedCollator collator = getRuleBasedCollator();
         CollationElementIterator iter1 = collator.getCollationElementIterator(s1);
@@ -319,6 +320,7 @@ public class UcaCollatorUsingJava implements SubstringMatcher {
      * @return true iff s1 ends with s2
      */
 
+    @Override
     public boolean endsWith(String s1, String s2) {
         RuleBasedCollator collator = getRuleBasedCollator();
         CollationElementIterator iter1 = collator.getCollationElementIterator(s1);
@@ -335,6 +337,7 @@ public class UcaCollatorUsingJava implements SubstringMatcher {
      * @return true iff s1 starts with s2
      */
 
+    @Override
     public boolean startsWith(String s1, String s2) {
         RuleBasedCollator collator = getRuleBasedCollator();
         CollationElementIterator iter1 = collator.getCollationElementIterator(s1);
@@ -351,6 +354,7 @@ public class UcaCollatorUsingJava implements SubstringMatcher {
      * @return the part of s1 that follows the first occurrence of s2
      */
 
+    @Override
     public String substringAfter(String s1, String s2) {
         RuleBasedCollator collator = getRuleBasedCollator();
         CollationElementIterator iter1 = collator.getCollationElementIterator(s1);
@@ -373,6 +377,7 @@ public class UcaCollatorUsingJava implements SubstringMatcher {
      * @return the part of s1 that precedes the first occurrence of s2
      */
 
+    @Override
     public String substringBefore(String s1, String s2) {
         RuleBasedCollator collator = getRuleBasedCollator();
         CollationElementIterator iter1 = collator.getCollationElementIterator(s1);

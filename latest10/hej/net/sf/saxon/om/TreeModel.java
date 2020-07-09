@@ -125,40 +125,48 @@ public abstract class TreeModel {
 
     private static class TinyTree extends TreeModel {
 
+        @Override
         public Builder makeBuilder(PipelineConfiguration pipe) {
             TinyBuilder builder = new TinyBuilder(pipe);
             builder.setStatistics(pipe.getConfiguration().getTreeStatistics().SOURCE_DOCUMENT_STATISTICS);
             return builder;
         }
 
+        @Override
         public int getSymbolicValue() {
             return Builder.TINY_TREE;
         }
 
+        @Override
         public boolean isSchemaAware() {
             return true;
         }
 
+        @Override
         public String getName() {
             return "TinyTree";
         }
     }
 
     private static class TinyTreeCondensed extends TreeModel {
+        @Override
         public Builder makeBuilder(PipelineConfiguration pipe) {
             TinyBuilderCondensed tbc = new TinyBuilderCondensed(pipe);
             tbc.setStatistics(pipe.getConfiguration().getTreeStatistics().SOURCE_DOCUMENT_STATISTICS);
             return tbc;
         }
 
+        @Override
         public int getSymbolicValue() {
             return Builder.TINY_TREE_CONDENSED;
         }
 
+        @Override
         public boolean isSchemaAware() {
             return true;
         }
 
+        @Override
         public String getName() {
             return "TinyTreeCondensed";
         }
@@ -167,18 +175,22 @@ public abstract class TreeModel {
     private static class LinkedTree extends TreeModel {
 
         /*@NotNull*/
+        @Override
         public Builder makeBuilder(PipelineConfiguration pipe) {
             return new LinkedTreeBuilder(pipe);
         }
 
+        @Override
         public int getSymbolicValue() {
             return Builder.LINKED_TREE;
         }
 
+        @Override
         public boolean isSchemaAware() {
             return true;
         }
 
+        @Override
         public String getName() {
             return "LinkedTree";
         }

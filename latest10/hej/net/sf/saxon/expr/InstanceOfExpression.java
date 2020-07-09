@@ -46,6 +46,7 @@ public final class InstanceOfExpression extends UnaryExpression {
         targetCardinality = target.getCardinality();
     }
 
+    @Override
     protected OperandRole getOperandRole() {
         return targetType instanceof DocumentNodeTest ?
                 OperandRole.ABSORB : OperandRole.INSPECT;
@@ -78,6 +79,7 @@ public final class InstanceOfExpression extends UnaryExpression {
      */
 
     /*@NotNull*/
+    @Override
     public Expression typeCheck(ExpressionVisitor visitor, ContextItemStaticInfo contextInfo) throws XPathException {
         getOperand().typeCheck(visitor, contextInfo);
         Expression operand = getBaseExpression();
@@ -129,6 +131,7 @@ public final class InstanceOfExpression extends UnaryExpression {
      */
 
     /*@NotNull*/
+    @Override
     public Expression optimize(ExpressionVisitor visitor, ContextItemStaticInfo contextInfo) throws XPathException {
         Expression e = super.optimize(visitor, contextInfo);
         if (e != this) {
@@ -186,6 +189,7 @@ public final class InstanceOfExpression extends UnaryExpression {
      * Determine the cardinality
      */
 
+    @Override
     public int computeCardinality() {
         return StaticProperty.EXACTLY_ONE;
     }
@@ -198,6 +202,7 @@ public final class InstanceOfExpression extends UnaryExpression {
      */
 
     /*@NotNull*/
+    @Override
     public Expression copy(RebindingMap rebindings) {
         InstanceOfExpression exp = new InstanceOfExpression(getBaseExpression().copy(rebindings),
                 SequenceType.makeSequenceType(targetType, targetCardinality));
@@ -210,6 +215,7 @@ public final class InstanceOfExpression extends UnaryExpression {
      */
 
     /*@NotNull*/
+    @Override
     public ItemType getItemType() {
         return BuiltInAtomicType.BOOLEAN;
     }
@@ -231,6 +237,7 @@ public final class InstanceOfExpression extends UnaryExpression {
      * Evaluate the expression
      */
 
+    @Override
     public BooleanValue evaluateItem(XPathContext context) throws XPathException {
         return BooleanValue.get(effectiveBooleanValue(context));
     }
@@ -239,6 +246,7 @@ public final class InstanceOfExpression extends UnaryExpression {
      * Evaluate the expression as a boolean
      */
 
+    @Override
     public boolean effectiveBooleanValue(XPathContext context) throws XPathException {
         SequenceIterator iter = getBaseExpression().iterate(context);
         return isInstance(iter, context);
@@ -287,6 +295,7 @@ public final class InstanceOfExpression extends UnaryExpression {
      * is written to the supplied output destination.
      */
 
+    @Override
     public void export(ExpressionPresenter out) throws XPathException {
         out.startElement("instance", this);
         SequenceType st = SequenceType.makeSequenceType(targetType, targetCardinality);

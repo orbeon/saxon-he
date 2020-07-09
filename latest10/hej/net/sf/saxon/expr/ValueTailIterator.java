@@ -42,11 +42,13 @@ public class ValueTailIterator
         pos = 0;
     }
 
+    @Override
     public Item next() throws XPathException {
         return baseValue.itemAt(start + pos++);
     }
 
 
+    @Override
     public boolean hasNext() {
         return baseValue.itemAt(start + pos) != null;
     }
@@ -58,6 +60,7 @@ public class ValueTailIterator
      * @return the corresponding Value
      */
 
+    @Override
     public GroundedValue materialize() {
         if (start == 0) {
             return baseValue;
@@ -85,6 +88,7 @@ public class ValueTailIterator
      *         It is acceptable for the properties of the iterator to change depending on its state.
      */
 
+    @Override
     public EnumSet<Property> getProperties() {
         return EnumSet.of(Property.LOOKAHEAD, Property.GROUNDED);
     }

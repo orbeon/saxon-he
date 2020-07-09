@@ -64,6 +64,7 @@ public class RebasedNode extends AbstractVirtualNode implements WrappingFunction
      */
 
     /*@NotNull*/
+    @Override
     public RebasedNode makeWrapper(NodeInfo node, VirtualNode parent) {
         RebasedNode wrapper = new RebasedNode(node, (RebasedNode) parent);
         wrapper.docWrapper = this.docWrapper;
@@ -121,6 +122,7 @@ public class RebasedNode extends AbstractVirtualNode implements WrappingFunction
      *         return true, and the two nodes will produce the same result for generateId())
      */
 
+    @Override
     public int compareOrder(/*@NotNull*/ NodeInfo other) {
         if (other instanceof RebasedNode) {
             return node.compareOrder(((RebasedNode) other).node);
@@ -134,6 +136,7 @@ public class RebasedNode extends AbstractVirtualNode implements WrappingFunction
      */
 
     /*@Nullable*/
+    @Override
     public NodeInfo getParent() {
         if (parent == null) {
             NodeInfo realParent = node.getParent();
@@ -152,6 +155,7 @@ public class RebasedNode extends AbstractVirtualNode implements WrappingFunction
      */
 
     /*@Nullable*/
+    @Override
     public AxisIterator iterateAxis(int axisNumber) {
         return new WrappingIterator(node.iterateAxis(axisNumber), this, null);
     }

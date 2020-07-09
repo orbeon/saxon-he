@@ -53,6 +53,7 @@ public class CurriedFunction extends AbstractFunction {
      * @return the function item's type
      */
 
+    @Override
     public FunctionItemType getFunctionItemType() {
         if (functionType == null) {
             FunctionItemType baseItemType = targetFunction.getFunctionItemType();
@@ -89,6 +90,7 @@ public class CurriedFunction extends AbstractFunction {
      */
 
     /*@Nullable*/
+    @Override
     public StructuredQName getFunctionName() {
         return null;
     }
@@ -100,6 +102,7 @@ public class CurriedFunction extends AbstractFunction {
      *
      * @return a description of the function for use in error messages
      */
+    @Override
     public String getDescription() {
         return "partially-applied function " + targetFunction.getDescription();
     }
@@ -110,6 +113,7 @@ public class CurriedFunction extends AbstractFunction {
      * @return the number of arguments in the function signature
      */
 
+    @Override
     public int getArity() {
         int count = 0;
         for (Sequence v : boundValues) {
@@ -143,6 +147,7 @@ public class CurriedFunction extends AbstractFunction {
      *
      */
 
+    @Override
     public Sequence call(XPathContext context, Sequence[] args) throws XPathException {
         Sequence[] newArgs = new Sequence[boundValues.length];
         for (int i = 0, j = 0; i < newArgs.length; i++) {

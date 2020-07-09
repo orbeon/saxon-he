@@ -75,12 +75,14 @@ public class Contains extends CollatingFunctionFixed {
         return collator.contains(s0, s1);
     }
 
+    @Override
     public BooleanValue call(XPathContext context, Sequence[] arguments) throws XPathException {
         StringValue s0 = (StringValue) arguments[0].head();
         StringValue s1 = (StringValue) arguments[1].head();
         return BooleanValue.get(contains(s0, s1, (SubstringMatcher)getStringCollator()));
     }
 
+    @Override
     public String getCompilerName() {
         return "ContainsCompiler";
     }

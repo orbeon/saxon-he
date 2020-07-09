@@ -59,6 +59,7 @@ public class ConstructorFunctionLibrary implements FunctionLibrary {
      *          in the event of certain errors, for example attempting to get a function
      *          that is private
      */
+    @Override
     public Function getFunctionItem(SymbolicName.F functionName, StaticContext staticContext) throws XPathException {
         if (functionName.getArity() != 1) {
             return null;
@@ -88,6 +89,7 @@ public class ConstructorFunctionLibrary implements FunctionLibrary {
         }
     }
 
+    @Override
     public boolean isAvailable(SymbolicName.F functionName) {
         if (functionName.getArity() != 1) {
             return false;
@@ -121,6 +123,7 @@ public class ConstructorFunctionLibrary implements FunctionLibrary {
      *         null if no constructor function was found matching the required name and arity.
      */
 
+    @Override
     public Expression bind(SymbolicName.F functionName, Expression[] arguments, StaticContext env, List<String> reasons) {
         final String uri = functionName.getComponentName().getURI();
         final String localName = functionName.getComponentName().getLocalPart();
@@ -200,6 +203,7 @@ public class ConstructorFunctionLibrary implements FunctionLibrary {
      * @return a copy of this function library. This must be an instance of the original class.
      */
 
+    @Override
     public FunctionLibrary copy() {
         return this;
     }

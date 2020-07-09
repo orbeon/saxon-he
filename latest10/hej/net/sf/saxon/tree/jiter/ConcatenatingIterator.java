@@ -52,6 +52,7 @@ public class ConcatenatingIterator<E> implements Iterator<E> {
      */
 
     /*@Nullable*/
+    @Override
     public E next() {
         return active.next();
     }

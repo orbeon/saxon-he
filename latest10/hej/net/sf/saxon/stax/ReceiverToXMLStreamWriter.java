@@ -43,26 +43,32 @@ public class ReceiverToXMLStreamWriter implements Receiver {
         return writer;
     }
 
+    @Override
     public void setPipelineConfiguration(PipelineConfiguration pipe) {
         this.pipe = pipe;
         config = pipe.getConfiguration();
     }
 
+    @Override
     public PipelineConfiguration getPipelineConfiguration() {
         return pipe;
     }
 
+    @Override
     public void setSystemId(String systemId) {
         this.systemId = systemId;
     }
 
+    @Override
     public String getSystemId() {
         return systemId;
     }
 
+    @Override
     public void open() throws XPathException {
     }
 
+    @Override
     public void startDocument(int properties) throws XPathException {
         try {
             writer.writeStartDocument();
@@ -71,6 +77,7 @@ public class ReceiverToXMLStreamWriter implements Receiver {
         }
     }
 
+    @Override
     public void endDocument() throws XPathException {
         try {
             writer.writeEndDocument();
@@ -79,10 +86,12 @@ public class ReceiverToXMLStreamWriter implements Receiver {
         }
     }
 
+    @Override
     public void setUnparsedEntity(String name, String systemID, String publicID) throws XPathException {
 
     }
 
+    @Override
     public void startElement(NodeName elemName, SchemaType type,
                              AttributeMap attributes, NamespaceMap namespaces,
                              Location location, int properties) throws XPathException {
@@ -120,6 +129,7 @@ public class ReceiverToXMLStreamWriter implements Receiver {
 
     }
 
+    @Override
     public void endElement() throws XPathException {
         try {
             writer.writeEndElement();
@@ -128,6 +138,7 @@ public class ReceiverToXMLStreamWriter implements Receiver {
         }
     }
 
+    @Override
     public void characters(CharSequence chars, Location locationId, int properties) throws XPathException {
         try {
             writer.writeCharacters(chars.toString());
@@ -136,6 +147,7 @@ public class ReceiverToXMLStreamWriter implements Receiver {
         }
     }
 
+    @Override
     public void processingInstruction(String name, CharSequence data, Location locationId, int properties) throws XPathException {
         try {
             writer.writeProcessingInstruction(name, data.toString());
@@ -144,6 +156,7 @@ public class ReceiverToXMLStreamWriter implements Receiver {
         }
     }
 
+    @Override
     public void comment(CharSequence content, Location locationId, int properties) throws XPathException {
         try {
             writer.writeComment(content.toString());
@@ -152,6 +165,7 @@ public class ReceiverToXMLStreamWriter implements Receiver {
         }
     }
 
+    @Override
     public void close() throws XPathException {
         try {
             writer.close();
@@ -160,6 +174,7 @@ public class ReceiverToXMLStreamWriter implements Receiver {
         }
     }
 
+    @Override
     public boolean usesTypeAnnotations() {
         return false;
     }

@@ -44,6 +44,7 @@ public class Numberer_fr extends AbstractNumberer {
       *      long)
       */
     /*@NotNull*/
+    @Override
     protected String ordinalSuffix(String ordinalParam, long number) {
         if (number != 1) {
             return "e";
@@ -57,6 +58,7 @@ public class Numberer_fr extends AbstractNumberer {
       *
       * @see net.sf.saxon.expr.number.Numberer_en#toWords(long)
       */
+    @Override
     public String toWords(long number) {
         return toWords(number, true);
     }
@@ -66,6 +68,7 @@ public class Numberer_fr extends AbstractNumberer {
       *
       * @see net.sf.saxon.expr.number.Numberer_en#toWords(long, int)
       */
+    @Override
     public String toWords(long number, int wordCase) {
         String s = toWords(number);
         if (wordCase == UPPER_CASE) {
@@ -146,6 +149,7 @@ public class Numberer_fr extends AbstractNumberer {
       * @see net.sf.saxon.expr.number.Numberer_en#toOrdinalWords(java.lang.String,
       *      long, int)
       */
+    @Override
     public String toOrdinalWords(String ordinalParam, long number, int wordCase) {
         String ord;
         if (number < 20) {
@@ -209,6 +213,7 @@ public class Numberer_fr extends AbstractNumberer {
       *
       * @see net.sf.saxon.lib.Numberer#monthName(int, int, int)
       */
+    @Override
     public String monthName(int month, int minWidth, int maxWidth) {
         String name = frenchMonths[month - 1];
         if (maxWidth < 3) {
@@ -228,6 +233,7 @@ public class Numberer_fr extends AbstractNumberer {
       *
       * @see net.sf.saxon.lib.Numberer#dayName(int, int, int)
       */
+    @Override
     public String dayName(int day, int minWidth, int maxWidth) {
         String name = frenchDays[day - 1];
         if (maxWidth < 3) {

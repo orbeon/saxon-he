@@ -18,6 +18,7 @@ public class XSLImport extends XSLGeneralIncorporate {
      * isImport() returns true if this is an xsl:import statement rather than an xsl:include
      */
 
+    @Override
     public boolean isImport() {
         return true;
     }

@@ -24,6 +24,7 @@ public interface ItemOrderComparer extends Comparator<Item> {
      * @return &lt;0 if a&lt;b, 0 if a=b, &gt;0 if a&gt;b
      */
 
+    @Override
     int compare(Item a, Item b);
 
 }

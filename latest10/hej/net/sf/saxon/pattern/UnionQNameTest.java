@@ -32,6 +32,7 @@ public class UnionQNameTest implements QNameTest {
      * @return true if the name matches, false if not
      */
 
+    @Override
     public boolean matches(StructuredQName qname) {
         for (QNameTest test : tests) {
             if (test.matches(qname)) {

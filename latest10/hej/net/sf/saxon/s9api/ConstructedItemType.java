@@ -45,6 +45,7 @@ class ConstructedItemType extends ItemType {
      * @return the conversion rules
      */
 
+    @Override
     public ConversionRules getConversionRules() {
         return processor.getUnderlyingConfiguration().getConversionRules();
     }
@@ -59,6 +60,7 @@ class ConstructedItemType extends ItemType {
      * error in the course of checking
      */
 
+    @Override
     public boolean matches(XdmItem item) throws SaxonApiUncheckedException {
         try {
             TypeHierarchy th = processor.getUnderlyingConfiguration().getTypeHierarchy();
@@ -79,6 +81,7 @@ class ConstructedItemType extends ItemType {
      * @since 9.1
      */
 
+    @Override
     public boolean subsumes(ItemType other) {
         TypeHierarchy th = processor.getUnderlyingConfiguration().getTypeHierarchy();
         return th.isSubType(other.getUnderlyingItemType(), underlyingType);
@@ -91,6 +94,7 @@ class ConstructedItemType extends ItemType {
      * @return the underlying Saxon implementation object
      */
 
+    @Override
     public net.sf.saxon.type.ItemType getUnderlyingItemType() {
         return underlyingType;
     }

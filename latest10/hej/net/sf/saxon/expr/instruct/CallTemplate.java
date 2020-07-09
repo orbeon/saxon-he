@@ -95,6 +95,7 @@ public class CallTemplate extends Instruction implements ITemplateCall, Componen
      * the name is defined dynamically
      */
 
+    @Override
     public SymbolicName getSymbolicName() {
         return calledTemplateName == null ? null : new SymbolicName(StandardNames.XSL_TEMPLATE, calledTemplateName);
     }
@@ -103,6 +104,7 @@ public class CallTemplate extends Instruction implements ITemplateCall, Componen
         return template.getDeclaringComponent();
     }
 
+    @Override
     public Component getFixedTarget() {
         Component c = getTarget();
         Visibility v = c.getVisibility();
@@ -120,6 +122,7 @@ public class CallTemplate extends Instruction implements ITemplateCall, Componen
      */
 
     /*@NotNull*/
+    @Override
     public WithParam[] getActualParams() {
         return actualParams;
     }
@@ -131,6 +134,7 @@ public class CallTemplate extends Instruction implements ITemplateCall, Componen
      */
 
     /*@NotNull*/
+    @Override
     public WithParam[] getTunnelParams() {
         return tunnelParams;
     }
@@ -168,6 +172,7 @@ public class CallTemplate extends Instruction implements ITemplateCall, Componen
      * Return the name of this instruction.
      */
 
+    @Override
     public int getInstructionNameCode() {
         return StandardNames.XSL_CALL_TEMPLATE;
     }
@@ -181,6 +186,7 @@ public class CallTemplate extends Instruction implements ITemplateCall, Componen
      *             can be found.
      */
 
+    @Override
     public void setBindingSlot(int slot) {
         bindingSlot = slot;
     }
@@ -193,6 +199,7 @@ public class CallTemplate extends Instruction implements ITemplateCall, Componen
      *         can be found.
      */
 
+    @Override
     public int getBindingSlot() {
         return bindingSlot;
     }
@@ -207,6 +214,7 @@ public class CallTemplate extends Instruction implements ITemplateCall, Componen
      */
 
     /*@NotNull*/
+    @Override
     public Expression simplify() throws XPathException {
         WithParam.simplify(actualParams);
         WithParam.simplify(tunnelParams);
@@ -214,6 +222,7 @@ public class CallTemplate extends Instruction implements ITemplateCall, Componen
     }
 
     /*@NotNull*/
+    @Override
     public Expression typeCheck(ExpressionVisitor visitor, ContextItemStaticInfo contextInfo) throws XPathException {
         WithParam.typeCheck(actualParams, visitor, contextInfo);
         WithParam.typeCheck(tunnelParams, visitor, contextInfo);
@@ -241,6 +250,7 @@ public class CallTemplate extends Instruction implements ITemplateCall, Componen
     }
 
     /*@NotNull*/
+    @Override
     public Expression optimize(ExpressionVisitor visitor, ContextItemStaticInfo contextItemType) throws XPathException {
         WithParam.optimize(visitor, actualParams, contextItemType);
         WithParam.optimize(visitor, tunnelParams, contextItemType);
@@ -254,6 +264,7 @@ public class CallTemplate extends Instruction implements ITemplateCall, Componen
      * @return the static cardinality
      */
 
+    @Override
     public int computeCardinality() {
         if (template == null) {
             return StaticProperty.ALLOWS_ZERO_OR_MORE;
@@ -269,6 +280,7 @@ public class CallTemplate extends Instruction implements ITemplateCall, Componen
      */
 
     /*@NotNull*/
+    @Override
     public ItemType getItemType() {
         if (template == null) {
             return AnyItemType.getInstance();
@@ -285,6 +297,7 @@ public class CallTemplate extends Instruction implements ITemplateCall, Componen
      */
 
     /*@NotNull*/
+    @Override
     public Expression copy(RebindingMap rebindings) {
         CallTemplate ct = new CallTemplate(template, calledTemplateName, useTailRecursion, isWithinDeclaredStreamableConstruct);
         ExpressionTool.copyLocationInfo(this, ct);
@@ -293,6 +306,7 @@ public class CallTemplate extends Instruction implements ITemplateCall, Componen
         return ct;
     }
 
+    @Override
     public int getIntrinsicDependencies() {
         // we could go to the called template and find which parts of the context it depends on, but this
         // would create the risk of infinite recursion. So we just assume that the dependencies exist
@@ -305,6 +319,7 @@ public class CallTemplate extends Instruction implements ITemplateCall, Componen
      * This implementation currently returns true unconditionally.
      */
 
+    @Override
     public final boolean mayCreateNewNodes() {
         return true;
     }
@@ -327,6 +342,7 @@ public class CallTemplate extends Instruction implements ITemplateCall, Componen
      * @throws XPathException if a dynamic error occurs
      */
 
+    @Override
     public void process(Outputter output, XPathContext context) throws XPathException {
 
         NamedTemplate t;
@@ -379,6 +395,7 @@ public class CallTemplate extends Instruction implements ITemplateCall, Componen
      *         caller. Returns null if there is no tail call.
      */
 
+    @Override
     public TailCall processLeavingTail(Outputter output, XPathContext context) throws XPathException {
         if (useTailRecursion) {
             Component targetComponent;
@@ -420,6 +437,7 @@ public class CallTemplate extends Instruction implements ITemplateCall, Componen
         }
     }
 
+    @Override
     public StructuredQName getObjectName() {
         return template == null ? null : template.getTemplateName();
     }
@@ -429,6 +447,7 @@ public class CallTemplate extends Instruction implements ITemplateCall, Componen
      * is written to the supplied output destination.
      */
 
+    @Override
     public void export(ExpressionPresenter out) throws XPathException {
         out.startElement("callT", this);
         String flags = "";
@@ -510,6 +529,7 @@ public class CallTemplate extends Instruction implements ITemplateCall, Componen
          * @throws XPathException if a dynamic error occurs
          */
 
+        @Override
         public TailCall processLeavingTail() throws XPathException {
             // TODO: the idea of tail call optimization is to reuse the caller's stack frame rather than
             // creating a new one. We're doing this for the Java stack, but not for the context stack where

@@ -54,6 +54,7 @@ public class JAXPVariableReference extends Expression implements Callable {
      * in explain() output displaying the expression.
      */
 
+    @Override
     public String getExpressionName() {
         return "$" + name.getDisplayName();
     }
@@ -66,6 +67,7 @@ public class JAXPVariableReference extends Expression implements Callable {
      */
 
     /*@NotNull*/
+    @Override
     public Expression copy(RebindingMap rebindings) {
         return new JAXPVariableReference(name, resolver);
     }
@@ -75,6 +77,7 @@ public class JAXPVariableReference extends Expression implements Callable {
      */
 
     /*@NotNull*/
+    @Override
     public ItemType getItemType() {
         return AnyItemType.getInstance();
     }
@@ -83,6 +86,7 @@ public class JAXPVariableReference extends Expression implements Callable {
      * Get the static cardinality
      */
 
+    @Override
     public int computeCardinality() {
         return StaticProperty.ALLOWS_ZERO_OR_MORE;
     }
@@ -93,6 +97,7 @@ public class JAXPVariableReference extends Expression implements Callable {
      * @return the value {@link StaticProperty#NO_NODES_NEWLY_CREATED}
      */
 
+    @Override
     public int computeSpecialProperties() {
         return StaticProperty.NO_NODES_NEWLY_CREATED;
     }
@@ -116,6 +121,7 @@ public class JAXPVariableReference extends Expression implements Callable {
      * get HashCode for comparing two expressions
      */
 
+    @Override
     public int computeHashCode() {
         return name.hashCode();
     }
@@ -136,6 +142,7 @@ public class JAXPVariableReference extends Expression implements Callable {
      */
 
     /*@NotNull*/
+    @Override
     public SequenceIterator iterate(XPathContext context) throws XPathException {
         return call(context, null).iterate();
     }
@@ -155,6 +162,7 @@ public class JAXPVariableReference extends Expression implements Callable {
      * is written to the supplied output destination.
      */
 
+    @Override
     public void export(ExpressionPresenter destination) throws XPathException {
         destination.startElement("jaxpVar", this);
         destination.emitAttribute("name", name);

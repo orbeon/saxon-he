@@ -63,6 +63,7 @@ public class TraceClause extends Clause {
         return TRACE;
     }
 
+    @Override
     public TraceClause copy(FLWORExpression flwor, RebindingMap rebindings) {
         return new TraceClause(flwor, target);
     }

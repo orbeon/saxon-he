@@ -78,6 +78,7 @@ public class LetExpression extends Assignation implements TailCallReturner {
      *         in explain() output displaying the expression.
      */
 
+    @Override
     public String getExpressionName() {
         return "let";
     }
@@ -134,6 +135,7 @@ public class LetExpression extends Assignation implements TailCallReturner {
      */
 
     /*@NotNull*/
+    @Override
     public Expression typeCheck(ExpressionVisitor visitor, ContextItemStaticInfo contextInfo) throws XPathException {
 
         // The order of events is critical here. First we ensure that the type of the
@@ -165,6 +167,7 @@ public class LetExpression extends Assignation implements TailCallReturner {
      *         method
      */
 
+    @Override
     public boolean implementsStaticTypeCheck() {
         return true;
     }
@@ -184,6 +187,7 @@ public class LetExpression extends Assignation implements TailCallReturner {
      *                        is incompatible with the required type
      */
 
+    @Override
     public Expression staticTypeCheck(SequenceType req,
                                       boolean backwardsCompatible,
                                       RoleDiagnostic role, ExpressionVisitor visitor)
@@ -209,6 +213,7 @@ public class LetExpression extends Assignation implements TailCallReturner {
      */
 
     /*@NotNull*/
+    @Override
     public Expression optimize(ExpressionVisitor visitor, ContextItemStaticInfo contextItemType) throws XPathException {
         Optimizer opt = visitor.obtainOptimizer();
 
@@ -438,6 +443,7 @@ public class LetExpression extends Assignation implements TailCallReturner {
      * @return true if this expression is vacuous
      */
 
+    @Override
     public boolean isVacuousExpression() {
         return getAction().isVacuousExpression();
     }
@@ -450,6 +456,7 @@ public class LetExpression extends Assignation implements TailCallReturner {
      * static validation can continue recursively.
      */
 
+    @Override
     public void checkPermittedContents(SchemaType parentType, boolean whole) throws XPathException {
         getAction().checkPermittedContents(parentType, whole);
     }
@@ -504,6 +511,7 @@ public class LetExpression extends Assignation implements TailCallReturner {
      */
 
     /*@NotNull*/
+    @Override
     public SequenceIterator iterate(XPathContext context) throws XPathException {
         // minimize stack consumption by evaluating nested LET expressions iteratively
         LetExpression let = this;
@@ -552,6 +560,7 @@ public class LetExpression extends Assignation implements TailCallReturner {
      * Evaluate the expression as a singleton
      */
 
+    @Override
     public Item evaluateItem(XPathContext context) throws XPathException {
         // minimize stack consumption by evaluating nested LET expressions iteratively
         LetExpression let = this;
@@ -579,6 +588,7 @@ public class LetExpression extends Assignation implements TailCallReturner {
      *          expression
      */
 
+    @Override
     public boolean effectiveBooleanValue(XPathContext context) throws XPathException {
         // minimize stack consumption by evaluating nested LET expressions iteratively
         LetExpression let = this;
@@ -599,6 +609,7 @@ public class LetExpression extends Assignation implements TailCallReturner {
      * outputter
      */
 
+    @Override
     public void process(Outputter output, XPathContext context) throws XPathException {
         // minimize stack consumption by evaluating nested LET expressions iteratively
         LetExpression let = this;
@@ -623,6 +634,7 @@ public class LetExpression extends Assignation implements TailCallReturner {
      */
 
     /*@NotNull*/
+    @Override
     public ItemType getItemType() {
         return getAction().getItemType();
     }
@@ -646,6 +658,7 @@ public class LetExpression extends Assignation implements TailCallReturner {
      * Determine the static cardinality of the expression
      */
 
+    @Override
     public int computeCardinality() {
         return getAction().getCardinality();
     }
@@ -656,6 +669,7 @@ public class LetExpression extends Assignation implements TailCallReturner {
      * property bit is set, it is true, but if it is unset, the value is unknown.
      */
 
+    @Override
     public int computeSpecialProperties() {
         int props = getAction().getSpecialProperties();
         int seqProps = getSequence().getSpecialProperties();
@@ -669,6 +683,7 @@ public class LetExpression extends Assignation implements TailCallReturner {
      * Mark tail function calls
      */
 
+    @Override
     public int markTailFunctionCalls(StructuredQName qName, int arity) {
         return ExpressionTool.markTailFunctionCalls(getAction(), qName, arity);
     }
@@ -682,6 +697,7 @@ public class LetExpression extends Assignation implements TailCallReturner {
      */
 
     /*@NotNull*/
+    @Override
     public Expression copy(RebindingMap rebindings) {
         LetExpression let = new LetExpression();
         rebindings.put(this, let);
@@ -713,6 +729,7 @@ public class LetExpression extends Assignation implements TailCallReturner {
      *         been unwound so as to save stack space.
      */
 
+    @Override
     public TailCall processLeavingTail(Outputter output, XPathContext context) throws XPathException {
         // minimize stack consumption by evaluating nested LET expressions iteratively
         LetExpression let = this;
@@ -742,6 +759,7 @@ public class LetExpression extends Assignation implements TailCallReturner {
      * @param pul     the pending update list to which the results should be written
      */
 
+    @Override
     public void evaluatePendingUpdates(XPathContext context, PendingUpdateList pul) throws XPathException {
         // minimize stack consumption by evaluating nested LET expressions iteratively
         LetExpression let = this;
@@ -786,6 +804,7 @@ public class LetExpression extends Assignation implements TailCallReturner {
      * is written to the supplied output destination.
      */
 
+    @Override
     public void export(ExpressionPresenter out) throws XPathException {
         out.startElement("let", this);
         out.emitAttribute("var", variableName);

@@ -55,6 +55,7 @@ public class AnyItemType implements ItemType.WithSequenceTypeCache {
      *
      * @return the smallest UType that subsumes this item type
      */
+    @Override
     public UType getUType() {
         return UType.ANY;
     }
@@ -64,6 +65,7 @@ public class AnyItemType implements ItemType.WithSequenceTypeCache {
      *
      * @return true if this is ANY_ATOMIC_TYPE or a subtype thereof
      */
+    @Override
     public boolean isAtomicType() {
         return false;
     }
@@ -87,6 +89,7 @@ public class AnyItemType implements ItemType.WithSequenceTypeCache {
      * @return false: this type can match nodes or atomic values
      */
 
+    @Override
     public boolean isPlainType() {
         return false;
     }
@@ -100,6 +103,7 @@ public class AnyItemType implements ItemType.WithSequenceTypeCache {
      * @param th
      * @return true if the item is an instance of this type; false otherwise
      */
+    @Override
     public boolean matches(Item item, TypeHierarchy th) {
         return true;
     }
@@ -114,15 +118,18 @@ public class AnyItemType implements ItemType.WithSequenceTypeCache {
      */
 
     /*@NotNull*/
+    @Override
     public ItemType getPrimitiveItemType() {
         return this;
     }
 
+    @Override
     public int getPrimitiveType() {
         return Type.ITEM;
     }
 
     /*@NotNull*/
+    @Override
     public AtomicType getAtomizedItemType() {
         return BuiltInAtomicType.ANY_ATOMIC;
     }
@@ -135,10 +142,12 @@ public class AnyItemType implements ItemType.WithSequenceTypeCache {
      * @param th The type hierarchy cache
      */
 
+    @Override
     public boolean isAtomizable(TypeHierarchy th) {
         return true;
     }
 
+    @Override
     public double getDefaultPriority() {
         return -2;
     }
@@ -163,6 +172,7 @@ public class AnyItemType implements ItemType.WithSequenceTypeCache {
      * @since 9.8.0.2
      */
 
+    @Override
     public SequenceType one() {
         if (_one == null) {
             _one = new SequenceType(this, StaticProperty.EXACTLY_ONE);
@@ -177,6 +187,7 @@ public class AnyItemType implements ItemType.WithSequenceTypeCache {
      * @since 9.8.0.2
      */
 
+    @Override
     public SequenceType zeroOrOne() {
         if (_zeroOrOne == null) {
             _zeroOrOne = new SequenceType(this, StaticProperty.ALLOWS_ZERO_OR_ONE);
@@ -191,6 +202,7 @@ public class AnyItemType implements ItemType.WithSequenceTypeCache {
      * @since 9.8.0.2
      */
 
+    @Override
     public SequenceType oneOrMore() {
         if (_oneOrMore == null) {
             _oneOrMore = new SequenceType(this, StaticProperty.ALLOWS_ONE_OR_MORE);
@@ -205,6 +217,7 @@ public class AnyItemType implements ItemType.WithSequenceTypeCache {
      * @since 9.8.0.2
      */
 
+    @Override
     public SequenceType zeroOrMore() {
         if (_zeroOrMore == null) {
             _zeroOrMore = new SequenceType(this, StaticProperty.ALLOWS_ZERO_OR_MORE);

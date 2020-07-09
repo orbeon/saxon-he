@@ -40,6 +40,7 @@ public class CollatingAtomicComparer implements AtomicComparer {
     }
 
 
+    @Override
     public StringCollator getCollator() {
         return collator;
     }
@@ -52,6 +53,7 @@ public class CollatingAtomicComparer implements AtomicComparer {
      *         is known. The original AtomicComparer is not modified
      */
 
+    @Override
     public AtomicComparer provideContext(XPathContext context) {
         return this;
     }
@@ -72,6 +74,7 @@ public class CollatingAtomicComparer implements AtomicComparer {
      * @throws ClassCastException if the objects are not comparable
      */
 
+    @Override
     public int compareAtomicValues(AtomicValue a, AtomicValue b) {
         if (a == null) {
             if (b == null) {
@@ -99,6 +102,7 @@ public class CollatingAtomicComparer implements AtomicComparer {
      * @throws ClassCastException if the objects are not comparable
      */
 
+    @Override
     public boolean comparesEqual(AtomicValue a, AtomicValue b) {
         return compareAtomicValues(a, b) == 0;
     }
@@ -109,6 +113,7 @@ public class CollatingAtomicComparer implements AtomicComparer {
      *
      * @return a string representation of the AtomicComparer
      */
+    @Override
     public String save() {
         return "CAC|" + getCollator().getCollationURI();
     }

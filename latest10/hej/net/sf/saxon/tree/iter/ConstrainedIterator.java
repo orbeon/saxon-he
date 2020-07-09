@@ -30,15 +30,19 @@ public interface ConstrainedIterator<T extends Item> extends SequenceIterator, U
      * @return true if there are more items
      */
 
+    @Override
     boolean hasNext();
 
     /*@Nullable*/
+    @Override
     T next();
 
+    @Override
     int getLength();
 
 
     /*@NotNull*/
+    @Override
     GroundedValue materialize();
 
 

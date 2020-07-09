@@ -79,6 +79,7 @@ public class XSLCharacterMap extends StyleElement {
      * Validate the attributes on this instruction
      */
 
+    @Override
     public void prepareAttributes() {
 
         String name = null;
@@ -106,6 +107,7 @@ public class XSLCharacterMap extends StyleElement {
 
     }
 
+    @Override
     public void validate(ComponentDeclaration decl) throws XPathException {
 
         if (validated) {
@@ -225,6 +227,7 @@ public class XSLCharacterMap extends StyleElement {
         }
     }
 
+    @Override
     public void compileDeclaration(Compilation compilation, ComponentDeclaration decl) throws XPathException {
         // no action
     }

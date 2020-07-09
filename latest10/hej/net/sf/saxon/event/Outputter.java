@@ -45,6 +45,7 @@ public abstract class Outputter implements Receiver {
      * @param pipe the pipeline configuration
      */
 
+    @Override
     public void setPipelineConfiguration(/*@NotNull*/ PipelineConfiguration pipe) {
         this.pipelineConfiguration = pipe;
     }
@@ -56,6 +57,7 @@ public abstract class Outputter implements Receiver {
      */
 
     /*@NotNull*/
+    @Override
     public PipelineConfiguration getPipelineConfiguration() {
         return pipelineConfiguration;
     }
@@ -76,6 +78,7 @@ public abstract class Outputter implements Receiver {
      *                 if there is no xml:base attribute)
      */
 
+    @Override
     public void setSystemId(String systemId) {
         this.systemId = systemId;
     }
@@ -87,6 +90,7 @@ public abstract class Outputter implements Receiver {
      */
 
     /*@Nullable*/
+    @Override
     public String getSystemId() {
         return systemId;
     }
@@ -98,6 +102,7 @@ public abstract class Outputter implements Receiver {
      * @throws XPathException if an error occurs
      */
 
+    @Override
     public void open() throws XPathException {}
 
     /**
@@ -108,6 +113,7 @@ public abstract class Outputter implements Receiver {
      * @throws XPathException if an error occurs
      */
 
+    @Override
     abstract public void startDocument(int properties) throws XPathException;
 
     /**
@@ -116,6 +122,7 @@ public abstract class Outputter implements Receiver {
      * @throws XPathException if an error occurs
      */
 
+    @Override
     abstract public void endDocument() throws XPathException;
 
     /**
@@ -127,6 +134,7 @@ public abstract class Outputter implements Receiver {
      * @throws XPathException if an error occurs
      */
 
+    @Override
     public void setUnparsedEntity(String name, String systemID, String publicID) throws XPathException {}
 
     /**
@@ -254,6 +262,7 @@ public abstract class Outputter implements Receiver {
      * @throws XPathException if an error occurs
      */
 
+    @Override
     abstract public void endElement() throws XPathException;
 
     /**
@@ -270,6 +279,7 @@ public abstract class Outputter implements Receiver {
      * @throws XPathException if an error occurs
      */
 
+    @Override
     abstract public void characters(CharSequence chars, Location location, int properties)
             throws XPathException;
 
@@ -284,6 +294,7 @@ public abstract class Outputter implements Receiver {
      * @throws XPathException            if an error occurs
      */
 
+    @Override
     abstract public void processingInstruction(String name, CharSequence data, Location location, int properties)
             throws XPathException;
 
@@ -297,6 +308,7 @@ public abstract class Outputter implements Receiver {
      * @throws XPathException            if an error occurs
      */
 
+    @Override
     abstract public void comment(CharSequence content, Location location, int properties) throws XPathException;
 
     /**
@@ -308,6 +320,7 @@ public abstract class Outputter implements Receiver {
 *                       need to be copied. Values are {@link ReceiverOption#ALL_NAMESPACES}; the default (0) means
      */
 
+     @Override
      public void append(Item item, Location locationId, int properties) throws XPathException {
          throw new UnsupportedOperationException();
      }
@@ -322,6 +335,7 @@ public abstract class Outputter implements Receiver {
      * @throws net.sf.saxon.trans.XPathException if the operation fails
      */
 
+    @Override
     public void append(Item item) throws XPathException {
         append(item, Loc.NONE, ReceiverOption.ALL_NAMESPACES);
     }
@@ -368,6 +382,7 @@ public abstract class Outputter implements Receiver {
      * @throws XPathException if an error occurs
      */
 
+    @Override
     public void close() throws XPathException {}
 
     /**
@@ -380,6 +395,7 @@ public abstract class Outputter implements Receiver {
      *         avoid stripping unwanted type annotations)
      */
 
+    @Override
     public boolean usesTypeAnnotations() {
         return false;
     }

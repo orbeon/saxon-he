@@ -50,6 +50,7 @@ public class PackageInspector extends ProxyReceiver {
      * Abort the parse when the first start element tag is found
      */
 
+    @Override
     public void startElement(NodeName elemName, SchemaType type,
                              AttributeMap attributes, NamespaceMap namespaces,
                              Location location, int properties)

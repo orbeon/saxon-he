@@ -34,6 +34,7 @@ public class TypeChecker10 extends TypeChecker {
     public TypeChecker10() {
     }
 
+    @Override
     public Expression staticTypeCheck(Expression supplied,
                                       SequenceType req,
                                       RoleDiagnostic role,
@@ -96,14 +97,17 @@ public class TypeChecker10 extends TypeChecker {
 
     }
 
+    @Override
     public Expression makeArithmeticExpression(Expression lhs, int operator, Expression rhs) {
         return new ArithmeticExpression10(lhs, operator, rhs);
     }
 
+    @Override
     public Expression makeGeneralComparison(Expression lhs, int operator, Expression rhs) {
         return new GeneralComparison10(lhs, operator, rhs);
     }
 
+    @Override
     public Expression processValueOf(Expression select, Configuration config) {
         TypeHierarchy th = config.getTypeHierarchy();
         if (!select.getItemType().isPlainType()) {

@@ -91,6 +91,7 @@ public class TransformerHandlerImpl extends ReceivingContentHandler implements T
      *                                       startDocument() more than once.
      */
 
+    @Override
     public void startDocument() throws SAXException {
         if (started) {
             throw new UnsupportedOperationException(
@@ -104,6 +105,7 @@ public class TransformerHandlerImpl extends ReceivingContentHandler implements T
      * Get the Transformer used for this transformation
      */
 
+    @Override
     public Transformer getTransformer() {
         return transformer;
     }
@@ -117,6 +119,7 @@ public class TransformerHandlerImpl extends ReceivingContentHandler implements T
      * @param url the systemId of the source document
      */
 
+    @Override
     public void setSystemId(String url) {
         systemId = url;
         receiver.setSystemId(url);
@@ -128,6 +131,7 @@ public class TransformerHandlerImpl extends ReceivingContentHandler implements T
      * to the {@link #setSystemId(String)} method.
      */
 
+    @Override
     public String getSystemId() {
         return systemId;
     }
@@ -142,6 +146,7 @@ public class TransformerHandlerImpl extends ReceivingContentHandler implements T
      * @throws IllegalArgumentException if result is invalid for some reason.
      */
 
+    @Override
     public void setResult(Result result) {
         if (result == null) {
             throw new IllegalArgumentException("Result must not be null");
@@ -164,6 +169,7 @@ public class TransformerHandlerImpl extends ReceivingContentHandler implements T
      * the transformation of the constructed document
      */
 
+    @Override
     public void endDocument() throws SAXException {
         super.endDocument();
         NodeInfo doc = builder.getCurrentRoot();

@@ -38,6 +38,7 @@ public class XSLOriginalLibrary implements FunctionLibrary {
 
     private XSLOriginalLibrary() {}
 
+    @Override
     public Expression bind(SymbolicName.F functionName, Expression[] staticArgs, StaticContext env, List<String> reasons) {
         try {
             Function target = getFunctionItem(functionName, env);
@@ -52,15 +53,18 @@ public class XSLOriginalLibrary implements FunctionLibrary {
         }
     }
 
+    @Override
     public boolean isAvailable(SymbolicName.F functionName) {
         // xsl:original is not recognized by function-available() - W3C bug 28122
         return false;
     }
 
+    @Override
     public FunctionLibrary copy() {
         return this;
     }
 
+    @Override
     public Function getFunctionItem(SymbolicName.F functionName, StaticContext env) throws XPathException {
         if (functionName.getComponentKind() == StandardNames.XSL_FUNCTION &&
             functionName.getComponentName().hasURI(NamespaceConstant.XSLT) &&

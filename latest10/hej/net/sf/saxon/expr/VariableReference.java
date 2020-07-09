@@ -90,6 +90,7 @@ public abstract class VariableReference extends Expression implements BindingRef
      */
 
     /*@NotNull*/
+    @Override
     public abstract Expression copy(RebindingMap rebindings);
 
 
@@ -122,6 +123,7 @@ public abstract class VariableReference extends Expression implements BindingRef
      * @param properties static properties of the expression to which the variable is bound
      */
 
+    @Override
     public void setStaticType(SequenceType type, GroundedValue value, int properties) {
         // System.err.println(this + " Set static type = " + type);
         if (type == null) {
@@ -147,6 +149,7 @@ public abstract class VariableReference extends Expression implements BindingRef
      * of the parent expression. At present, only variable references take any notice of this notification.
      */
 
+    @Override
     public void setFlattened(boolean flattened) {
         this.flattened = flattened;
     }
@@ -166,6 +169,7 @@ public abstract class VariableReference extends Expression implements BindingRef
      * This notification currently has no effect except when the expression is a variable reference.
      */
 
+    @Override
     public void setFiltered(boolean filtered) {
         this.filtered = filtered;
     }
@@ -209,6 +213,7 @@ public abstract class VariableReference extends Expression implements BindingRef
      */
 
     /*@NotNull*/
+    @Override
     public Expression typeCheck(ExpressionVisitor visitor, ContextItemStaticInfo contextInfo) throws XPathException {
         if (constantValue != null) {
             binding = null;
@@ -243,6 +248,7 @@ public abstract class VariableReference extends Expression implements BindingRef
      */
 
     /*@NotNull*/
+    @Override
     public Expression optimize(ExpressionVisitor visitor, ContextItemStaticInfo contextItemType) throws XPathException {
         if (binding instanceof LetExpression &&
                 ((LetExpression)binding).getSequence() instanceof Literal &&
@@ -276,6 +282,7 @@ public abstract class VariableReference extends Expression implements BindingRef
      * to be located at run-time.
      */
 
+    @Override
     public void fixup(Binding newBinding) {
         boolean indexed = binding instanceof LocalBinding && ((LocalBinding)binding).isIndexedVariable();
         this.binding = newBinding;
@@ -323,6 +330,7 @@ public abstract class VariableReference extends Expression implements BindingRef
      */
 
     /*@NotNull*/
+    @Override
     public ItemType getItemType() {
         if (staticType == null || staticType.getPrimaryType() == AnyItemType.getInstance()) {
             if (binding != null) {
@@ -390,6 +398,7 @@ public abstract class VariableReference extends Expression implements BindingRef
      * Get the static cardinality
      */
 
+    @Override
     public int computeCardinality() {
         if (staticType == null) {
             if (binding == null) {
@@ -414,6 +423,7 @@ public abstract class VariableReference extends Expression implements BindingRef
      * @return {@link StaticProperty#NO_NODES_NEWLY_CREATED} (unless the variable is assignable using saxon:assign)
      */
 
+    @Override
     public int computeSpecialProperties() {
         int p = super.computeSpecialProperties();
         if (binding == null || !binding.isAssignable()) {
@@ -452,11 +462,13 @@ public abstract class VariableReference extends Expression implements BindingRef
      * get HashCode for comparing two expressions
      */
 
+    @Override
     public int computeHashCode() {
         return binding == null ? 73619830 : binding.hashCode();
     }
 
 
+    @Override
     public int getIntrinsicDependencies() {
         int d = 0;
         if (binding == null) {
@@ -483,6 +495,7 @@ public abstract class VariableReference extends Expression implements BindingRef
      * natively.
      */
 
+    @Override
     public int getImplementationMethod() {
         return (Cardinality.allowsMany(getCardinality()) ? 0 : EVALUATE_METHOD)
                 | ITERATE_METHOD | PROCESS_METHOD;
@@ -539,6 +552,7 @@ public abstract class VariableReference extends Expression implements BindingRef
      * expressions, it is the same as the input pathMapNode.
      */
 
+    @Override
     public PathMap.PathMapNodeSet addToPathMap(PathMap pathMap, PathMap.PathMapNodeSet pathMapNodeSet) {
         return pathMap.getPathForVariable(getBinding());
     }
@@ -552,6 +566,7 @@ public abstract class VariableReference extends Expression implements BindingRef
      */
 
     /*@NotNull*/
+    @Override
     public SequenceIterator iterate(XPathContext c) throws XPathException {
         try {
             Sequence actual = evaluateVariable(c);
@@ -575,6 +590,7 @@ public abstract class VariableReference extends Expression implements BindingRef
         }
     }
 
+    @Override
     public Item evaluateItem(XPathContext c) throws XPathException {
         try {
             Sequence actual = evaluateVariable(c);
@@ -586,6 +602,7 @@ public abstract class VariableReference extends Expression implements BindingRef
         }
     }
 
+    @Override
     public void process(Outputter output, XPathContext c) throws XPathException {
         try {
             SequenceIterator iter = evaluateVariable(c).iterate();
@@ -702,6 +719,7 @@ public abstract class VariableReference extends Expression implements BindingRef
      * is written to the supplied output destination.
      */
 
+    @Override
     public void export(ExpressionPresenter destination) throws XPathException {
         destination.startElement("varRef", this);
         destination.emitAttribute("name", variableName);

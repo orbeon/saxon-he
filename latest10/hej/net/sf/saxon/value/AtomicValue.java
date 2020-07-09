@@ -50,6 +50,7 @@ public abstract class AtomicValue
      *          if atomization is not allowed for this kind of item
      */
 
+    @Override
     public AtomicSequence atomize() throws XPathException {
         return this;
     }
@@ -60,6 +61,7 @@ public abstract class AtomicValue
      * @return this item
      */
 
+    @Override
     public final AtomicValue head() {
         return this;
     }
@@ -70,6 +72,7 @@ public abstract class AtomicValue
      * @return the number of items in the sequence (always one)
      */
 
+    @Override
     public int getLength() {
         return 1;
     }
@@ -108,6 +111,7 @@ public abstract class AtomicValue
      * @return a Comparable that follows XML Schema comparison rules
      */
 
+    @Override
     public abstract Comparable getSchemaComparable();
 
     /**
@@ -194,6 +198,7 @@ public abstract class AtomicValue
      * @return true if the two values are identical, false otherwise
      */
 
+    @Override
     public boolean isIdentical(IdentityComparable other) {
         return other instanceof AtomicValue && isIdentical((AtomicValue) other);
     }
@@ -203,6 +208,7 @@ public abstract class AtomicValue
      *
      * @return a hashCode suitable for use when testing for identity.
      */
+    @Override
     public int identityHashCode() {
         // default implementation, which presumes that if two objects are identical then they are equal.
         return hashCode();
@@ -213,6 +219,7 @@ public abstract class AtomicValue
      * the version of the method that returns a String.
      */
 
+    @Override
     public CharSequence getStringValueCS() {
         CharSequence cs = getPrimitiveStringValue();
         try {
@@ -230,6 +237,7 @@ public abstract class AtomicValue
      * @return the canonical lexical representation if defined in XML Schema; otherwise, the result
      *         of casting to string according to the XPath 2.0 rules
      */
+    @Override
     public CharSequence getCanonicalLexicalRepresentation() {
         return getStringValueCS();
     }
@@ -245,6 +253,7 @@ public abstract class AtomicValue
      */
 
     /*@Nullable*/
+    @Override
     public final AtomicValue itemAt(int n) {
         return n == 0 ? head() : null;
     }
@@ -320,6 +329,7 @@ public abstract class AtomicValue
      * so that it never throws an Exception.
      */
 
+    @Override
     public final String getStringValue() {
         return getStringValueCS().toString();
     }
@@ -342,6 +352,7 @@ public abstract class AtomicValue
      *         zero-length string
      * @throws XPathException if effective boolean value is not defined for this type (the default behaviour)
      */
+    @Override
     public boolean effectiveBooleanValue() throws XPathException {
         XPathException err = new XPathException("Effective boolean value is not defined for an atomic value of type " +
                 Type.displayTypeName(this));
@@ -429,6 +440,7 @@ public abstract class AtomicValue
      */
 
     /*@NotNull*/
+    @Override
     public AtomicValue asAtomic() {
         return this;
     }
@@ -448,6 +460,7 @@ public abstract class AtomicValue
      *
      * @return an iterator over all the items
      */
+    @Override
     public SingleAtomicIterator<? extends AtomicValue> iterate() {
         return new SingleAtomicIterator<>(this);
     }
@@ -459,6 +472,7 @@ public abstract class AtomicValue
      * @return an Iterator.
      */
 
+    @Override
     public Iterator<AtomicValue> iterator() {
         return new MonoIterator<>(this);
     }

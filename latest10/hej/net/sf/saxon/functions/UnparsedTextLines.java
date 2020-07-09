@@ -34,6 +34,7 @@ public class UnparsedTextLines extends UnparsedTextFunction implements Callable 
      * @throws net.sf.saxon.trans.XPathException
      *          if a dynamic error occurs during the evaluation of the expression
      */
+    @Override
     public Sequence call(XPathContext context, Sequence[] arguments) throws XPathException {
         StringValue hrefVal = (StringValue) arguments[0].head();
         String encoding = getArity() == 2 ? arguments[1].head().getStringValue() : null;

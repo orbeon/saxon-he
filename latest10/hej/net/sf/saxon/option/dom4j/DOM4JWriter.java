@@ -53,6 +53,7 @@ public class DOM4JWriter extends net.sf.saxon.event.Builder {
      * @param publicID The public identifier of the unparsed entity
      */
 
+    @Override
     public void setUnparsedEntity(String name, String systemID, String publicID) throws XPathException {
         // no-op
     }
@@ -61,6 +62,7 @@ public class DOM4JWriter extends net.sf.saxon.event.Builder {
      * Start of the document.
      */
 
+    @Override
     public void open() {
     }
 
@@ -68,6 +70,7 @@ public class DOM4JWriter extends net.sf.saxon.event.Builder {
      * End of the document.
      */
 
+    @Override
     public void close() {
     }
 
@@ -76,6 +79,7 @@ public class DOM4JWriter extends net.sf.saxon.event.Builder {
      * @param properties
      */
 
+    @Override
     public void startDocument(int properties) throws XPathException {
         document = new DefaultDocument();
         ancestors.push(document);
@@ -86,6 +90,7 @@ public class DOM4JWriter extends net.sf.saxon.event.Builder {
      * Notify the end of a document node
      */
 
+    @Override
     public void endDocument() throws XPathException {
         ancestors.pop();
     }
@@ -147,6 +152,7 @@ public class DOM4JWriter extends net.sf.saxon.event.Builder {
      * End of an element.
      */
 
+    @Override
     public void endElement() throws XPathException {
         flush();
         ancestors.pop();
@@ -161,6 +167,7 @@ public class DOM4JWriter extends net.sf.saxon.event.Builder {
      * Character data.
      */
 
+    @Override
     public void characters(CharSequence chars, Location locationId, int properties) throws XPathException {
         textBuffer.cat(chars);
     }
@@ -178,6 +185,7 @@ public class DOM4JWriter extends net.sf.saxon.event.Builder {
      * Handle a processing instruction.
      */
 
+    @Override
     public void processingInstruction(String target, CharSequence data, Location locationId, int properties)
             throws XPathException {
         flush();
@@ -189,6 +197,7 @@ public class DOM4JWriter extends net.sf.saxon.event.Builder {
      * Handle a comment.
      */
 
+    @Override
     public void comment(CharSequence chars, Location locationId, int properties) throws XPathException {
         flush();
         Comment comment = new DefaultComment(chars.toString());
@@ -203,6 +212,7 @@ public class DOM4JWriter extends net.sf.saxon.event.Builder {
      *         may supply untyped nodes instead of supplying the type annotation
      */
 
+    @Override
     public boolean usesTypeAnnotations() {
         return false;
     }
@@ -224,6 +234,7 @@ public class DOM4JWriter extends net.sf.saxon.event.Builder {
      */
 
     /*@Nullable*/
+    @Override
     public NodeInfo getCurrentRoot() {
         DOM4JDocumentWrapper wrapper = new DOM4JDocumentWrapper(document, systemId, config);
         wrapper.setUserData("saxon-id-index", idIndex);

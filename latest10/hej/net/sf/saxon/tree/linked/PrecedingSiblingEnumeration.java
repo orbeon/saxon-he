@@ -18,6 +18,7 @@ final class PrecedingSiblingEnumeration extends TreeEnumeration {
         advance();
     }
 
+    @Override
     protected void step() {
         next = next.getPreviousSibling();
     }

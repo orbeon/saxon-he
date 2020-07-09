@@ -235,6 +235,7 @@ public class Choose extends Instruction implements ConditionalInstruction {
      */
 
 
+    @Override
     public int getInstructionNameCode() {
         return size() == 1 ? StandardNames.XSL_IF : StandardNames.XSL_CHOOSE;
     }
@@ -250,6 +251,7 @@ public class Choose extends Instruction implements ConditionalInstruction {
      */
 
     /*@NotNull*/
+    @Override
     public Expression simplify() throws XPathException {
         for (int i = 0; i < size(); i++) {
             setCondition(i, getCondition(i).simplify());
@@ -377,6 +379,7 @@ public class Choose extends Instruction implements ConditionalInstruction {
     }
 
     /*@NotNull*/
+    @Override
     public Expression typeCheck(ExpressionVisitor visitor, ContextItemStaticInfo contextInfo) throws XPathException {
         TypeHierarchy th = visitor.getConfiguration().getTypeHierarchy();
         for (int i = 0; i < size(); i++) {
@@ -442,6 +445,7 @@ public class Choose extends Instruction implements ConditionalInstruction {
      *         method
      */
 
+    @Override
     public boolean implementsStaticTypeCheck() {
         return true;
     }
@@ -464,6 +468,7 @@ public class Choose extends Instruction implements ConditionalInstruction {
      *                        is incompatible with the required type
      */
 
+    @Override
     public Expression staticTypeCheck(SequenceType req,
                                       boolean backwardsCompatible,
                                       RoleDiagnostic role, ExpressionVisitor visitor)
@@ -510,6 +515,7 @@ public class Choose extends Instruction implements ConditionalInstruction {
     }
 
     /*@NotNull*/
+    @Override
     public Expression optimize(ExpressionVisitor visitor, ContextItemStaticInfo contextItemType) throws XPathException {
         int size = size();
         for (int i = 0; i < size; i++) {
@@ -584,6 +590,7 @@ public class Choose extends Instruction implements ConditionalInstruction {
      */
 
     /*@NotNull*/
+    @Override
     public Expression copy(RebindingMap rebindings) {
         int size = size();
         Expression[] c2 = new Expression[size];
@@ -607,6 +614,7 @@ public class Choose extends Instruction implements ConditionalInstruction {
      *          if the expression has a non-permitted updateing subexpression
      */
 
+    @Override
     public void checkForUpdatingSubexpressions() throws XPathException {
         for (Operand o : conditions()) {
             Expression condition = o.getChildExpression();
@@ -652,6 +660,7 @@ public class Choose extends Instruction implements ConditionalInstruction {
      * @return true if this is an updating expression
      */
 
+    @Override
     public boolean isUpdatingExpression() {
         for (Operand o : actions()) {
             if (o.getChildExpression().isUpdatingExpression()) {
@@ -667,6 +676,7 @@ public class Choose extends Instruction implements ConditionalInstruction {
      * @return true if this expression is vacuous
      */
 
+    @Override
     public boolean isVacuousExpression() {
         // The Choose is vacuous if all branches are vacuous
         for (Operand action : actions()) {
@@ -682,6 +692,7 @@ public class Choose extends Instruction implements ConditionalInstruction {
      * This method indicates which of these methods is prefered. For instructions this is the process() method.
      */
 
+    @Override
     public int getImplementationMethod() {
         int m = Expression.PROCESS_METHOD | Expression.ITERATE_METHOD | Expression.WATCH_METHOD;
         if (!Cardinality.allowsMany(getCardinality())) {
@@ -697,6 +708,7 @@ public class Choose extends Instruction implements ConditionalInstruction {
      *         2 if a tail recursive call was found and if this call accounts for the whole of the value.
      */
 
+    @Override
     public int markTailFunctionCalls(StructuredQName qName, int arity) {
         int result = UserFunctionCall.NOT_TAIL_CALL;
         for (Operand action : actions()) {
@@ -712,6 +724,7 @@ public class Choose extends Instruction implements ConditionalInstruction {
      */
 
     /*@NotNull*/
+    @Override
     public ItemType getItemType() {
         TypeHierarchy th = getConfiguration().getTypeHierarchy();
         ItemType type = getAction(0).getItemType();
@@ -747,6 +760,7 @@ public class Choose extends Instruction implements ConditionalInstruction {
      * @return the static cardinality
      */
 
+    @Override
     public int computeCardinality() {
         int card = 0;
         boolean includesTrue = false;
@@ -771,6 +785,7 @@ public class Choose extends Instruction implements ConditionalInstruction {
      * @return a set of flags indicating static properties of this expression
      */
 
+    @Override
     public int computeSpecialProperties() {
         // The special properties of a conditional are those which are common to every branch of the conditional
         int props = getAction(0).getSpecialProperties();
@@ -786,6 +801,7 @@ public class Choose extends Instruction implements ConditionalInstruction {
      * (Nodes created by the conditions can't contribute to the result).
      */
 
+    @Override
     public final boolean mayCreateNewNodes() {
         for (Operand action : actions()) {
             int props = action.getChildExpression().getSpecialProperties();
@@ -820,6 +836,7 @@ public class Choose extends Instruction implements ConditionalInstruction {
      * static validation can continue recursively.
      */
 
+    @Override
     public void checkPermittedContents(SchemaType parentType, boolean whole) throws XPathException {
         for (Operand action : actions()) {
             action.getChildExpression().checkPermittedContents(parentType, whole);
@@ -847,6 +864,7 @@ public class Choose extends Instruction implements ConditionalInstruction {
      *         expressions, it is the same as the input pathMapNode.
      */
 
+    @Override
     public PathMap.PathMapNodeSet addToPathMap(PathMap pathMap, PathMap.PathMapNodeSet pathMapNodeSet) {
         // expressions used in a condition contribute paths, but these do not contribute to the result
         for (Operand condition : conditions()) {
@@ -894,6 +912,7 @@ public class Choose extends Instruction implements ConditionalInstruction {
      * is written to the supplied output destination.
      */
 
+    @Override
     public void export(ExpressionPresenter out) throws XPathException {
         out.startElement("choose", this);
         for (int i = 0; i < size(); i++) {
@@ -916,6 +935,7 @@ public class Choose extends Instruction implements ConditionalInstruction {
      * @throws XPathException if any non-recoverable dynamic error occurs
      */
 
+    @Override
     public TailCall processLeavingTail(Outputter output, XPathContext context) throws XPathException {
         int i = choose(context);
         if (i >= 0) {
@@ -970,6 +990,7 @@ public class Choose extends Instruction implements ConditionalInstruction {
      *                        expression
      */
 
+    @Override
     public Item evaluateItem(XPathContext context) throws XPathException {
         int i = choose(context);
         return i < 0 ? null : getAction(i).evaluateItem(context);
@@ -992,6 +1013,7 @@ public class Choose extends Instruction implements ConditionalInstruction {
      */
 
     /*@NotNull*/
+    @Override
     public SequenceIterator iterate(XPathContext context) throws XPathException {
         int i = choose(context);
         return i < 0 ? EmptyIterator.emptyIterator() : getAction(i).iterate(context);
@@ -1007,6 +1029,7 @@ public class Choose extends Instruction implements ConditionalInstruction {
      * @param pul     the pending update list to which the results should be written
      */
 
+    @Override
     public void evaluatePendingUpdates(XPathContext context, PendingUpdateList pul) throws XPathException {
         int i = choose(context);
         if (i >= 0) {

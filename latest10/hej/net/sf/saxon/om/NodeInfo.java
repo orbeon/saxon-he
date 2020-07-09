@@ -158,6 +158,7 @@ public interface NodeInfo extends Source, Item, Location {
      */
 
     /*@Nullable*/
+    @Override
     String getSystemId();
 
     /**
@@ -170,6 +171,7 @@ public interface NodeInfo extends Source, Item, Location {
      * @since 9.7
      */
 
+    @Override
     default String getPublicId() {
         return null;
     }
@@ -207,6 +209,7 @@ public interface NodeInfo extends Source, Item, Location {
      * @since 8.4
      */
 
+    @Override
     default int getLineNumber() {
         return -1;
     }
@@ -231,6 +234,7 @@ public interface NodeInfo extends Source, Item, Location {
      * @since 9.1
      */
 
+    @Override
     default int getColumnNumber() {
         return -1;
     }
@@ -267,6 +271,7 @@ public interface NodeInfo extends Source, Item, Location {
      * @since 8.4
      */
 
+    @Override
     String getStringValue();
 
     /**
@@ -392,6 +397,7 @@ public interface NodeInfo extends Source, Item, Location {
      * @since 8.5. Changed in 9.5 to return the new type AtomicSequence.
      */
 
+    @Override
     AtomicSequence atomize() throws XPathException;
 
     /**
@@ -640,6 +646,7 @@ public interface NodeInfo extends Source, Item, Location {
      * The default implementation returns false.
      */
 
+    @Override
     default boolean isStreamed() {
         return false;
     }

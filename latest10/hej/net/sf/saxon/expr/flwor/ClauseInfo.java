@@ -34,6 +34,7 @@ public class ClauseInfo implements Traceable {
         return clause;
     }
 
+    @Override
     public Location getLocation() {
         return clause.getLocation();
     }
@@ -44,6 +45,7 @@ public class ClauseInfo implements Traceable {
      *
      * @return the QName of the object declared or manipulated by this instruction or expression
      */
+    @Override
     public StructuredQName getObjectName() {
         LocalVariableBinding[] vars = clause.getRangeVariables();
         if (vars != null && vars.length > 0) {

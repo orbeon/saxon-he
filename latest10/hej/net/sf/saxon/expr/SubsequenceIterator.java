@@ -91,6 +91,7 @@ public class SubsequenceIterator implements SequenceIterator, LastPositionFinder
      * Test whether there are any more items available in the sequence
      */
 
+    @Override
     public boolean hasNext() {
         return nextItem != null;
     }
@@ -99,6 +100,7 @@ public class SubsequenceIterator implements SequenceIterator, LastPositionFinder
      * Get the next item if there is one
      */
 
+    @Override
     public Item next() throws XPathException {
         if (nextItem == null) {
             return null;
@@ -114,6 +116,7 @@ public class SubsequenceIterator implements SequenceIterator, LastPositionFinder
         return current;
     }
 
+    @Override
     public void close() {
         base.close();
     }
@@ -128,6 +131,7 @@ public class SubsequenceIterator implements SequenceIterator, LastPositionFinder
      *         It is acceptable for the properties of the iterator to change depending on its state.
      */
 
+    @Override
     public EnumSet<Property> getProperties() {
         EnumSet<Property> p = EnumSetTool.intersect(base.getProperties(), EnumSet.of(Property.LAST_POSITION_FINDER));
         return EnumSetTool.union(p, EnumSet.of(Property.LOOKAHEAD));
@@ -141,6 +145,7 @@ public class SubsequenceIterator implements SequenceIterator, LastPositionFinder
      * includes the bit setting {@link net.sf.saxon.om.SequenceIterator.Property#LAST_POSITION_FINDER}
      */
 
+    @Override
     public int getLength() throws XPathException {
         int lastBase = ((LastPositionFinder) base).getLength();
         int z = Math.min(lastBase, max);

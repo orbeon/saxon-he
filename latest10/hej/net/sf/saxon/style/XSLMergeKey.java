@@ -60,6 +60,7 @@ public class XSLMergeKey extends XSLSortOrMergeKey {
         return null;
     }
 
+    @Override
     protected String getErrorCode() {
         return "XTSE3200";
     }

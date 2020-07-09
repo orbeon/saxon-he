@@ -60,6 +60,7 @@ public class Replace extends RegexFunction  {
      * @throws net.sf.saxon.trans.XPathException
      *          if a dynamic error occurs during the evaluation of the expression
      */
+    @Override
     public StringValue call(XPathContext context, Sequence[] arguments) throws XPathException {
 
         StringValue arg0 = (StringValue)arguments[0].head();

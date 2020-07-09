@@ -96,6 +96,7 @@ public class JLine2Talker implements Talker {
                 if (command.equals("load") || command.equals("save") || command.equals("transform") ||
                         command.equals("schema")) {
                     FileNameCompleter fnc = new FileNameCompleter() {
+                        @Override
                         public int complete(String buffer, final int cursor, final List<CharSequence> candidates) {
                             // buffer can be null
                             checkNotNull(candidates);

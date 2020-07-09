@@ -211,6 +211,7 @@ public final class TinyTree extends GenericTreeInfo implements NodeVectorTree {
      * @param config the Saxon configuration
      */
 
+    @Override
     public void setConfiguration(/*@NotNull*/ Configuration config) {
         super.setConfiguration(config);
         allowTypedValueCache = config.isLicensedFeature(Configuration.LicenseFeature.SCHEMA_VALIDATION) &&
@@ -647,6 +648,7 @@ public final class TinyTree extends GenericTreeInfo implements NodeVectorTree {
      * @return the node kind
      */
 
+    @Override
     public int getNodeKind(int nodeNr) {
         int kind = nodeKind[nodeNr];
         return kind == Type.WHITESPACE_TEXT ? Type.TEXT : kind;
@@ -672,6 +674,7 @@ public final class TinyTree extends GenericTreeInfo implements NodeVectorTree {
      * @return the name code
      */
 
+    @Override
     public int getFingerprint(int nodeNr) {
         int nc = nameCode[nodeNr];
         return nc == -1 ? -1 : nc & NamePool.FP_MASK;
@@ -915,6 +918,7 @@ public final class TinyTree extends GenericTreeInfo implements NodeVectorTree {
      * @return the node at the given position
      */
 
+    @Override
     public final TinyNodeImpl getNode(int nr) {
         switch (nodeKind[nr]) {
             case Type.DOCUMENT:
@@ -1174,6 +1178,7 @@ public final class TinyTree extends GenericTreeInfo implements NodeVectorTree {
     }
 
 
+    @Override
     public NodeInfo getRootNode() {
         if (getNodeKind(0) == Type.DOCUMENT) {
             if (root != null) {
@@ -1306,6 +1311,7 @@ public final class TinyTree extends GenericTreeInfo implements NodeVectorTree {
      */
 
     /*@Nullable*/
+    @Override
     public NodeInfo selectID(String id, boolean getParent) {
         if (idTable == null) {
             return null;            // no ID values found
@@ -1345,6 +1351,7 @@ public final class TinyTree extends GenericTreeInfo implements NodeVectorTree {
      * information is not available then an empty iterator is returned
      */
 
+    @Override
     public Iterator<String> getUnparsedEntityNames() {
         if (entityTable == null) {
             List<String> emptyList = Collections.emptyList();
@@ -1364,6 +1371,7 @@ public final class TinyTree extends GenericTreeInfo implements NodeVectorTree {
      */
 
     /*@Nullable*/
+    @Override
     public String[] getUnparsedEntity(String name) {
         if (entityTable == null) {
             return null;
@@ -1462,6 +1470,7 @@ public final class TinyTree extends GenericTreeInfo implements NodeVectorTree {
      *
      * @return true if the document contains elements whose type is other than UNTYPED
      */
+    @Override
     public boolean isTyped() {
         return typeArray != null;
     }
@@ -1502,6 +1511,7 @@ public final class TinyTree extends GenericTreeInfo implements NodeVectorTree {
      * @return an array of bytes, byte N is the node kind of node number N
      */
 
+    @Override
     public byte[] getNodeKindArray() {
         return nodeKind;
     }
@@ -1522,6 +1532,7 @@ public final class TinyTree extends GenericTreeInfo implements NodeVectorTree {
      * @return an array of integers, integer N is the name code of node number N
      */
 
+    @Override
     public int[] getNameCodeArray() {
         return nameCode;
     }

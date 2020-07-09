@@ -129,6 +129,7 @@ public final class FastStringBuffer implements AppendableCharSequence, CharSeque
      * @return the result of the concatenation
      */
 
+    @Override
     public FastStringBuffer cat(CharSequence s) {
         // Although we provide variants of this method for different subtypes, Java decides which to use based
         // on the static type of the operand. We want to use the right method based on the dynamic type, to avoid
@@ -204,6 +205,7 @@ public final class FastStringBuffer implements AppendableCharSequence, CharSeque
      * @return this FastStringBuffer
      */
 
+    @Override
     public FastStringBuffer cat(char ch) {
         ensureCapacity(1);
         array[used++] = ch;
@@ -262,6 +264,7 @@ public final class FastStringBuffer implements AppendableCharSequence, CharSeque
      *
      * @return the number of <code>char</code>s in this sequence
      */
+    @Override
     public int length() {
         return used;
     }
@@ -289,6 +292,7 @@ public final class FastStringBuffer implements AppendableCharSequence, CharSeque
      * @throws IndexOutOfBoundsException if the <tt>index</tt> argument is negative or not less than
      *                                   <tt>length()</tt>
      */
+    @Override
     public char charAt(int index) {
         if (index >= used) {
             throw new IndexOutOfBoundsException("" + index);
@@ -311,6 +315,7 @@ public final class FastStringBuffer implements AppendableCharSequence, CharSeque
      *                                   if <tt>end</tt> is greater than <tt>length()</tt>,
      *                                   or if <tt>start</tt> is greater than <tt>end</tt>
      */
+    @Override
     public CharSequence subSequence(int start, int end) {
         return new CharSlice(array, start, end - start);
     }
@@ -553,6 +558,7 @@ public final class FastStringBuffer implements AppendableCharSequence, CharSeque
      * @param length the new length
      */
 
+    @Override
     public void setLength(int length) {
         if (length < 0 || length > used) {
             return;

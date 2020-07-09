@@ -82,6 +82,7 @@ public final class BigIntegerValue extends IntegerValue {
      */
 
     /*@NotNull*/
+    @Override
     public AtomicValue copyAsSubType(/*@NotNull*/ AtomicType typeLabel) {
         if (typeLabel.getPrimitiveType() == StandardNames.XS_INTEGER) {
             BigIntegerValue v = new BigIntegerValue(value);
@@ -102,6 +103,7 @@ public final class BigIntegerValue extends IntegerValue {
      */
 
     /*@Nullable*/
+    @Override
     public ValidationFailure convertToSubType(/*@NotNull*/ BuiltInAtomicType type, boolean validate) {
         if (!validate) {
             typeLabel = type;
@@ -128,6 +130,7 @@ public final class BigIntegerValue extends IntegerValue {
      */
 
     /*@Nullable*/
+    @Override
     public ValidationFailure validateAgainstSubType(/*@NotNull*/ BuiltInAtomicType type) {
         if (IntegerValue.checkBigRange(value, type)) {
             typeLabel = type;
@@ -160,6 +163,7 @@ public final class BigIntegerValue extends IntegerValue {
      * @return the value of the xs:integer, as a Java long
      */
 
+    @Override
     public long longValue() {
         return value.longValue();
     }
@@ -170,6 +174,7 @@ public final class BigIntegerValue extends IntegerValue {
      * @return the value of the xs:integer as a Java BigInteger
      */
 
+    @Override
     public BigInteger asBigInteger() {
         return value;
     }
@@ -200,6 +205,7 @@ public final class BigIntegerValue extends IntegerValue {
      *
      * @return false if the integer is zero, otherwise true
      */
+    @Override
     public boolean effectiveBooleanValue() {
         return value.compareTo(BigInteger.ZERO) != 0;
     }
@@ -212,6 +218,7 @@ public final class BigIntegerValue extends IntegerValue {
      *         +1 if this value is greater
      */
 
+    @Override
     public int compareTo(NumericValue other) {
         if (other instanceof BigIntegerValue) {
             return value.compareTo(((BigIntegerValue) other).value);
@@ -231,6 +238,7 @@ public final class BigIntegerValue extends IntegerValue {
      * @return -1 if this is less, 0 if this is equal, +1 if this is greater or if this is NaN
      */
 
+    @Override
     public int compareTo(long other) {
         if (other == 0) {
             return value.signum();
@@ -245,6 +253,7 @@ public final class BigIntegerValue extends IntegerValue {
      * @return a String representation of the value
      */
 
+    @Override
     public String getPrimitiveStringValue() {
         return value.toString();
     }
@@ -255,6 +264,7 @@ public final class BigIntegerValue extends IntegerValue {
      * @return A double representing this numeric value; NaN if it cannot be
      *         converted
      */
+    @Override
     public double getDoubleValue() {
         return value.doubleValue();
     }
@@ -266,6 +276,7 @@ public final class BigIntegerValue extends IntegerValue {
      */
 
     /*@NotNull*/
+    @Override
     public BigDecimal getDecimalValue() {
         return new BigDecimal(value);
     }
@@ -287,6 +298,7 @@ public final class BigIntegerValue extends IntegerValue {
      */
 
     /*@NotNull*/
+    @Override
     public NumericValue negate() {
         return new BigIntegerValue(value.negate());
     }
@@ -298,6 +310,7 @@ public final class BigIntegerValue extends IntegerValue {
      */
 
     /*@NotNull*/
+    @Override
     public NumericValue floor() {
         return this;
     }
@@ -309,6 +322,7 @@ public final class BigIntegerValue extends IntegerValue {
      */
 
     /*@NotNull*/
+    @Override
     public NumericValue ceiling() {
         return this;
     }
@@ -319,6 +333,7 @@ public final class BigIntegerValue extends IntegerValue {
      * @return the integer value, unchanged
      */
 
+    @Override
     public NumericValue round(int scale) {
         if (scale >= 0) {
             return this;
@@ -343,6 +358,7 @@ public final class BigIntegerValue extends IntegerValue {
      *         round it to a multiple of 10**-scale
      */
 
+    @Override
     public NumericValue roundHalfToEven(int scale) {
         if (scale >= 0) {
             return this;
@@ -370,6 +386,7 @@ public final class BigIntegerValue extends IntegerValue {
      * @return -1 if negative, 0 if zero, +1 if positive, NaN if NaN
      */
 
+    @Override
     public int signum() {
         return value.signum();
     }
@@ -381,6 +398,7 @@ public final class BigIntegerValue extends IntegerValue {
      */
 
     /*@NotNull*/
+    @Override
     public NumericValue abs() {
         if (value.signum() >= 0) {
             return this;
@@ -396,6 +414,7 @@ public final class BigIntegerValue extends IntegerValue {
      * @return always true for this implementation
      */
 
+    @Override
     public boolean isWholeNumber() {
         return true;
     }
@@ -419,6 +438,7 @@ public final class BigIntegerValue extends IntegerValue {
      * Add another integer
      */
 
+    @Override
     public IntegerValue plus(/*@NotNull*/ IntegerValue other) {
         if (other instanceof BigIntegerValue) {
             return makeIntegerValue(value.add(((BigIntegerValue) other).value));
@@ -432,6 +452,7 @@ public final class BigIntegerValue extends IntegerValue {
      * Subtract another integer
      */
 
+    @Override
     public IntegerValue minus(/*@NotNull*/ IntegerValue other) {
         if (other instanceof BigIntegerValue) {
             return makeIntegerValue(value.subtract(((BigIntegerValue) other).value));
@@ -445,6 +466,7 @@ public final class BigIntegerValue extends IntegerValue {
      * Multiply by another integer
      */
 
+    @Override
     public IntegerValue times(/*@NotNull*/ IntegerValue other) {
         if (other instanceof BigIntegerValue) {
             return makeIntegerValue(value.multiply(((BigIntegerValue) other).value));
@@ -461,6 +483,7 @@ public final class BigIntegerValue extends IntegerValue {
      *          if the other integer is zero
      */
 
+    @Override
     public NumericValue div(/*@NotNull*/ IntegerValue other) throws XPathException {
         BigInteger oi;
         if (other instanceof BigIntegerValue) {
@@ -480,6 +503,7 @@ public final class BigIntegerValue extends IntegerValue {
      *          if the other integer is zero
      */
 
+    @Override
     public IntegerValue mod(/*@NotNull*/ IntegerValue other) throws XPathException {
         try {
             if (other instanceof BigIntegerValue) {
@@ -505,6 +529,7 @@ public final class BigIntegerValue extends IntegerValue {
      *          if the other integer is zero
      */
 
+    @Override
     public IntegerValue idiv(/*@NotNull*/ IntegerValue other) throws XPathException {
         BigInteger oi;
         if (other instanceof BigIntegerValue) {
@@ -530,6 +555,7 @@ public final class BigIntegerValue extends IntegerValue {
      */
 
     /*@NotNull*/
+    @Override
     public Comparable getSchemaComparable() {
         return new BigIntegerComparable(this);
     }
@@ -551,6 +577,7 @@ public final class BigIntegerValue extends IntegerValue {
             return value.asBigInteger();
         }
 
+        @Override
         public int compareTo(/*@NotNull*/ Object o) {
             if (o instanceof Int64Value.Int64Comparable) {
                 return asBigInteger().compareTo(BigInteger.valueOf(((Int64Value.Int64Comparable) o).asLong()));
@@ -583,6 +610,7 @@ public final class BigIntegerValue extends IntegerValue {
      */
 
     /*@NotNull*/
+    @Override
     public IntegerValue reduce() {
         if (compareTo(Long.MAX_VALUE) < 0 && compareTo(Long.MIN_VALUE) > 0) {
             Int64Value iv = new Int64Value(longValue());
@@ -614,6 +642,7 @@ public final class BigIntegerValue extends IntegerValue {
 //        }
 //    }
 
+    @Override
     public BigIntegerValue asAtomic() {
         return this;
     }

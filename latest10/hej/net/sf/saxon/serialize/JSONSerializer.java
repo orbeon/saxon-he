@@ -101,6 +101,7 @@ public class JSONSerializer extends SequenceWriter implements ReceiverWithOutput
      * @return the properties that were set using setOutputProperties
      */
 
+    @Override
     public Properties getOutputProperties() {
         return outputProperties;
     }

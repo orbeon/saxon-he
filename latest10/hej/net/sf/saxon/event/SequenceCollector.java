@@ -80,6 +80,7 @@ public final class SequenceCollector extends SequenceWriter {
      * Method to be supplied by subclasses: output one item in the sequence.
      */
 
+    @Override
     public void write(Item item) {
         list.add(item);
     }

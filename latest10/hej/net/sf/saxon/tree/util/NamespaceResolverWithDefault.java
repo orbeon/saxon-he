@@ -41,6 +41,7 @@ public class NamespaceResolverWithDefault implements NamespaceResolver {
      */
 
     /*@Nullable*/
+    @Override
     public String getURIForPrefix(/*@NotNull*/ String prefix, boolean useDefault) {
         if (useDefault && prefix.isEmpty()) {
             return defaultNamespace;
@@ -54,6 +55,7 @@ public class NamespaceResolverWithDefault implements NamespaceResolver {
      * the default namespace (prefix="") and the XML namespace where appropriate
      */
 
+    @Override
     public Iterator<String> iteratePrefixes() {
         ArrayList<String> list = new ArrayList<String>(10);
         for (Iterator<String> it = baseResolver.iteratePrefixes(); it.hasNext(); ) {

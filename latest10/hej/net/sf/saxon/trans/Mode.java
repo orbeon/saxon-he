@@ -631,6 +631,7 @@ public abstract class Mode extends Actor {
         return base;
     }
 
+    @Override
     public final void export(ExpressionPresenter presenter) throws XPathException {
         int s = presenter.startElement("mode");
         if (!isUnnamedMode()) {

@@ -47,6 +47,7 @@ public class PullFilter implements PullProvider {
      * have been read.
      */
 
+    @Override
     public void setPipelineConfiguration(PipelineConfiguration pipe) {
         this.pipe = pipe;
         base.setPipelineConfiguration(pipe);
@@ -56,6 +57,7 @@ public class PullFilter implements PullProvider {
      * Get configuration information.
      */
 
+    @Override
     public PipelineConfiguration getPipelineConfiguration() {
         return pipe;
     }
@@ -90,6 +92,7 @@ public class PullFilter implements PullProvider {
      *         {@link net.sf.saxon.pull.PullProvider.Event#END_OF_INPUT} is returned at the end of the sequence.
      */
 
+    @Override
     public Event next() throws XPathException {
         return base.next();
     }
@@ -102,6 +105,7 @@ public class PullFilter implements PullProvider {
      * @return the current event
      */
 
+    @Override
     public Event current() {
         return currentEvent;
     }
@@ -118,6 +122,7 @@ public class PullFilter implements PullProvider {
      *         that has just been notified.
      */
 
+    @Override
     public AttributeMap getAttributes() throws XPathException {
         return base.getAttributes();
     }
@@ -139,6 +144,7 @@ public class PullFilter implements PullProvider {
      * one of the methods skipToEnd(), getStringValue(), or getTypedValue().</p>
      */
 
+    @Override
     public NamespaceBinding[] getNamespaceDeclarations() throws XPathException {
         return base.getNamespaceDeclarations();
     }
@@ -150,6 +156,7 @@ public class PullFilter implements PullProvider {
      * the event following the END_DOCUMENT or END_ELEMENT.
      */
 
+    @Override
     public Event skipToMatchingEnd() throws XPathException {
         return base.skipToMatchingEnd();
     }
@@ -162,10 +169,12 @@ public class PullFilter implements PullProvider {
      * calls on next() is undefined.
      */
 
+    @Override
     public void close() {
         base.close();
     }
 
+    @Override
     public NodeName getNodeName() {
         return base.getNodeName();
     }
@@ -181,6 +190,7 @@ public class PullFilter implements PullProvider {
      *         XPath data model.
      */
 
+    @Override
     public CharSequence getStringValue() throws XPathException {
         return base.getStringValue();
     }
@@ -191,6 +201,7 @@ public class PullFilter implements PullProvider {
      * a free-standing atomic value; it is never used when reading the content of a node.
      */
 
+    @Override
     public AtomicValue getAtomicValue() {
         return base.getAtomicValue();
     }
@@ -203,6 +214,7 @@ public class PullFilter implements PullProvider {
      * @return the type annotation.
      */
 
+    @Override
     public SchemaType getSchemaType() {
         return base.getSchemaType();
     }
@@ -215,6 +227,7 @@ public class PullFilter implements PullProvider {
      * A value of null can be returned if no location information is available.
      */
 
+    @Override
     public Location getSourceLocator() {
         return base.getSourceLocator();
     }
@@ -226,6 +239,7 @@ public class PullFilter implements PullProvider {
      *         an empty list if there are no unparsed entities.
      */
 
+    @Override
     public List<UnparsedEntity> getUnparsedEntities() {
         return base.getUnparsedEntities();
     }

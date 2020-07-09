@@ -120,6 +120,7 @@ public class TryCatch extends Expression {
      * Determine the cardinality of the function.
      */
 
+    @Override
     public int computeCardinality() {
         int card = getTryExpr().getCardinality();
         for (CatchClause catchClause : catchClauses) {
@@ -133,6 +134,7 @@ public class TryCatch extends Expression {
      */
 
     /*@NotNull*/
+    @Override
     public ItemType getItemType() {
         ItemType type = getTryExpr().getItemType();
         for (CatchClause catchClause : catchClauses) {
@@ -201,6 +203,7 @@ public class TryCatch extends Expression {
      * Hashcode supporting equals()
      */
 
+    @Override
     public int computeHashCode() {
         int h = 0x836b12a0;
         for (int i = 0; i < catchClauses.size(); i++) {
@@ -217,6 +220,7 @@ public class TryCatch extends Expression {
      */
 
     /*@NotNull*/
+    @Override
     public Expression copy(RebindingMap rebindings) {
         TryCatch t2 = new TryCatch(tryOp.getChildExpression().copy(rebindings));
         for (CatchClause clause : catchClauses) {
@@ -233,6 +237,7 @@ public class TryCatch extends Expression {
      * @param c the dynamic XPath evaluation context
      */
 
+    @Override
     public Item evaluateItem(XPathContext c) throws XPathException {
         XPathContext c1 = c.newMinorContext();
         try {
@@ -264,6 +269,7 @@ public class TryCatch extends Expression {
      */
 
     /*@NotNull*/
+    @Override
     public SequenceIterator iterate(XPathContext c) throws XPathException {
         XPathContextMajor c1 = c.newContext();
         c1.createThreadManager();
@@ -394,6 +400,7 @@ public class TryCatch extends Expression {
      * @param out the expression presenter used to display the structure
      */
 
+    @Override
     public void export(ExpressionPresenter out) throws XPathException {
         out.startElement("try", this);
         if (rollbackOutput) {

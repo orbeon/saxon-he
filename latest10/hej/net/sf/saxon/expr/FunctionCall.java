@@ -169,6 +169,7 @@ public abstract class FunctionCall extends Expression {
      */
 
     /*@NotNull*/
+    @Override
     public Expression typeCheck(ExpressionVisitor visitor, ContextItemStaticInfo contextInfo) throws XPathException {
         typeCheckChildren(visitor, contextInfo);
         checkArguments(visitor);
@@ -238,6 +239,7 @@ public abstract class FunctionCall extends Expression {
      */
 
     /*@NotNull*/
+    @Override
     public Expression optimize(ExpressionVisitor visitor, ContextItemStaticInfo contextItemType) throws XPathException {
         optimizeChildren(visitor, contextItemType);
 
@@ -408,6 +410,7 @@ public abstract class FunctionCall extends Expression {
      * in explain() output displaying the expression.
      */
 
+    @Override
     public String getExpressionName() {
         return "functionCall";
     }
@@ -468,6 +471,7 @@ public abstract class FunctionCall extends Expression {
      * is written to the supplied output destination.
      */
 
+    @Override
     public void export(ExpressionPresenter out) throws XPathException {
         out.startElement("functionCall", this);
         if (getFunctionName() == null) {
@@ -511,6 +515,7 @@ public abstract class FunctionCall extends Expression {
      * Get hashCode in support of equals() method
      */
 
+    @Override
     public int computeHashCode() {
         if (getFunctionName() == null) {
             return super.computeHashCode();

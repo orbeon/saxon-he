@@ -68,6 +68,7 @@ public class DotNetURIResolver implements RelativeURIResolver, EntityResolver {
      *         call to the <code>resolve</code> method.
      */
 
+    @Override
     public String makeAbsolute(String href, /*@Nullable*/ String base) throws TransformerException {
         if (base == null || base.isEmpty()) {
             try {
@@ -121,6 +122,7 @@ public class DotNetURIResolver implements RelativeURIResolver, EntityResolver {
      *          if an error occurs when trying to
      *          resolve the URI.
      */
+    @Override
     public Source resolve(String href, String base) throws TransformerException {
         return dereference(makeAbsolute(href, base));
     }
@@ -136,6 +138,7 @@ public class DotNetURIResolver implements RelativeURIResolver, EntityResolver {
      *          if an error occurs when trying to
      *          dereference the URI.
      */
+    @Override
     public Source dereference(String uri) throws XPathException {
         //System.err.println("Resolving " + href + " against " + base);
         try {
@@ -205,6 +208,7 @@ public class DotNetURIResolver implements RelativeURIResolver, EntityResolver {
      *                                  or Reader for the InputSource.
      * @see org.xml.sax.InputSource
      */
+    @Override
     public InputSource resolveEntity(String publicId, String systemId) throws SAXException, IOException {
         try {
             Uri abs = new Uri(systemId);

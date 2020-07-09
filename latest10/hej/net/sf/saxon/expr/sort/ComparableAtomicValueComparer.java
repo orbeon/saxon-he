@@ -35,6 +35,7 @@ public class ComparableAtomicValueComparer implements AtomicComparer {
     }
 
     /*@Nullable*/
+    @Override
     public StringCollator getCollator() {
         return null;
     }
@@ -47,6 +48,7 @@ public class ComparableAtomicValueComparer implements AtomicComparer {
      *         is known. The original AtomicComparer is not modified
      */
 
+    @Override
     public AtomicComparer provideContext(XPathContext context) {
         return this;
     }
@@ -64,6 +66,7 @@ public class ComparableAtomicValueComparer implements AtomicComparer {
      * @throws ClassCastException if the objects are not comparable
      */
 
+    @Override
     public int compareAtomicValues(AtomicValue a, AtomicValue b) {
         if (a == null) {
             return (b == null ? 0 : -1);
@@ -85,6 +88,7 @@ public class ComparableAtomicValueComparer implements AtomicComparer {
      * @throws ClassCastException if the objects are not comparable
      */
 
+    @Override
     public boolean comparesEqual(AtomicValue a, AtomicValue b) {
         return a.equals(b);
     }
@@ -95,6 +99,7 @@ public class ComparableAtomicValueComparer implements AtomicComparer {
      *
      * @return a string representation of the AtomicComparer
      */
+    @Override
     public String save() {
         return "CAVC";
     }

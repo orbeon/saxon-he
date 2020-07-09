@@ -33,6 +33,7 @@ public class CommentImpl extends NodeImpl {
         this.comment = content;
     }
 
+    @Override
     public final String getStringValue() {
         return comment;
     }
@@ -43,10 +44,12 @@ public class CommentImpl extends NodeImpl {
      */
 
     /*@NotNull*/
+    @Override
     public AtomicSequence atomize() {
         return new StringValue(getStringValue());
     }
 
+    @Override
     public final int getNodeKind() {
         return Type.COMMENT;
     }
@@ -55,6 +58,7 @@ public class CommentImpl extends NodeImpl {
      * Copy this node to a given outputter
      */
 
+    @Override
     public void copy(/*@NotNull*/ Receiver out, int copyOptions, Location locationId) throws XPathException {
         out.comment(comment, locationId, ReceiverOption.NONE);
     }
@@ -66,6 +70,7 @@ public class CommentImpl extends NodeImpl {
      * @param stringValue the new string value
      */
 
+    @Override
     public void replaceStringValue(/*@NotNull*/ CharSequence stringValue) {
         comment = stringValue.toString();
     }
@@ -89,6 +94,7 @@ public class CommentImpl extends NodeImpl {
      * @return the system identifier
      */
 
+    @Override
     public String getSystemId() {
         return systemId;
     }
@@ -97,6 +103,7 @@ public class CommentImpl extends NodeImpl {
      * Get the line number of the node within its source entity
      */
 
+    @Override
     public int getLineNumber() {
         return lineNumber;
     }
@@ -105,6 +112,7 @@ public class CommentImpl extends NodeImpl {
      * Get the column number of the node within its source entity
      */
 
+    @Override
     public int getColumnNumber() {
         return columnNumber;
     }

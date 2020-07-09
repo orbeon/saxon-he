@@ -33,10 +33,12 @@ public class LinkedBuilderMonitor extends BuilderMonitor {
         this.builder = builder;
     }
 
+    @Override
     public void markNextNode(int nodeKind) {
         mark = nodeKind;
     }
 
+    @Override
     public void startDocument(int properties) throws XPathException {
         super.startDocument(properties);
         if (mark == Type.DOCUMENT) {
@@ -54,6 +56,7 @@ public class LinkedBuilderMonitor extends BuilderMonitor {
         mark = -1;
     }
 
+    @Override
     public void characters(CharSequence chars, Location locationId, int properties) throws XPathException {
         super.characters(chars, locationId, properties);
         if (mark == Type.TEXT) {
@@ -62,6 +65,7 @@ public class LinkedBuilderMonitor extends BuilderMonitor {
         mark = -1;
     }
 
+    @Override
     public void comment(CharSequence chars, Location locationId, int properties) throws XPathException {
         super.comment(chars, locationId, properties);
         if (mark == Type.COMMENT) {
@@ -70,6 +74,7 @@ public class LinkedBuilderMonitor extends BuilderMonitor {
         mark = -1;
     }
 
+    @Override
     public void processingInstruction(String target, CharSequence data, Location locationId, int properties) throws XPathException {
         super.processingInstruction(target, data, locationId, properties);
         if (mark == Type.PROCESSING_INSTRUCTION) {
@@ -79,6 +84,7 @@ public class LinkedBuilderMonitor extends BuilderMonitor {
     }
 
     /*@Nullable*/
+    @Override
     public NodeInfo getMarkedNode() {
         return markedNode;
     }

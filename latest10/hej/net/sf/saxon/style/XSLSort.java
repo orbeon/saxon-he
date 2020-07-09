@@ -17,6 +17,7 @@ import net.sf.saxon.trans.XPathException;
 public class XSLSort extends XSLSortOrMergeKey {
 
 
+    @Override
     public void validate(ComponentDeclaration decl) throws XPathException {
 
         super.validate(decl);
@@ -26,6 +27,7 @@ public class XSLSort extends XSLSortOrMergeKey {
     }
 
 
+    @Override
     public Expression getStable() {
         return stable;
     }

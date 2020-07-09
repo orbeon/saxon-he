@@ -148,6 +148,7 @@ public class PackageLoaderHE implements IPackageLoader {
              * @param next the next receiver in the pipeline
              * @return a ProxyReceiver initialized to send events to the next receiver in the pipeine
              */
+            @Override
             public ProxyReceiver makeFilter(Receiver next) {
                 CheckSumFilter filter = new CheckSumFilter(next);
                 filter.setCheckExistingChecksum(true);
@@ -167,6 +168,7 @@ public class PackageLoaderHE implements IPackageLoader {
         return loadPackageDoc(doc);
     }
 
+    @Override
     public StylesheetPackage loadPackageDoc(NodeInfo doc) throws XPathException {
 
         StylesheetPackage pack = config.makeStylesheetPackage();
@@ -2666,6 +2668,7 @@ public class PackageLoaderHE implements IPackageLoader {
                 loader.addCompletionAction(new Action() {
                     final StylesheetPackage pack = loader.getPackStack().peek();
 
+                    @Override
                     public void doAction() {
                         Set<Accumulator> list = new HashSet<>();
                         for (StructuredQName sn : accNameList) {

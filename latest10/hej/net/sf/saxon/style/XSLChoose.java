@@ -33,11 +33,13 @@ public class XSLChoose extends StyleElement {
      * @return true - it is an instruction
      */
 
+    @Override
     public boolean isInstruction() {
         return true;
     }
 
 
+    @Override
     public void prepareAttributes() {
         for (AttributeInfo att : attributes()) {
             NodeName attName = att.getNodeName();
@@ -45,6 +47,7 @@ public class XSLChoose extends StyleElement {
         }
     }
 
+    @Override
     public void validate(ComponentDeclaration decl) throws XPathException {
         for (NodeInfo curr : children()) {
             if (curr instanceof XSLWhen) {
@@ -74,6 +77,7 @@ public class XSLChoose extends StyleElement {
      * Mark tail-recursive calls on templates and functions.
      */
 
+    @Override
     public boolean markTailCalls() {
         boolean found = false;
         for (NodeInfo curr : children(StyleElement.class::isInstance)) {
@@ -84,6 +88,7 @@ public class XSLChoose extends StyleElement {
 
 
     /*@Nullable*/
+    @Override
     public Expression compile(Compilation exec, ComponentDeclaration decl) throws XPathException {
 
         int entries = numberOfWhens + (otherwise == null ? 0 : 1);

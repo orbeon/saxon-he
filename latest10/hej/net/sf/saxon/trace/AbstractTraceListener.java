@@ -58,6 +58,7 @@ public abstract class AbstractTraceListener extends StandardDiagnostics implemen
      * Called at start
      */
 
+    @Override
     public void open(Controller controller) {
         out.info("<trace " +
                 "saxon-version=\"" + Version.getProductVersion() + "\" " +
@@ -71,6 +72,7 @@ public abstract class AbstractTraceListener extends StandardDiagnostics implemen
      * Called at end
      */
 
+    @Override
     public void close() {
         indent--;
         out.info("</trace>");
@@ -80,6 +82,7 @@ public abstract class AbstractTraceListener extends StandardDiagnostics implemen
      * Called when an instruction in the stylesheet gets processed
      */
 
+    @Override
     public void enter(Traceable info, Map<String, Object> properties, XPathContext context) {
         if (isApplicable(info)) {
             Location loc = info.getLocation();
@@ -152,6 +155,7 @@ public abstract class AbstractTraceListener extends StandardDiagnostics implemen
      * @param info
      */
 
+    @Override
     public void leave(Traceable info) {
         if (isApplicable(info)) {
             String tag = tag(info);
@@ -180,6 +184,7 @@ public abstract class AbstractTraceListener extends StandardDiagnostics implemen
      * Called when an item becomes the context item
      */
 
+    @Override
     public void startCurrentItem(Item item) {
         if (item instanceof NodeInfo && detail > 0) {
             NodeInfo curr = (NodeInfo) item;
@@ -195,6 +200,7 @@ public abstract class AbstractTraceListener extends StandardDiagnostics implemen
      * Called after a node of the source tree got processed
      */
 
+    @Override
     public void endCurrentItem(Item item) {
         indent--;
         if (item instanceof NodeInfo && detail > 0) {
@@ -221,6 +227,7 @@ public abstract class AbstractTraceListener extends StandardDiagnostics implemen
      * @param stream the output destination for tracing output
      */
 
+    @Override
     public void setOutputDestination(Logger stream) {
         out = stream;
     }
@@ -239,6 +246,7 @@ public abstract class AbstractTraceListener extends StandardDiagnostics implemen
      * @param mode the mode in operation
      * @param item the item that was checked against
      */
+    @Override
     public void endRuleSearch(Object rule, Mode mode, Item item) {
         // do nothing
     }
@@ -246,6 +254,7 @@ public abstract class AbstractTraceListener extends StandardDiagnostics implemen
     /**
      * Method called when a search for a template rule is about to start
      */
+    @Override
     public void startRuleSearch() {
         // do nothing
     }

@@ -34,6 +34,7 @@ public class LazySequence implements Sequence {
      * @throws XPathException if an error occurs evaluating the underlying expression
      */
 
+    @Override
     public Item head() throws XPathException {
         return iterate().next();
     }
@@ -46,6 +47,7 @@ public class LazySequence implements Sequence {
      * @throws IllegalStateException if iterate() has already been called
      */
 
+    @Override
     public synchronized SequenceIterator iterate() throws XPathException {
         if (used) {
             throw new IllegalStateException("A LazySequence can only be read once");

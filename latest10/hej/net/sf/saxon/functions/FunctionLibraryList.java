@@ -64,6 +64,7 @@ public class FunctionLibraryList implements FunctionLibrary, XQueryFunctionBinde
      * @return if a function of this name and arity is available for calling, then a corresponding
      *         function item; or null if the function does not exist
      */
+    @Override
     public Function getFunctionItem(SymbolicName.F functionName, StaticContext staticContext) throws XPathException {
         for (FunctionLibrary lib : libraryList) {
             Function fi = lib.getFunctionItem(functionName, staticContext);
@@ -82,6 +83,7 @@ public class FunctionLibraryList implements FunctionLibrary, XQueryFunctionBinde
      * @param functionName the qualified name of the function being called
      * @return true if a function of this name and arity is available for calling
      */
+    @Override
     public boolean isAvailable(SymbolicName.F functionName) {
         for (FunctionLibrary lib : libraryList) {
             if (lib.isAvailable(functionName)) {
@@ -110,6 +112,7 @@ public class FunctionLibraryList implements FunctionLibrary, XQueryFunctionBinde
      *         null if no extension function was found matching the required name and arity.
      */
 
+    @Override
     public Expression bind(SymbolicName.F functionName, Expression[] staticArgs, StaticContext env, List<String> reasons) {
         boolean debug = env.getConfiguration().getBooleanProperty(Feature.TRACE_EXTERNAL_FUNCTIONS);
         Logger err = env.getConfiguration().getLogger();
@@ -137,6 +140,7 @@ public class FunctionLibraryList implements FunctionLibrary, XQueryFunctionBinde
      * @return the XQueryFunction if there is one, or null if not.
      */
 
+    @Override
     public XQueryFunction getDeclaration(StructuredQName functionName, int staticArgs) {
         for (FunctionLibrary lib : libraryList) {
             if (lib instanceof XQueryFunctionBinder) {
@@ -171,6 +175,7 @@ public class FunctionLibraryList implements FunctionLibrary, XQueryFunctionBinde
      * @return a copy of this function library. This must be an instance of the original class.
      */
 
+    @Override
     public FunctionLibrary copy() {
         FunctionLibraryList fll = new FunctionLibraryList();
         fll.libraryList = new ArrayList<>(libraryList.size());

@@ -28,6 +28,7 @@ public class ProxyReceiver extends SequenceReceiver {
         setPipelineConfiguration(nextReceiver.getPipelineConfiguration());
     }
 
+    @Override
     public void setSystemId(String systemId) {
         //noinspection StringEquality
         if (systemId != this.systemId) {
@@ -59,6 +60,7 @@ public class ProxyReceiver extends SequenceReceiver {
     }
 
 
+    @Override
     public void setPipelineConfiguration(/*@NotNull*/ PipelineConfiguration pipe) {
         if (pipelineConfiguration != pipe) {
             pipelineConfiguration = pipe;
@@ -72,6 +74,7 @@ public class ProxyReceiver extends SequenceReceiver {
      * Get the namepool for this configuration
      */
 
+    @Override
     public NamePool getNamePool() {
         return pipelineConfiguration.getConfiguration().getNamePool();
     }
@@ -80,6 +83,7 @@ public class ProxyReceiver extends SequenceReceiver {
      * Start of event stream
      */
 
+    @Override
     public void open() throws XPathException {
         nextReceiver.open();
     }
@@ -89,6 +93,7 @@ public class ProxyReceiver extends SequenceReceiver {
      * pipeline.
      */
 
+    @Override
     public void close() throws XPathException {
         // Note: It's wrong to assume that because we've finished writing to this
         // receiver, then we've also finished writing to other receivers in the pipe.
@@ -102,6 +107,7 @@ public class ProxyReceiver extends SequenceReceiver {
      * Start of a document node.
      */
 
+    @Override
     public void startDocument(int properties) throws XPathException {
         nextReceiver.startDocument(properties);
     }
@@ -110,6 +116,7 @@ public class ProxyReceiver extends SequenceReceiver {
      * Notify the end of a document node
      */
 
+    @Override
     public void endDocument() throws XPathException {
         nextReceiver.endDocument();
     }
@@ -136,6 +143,7 @@ public class ProxyReceiver extends SequenceReceiver {
      * End of element
      */
 
+    @Override
     public void endElement() throws XPathException {
         nextReceiver.endElement();
     }
@@ -144,6 +152,7 @@ public class ProxyReceiver extends SequenceReceiver {
      * Character data
      */
 
+    @Override
     public void characters(CharSequence chars, Location locationId, int properties) throws XPathException {
         nextReceiver.characters(chars, locationId, properties);
     }
@@ -153,6 +162,7 @@ public class ProxyReceiver extends SequenceReceiver {
      * Processing Instruction
      */
 
+    @Override
     public void processingInstruction(String target, CharSequence data, Location locationId, int properties) throws XPathException {
         nextReceiver.processingInstruction(target, data, locationId, properties);
     }
@@ -161,6 +171,7 @@ public class ProxyReceiver extends SequenceReceiver {
      * Output a comment
      */
 
+    @Override
     public void comment(CharSequence chars, Location locationId, int properties) throws XPathException {
         nextReceiver.comment(chars, locationId, properties);
     }
@@ -170,6 +181,7 @@ public class ProxyReceiver extends SequenceReceiver {
      * Set the URI for an unparsed entity in the document.
      */
 
+    @Override
     public void setUnparsedEntity(String name, String uri, String publicId) throws XPathException {
         nextReceiver.setUnparsedEntity(name, uri, publicId);
     }
@@ -182,6 +194,7 @@ public class ProxyReceiver extends SequenceReceiver {
 *                       need to be copied. Values are {@link ReceiverOption#ALL_NAMESPACES}; the default (0) means
      */
 
+    @Override
     public void append(Item item, Location locationId, int properties) throws XPathException {
         nextReceiver.append(item, locationId, properties);
     }
@@ -194,6 +207,7 @@ public class ProxyReceiver extends SequenceReceiver {
      * may supply untyped nodes instead of supplying the type annotation
      */
 
+    @Override
     public boolean usesTypeAnnotations() {
         return nextReceiver.usesTypeAnnotations();
     }

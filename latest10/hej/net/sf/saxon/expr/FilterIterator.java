@@ -58,6 +58,7 @@ public class FilterIterator implements SequenceIterator {
      * Get the next item if there is one
      */
 
+    @Override
     public Item next() throws XPathException {
         return getNextMatchingItem();
     }
@@ -141,6 +142,7 @@ public class FilterIterator implements SequenceIterator {
         }
     }
 
+    @Override
     public void close() {
         base.close();
     }
@@ -173,6 +175,7 @@ public class FilterIterator implements SequenceIterator {
          * Determine whether the context item matches the filter predicate
          */
 
+        @Override
         protected boolean matches() throws XPathException {
             return filter.effectiveBooleanValue(filterContext);
         }

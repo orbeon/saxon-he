@@ -22,6 +22,7 @@ public class QT3TestReport extends TestReport {
         super(testDriver, sp);
     }
 
+    @Override
     public void writeResultFilePreamble(Processor processor, XdmNode catalog)
             throws IOException, SaxonApiException, XMLStreamException {
         String ns = getReportNamespace();

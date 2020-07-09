@@ -28,6 +28,7 @@ public class HasChildren_1 extends SystemFunction {
      * @throws net.sf.saxon.trans.XPathException
      *          if a dynamic error occurs during the evaluation of the expression
      */
+    @Override
     public BooleanValue call(XPathContext context, Sequence[] arguments) throws XPathException {
         NodeInfo arg = (NodeInfo) arguments[0].head();
         if (arg == null) {

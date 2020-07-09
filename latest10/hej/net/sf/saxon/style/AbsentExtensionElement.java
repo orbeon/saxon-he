@@ -18,6 +18,7 @@ import net.sf.saxon.trans.XPathException;
 
 public class AbsentExtensionElement extends StyleElement {
 
+    @Override
     public boolean isInstruction() {
         return true;
     }
@@ -26,6 +27,7 @@ public class AbsentExtensionElement extends StyleElement {
      * Determine whether this type of element is allowed to contain a template-body
      */
 
+    @Override
     public boolean mayContainSequenceConstructor() {
         return true;
     }
@@ -34,6 +36,7 @@ public class AbsentExtensionElement extends StyleElement {
      * Process the attributes of this element and all its children
      */
 
+    @Override
     public void processAllAttributes() throws XPathException {
         if (reportingCircumstances == OnFailure.IGNORED_INSTRUCTION) {
             return;
@@ -48,6 +51,7 @@ public class AbsentExtensionElement extends StyleElement {
         }
     }
 
+    @Override
     public void prepareAttributes() {
     }
 
@@ -58,6 +62,7 @@ public class AbsentExtensionElement extends StyleElement {
      * @param excludeStylesheet
      */
 
+    @Override
     public void validateSubtree(ComponentDeclaration decl, boolean excludeStylesheet) throws XPathException {
         if (reportingCircumstances == OnFailure.IGNORED_INSTRUCTION || (isTopLevel() && forwardsCompatibleModeIsEnabled())) {
             // do nothing
@@ -66,10 +71,12 @@ public class AbsentExtensionElement extends StyleElement {
         }
     }
 
+    @Override
     public void validate(ComponentDeclaration decl) throws XPathException {
     }
 
     /*@Nullable*/
+    @Override
     public Expression compile(Compilation exec, ComponentDeclaration decl) throws XPathException {
 
         if (isTopLevel() || reportingCircumstances == OnFailure.IGNORED_INSTRUCTION) {

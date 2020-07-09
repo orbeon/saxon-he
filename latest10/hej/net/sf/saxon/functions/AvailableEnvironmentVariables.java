@@ -33,6 +33,7 @@ public class AvailableEnvironmentVariables extends SystemFunction {
      * @throws net.sf.saxon.trans.XPathException
      *          if a dynamic error occurs during the evaluation of the expression
      */
+    @Override
     public Sequence call(XPathContext context, Sequence[] arguments) throws XPathException {
         EnvironmentVariableResolver resolver = context.getConfiguration().getConfigurationProperty(
             Feature.ENVIRONMENT_VARIABLE_RESOLVER);
@@ -49,6 +50,7 @@ public class AvailableEnvironmentVariables extends SystemFunction {
     public Expression makeFunctionCall(Expression[] arguments) {
         return new SystemFunctionCall(this, arguments) {
             // Suppress early evaluation
+            @Override
             public Expression preEvaluate(ExpressionVisitor visitor) {
                 return this;
             }

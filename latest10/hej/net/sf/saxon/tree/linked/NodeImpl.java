@@ -54,6 +54,7 @@ public abstract class NodeImpl
      * @return this item
      */
 
+    @Override
     public NodeImpl head() {
         return this;
     }
@@ -75,6 +76,7 @@ public abstract class NodeImpl
      * @return the TreeInfo
      * @since 9.7
      */
+    @Override
     public TreeInfo getTreeInfo() {
         return getPhysicalRoot();
     }
@@ -84,6 +86,7 @@ public abstract class NodeImpl
      * the version of the method that returns a String.
      */
 
+    @Override
     public CharSequence getStringValueCS() {
         return getStringValue();
     }
@@ -94,6 +97,7 @@ public abstract class NodeImpl
      * @return the type annotation of the base node
      */
 
+    @Override
     public SchemaType getSchemaType() {
         return Untyped.getInstance();
     }
@@ -103,6 +107,7 @@ public abstract class NodeImpl
      * The default implementation returns -1, meaning unknown
      */
 
+    @Override
     public int getColumnNumber() {
         if (parent == null) {
             return -1;
@@ -117,6 +122,7 @@ public abstract class NodeImpl
      * @return 0 for the first child, 1 for the second child, etc. Returns -1 for a node
      * that has been deleted.
      */
+    @Override
     public final int getSiblingPosition() {
         return index;
     }
@@ -140,6 +146,7 @@ public abstract class NodeImpl
      * @since 8.5
      */
 
+    @Override
     public AtomicSequence atomize() throws XPathException {
         SchemaType stype = getSchemaType();
         if (stype == Untyped.getInstance() || stype == BuiltInAtomicType.UNTYPED_ATOMIC) {
@@ -155,6 +162,7 @@ public abstract class NodeImpl
      * used directly as the Source of a transformation
      */
 
+    @Override
     public void setSystemId(String uri) {
         // overridden in DocumentImpl and ElementImpl
         NodeInfo p = getParent();
@@ -206,6 +214,7 @@ public abstract class NodeImpl
      * have equivalent names. Return -1 for a node with no name.
      */
 
+    @Override
     public int getFingerprint() {
         NodeName name = getNodeName();
         if (name == null) {
@@ -230,6 +239,7 @@ public abstract class NodeImpl
      * Get a character string that uniquely identifies this node
      */
 
+    @Override
     public void generateId(/*@NotNull*/ FastStringBuffer buffer) {
         long seq = getSequenceNumber();
         if (seq == -1L) {
@@ -248,6 +258,7 @@ public abstract class NodeImpl
      */
 
     /*@Nullable*/
+    @Override
     public String getSystemId() {
         return parent.getSystemId();
     }
@@ -256,6 +267,7 @@ public abstract class NodeImpl
      * Get the base URI for the node. Default implementation for child nodes.
      */
 
+    @Override
     public String getBaseURI() {
         return parent.getBaseURI();
     }
@@ -295,6 +307,7 @@ public abstract class NodeImpl
      * return true, and the two nodes will produce the same result for generateId())
      */
 
+    @Override
     public final int compareOrder(/*@NotNull*/ NodeInfo other) {
         if (other instanceof NamespaceNode) {
             return 0 - other.compareOrder(this);
@@ -312,6 +325,7 @@ public abstract class NodeImpl
      * Get the configuration
      */
 
+    @Override
     public Configuration getConfiguration() {
         return getPhysicalRoot().getConfiguration();
     }
@@ -330,6 +344,7 @@ public abstract class NodeImpl
      * @return the prefix part of the name. For an unnamed node, return an empty string.
      */
 
+    @Override
     public String getPrefix() {
         NodeName qName = getNodeName();
         return qName == null ? "" : qName.getPrefix();
@@ -343,6 +358,7 @@ public abstract class NodeImpl
      * empty string. For an unnamed node, return the empty string.
      */
 
+    @Override
     public String getURI() {
         NodeName qName = getNodeName();
         return qName == null ? "" : qName.getURI();
@@ -356,6 +372,7 @@ public abstract class NodeImpl
      * For a node with no name, return an empty string.
      */
 
+    @Override
     public String getDisplayName() {
         NodeName qName = getNodeName();
         return qName == null ? "" : qName.getDisplayName();
@@ -368,6 +385,7 @@ public abstract class NodeImpl
      * For a node with no name, return "",.
      */
 
+    @Override
     public String getLocalPart() {
         NodeName qName = getNodeName();
         return qName == null ? "" : qName.getLocalPart();
@@ -377,6 +395,7 @@ public abstract class NodeImpl
      * Get the line number of the node within its source document entity
      */
 
+    @Override
     public int getLineNumber() {
         return parent.getLineNumber();
     }
@@ -387,6 +406,7 @@ public abstract class NodeImpl
      * but in an immutable form.
      */
 
+    @Override
     public Location saveLocation() {
         return this;
     }
@@ -398,6 +418,7 @@ public abstract class NodeImpl
      */
 
     /*@Nullable*/
+    @Override
     public final NodeImpl getParent() {
         if (parent instanceof DocumentImpl && ((DocumentImpl) parent).isImaginary()) {
             return null;
@@ -438,6 +459,7 @@ public abstract class NodeImpl
      */
 
     /*@Nullable*/
+    @Override
     public NodeImpl getPreviousSibling() {
         if (parent == null) {
             return null;
@@ -454,6 +476,7 @@ public abstract class NodeImpl
      */
 
     /*@Nullable*/
+    @Override
     public NodeImpl getNextSibling() {
         if (parent == null) {
             return null;
@@ -468,6 +491,7 @@ public abstract class NodeImpl
      */
 
     /*@Nullable*/
+    @Override
     public NodeImpl getFirstChild() {
         return null;
     }
@@ -490,6 +514,7 @@ public abstract class NodeImpl
      * @return an AxisIterator that scans the nodes reached by the axis in turn.
      */
 
+    @Override
     public AxisIterator iterateAxis(int axisNumber) {
         // Fast path for child axis
         if (axisNumber == AxisInfo.CHILD) {
@@ -511,6 +536,7 @@ public abstract class NodeImpl
      * @return an AxisIterator that scans the nodes reached by the axis in turn.
      */
 
+    @Override
     public AxisIterator iterateAxis(int axisNumber, Predicate<? super NodeInfo> nodeTest) {
 
         switch (axisNumber) {
@@ -594,6 +620,7 @@ public abstract class NodeImpl
      */
 
     /*@Nullable*/
+    @Override
     public String getAttributeValue( /*@NotNull*/ String uri, /*@NotNull*/ String localName) {
         return null;
     }
@@ -605,6 +632,7 @@ public abstract class NodeImpl
      * root will either be a document node or an element node.
      */
 
+    @Override
     public NodeInfo getRoot() {
         NodeInfo parent = getParent();
         if (parent == null) {
@@ -672,6 +700,7 @@ public abstract class NodeImpl
         }
     }
 
+    @Override
     public NodeImpl getSuccessorElement(NodeImpl anchor, String uri, String local) {
         NodeImpl next = getNextInDocument(anchor);
         while (next != null && !(next.getNodeKind() == Type.ELEMENT &&
@@ -728,6 +757,7 @@ public abstract class NodeImpl
      */
 
     /*@Nullable*/
+    @Override
     public NamespaceBinding[] getDeclaredNamespaces(NamespaceBinding[] buffer) {
         return null;
     }
@@ -754,6 +784,7 @@ public abstract class NodeImpl
      * <code>false</code> if the node has no children.
      */
 
+    @Override
     public boolean hasChildNodes() {
         return getFirstChild() != null;
     }
@@ -767,6 +798,7 @@ public abstract class NodeImpl
      *             isNilled properties)
      */
 
+    @Override
     public void setTypeAnnotation(SchemaType type) {
         // no action
     }
@@ -775,6 +807,7 @@ public abstract class NodeImpl
      * Delete this node (that is, detach it from its parent)
      */
 
+    @Override
     public void delete() {
         // Overridden for attribute nodes
         if (parent != null) {
@@ -795,6 +828,7 @@ public abstract class NodeImpl
      * @return true if this node has been deleted
      */
 
+    @Override
     public boolean isDeleted() {
         return index == -1 || (parent != null && parent.isDeleted());
     }
@@ -820,6 +854,7 @@ public abstract class NodeImpl
      * @param attribute the attribute node to be removed
      */
 
+    @Override
     public void removeAttribute(NodeInfo attribute) {
         // no action (overridden in subclasses)
     }
@@ -840,6 +875,7 @@ public abstract class NodeImpl
      * @throws IllegalStateException if the element already has an attribute with the given name.
      */
 
+    @Override
     public void addAttribute(NodeName name, SimpleType attType, CharSequence value, int properties) {
         // No action, unless this is an element node
     }
@@ -850,11 +886,13 @@ public abstract class NodeImpl
      * @param newNameCode the NamePool code of the new name
      */
 
+    @Override
     public void rename(NodeName newNameCode) {
         // implemented for node kinds that have a name
     }
 
 
+    @Override
     public void addNamespace(NamespaceBinding nscode) {
         // implemented for element nodes only
     }
@@ -885,6 +923,7 @@ public abstract class NodeImpl
      *                                  or if two replacement attributes have the same name.
      */
 
+    @Override
     public void replace(NodeInfo[] replacement, boolean inherit) {
         if (isDeleted()) {
             throw new IllegalStateException("Cannot replace a deleted node");
@@ -921,6 +960,7 @@ public abstract class NodeImpl
      *                                  implementation does not accept.
      */
 
+    @Override
     public void insertChildren(NodeInfo[] source, boolean atStart, boolean inherit) {
         // No action: node is not a document or element node
     }
@@ -940,6 +980,7 @@ public abstract class NodeImpl
      *                if such namespaces are to be undeclared
      */
 
+    @Override
     public void insertSiblings(NodeInfo[] source, boolean before, boolean inherit) {
         if (parent == null) {
             throw new IllegalStateException("Cannot add siblings if there is no parent");
@@ -953,6 +994,7 @@ public abstract class NodeImpl
      * This method implements the upd:removeType() primitive defined in the XQuery Update specification
      */
 
+    @Override
     public void removeTypeAnnotation() {
         // no action
     }
@@ -965,6 +1007,7 @@ public abstract class NodeImpl
      */
 
     /*@NotNull*/
+    @Override
     public Builder newBuilder() {
         return getPhysicalRoot().newBuilder();
     }

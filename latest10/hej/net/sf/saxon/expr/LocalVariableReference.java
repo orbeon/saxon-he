@@ -51,6 +51,7 @@ public class LocalVariableReference extends VariableReference {
      */
 
     /*@NotNull*/
+    @Override
     public Expression copy(RebindingMap rebindings) {
         if (binding == null) {
             throw new UnsupportedOperationException("Cannot copy a variable reference whose binding is unknown");
@@ -110,6 +111,7 @@ public class LocalVariableReference extends VariableReference {
      */
 
     /*@NotNull*/
+    @Override
     public Sequence evaluateVariable(XPathContext c) throws XPathException {
         try {
             return c.getStackFrame().slots[slotNumber];

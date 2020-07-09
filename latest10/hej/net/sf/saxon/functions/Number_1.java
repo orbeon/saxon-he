@@ -44,6 +44,7 @@ public class Number_1 extends ScalarSystemFunction {
      */
 
     /*@NotNull*/
+    @Override
     public Expression typeCheckCaller(FunctionCall caller, ExpressionVisitor visitor, ContextItemStaticInfo contextInfo) {
         if (caller.getArg(0).isCallOn(Number_1.class)) {
             // happens through repeated rewriting
@@ -109,6 +110,7 @@ public class Number_1 extends ScalarSystemFunction {
         }
     }
 
+    @Override
     public String getCompilerName() {
         return "NumberFnCompiler";
     }

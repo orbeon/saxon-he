@@ -59,6 +59,7 @@ public class NamespaceDifferencer extends ProxyReceiver {
      * possibly adds an xmlns="" undeclaration.
      */
 
+    @Override
     public void startElement(NodeName elemName, SchemaType type,
                              AttributeMap attributes, NamespaceMap namespaces,
                              Location location, int properties)

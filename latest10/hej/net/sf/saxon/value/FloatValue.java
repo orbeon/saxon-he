@@ -77,6 +77,7 @@ public final class FloatValue extends NumericValue {
      *                  the value actually conforms to this type.
      */
 
+    @Override
     public AtomicValue copyAsSubType(AtomicType typeLabel) {
         FloatValue v = new FloatValue(value);
         v.typeLabel = typeLabel;
@@ -90,6 +91,7 @@ public final class FloatValue extends NumericValue {
      * and xs:untypedAtomic. For external objects, the result is AnyAtomicType.
      */
 
+    @Override
     public BuiltInAtomicType getPrimitiveType() {
         return BuiltInAtomicType.FLOAT;
     }
@@ -98,10 +100,12 @@ public final class FloatValue extends NumericValue {
      * Get the value
      */
 
+    @Override
     public float getFloatValue() {
         return value;
     }
 
+    @Override
     public double getDoubleValue() {
         return (double) value;
     }
@@ -149,6 +153,7 @@ public final class FloatValue extends NumericValue {
      * Test whether the value is the double/float value NaN
      */
 
+    @Override
     public boolean isNaN() {
         return Float.isNaN(value);
     }
@@ -158,6 +163,7 @@ public final class FloatValue extends NumericValue {
      *
      * @return true unless the value is zero or NaN
      */
+    @Override
     public boolean effectiveBooleanValue() {
         return (value != 0.0 && !Float.isNaN(value));
     }
@@ -179,6 +185,7 @@ public final class FloatValue extends NumericValue {
      */
 
     /*@NotNull*/
+    @Override
     public CharSequence getPrimitiveStringValue() {
         return floatToString(value);
     }
@@ -189,6 +196,7 @@ public final class FloatValue extends NumericValue {
      * representation always uses exponential notation.
      */
 
+    @Override
     public CharSequence getCanonicalLexicalRepresentation() {
         FastStringBuffer fsb = new FastStringBuffer(FastStringBuffer.C16);
         return FloatingPointConverter.appendFloat(fsb, value, true);
@@ -209,6 +217,7 @@ public final class FloatValue extends NumericValue {
      * Negate the value
      */
 
+    @Override
     public NumericValue negate() {
         return new FloatValue(-value);
     }
@@ -217,6 +226,7 @@ public final class FloatValue extends NumericValue {
      * Implement the XPath floor() function
      */
 
+    @Override
     public NumericValue floor() {
         return new FloatValue((float) Math.floor(value));
     }
@@ -225,6 +235,7 @@ public final class FloatValue extends NumericValue {
      * Implement the XPath ceiling() function
      */
 
+    @Override
     public NumericValue ceiling() {
         return new FloatValue((float) Math.ceil(value));
     }
@@ -233,6 +244,7 @@ public final class FloatValue extends NumericValue {
      * Implement the XPath round() function
      */
 
+    @Override
     public NumericValue round(int scale) {
         if (Float.isNaN(value)) {
             return this;
@@ -259,6 +271,7 @@ public final class FloatValue extends NumericValue {
      * Implement the XPath round-to-half-even() function
      */
 
+    @Override
     public NumericValue roundHalfToEven(int scale) {
         DoubleValue d = new DoubleValue(getDoubleValue());
         d = (DoubleValue) d.roundHalfToEven(scale);
@@ -271,6 +284,7 @@ public final class FloatValue extends NumericValue {
      * @return -1 if negative, 0 if zero (including negative zero), +1 if positive, NaN if NaN
      */
 
+    @Override
     public int signum() {
         if (Float.isNaN(value)) {
             return 0;
@@ -294,6 +308,7 @@ public final class FloatValue extends NumericValue {
      * equal to some integer
      */
 
+    @Override
     public boolean isWholeNumber() {
         return value == Math.floor(value) && !Float.isInfinite(value);
     }
@@ -320,6 +335,7 @@ public final class FloatValue extends NumericValue {
      * @since 9.2
      */
 
+    @Override
     public NumericValue abs() {
         if (value > 0.0) {
             return this;
@@ -328,6 +344,7 @@ public final class FloatValue extends NumericValue {
         }
     }
 
+    @Override
     public int compareTo(NumericValue other) {
         if (other instanceof FloatValue) {
             float otherFloat = ((FloatValue) other).value;
@@ -353,6 +370,7 @@ public final class FloatValue extends NumericValue {
      * @return -1 if this is less, 0 if this is equal, +1 if this is greater or if this is NaN
      */
 
+    @Override
     public int compareTo(long other) {
         float otherFloat = (float) other;
         if (value == otherFloat) {
@@ -365,6 +383,7 @@ public final class FloatValue extends NumericValue {
      * Get an object that implements XML Schema comparison semantics
      */
 
+    @Override
     public Comparable getSchemaComparable() {
         // Convert negative to positive zero because Float.compareTo() does the wrong thing
         // Note that for NaN, we return NaN, and rely on the user of the Comparable to use it in a way
@@ -408,10 +427,12 @@ public final class FloatValue extends NumericValue {
      * @return true if the two values are identical, false otherwise.
      */
 
+    @Override
     public boolean isIdentical(/*@NotNull*/ AtomicValue v) {
         return v instanceof FloatValue && DoubleSortComparer.getInstance().comparesEqual(this, (FloatValue) v);
     }
 
+    @Override
     public FloatValue asAtomic() {
         return this;
     }

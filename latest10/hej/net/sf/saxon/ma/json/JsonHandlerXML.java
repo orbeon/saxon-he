@@ -190,6 +190,7 @@ public class JsonHandlerXML extends JsonHandler {
      *                  option is yes; if escape=no, the reEscaped form is the same as the unEscaped form.
      * @return true if the key is already present in the map, false if it is not
      */
+    @Override
     public boolean setKey(String unEscaped, String reEscaped) {
         this.keys.push(unEscaped);
         return checkForDuplicates && !mapKeys.peek().add(reEscaped);
@@ -201,6 +202,7 @@ public class JsonHandlerXML extends JsonHandler {
      * @return the XML document for this JSON
      * @throws XPathException if an error occurs downstream
      */
+    @Override
     public Item getResult() throws XPathException {
         out.endDocument();
         out.close();
@@ -283,6 +285,7 @@ public class JsonHandlerXML extends JsonHandler {
      * @throws XPathException if a dynamic error occurs
      */
 
+    @Override
     public void startArray() throws XPathException {
         startElement(arrayQN, isInMap() ? "arrayWithinMapType" : "arrayType");
         inMap.push(false);
@@ -295,6 +298,7 @@ public class JsonHandlerXML extends JsonHandler {
      * @throws XPathException if a dynamic error occurs
      */
 
+    @Override
     public void endArray() throws XPathException {
         inMap.pop();
         endElement();
@@ -305,6 +309,7 @@ public class JsonHandlerXML extends JsonHandler {
      *
      * @throws XPathException if a dynamic error occurs
      */
+    @Override
     public void startMap() throws XPathException {
         startElement(mapQN, isInMap() ? "mapWithinMapType": "mapType");
         if (checkForDuplicates) {
@@ -319,6 +324,7 @@ public class JsonHandlerXML extends JsonHandler {
      *
      * @throws XPathException if a dynamic error occurs
      */
+    @Override
     public void endMap() throws XPathException {
         inMap.pop();
         if (checkForDuplicates) {
@@ -334,6 +340,7 @@ public class JsonHandlerXML extends JsonHandler {
      * @param asDouble the double representation of the value
      * @throws XPathException if a dynamic error occurs
      */
+    @Override
     public void writeNumeric(String asString, double asDouble) throws XPathException {
         startElement(numberQN, isInMap() ? "numberWithinMapType" : "numberType");
         startContent();
@@ -348,6 +355,7 @@ public class JsonHandlerXML extends JsonHandler {
      *            in the flags, otherwise it may contain JSON escape sequences
      * @throws XPathException if a dynamic error occurs
      */
+    @Override
     public void writeString(String val) throws XPathException {
         startElement(stringQN, isInMap() ? "stringWithinMapType" : "stringType");
         CharSequence escaped = reEscape(val);
@@ -374,6 +382,7 @@ public class JsonHandlerXML extends JsonHandler {
      * @param value the boolean value to be written
      * @throws XPathException if a dynamic error occurs
      */
+    @Override
     public void writeBoolean(boolean value) throws XPathException {
         startElement(booleanQN, isInMap() ? "booleanWithinMapType" : "booleanType");
         startContent();
@@ -386,6 +395,7 @@ public class JsonHandlerXML extends JsonHandler {
      *
      * @throws XPathException if a dynamic error occurs
      */
+    @Override
     public void writeNull() throws XPathException {
         startElement(nullQN, isInMap() ? "nullWithinMapType" : "nullType");
         startContent();

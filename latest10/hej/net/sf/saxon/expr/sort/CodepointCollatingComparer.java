@@ -46,6 +46,7 @@ public class CodepointCollatingComparer implements AtomicComparer {
     private CodepointCollatingComparer() {
     }
 
+    @Override
     public StringCollator getCollator() {
         return collator;
     }
@@ -58,6 +59,7 @@ public class CodepointCollatingComparer implements AtomicComparer {
      *         is known. The original AtomicComparer is not modified
      */
 
+    @Override
     public AtomicComparer provideContext(XPathContext context) {
         return this;
     }
@@ -75,6 +77,7 @@ public class CodepointCollatingComparer implements AtomicComparer {
      * @throws ClassCastException if the objects are not comparable
      */
 
+    @Override
     public int compareAtomicValues(/*@Nullable*/ AtomicValue a, AtomicValue b) {
         if (a == null) {
             return (b == null ? 0 : -1);
@@ -101,6 +104,7 @@ public class CodepointCollatingComparer implements AtomicComparer {
      * @throws ClassCastException if either value is not xs:string or a subtype
      */
 
+    @Override
     public boolean comparesEqual(AtomicValue a, AtomicValue b) {
         return ((StringValue)a).codepointEquals((StringValue)b);
     }
@@ -111,6 +115,7 @@ public class CodepointCollatingComparer implements AtomicComparer {
      *
      * @return a string representation of the AtomicComparer
      */
+    @Override
     public String save() {
         return "CCC";
     }

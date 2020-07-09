@@ -72,6 +72,7 @@ public class SequenceInstr extends UnaryExpression {
      */
 
     /*@NotNull*/
+    @Override
     public Expression typeCheck(ExpressionVisitor visitor, ContextItemStaticInfo contextInfo) throws XPathException {
         getOperand().typeCheck(visitor, contextInfo);
         return this;
@@ -93,6 +94,7 @@ public class SequenceInstr extends UnaryExpression {
      */
 
     /*@NotNull*/
+    @Override
     public Expression optimize(ExpressionVisitor visitor, ContextItemStaticInfo contextInfo) throws XPathException {
         getOperand().optimize(visitor, contextInfo);
         return this;
@@ -100,6 +102,7 @@ public class SequenceInstr extends UnaryExpression {
 
 
     /*@NotNull*/
+    @Override
     public Expression copy(RebindingMap rebindings) {
         return new SequenceInstr(getBaseExpression().copy(rebindings));
     }
@@ -163,6 +166,7 @@ public class SequenceInstr extends UnaryExpression {
 
 
 
+    @Override
     public void export(ExpressionPresenter out) throws XPathException {
         getBaseExpression().export(out);
     }

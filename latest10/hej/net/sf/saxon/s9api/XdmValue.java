@@ -249,6 +249,7 @@ public class XdmValue implements Iterable<XdmItem> {
      * @throws SaxonApiUncheckedException if the value is lazily evaluated and the delayed
      *                                    evaluation fails with a dynamic error.
      */
+    @Override
     public Iterator<XdmItem> iterator() throws SaxonApiUncheckedException {
         try {
             Sequence v = getUnderlyingValue();

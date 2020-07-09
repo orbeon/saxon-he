@@ -78,6 +78,7 @@ public abstract class Emitter extends SequenceReceiver implements ReceiverWithOu
      *         has not been called
      */
 
+    @Override
     public Properties getOutputProperties() {
         return outputProperties;
     }
@@ -291,6 +292,7 @@ public abstract class Emitter extends SequenceReceiver implements ReceiverWithOu
      * @param publicId the entity public ID
      */
 
+    @Override
     public void setUnparsedEntity(String name, String uri, String publicId) throws XPathException {
     }
 
@@ -298,6 +300,7 @@ public abstract class Emitter extends SequenceReceiver implements ReceiverWithOu
      * Notify the end of the event stream
      */
 
+    @Override
     public void close() throws XPathException {
         if (mustClose && outputStream != null) {
             try {
@@ -316,6 +319,7 @@ public abstract class Emitter extends SequenceReceiver implements ReceiverWithOu
      *         may supply untyped nodes instead of supplying the type annotation (or conversely, it may
      *         avoid stripping unwanted type annotations)
      */
+    @Override
     public boolean usesTypeAnnotations() {
         return false;
     }
@@ -324,6 +328,7 @@ public abstract class Emitter extends SequenceReceiver implements ReceiverWithOu
      * Append an arbitrary item (node or atomic value) to the output
      */
 
+    @Override
     public void append(/*@Nullable*/ Item item, Location locationId, int copyNamespaces) throws XPathException {
         if (item instanceof NodeInfo) {
             decompose(item, locationId, copyNamespaces);

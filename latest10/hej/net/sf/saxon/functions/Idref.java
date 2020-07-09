@@ -27,6 +27,7 @@ public class Idref extends SystemFunction {
      * @param arguments the actual arguments to the function call
      */
 
+    @Override
     public int getSpecialProperties(Expression[] arguments) {
         int prop = StaticProperty.ORDERED_NODESET |
                 StaticProperty.SINGLE_DOCUMENT_NODESET |
@@ -69,6 +70,7 @@ public class Idref extends SystemFunction {
      * @throws net.sf.saxon.trans.XPathException
      *          if a dynamic error occurs during the evaluation of the expression
      */
+    @Override
     public ZeroOrMore<NodeInfo> call(XPathContext context, Sequence[] arguments) throws XPathException {
         NodeInfo start = arguments.length == 1 ? getContextNode(context) : (NodeInfo) arguments[1].head();
         NodeInfo arg2 = start.getRoot();
@@ -89,6 +91,7 @@ public class Idref extends SystemFunction {
          * Implement the MappingFunction interface
          */
 
+        @Override
         public SequenceIterator map(Item item) throws XPathException {
             return keyManager.selectByKey(keySet, document, (StringValue)item, keyContext);
         }

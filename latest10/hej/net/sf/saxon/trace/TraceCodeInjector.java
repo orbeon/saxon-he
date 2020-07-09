@@ -50,6 +50,7 @@ public class TraceCodeInjector implements CodeInjector {
      * @param clause     the clause whose execution is being monitored
      */
 
+    @Override
     public Clause injectClause(FLWORExpression expression, Clause clause) {
         return new TraceClause(expression, clause);
     }

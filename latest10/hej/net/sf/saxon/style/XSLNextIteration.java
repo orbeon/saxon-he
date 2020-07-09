@@ -29,6 +29,7 @@ import net.sf.saxon.value.Whitespace;
 
 public class XSLNextIteration extends XSLBreakOrContinue {
 
+    @Override
     public void validate(ComponentDeclaration decl) throws XPathException {
         validatePosition();
         if (xslIterate == null) {
@@ -51,6 +52,7 @@ public class XSLNextIteration extends XSLBreakOrContinue {
         };
     }
 
+    @Override
     public void postValidate() throws XPathException {
 
         if (xslIterate == null) {
@@ -91,6 +93,7 @@ public class XSLNextIteration extends XSLBreakOrContinue {
     }
 
 
+    @Override
     public Expression compile(Compilation exec, ComponentDeclaration decl) throws XPathException {
         NextIteration call = new NextIteration();
         call.setRetainedStaticContext(makeRetainedStaticContext());

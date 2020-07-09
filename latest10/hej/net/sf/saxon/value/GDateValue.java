@@ -64,6 +64,7 @@ public abstract class GDateValue extends CalendarValue {
     }
 
     /*@NotNull*/
+    @Override
     public GregorianCalendar getCalendar() {
 
         int tz = hasTimezone() ? getTimezoneInMinutes() * 60000 : 0;
@@ -351,6 +352,7 @@ public abstract class GDateValue extends CalendarValue {
      * @return -1 if this value is less, 0 if equal, +1 if greater
      */
 
+    @Override
     public int compareTo(/*@NotNull*/ CalendarValue other, int implicitTimezone) throws NoDynamicContextException {
         if (getPrimitiveType() != other.getPrimitiveType()) {
             throw new ClassCastException("Cannot compare dates of different types");
@@ -380,12 +382,14 @@ public abstract class GDateValue extends CalendarValue {
      */
 
     /*@NotNull*/
+    @Override
     public DateTimeValue toDateTime() {
         return new DateTimeValue(year, month, day, (byte) 0, (byte) 0, (byte) 0, 0, getTimezoneInMinutes(), hasNoYearZero);
     }
 
 
     /*@NotNull*/
+    @Override
     public Comparable getSchemaComparable() {
         return new GDateComparable();
     }
@@ -397,6 +401,7 @@ public abstract class GDateValue extends CalendarValue {
      */
 
     /*@Nullable*/
+    @Override
     public AtomicValue getComponent(AccessorFn.Component component) throws XPathException {
         switch (component) {
             case YEAR_ALLOWING_ZERO:
@@ -425,6 +430,7 @@ public abstract class GDateValue extends CalendarValue {
             return GDateValue.this;
         }
 
+        @Override
         public int compareTo(/*@NotNull*/ Object o) {
             if (o instanceof GDateComparable) {
                 if (asGDateValue().getPrimitiveType() != ((GDateComparable) o).asGDateValue().getPrimitiveType()) {

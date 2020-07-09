@@ -36,11 +36,13 @@ public class AdjacentTextNodeMergingIterator implements LookaheadIterator {
         next = base.next();
     }
 
+    @Override
     public boolean hasNext() {
         return next != null;
     }
 
     /*@Nullable*/
+    @Override
     public Item next() throws XPathException {
         Item current = next;
         if (current == null) {
@@ -70,10 +72,12 @@ public class AdjacentTextNodeMergingIterator implements LookaheadIterator {
         }
     }
 
+    @Override
     public void close() {
         base.close();
     }
 
+    @Override
     public EnumSet<Property> getProperties() {
         return EnumSet.of(Property.LOOKAHEAD);
     }

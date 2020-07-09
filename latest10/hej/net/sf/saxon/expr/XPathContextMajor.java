@@ -104,6 +104,7 @@ public class XPathContextMajor extends XPathContextMinor {
      * to the top of a stack, and contains a pointer to the previous context.
      */
 
+    @Override
     public XPathContextMajor newContext() {
         XPathContextMajor c = new XPathContextMajor();
         c.controller = controller;
@@ -192,6 +193,7 @@ public class XPathContextMajor extends XPathContextMinor {
      *
      * @return the current thread manager. This will be null if not running XSLT under Saxon-EE
      */
+    @Override
     public ThreadManager getThreadManager() {
         return threadManager;
     }
@@ -215,6 +217,7 @@ public class XPathContextMajor extends XPathContextMinor {
      *                        error.
      */
 
+    @Override
     public void waitForChildThreads() throws XPathException {
         if (threadManager != null) {
             threadManager.waitForChildThreads();
@@ -228,6 +231,7 @@ public class XPathContextMajor extends XPathContextMinor {
      * @return the supplied parameters
      */
 
+    @Override
     public ParameterSet getLocalParameters() {
         if (localParameters == null) {
             localParameters = new ParameterSet();
@@ -251,6 +255,7 @@ public class XPathContextMajor extends XPathContextMinor {
      * @return the supplied tunnel parameters
      */
 
+    @Override
     public ParameterSet getTunnelParameters() {
         return tunnelParameters;
     }
@@ -438,6 +443,7 @@ public class XPathContextMajor extends XPathContextMinor {
      * @return the current mode. May return null if the current mode is the default mode.
      */
 
+    @Override
     public Component.M getCurrentMode() {
         Component.M m = currentMode;
         if (m == null) {
@@ -470,6 +476,7 @@ public class XPathContextMajor extends XPathContextMinor {
      * @return the current template
      */
 
+    @Override
     public Rule getCurrentTemplateRule() {
         return currentTemplate;
     }
@@ -492,6 +499,7 @@ public class XPathContextMajor extends XPathContextMinor {
      * @return the current grouped collection
      */
 
+    @Override
     public GroupIterator getCurrentGroupIterator() {
         return currentGroupIterator;
     }
@@ -514,6 +522,7 @@ public class XPathContextMajor extends XPathContextMinor {
      * @return the current grouped collection
      */
 
+    @Override
     public GroupIterator getCurrentMergeGroupIterator() {
         return currentMergeGroupIterator;
     }
@@ -536,6 +545,7 @@ public class XPathContextMajor extends XPathContextMinor {
      * @return the current regular expressions iterator
      */
 
+    @Override
     public RegexIterator getCurrentRegexIterator() {
         return currentRegexIterator;
     }
@@ -551,6 +561,7 @@ public class XPathContextMajor extends XPathContextMinor {
      * @return ParameterSet.NOT_SUPPLIED, ParameterSet.SUPPLIED, or ParameterSet.SUPPLIED_AND_CHECKED
      */
 
+    @Override
     public int useLocalParameter(
             StructuredQName paramName, int slotNumber, boolean isTunnel) throws XPathException {
 
@@ -596,6 +607,7 @@ public class XPathContextMajor extends XPathContextMinor {
      * @since 9.6
      */
 
+    @Override
     public URIResolver getURIResolver() {
         return uriResolver == null ? controller.getURIResolver() : uriResolver;
     }
@@ -621,6 +633,7 @@ public class XPathContextMajor extends XPathContextMinor {
      * @since 9.6. Changed in 10.0 to use an ErrorReporter rather than ErrorListener
      */
 
+    @Override
     public ErrorReporter getErrorReporter() {
         return errorReporter == null ? controller.getErrorReporter() : errorReporter;
     }
@@ -641,6 +654,7 @@ public class XPathContextMajor extends XPathContextMinor {
      * @return the current exception, or null if there is none defined
      */
 
+    @Override
     public XPathException getCurrentException() {
         return currentException;
     }
@@ -649,6 +663,7 @@ public class XPathContextMajor extends XPathContextMinor {
      * Get the current component
      */
 
+    @Override
     public Component getCurrentComponent() {
         return currentComponent;
     }
@@ -681,6 +696,7 @@ public class XPathContextMajor extends XPathContextMinor {
      *                    executed
      * @return the component to be invoked
      */
+    @Override
     public Component getTargetComponent(int bindingSlot) {
         try {
             ComponentBinding binding = currentComponent.getComponentBindings().get(bindingSlot);

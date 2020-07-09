@@ -54,6 +54,7 @@ public class AdjacentTextNodeMerger extends UnaryExpression {
         }
     }
 
+    @Override
     protected OperandRole getOperandRole() {
         return OperandRole.SAME_FOCUS_ACTION;
     }
@@ -180,6 +181,7 @@ public class AdjacentTextNodeMerger extends UnaryExpression {
      */
 
     /*@NotNull*/
+    @Override
     public Expression copy(RebindingMap rebindings) {
         AdjacentTextNodeMerger a2 = new AdjacentTextNodeMerger(getBaseExpression().copy(rebindings));
         ExpressionTool.copyLocationInfo(this, a2);
@@ -191,6 +193,7 @@ public class AdjacentTextNodeMerger extends UnaryExpression {
      * This method indicates which of these methods is prefered.
      */
 
+    @Override
     public int getImplementationMethod() {
         return Expression.PROCESS_METHOD | Expression.ITERATE_METHOD | ITEM_FEED_METHOD | WATCH_METHOD;
     }

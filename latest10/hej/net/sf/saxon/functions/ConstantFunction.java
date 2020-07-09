@@ -29,6 +29,7 @@ public class ConstantFunction extends SystemFunction  {
         this.value = value;
     }
 
+    @Override
     public Sequence call(XPathContext context, Sequence[] arguments) throws XPathException {
         return value;
     }

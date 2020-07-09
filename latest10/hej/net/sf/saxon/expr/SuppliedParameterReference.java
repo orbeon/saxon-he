@@ -67,11 +67,13 @@ public class SuppliedParameterReference extends Expression {
     }
 
     /*@NotNull*/
+    @Override
     public Expression typeCheck(ExpressionVisitor visitor, ContextItemStaticInfo contextInfo) throws XPathException {
         return this;
     }
 
     /*@NotNull*/
+    @Override
     public Expression optimize(ExpressionVisitor visitor, ContextItemStaticInfo contextItemType) throws XPathException {
         return this;
     }
@@ -84,6 +86,7 @@ public class SuppliedParameterReference extends Expression {
      */
 
     /*@NotNull*/
+    @Override
     public ItemType getItemType() {
         if (type != null) {
             return type.getPrimaryType();
@@ -102,6 +105,7 @@ public class SuppliedParameterReference extends Expression {
      *         dependencies. The flags are documented in class net.sf.saxon.value.StaticProperty
      */
 
+    @Override
     public int getIntrinsicDependencies() {
         return StaticProperty.DEPENDS_ON_LOCAL_VARIABLES;
     }
@@ -113,6 +117,7 @@ public class SuppliedParameterReference extends Expression {
      *         in advance.
      */
 
+    @Override
     public int computeCardinality() {
         if (type != null) {
             return type.getCardinality();
@@ -129,6 +134,7 @@ public class SuppliedParameterReference extends Expression {
      */
 
     /*@NotNull*/
+    @Override
     public Expression copy(RebindingMap rebindings) {
         SuppliedParameterReference exp = new SuppliedParameterReference(slotNumber);
         ExpressionTool.copyLocationInfo(this, exp);
@@ -176,6 +182,7 @@ public class SuppliedParameterReference extends Expression {
      */
 
     /*@NotNull*/
+    @Override
     public SequenceIterator iterate(XPathContext context) throws XPathException {
         return evaluateVariable(context).iterate();
     }
@@ -196,6 +203,7 @@ public class SuppliedParameterReference extends Expression {
      *          expression
      */
 
+    @Override
     public Item evaluateItem(XPathContext context) throws XPathException {
         return evaluateVariable(context).head();
     }
@@ -218,6 +226,7 @@ public class SuppliedParameterReference extends Expression {
      * is written to the supplied output destination.
      */
 
+    @Override
     public void export(ExpressionPresenter destination) throws XPathException {
         destination.startElement("supplied", this);
         destination.emitAttribute("slot", slotNumber + "");

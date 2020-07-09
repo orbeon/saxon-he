@@ -36,6 +36,7 @@ public class FailedResource implements Resource {
      *
      * @return always null for this kind of resource
      */
+    @Override
     public String getContentType() {
         return null;
     }
@@ -45,6 +46,7 @@ public class FailedResource implements Resource {
      *
      * @return a URI identifying this resource
      */
+    @Override
     public String getResourceURI() {
         return uri;
     }
@@ -59,6 +61,7 @@ public class FailedResource implements Resource {
      * @throws XPathException if a failure occurs materializing the resource
      */
 
+    @Override
     public Item getItem(XPathContext context) throws XPathException {
         throw error;
     }

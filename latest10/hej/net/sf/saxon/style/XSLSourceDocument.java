@@ -43,6 +43,7 @@ public class XSLSourceDocument extends StyleElement {
      * @return true - it is an instruction
      */
 
+    @Override
     public boolean isInstruction() {
         return true;
     }
@@ -53,15 +54,18 @@ public class XSLSourceDocument extends StyleElement {
      * @return true: yes, it may contain a sequence constructor
      */
 
+    @Override
     public boolean mayContainSequenceConstructor() {
         return true;
     }
 
+    @Override
     protected boolean isWithinDeclaredStreamableConstruct() {
         return true;
     }
 
 
+    @Override
     public void prepareAttributes() {
 
         parseOptions = new ParseOptions(getConfiguration().getParseOptions());
@@ -168,6 +172,7 @@ public class XSLSourceDocument extends StyleElement {
     }
 
 
+    @Override
     public void validate(ComponentDeclaration decl) throws XPathException {
         //checkParamComesFirst(false);
         href = typeCheck("select", href);
@@ -177,6 +182,7 @@ public class XSLSourceDocument extends StyleElement {
     }
 
     /*@Nullable*/
+    @Override
     public Expression compile(Compilation exec, ComponentDeclaration decl) throws XPathException {
         Configuration config = getConfiguration();
         if (parseOptions.getSpaceStrippingRule() == null) {

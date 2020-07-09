@@ -241,6 +241,7 @@ public class PatternThatSetsCurrent extends Pattern {
      */
 
     /*@NotNull*/
+    @Override
     public Pattern copy(RebindingMap rebindings) {
         LocalVariableBinding newCurrent = new LocalVariableBinding(Current.FN_CURRENT, SequenceType.SINGLE_ITEM);
         rebindings.put(binding, newCurrent);
@@ -249,6 +250,7 @@ public class PatternThatSetsCurrent extends Pattern {
         return n;
     }
 
+    @Override
     public void export(ExpressionPresenter presenter) throws XPathException {
         presenter.startElement("p.withCurrent");
         wrappedPattern.export(presenter);

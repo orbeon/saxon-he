@@ -59,10 +59,12 @@ public class AtomicArray implements AtomicSequence {
         content = list;
     }
 
+    @Override
     public AtomicValue head() {
         return content.isEmpty() ? null : content.get(0);
     }
 
+    @Override
     public AtomicIterator iterate() {
         return new ListIterator.Atomic(content);
     }
@@ -74,6 +76,7 @@ public class AtomicArray implements AtomicSequence {
      * @return the n'th item if n is in range, or null otherwise
      */
 
+    @Override
     public AtomicValue itemAt(int n) {
         if (n >= 0 && n < content.size()) {
             return content.get(n);
@@ -88,6 +91,7 @@ public class AtomicArray implements AtomicSequence {
      * @return the number of items in the sequence
      */
 
+    @Override
     public int getLength() {
         return content.size();
     }
@@ -105,6 +109,7 @@ public class AtomicArray implements AtomicSequence {
      * @return the required subsequence
      */
 
+    @Override
     public AtomicArray subsequence(int start, int length) {
         if (start < 0) {
             start = 0;
@@ -123,6 +128,7 @@ public class AtomicArray implements AtomicSequence {
      * of casting to string according to the XPath 2.0 rules
      */
 
+    @Override
     public CharSequence getCanonicalLexicalRepresentation() {
         return getStringValueCS();
     }
@@ -132,6 +138,7 @@ public class AtomicArray implements AtomicSequence {
      * the version of the method that returns a String.
      */
 
+    @Override
     public CharSequence getStringValueCS() {
         FastStringBuffer fsb = new FastStringBuffer(FastStringBuffer.C64);
         boolean first = true;
@@ -146,10 +153,12 @@ public class AtomicArray implements AtomicSequence {
         return fsb.condense();
     }
 
+    @Override
     public String getStringValue() {
         return getStringValueCS().toString();
     }
 
+    @Override
     public boolean effectiveBooleanValue() throws XPathException {
         return ExpressionTool.effectiveBooleanValue(iterate());
     }
@@ -168,6 +177,7 @@ public class AtomicArray implements AtomicSequence {
      * @return a Comparable that follows XML Schema comparison rules
      */
 
+    @Override
     public Comparable getSchemaComparable() {
         if (content.size() == 1) {
             return content.get(0).getSchemaComparable();
@@ -181,6 +191,7 @@ public class AtomicArray implements AtomicSequence {
             return AtomicArray.this;
         }
 
+        @Override
         public int compareTo(ValueSchemaComparable obj) {
             UnfailingIterator iter1 = getValue().iterate();
             UnfailingIterator iter2 = obj.getValue().iterate();
@@ -234,6 +245,7 @@ public class AtomicArray implements AtomicSequence {
      *
      * @return the simplified sequence
      */
+    @Override
     public GroundedValue reduce() {
         int len = getLength();
         if (len == 0) {
@@ -251,6 +263,7 @@ public class AtomicArray implements AtomicSequence {
      * @return an Iterator.
      */
 
+    @Override
     public Iterator<AtomicValue> iterator() {
         return content.iterator();
     }

@@ -36,14 +36,17 @@ public class MetadataResource implements Resource {
         this.properties = properties;
     }
 
+    @Override
     public String getContentType() {
         return content.getContentType();
     }
 
+    @Override
     public String getResourceURI() {
         return resourceURI;
     }
 
+    @Override
     public Item getItem(XPathContext context)  {
 
         // Create a map for the result

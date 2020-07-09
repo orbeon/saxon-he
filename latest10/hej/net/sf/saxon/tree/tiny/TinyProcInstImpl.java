@@ -31,6 +31,7 @@ final class TinyProcInstImpl extends TinyNodeImpl {
         this.nodeNr = nodeNr;
     }
 
+    @Override
     public String getStringValue() {
         int start = tree.alpha[nodeNr];
         int len = tree.beta[nodeNr];
@@ -47,10 +48,12 @@ final class TinyProcInstImpl extends TinyNodeImpl {
      * Returns the string value, as an instance of xs:string
      */
 
+    @Override
     public AtomicSequence atomize() {
         return new StringValue(getStringValue());
     }
 
+    @Override
     public final int getNodeKind() {
         return Type.PROCESSING_INSTRUCTION;
     }
@@ -59,6 +62,7 @@ final class TinyProcInstImpl extends TinyNodeImpl {
      * Get the base URI of this processing instruction node.
      */
 
+    @Override
     public String getBaseURI() {
         return Navigator.getBaseURI(this);
     }
@@ -67,6 +71,7 @@ final class TinyProcInstImpl extends TinyNodeImpl {
      * Copy this node to a given outputter
      */
 
+    @Override
     public void copy(Receiver out, int copyOptions, Location locationId) throws XPathException {
         out.processingInstruction(getDisplayName(), getStringValue(), locationId, ReceiverOption.NONE);
     }

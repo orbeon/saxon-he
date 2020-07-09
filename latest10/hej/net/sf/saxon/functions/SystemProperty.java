@@ -75,6 +75,7 @@ public class SystemProperty extends SystemFunction implements Callable {
      * @throws net.sf.saxon.trans.XPathException
      *          if a dynamic error occurs during the evaluation of the expression
      */
+    @Override
     public StringValue call(XPathContext context, Sequence[] arguments) throws XPathException {
 
         StringValue name = (StringValue) arguments[0].head();

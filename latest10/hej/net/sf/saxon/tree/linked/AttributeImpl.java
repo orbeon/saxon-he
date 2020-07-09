@@ -80,6 +80,7 @@ public class AttributeImpl extends NodeImpl {
      * @return the type annotation of the node, if any
      */
 
+    @Override
     public SchemaType getSchemaType() {
         return getAttributeInfo().getType();
     }
@@ -91,6 +92,7 @@ public class AttributeImpl extends NodeImpl {
      * @return true if the node is an ID
      */
 
+    @Override
     public boolean isId() {
         return getAttributeInfo().isId();
     }
@@ -101,6 +103,7 @@ public class AttributeImpl extends NodeImpl {
      * @return true if the node is an IDREF or IDREFS element or attribute
      */
 
+    @Override
     public boolean isIdref() {
         if (ReceiverOption.contains(getAttributeInfo().getProperties(), ReceiverOption.IS_IDREF)) {
             return true;
@@ -142,6 +145,7 @@ public class AttributeImpl extends NodeImpl {
      * the top word the same as their owner and the bottom half reflecting their relative position.
      */
 
+    @Override
     protected long getSequenceNumber() {
         long parseq = getRawParent().getSequenceNumber();
         return (parseq == -1L ? parseq : parseq + 0x8000 + getSiblingPosition());
@@ -154,6 +158,7 @@ public class AttributeImpl extends NodeImpl {
      * @return Node.ATTRIBUTE
      */
 
+    @Override
     public final int getNodeKind() {
         return Type.ATTRIBUTE;
     }
@@ -164,6 +169,7 @@ public class AttributeImpl extends NodeImpl {
      * @return the attribute value
      */
 
+    @Override
     public String getStringValue() {
         return getAttributeInfo().getValue();
     }
@@ -173,6 +179,7 @@ public class AttributeImpl extends NodeImpl {
      */
 
     /*@Nullable*/
+    @Override
     public NodeImpl getNextSibling() {
         return null;
     }
@@ -182,6 +189,7 @@ public class AttributeImpl extends NodeImpl {
      */
 
     /*@Nullable*/
+    @Override
     public NodeImpl getPreviousSibling() {
         return null;
     }
@@ -191,6 +199,7 @@ public class AttributeImpl extends NodeImpl {
      */
 
     /*@NotNull*/
+    @Override
     public NodeImpl getPreviousInDocument() {
         return getParent();
     }
@@ -200,6 +209,7 @@ public class AttributeImpl extends NodeImpl {
      */
 
     /*@Nullable*/
+    @Override
     public NodeImpl getNextInDocument(NodeImpl anchor) {
         if (anchor == this) return null;
         return getParent().getNextInDocument(anchor);
@@ -211,6 +221,7 @@ public class AttributeImpl extends NodeImpl {
      * @param buffer a buffer to which the generated ID will be written
      */
 
+    @Override
     public void generateId(/*@NotNull*/ FastStringBuffer buffer) {
         getParent().generateId(buffer);
         buffer.cat('a');
@@ -222,6 +233,7 @@ public class AttributeImpl extends NodeImpl {
      * @throws IllegalArgumentException this method is not supported for attribute nodes
      */
 
+    @Override
     public void copy(/*@NotNull*/ Receiver out, int copyOptions, Location locationId) throws XPathException {
         throw new IllegalArgumentException();
     }
@@ -230,6 +242,7 @@ public class AttributeImpl extends NodeImpl {
      * Delete this node (that is, detach it from its parent)
      */
 
+    @Override
     public void delete() {
         if (!isDeleted()) {
             if (getRawParent() != null) {
@@ -251,6 +264,7 @@ public class AttributeImpl extends NodeImpl {
      * @return true if this node has been deleted
      */
 
+    @Override
     public boolean isDeleted() {
         // Note that the attribute node may be represented by more than one object
         return getRawParent() == null || getAttributeInfo() instanceof AttributeInfo.Deleted || getRawParent().isDeleted();
@@ -271,6 +285,7 @@ public class AttributeImpl extends NodeImpl {
      *                                  or if two of the replacement nodes have the same name
      */
 
+    @Override
     public void replace(/*@NotNull*/ NodeInfo[] replacement, boolean inherit) {
         if (isDeleted()) {
             throw new IllegalStateException("Cannot replace a deleted node");
@@ -294,6 +309,7 @@ public class AttributeImpl extends NodeImpl {
      * @param newNameCode the NamePool code of the new name
      */
 
+    @Override
     public void rename(NodeName newNameCode) {
         // The attribute node itself is transient; we need to update the attribute collection held in the parent
         ElementImpl owner = (ElementImpl)getRawParent();
@@ -317,6 +333,7 @@ public class AttributeImpl extends NodeImpl {
         }
     }
 
+    @Override
     public void replaceStringValue(CharSequence stringValue) {
         ElementImpl owner = (ElementImpl)getRawParent();
         if (owner != null && !isDeleted()) {
@@ -332,6 +349,7 @@ public class AttributeImpl extends NodeImpl {
      * This method implements the upd:removeType() primitive defined in the XQuery Update specification
      */
 
+    @Override
     public void removeTypeAnnotation() {
         ElementImpl owner = (ElementImpl) getRawParent();
         if (owner != null && !isDeleted()) {
@@ -352,6 +370,7 @@ public class AttributeImpl extends NodeImpl {
      *                 isNilled properties)
      */
 
+    @Override
     public void setTypeAnnotation(SchemaType type) {
         if (!(type instanceof SimpleType)) {
             throw new IllegalArgumentException("Attribute type must be a simple type");

@@ -89,6 +89,7 @@ public class BooleanExpressionPattern extends Pattern implements PatternWithPred
      * @param nextFree    the next slot that is free to be allocated @return the next slot that is free to be allocated
      */
 
+    @Override
     public int allocateSlots(SlotManager slotManager, int nextFree) {
         return ExpressionTool.allocateSlots(getPredicate(), nextFree, slotManager);
     }
@@ -135,6 +136,7 @@ public class BooleanExpressionPattern extends Pattern implements PatternWithPred
      * @return true if the item matches the Pattern, false otherwise
      */
 
+    @Override
     public boolean matches(Item item, XPathContext context) {
         XPathContext c2 = context.newMinorContext();
         ManualIterator iter = new ManualIterator(item);
@@ -151,6 +153,7 @@ public class BooleanExpressionPattern extends Pattern implements PatternWithPred
      * Get an Itemtype that all the items matching this pattern must satisfy
      */
 
+    @Override
     public ItemType getItemType() {
         if (getPredicate() instanceof InstanceOfExpression) {
             InstanceOfExpression ioe = (InstanceOfExpression)getPredicate();
@@ -168,6 +171,7 @@ public class BooleanExpressionPattern extends Pattern implements PatternWithPred
      * @return A fingerprint that the nodes must match, or -1 if it can match multiple fingerprints
      */
 
+    @Override
     public int getFingerprint() {
         return -1;
     }
@@ -195,6 +199,7 @@ public class BooleanExpressionPattern extends Pattern implements PatternWithPred
      * Hashcode supporting equals()
      */
 
+    @Override
     public int computeHashCode() {
         return 0x7aeffea9 ^ getPredicate().hashCode();
     }
@@ -207,12 +212,14 @@ public class BooleanExpressionPattern extends Pattern implements PatternWithPred
      */
 
     /*@NotNull*/
+    @Override
     public Pattern copy(RebindingMap rebindings) {
         BooleanExpressionPattern n = new BooleanExpressionPattern(getPredicate().copy(rebindings));
         ExpressionTool.copyLocationInfo(this, n);
         return n;
     }
 
+    @Override
     public void export(ExpressionPresenter presenter) throws XPathException {
         presenter.startElement("p.booleanExp");
         /*if (comp != null) {

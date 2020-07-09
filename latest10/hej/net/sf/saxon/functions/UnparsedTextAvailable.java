@@ -26,6 +26,7 @@ public class UnparsedTextAvailable extends UnparsedTextFunction implements Calla
      * @throws net.sf.saxon.trans.XPathException
      *          if a dynamic error occurs during the evaluation of the expression
      */
+    @Override
     public BooleanValue call(XPathContext context, Sequence[] arguments) throws XPathException {
         StringValue hrefVal = (StringValue) arguments[0].head();
         if (hrefVal == null) {

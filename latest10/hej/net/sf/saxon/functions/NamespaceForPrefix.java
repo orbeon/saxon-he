@@ -30,6 +30,7 @@ public class NamespaceForPrefix extends SystemFunction implements Callable {
      * @throws net.sf.saxon.trans.XPathException
      *          if a dynamic error occurs during the evaluation of the expression
      */
+    @Override
     public ZeroOrOne call(XPathContext context, Sequence[] arguments) throws XPathException {
         AnyURIValue result = namespaceUriForPrefix((StringValue) arguments[0].head(), (NodeInfo) arguments[1].head());
         return new ZeroOrOne(result);

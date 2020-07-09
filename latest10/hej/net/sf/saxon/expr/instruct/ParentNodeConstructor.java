@@ -55,6 +55,7 @@ public abstract class ParentNodeConstructor extends Instruction
      *         type of the document element)
      */
 
+    @Override
     public SchemaType getSchemaType() {
         return validationOptions == null ? null : validationOptions.getTopLevelType();
     }
@@ -100,6 +101,7 @@ public abstract class ParentNodeConstructor extends Instruction
      *
      * @return the validation mode, for example {@link Validation#STRICT} or {@link Validation#PRESERVE}
      */
+    @Override
     public int getValidationAction() {
         return validationOptions == null ? Validation.PRESERVE : validationOptions.getSchemaValidationMode();
     }
@@ -133,6 +135,7 @@ public abstract class ParentNodeConstructor extends Instruction
      * @return the content expression
      */
 
+    @Override
     public Expression getContentExpression() {
         return contentOp == null ? null : contentOp.getChildExpression();
     }
@@ -147,11 +150,13 @@ public abstract class ParentNodeConstructor extends Instruction
      * @return the static cardinality
      */
 
+    @Override
     public int computeCardinality() {
         return StaticProperty.EXACTLY_ONE;
     }
 
     /*@NotNull*/
+    @Override
     public Expression typeCheck(ExpressionVisitor visitor, ContextItemStaticInfo contextInfo) throws XPathException {
         typeCheckChildren(visitor, contextInfo);
         checkContentSequence(visitor.getStaticContext());
@@ -181,6 +186,7 @@ public abstract class ParentNodeConstructor extends Instruction
     protected abstract void checkContentSequence(StaticContext env) throws XPathException;
 
     /*@NotNull*/
+    @Override
     public Expression optimize(ExpressionVisitor visitor, ContextItemStaticInfo contextItemType) throws XPathException {
         optimizeChildren(visitor, contextItemType);
         if (!Literal.isEmptySequence(getContentExpression())) {
@@ -234,6 +240,7 @@ public abstract class ParentNodeConstructor extends Instruction
         return true;
     }
 
+    @Override
     public int getCardinality() {
         return StaticProperty.EXACTLY_ONE;
     }
@@ -258,6 +265,7 @@ public abstract class ParentNodeConstructor extends Instruction
      *         expressions, it is the same as the input pathMapNode.
      */
 
+    @Override
     public PathMap.PathMapNodeSet addToPathMap(PathMap pathMap, PathMap.PathMapNodeSet pathMapNodeSet) {
         PathMap.PathMapNodeSet result = super.addToPathMap(pathMap, pathMapNodeSet);
         result.setReturnable(false);

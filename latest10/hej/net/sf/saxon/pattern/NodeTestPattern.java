@@ -47,6 +47,7 @@ public class NodeTestPattern extends Pattern {
      * @return true if the item matches the Pattern, false otherwise
      */
 
+    @Override
     public boolean matches(Item item, XPathContext context) {
         return item instanceof NodeInfo && nodeTest.test((NodeInfo)item);
     }
@@ -55,6 +56,7 @@ public class NodeTestPattern extends Pattern {
      * Get a NodeTest that all the nodes matching this pattern must satisfy
      */
 
+    @Override
     public NodeTest getItemType() {
         return nodeTest;
     }
@@ -76,6 +78,7 @@ public class NodeTestPattern extends Pattern {
      * @return A fingerprint that the nodes must match, or -1 if it can match multiple fingerprints
      */
 
+    @Override
     public int getFingerprint() {
         return nodeTest.getFingerprint();
     }
@@ -88,6 +91,7 @@ public class NodeTestPattern extends Pattern {
         return nodeTest.toString();
     }
 
+    @Override
     public String toShortString() {
         return nodeTest.toShortString();
     }
@@ -107,6 +111,7 @@ public class NodeTestPattern extends Pattern {
      * Hashcode supporting equals()
      */
 
+    @Override
     public int computeHashCode() {
         return 0x7aeffea8 ^ nodeTest.hashCode();
     }
@@ -140,6 +145,7 @@ public class NodeTestPattern extends Pattern {
         }
     }
 
+    @Override
     public void export(ExpressionPresenter presenter) throws XPathException {
         presenter.startElement("p.nodeTest");
         presenter.emitAttribute("test", AlphaCode.fromItemType(nodeTest));
@@ -154,6 +160,7 @@ public class NodeTestPattern extends Pattern {
      */
 
     /*@NotNull*/
+    @Override
     public Pattern copy(RebindingMap rebindings) {
         NodeTestPattern n = new NodeTestPattern(nodeTest.copy());
         n.setPriority(getDefaultPriority());

@@ -72,6 +72,7 @@ public class SimpleArrayItem extends AbstractArrayItem implements ArrayItem {
      *
      * @return an array of OperandRole objects, one for each argument
      */
+    @Override
     public OperandRole[] getOperandRoles() {
         return new OperandRole[]{OperandRole.SINGLE_ATOMIC};
     }
@@ -99,6 +100,7 @@ public class SimpleArrayItem extends AbstractArrayItem implements ArrayItem {
      *
      * @return true (it is an array)
      */
+    @Override
     public boolean isArray() {
         return true;
     }
@@ -108,6 +110,7 @@ public class SimpleArrayItem extends AbstractArrayItem implements ArrayItem {
      *
      * @return false (it is not a map)
      */
+    @Override
     public boolean isMap() {
         return false;
     }
@@ -133,6 +136,7 @@ public class SimpleArrayItem extends AbstractArrayItem implements ArrayItem {
      */
 
 
+    @Override
     public GroundedValue get(int index) {
         return members.get(index);
     }
@@ -157,6 +161,7 @@ public class SimpleArrayItem extends AbstractArrayItem implements ArrayItem {
      * @return the number of members in this array
      */
 
+    @Override
     public int arrayLength() {
         return members.size();
     }
@@ -167,6 +172,7 @@ public class SimpleArrayItem extends AbstractArrayItem implements ArrayItem {
      * @return true if and only if the size of the array is zero
      */
 
+    @Override
     public boolean isEmpty() {
         return members.isEmpty();
     }
@@ -177,6 +183,7 @@ public class SimpleArrayItem extends AbstractArrayItem implements ArrayItem {
      * @return an iterator over the members of the array
      */
 
+    @Override
     public Iterable<GroundedValue> members() {
         return members;
     }
@@ -189,6 +196,7 @@ public class SimpleArrayItem extends AbstractArrayItem implements ArrayItem {
      * @return a new array in which the requested member has been removed
      */
 
+    @Override
     public ArrayItem removeSeveral(IntSet positions) {
         ImmutableArrayItem a2 = new ImmutableArrayItem(this);
         return a2.removeSeveral(positions);
@@ -202,6 +210,7 @@ public class SimpleArrayItem extends AbstractArrayItem implements ArrayItem {
      * @return a new array in which the requested member has been removed
      */
 
+    @Override
     public ArrayItem remove(int pos) {
         ImmutableArrayItem a2 = new ImmutableArrayItem(this);
         return a2.remove(pos);
@@ -242,6 +251,7 @@ public class SimpleArrayItem extends AbstractArrayItem implements ArrayItem {
      *         containing first the members of this array, and then the members of the other array
      */
 
+    @Override
     public ArrayItem concat(ArrayItem other) {
         ImmutableArrayItem a2 = new ImmutableArrayItem(this);
         return a2.concat(other);

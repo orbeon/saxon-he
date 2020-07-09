@@ -36,6 +36,7 @@ public class TraceEventMulticaster implements TraceListener {
         this.b = b;
     }
 
+    @Override
     public void setOutputDestination(Logger stream) {
         a.setOutputDestination(stream);
         b.setOutputDestination(stream);
@@ -67,6 +68,7 @@ public class TraceEventMulticaster implements TraceListener {
      * Called at start
      */
 
+    @Override
     public void open(Controller controller) {
         a.open(controller);
         b.open(controller);
@@ -76,6 +78,7 @@ public class TraceEventMulticaster implements TraceListener {
      * Called at end
      */
 
+    @Override
     public void close() {
         a.close();
         b.close();
@@ -85,6 +88,7 @@ public class TraceEventMulticaster implements TraceListener {
     /**
      * Called when an element of the stylesheet gets processed
      */
+    @Override
     public void enter(Traceable element, Map<String, Object> properties, XPathContext context) {
         a.enter(element, properties, context);
         b.enter(element, properties, context);
@@ -94,6 +98,7 @@ public class TraceEventMulticaster implements TraceListener {
      * Called after an element of the stylesheet got processed
      * @param element
      */
+    @Override
     public void leave(Traceable element) {
         a.leave(element);
         b.leave(element);
@@ -102,6 +107,7 @@ public class TraceEventMulticaster implements TraceListener {
     /**
      * Called when an item becomes current
      */
+    @Override
     public void startCurrentItem(Item item) {
         a.startCurrentItem(item);
         b.startCurrentItem(item);
@@ -110,6 +116,7 @@ public class TraceEventMulticaster implements TraceListener {
     /**
      * Called when an item ceases to be the current item
      */
+    @Override
     public void endCurrentItem(Item item) {
         a.endCurrentItem(item);
         b.endCurrentItem(item);
@@ -117,6 +124,7 @@ public class TraceEventMulticaster implements TraceListener {
     /**
      * Called at the start of a rule search
      */
+    @Override
     public void startRuleSearch() {
         a.startRuleSearch();
         b.startRuleSearch();

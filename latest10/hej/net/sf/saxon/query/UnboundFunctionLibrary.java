@@ -63,6 +63,7 @@ public class UnboundFunctionLibrary implements FunctionLibrary {
      */
 
     /*@Nullable*/
+    @Override
     public Expression bind(SymbolicName.F functionName, /*@NotNull*/  Expression[] arguments, StaticContext env, List<String> reasons) {
         if (resolving) {
             return null;
@@ -91,6 +92,7 @@ public class UnboundFunctionLibrary implements FunctionLibrary {
      * @return if a function of this name and arity is available for calling, then a corresponding
      *         function item; or null if the function does not exist
      */
+    @Override
     public Function getFunctionItem(SymbolicName.F functionName, StaticContext staticContext) {
         if (resolving) {
             return null;
@@ -111,6 +113,7 @@ public class UnboundFunctionLibrary implements FunctionLibrary {
      * @param functionName the qualified name of the function being called
      * @return true if a function of this name and arity is available for calling
      */
+    @Override
     public boolean isAvailable(SymbolicName.F functionName) {
         return false;  // function-available() is not used in XQuery
     }
@@ -201,6 +204,7 @@ public class UnboundFunctionLibrary implements FunctionLibrary {
      */
 
     /*@NotNull*/
+    @Override
     public FunctionLibrary copy() {
         UnboundFunctionLibrary qfl = new UnboundFunctionLibrary();
         qfl.unboundFunctionReferences = new ArrayList<>(unboundFunctionReferences);

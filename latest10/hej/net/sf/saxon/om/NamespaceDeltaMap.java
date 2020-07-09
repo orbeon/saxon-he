@@ -37,10 +37,12 @@ public class NamespaceDeltaMap extends NamespaceMap implements NamespaceBindingS
         uris = new String[]{};
     }
 
+    @Override
     protected NamespaceMap newInstance() {
         return new NamespaceDeltaMap();
     }
 
+    @Override
     public boolean allowsNamespaceUndeclarations() {
         return true;
     }

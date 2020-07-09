@@ -236,6 +236,7 @@ public class SystemFunctionCall extends StaticFunctionCall implements Negatable 
                 (!forStreaming || !isCallOn(MapFunctionSet.MapEntry.class));
     }
 
+    @Override
     public Expression optimize(ExpressionVisitor visitor, ContextItemStaticInfo contextInfo) throws XPathException {
         Optimizer opt = visitor.obtainOptimizer();
         Expression sf = super.optimize(visitor, contextInfo);
@@ -324,6 +325,7 @@ public class SystemFunctionCall extends StaticFunctionCall implements Negatable 
      * unknown or not applicable.
      */
     //@Override
+    @Override
     public IntegerValue[] getIntegerBounds() {
         SystemFunction fn = getTargetFunction();
         if ((fn.getDetails().properties & BuiltInFunctionSet.FILTER) != 0) {
@@ -338,6 +340,7 @@ public class SystemFunctionCall extends StaticFunctionCall implements Negatable 
      * @param th the TypeHierarchy (in case it's needed)
      * @return true if it is
      */
+    @Override
     public boolean isNegatable(TypeHierarchy th) {
         return isCallOn(NotFn.class) || isCallOn(BooleanFn.class) || isCallOn(Empty.class) || isCallOn(Exists.class);
     }
@@ -348,6 +351,7 @@ public class SystemFunctionCall extends StaticFunctionCall implements Negatable 
      * @return the negated expression
      * @throws UnsupportedOperationException if isNegatable() returns false
      */
+    @Override
     public Expression negate() {
         SystemFunction fn = getTargetFunction();
         if (fn instanceof NotFn) {
@@ -440,6 +444,7 @@ public class SystemFunctionCall extends StaticFunctionCall implements Negatable 
         return super.toPattern(config);
     }
 
+    @Override
     public Sequence[] evaluateArguments(XPathContext context) throws XPathException {
         OperandArray operanda = getOperanda();
         int numArgs = operanda.getNumberOfOperands();

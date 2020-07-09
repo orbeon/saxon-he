@@ -46,6 +46,7 @@ public class NextIteration extends Instruction implements TailCallLoop.TailCallI
      * @param forStreaming
      */
 
+    @Override
     public boolean isLiftable(boolean forStreaming) {
         return false;
     }
@@ -62,18 +63,21 @@ public class NextIteration extends Instruction implements TailCallLoop.TailCallI
     }
 
     /*@NotNull*/
+    @Override
     public Expression simplify() throws XPathException {
         WithParam.simplify(actualParams);
         return this;
     }
 
     /*@NotNull*/
+    @Override
     public Expression typeCheck(ExpressionVisitor visitor, ContextItemStaticInfo contextInfo) throws XPathException {
         WithParam.typeCheck(actualParams, visitor, contextInfo);
         return this;
     }
 
     /*@NotNull*/
+    @Override
     public Expression copy(RebindingMap rebindings) {
         NextIteration c2 = new NextIteration();
         ExpressionTool.copyLocationInfo(this, c2);
@@ -107,6 +111,7 @@ public class NextIteration extends Instruction implements TailCallLoop.TailCallI
     }
 
     /*@Nullable*/
+    @Override
     public TailCall processLeavingTail(Outputter output, XPathContext context) throws XPathException {
         XPathContext c = context;
         while (!(c instanceof XPathContextMajor)) {
@@ -129,6 +134,7 @@ public class NextIteration extends Instruction implements TailCallLoop.TailCallI
     }
 
 
+    @Override
     public void export(ExpressionPresenter out) throws XPathException {
         out.startElement("nextIteration", this);
         if (actualParams != null && actualParams.length > 0) {

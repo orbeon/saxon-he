@@ -43,6 +43,7 @@ public class EquivalenceComparer extends GenericAtomicComparer {
      * @throws ClassCastException if the objects are not comparable
      */
 
+    @Override
     public boolean comparesEqual (AtomicValue a, AtomicValue b) throws NoDynamicContextException {
         // System.err.println("Comparing " + a.getClass() + ": " + a + " with " + b.getClass() + ": " + b);
         if (a instanceof StringValue && b instanceof StringValue) {

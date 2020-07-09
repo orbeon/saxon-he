@@ -192,6 +192,7 @@ public class ArrayFunctionSet extends BuiltInFunctionSet {
      */
     public static class ArrayAppend extends SystemFunction {
 
+        @Override
         public ArrayItem call(XPathContext context, Sequence[] arguments) throws XPathException {
             ArrayItem array = (ArrayItem) arguments[0].head();
             assert array != null;
@@ -245,6 +246,7 @@ public class ArrayFunctionSet extends BuiltInFunctionSet {
             });
         }
 
+        @Override
         public Sequence call(XPathContext context, Sequence[] arguments) throws XPathException {
             List<Item> out = new ArrayList<>();
             flatten(arguments[0], out);
@@ -262,7 +264,7 @@ public class ArrayFunctionSet extends BuiltInFunctionSet {
             ArrayItem array = (ArrayItem) arguments[0].head();
             assert array != null;
             int arraySize = array.arrayLength();
-            Sequence zero = arguments[1].head();
+            Sequence zero = arguments[1];
             Function fn = (Function) arguments[2].head();
             int i;
             for (i=0; i < arraySize; i++) {
@@ -281,7 +283,7 @@ public class ArrayFunctionSet extends BuiltInFunctionSet {
         public Sequence call(XPathContext context, Sequence[] arguments) throws XPathException {
             ArrayItem array = (ArrayItem) arguments[0].head();
             assert array != null;
-            Sequence zero = ((Sequence)arguments[1]).head();
+            Sequence zero = arguments[1];
             Function fn = (Function) arguments[2].head();
             int i;
             for (i = array.arrayLength() - 1; i >= 0; i--) {
@@ -337,6 +339,7 @@ public class ArrayFunctionSet extends BuiltInFunctionSet {
      */
     public static class ArrayGet extends SystemFunction {
 
+        @Override
         public Sequence call(XPathContext context, Sequence[] arguments) throws XPathException {
             ArrayItem array = (ArrayItem) arguments[0].head();
             IntegerValue index = (IntegerValue) arguments[1].head();
@@ -350,6 +353,7 @@ public class ArrayFunctionSet extends BuiltInFunctionSet {
      */
     public static class ArrayHead extends SystemFunction {
 
+        @Override
         public Sequence call(XPathContext context, Sequence[] arguments) throws XPathException {
             ArrayItem array = (ArrayItem) arguments[0].head();
             assert array != null;
@@ -367,6 +371,7 @@ public class ArrayFunctionSet extends BuiltInFunctionSet {
     public static class ArrayInsertBefore extends SystemFunction {
 
 
+        @Override
         public ArrayItem call(XPathContext context, Sequence[] arguments) throws XPathException {
             ArrayItem array = (ArrayItem) arguments[0].head();
             assert array != null;
@@ -419,6 +424,7 @@ public class ArrayFunctionSet extends BuiltInFunctionSet {
     public static class ArrayRemove extends SystemFunction {
 
 
+        @Override
         public ArrayItem call(XPathContext context, Sequence[] arguments) throws XPathException {
             ArrayItem array = (ArrayItem) arguments[0].head();
             if (arguments[1] instanceof IntegerValue) {
@@ -441,6 +447,7 @@ public class ArrayFunctionSet extends BuiltInFunctionSet {
      */
     public static class ArrayReverse extends SystemFunction {
 
+        @Override
         public ArrayItem call(XPathContext context, Sequence[] arguments) throws XPathException {
             ArrayItem array = (ArrayItem) arguments[0].head();
             assert array != null;
@@ -459,6 +466,7 @@ public class ArrayFunctionSet extends BuiltInFunctionSet {
      */
     public static class ArraySize extends SystemFunction {
 
+        @Override
         public IntegerValue call(XPathContext context, Sequence[] arguments) throws XPathException {
             ArrayItem array = (ArrayItem) arguments[0].head();
             assert array != null;
@@ -472,6 +480,7 @@ public class ArrayFunctionSet extends BuiltInFunctionSet {
      */
     public static class ArraySubarray extends SystemFunction {
 
+        @Override
         public ArrayItem call(XPathContext context, Sequence[] arguments) throws XPathException {
             ArrayItem array = (ArrayItem) arguments[0].head();
             assert array != null;
@@ -507,6 +516,7 @@ public class ArrayFunctionSet extends BuiltInFunctionSet {
      */
     public static class ArrayTail extends SystemFunction {
 
+        @Override
         public ArrayItem call(XPathContext context, Sequence[] arguments) throws XPathException {
             ArrayItem array = (ArrayItem) arguments[0].head();
             assert array != null;
@@ -523,6 +533,7 @@ public class ArrayFunctionSet extends BuiltInFunctionSet {
      */
 
     public static class ArrayToSequence extends SystemFunction {
+        @Override
         public Sequence call(XPathContext context, Sequence[] arguments) throws XPathException {
             ArrayItem array = (ArrayItem) arguments[0].head();
             return toSequence(array);
@@ -543,6 +554,7 @@ public class ArrayFunctionSet extends BuiltInFunctionSet {
      */
 
     public static class ArrayFromSequence extends FoldingFunction {
+        @Override
         public ArrayItem call(XPathContext context, Sequence[] arguments) throws XPathException {
             return SimpleArrayItem.makeSimpleArrayItem(((Sequence)arguments[0]).iterate());
         }

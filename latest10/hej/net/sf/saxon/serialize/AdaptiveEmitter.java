@@ -76,6 +76,7 @@ public class AdaptiveEmitter extends SequenceWriter implements ReceiverWithOutpu
     }
 
 
+    @Override
     public Properties getOutputProperties() {
         return outputProperties;
     }

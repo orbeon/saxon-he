@@ -51,6 +51,7 @@ public final class TinyDocumentImpl extends TinyParentNodeImpl {
      * Get the tree containing this node
      */
 
+    @Override
     public TinyTree getTree() {
         return tree;
     }
@@ -69,6 +70,7 @@ public final class TinyDocumentImpl extends TinyParentNodeImpl {
      * Get the configuration previously set using setConfiguration
      */
 
+    @Override
     public Configuration getConfiguration() {
         return tree.getConfiguration();
     }
@@ -77,6 +79,7 @@ public final class TinyDocumentImpl extends TinyParentNodeImpl {
      * Set the system id of this node
      */
 
+    @Override
     public void setSystemId(String uri) {
         tree.setSystemId(nodeNr, uri);
     }
@@ -85,6 +88,7 @@ public final class TinyDocumentImpl extends TinyParentNodeImpl {
      * Get the system id of this root node
      */
 
+    @Override
     public String getSystemId() {
         return tree.getSystemId(nodeNr);
     }
@@ -103,6 +107,7 @@ public final class TinyDocumentImpl extends TinyParentNodeImpl {
      * Get the base URI of this root node.
      */
 
+    @Override
     public String getBaseURI() {
         if (baseURI != null) {
             return baseURI;
@@ -116,6 +121,7 @@ public final class TinyDocumentImpl extends TinyParentNodeImpl {
      * @return 0 always
      */
 
+    @Override
     public int getLineNumber() {
         return 0;
     }
@@ -136,6 +142,7 @@ public final class TinyDocumentImpl extends TinyParentNodeImpl {
      * @return Type.DOCUMENT (always)
      */
 
+    @Override
     public final int getNodeKind() {
         return Type.DOCUMENT;
     }
@@ -147,6 +154,7 @@ public final class TinyDocumentImpl extends TinyParentNodeImpl {
      */
 
     /*@Nullable*/
+    @Override
     public TinyNodeImpl getParent() {
         return null;
     }
@@ -158,6 +166,7 @@ public final class TinyDocumentImpl extends TinyParentNodeImpl {
      */
 
     /*@NotNull*/
+    @Override
     public NodeInfo getRoot() {
         return this;
     }
@@ -168,6 +177,7 @@ public final class TinyDocumentImpl extends TinyParentNodeImpl {
      * @param buffer to contain an identifier based on the document number
      */
 
+    @Override
     public void generateId(/*@NotNull*/ FastStringBuffer buffer) {
         buffer.cat('d');
         buffer.append(Long.toString(getTreeInfo().getDocumentNumber()));
@@ -181,6 +191,7 @@ public final class TinyDocumentImpl extends TinyParentNodeImpl {
      */
 
     /*@NotNull*/
+    @Override
     public AtomicSequence atomize() throws XPathException {
         return new UntypedAtomicValue(getStringValueCS());
     }
@@ -254,6 +265,7 @@ public final class TinyDocumentImpl extends TinyParentNodeImpl {
      *         xs:anyType if it has.
      * @since 9.4
      */
+    @Override
     public SchemaType getSchemaType() {
         AxisIterator children = iterateAxis(AxisInfo.CHILD, NodeKindTest.ELEMENT);
         NodeInfo node = children.next();
@@ -268,6 +280,7 @@ public final class TinyDocumentImpl extends TinyParentNodeImpl {
      * Copy this node to a given outputter
      */
 
+    @Override
     public void copy(/*@NotNull*/ Receiver out, int copyOptions, Location locationId) throws XPathException {
 
         out.startDocument(CopyOptions.getStartDocumentProperties(copyOptions));

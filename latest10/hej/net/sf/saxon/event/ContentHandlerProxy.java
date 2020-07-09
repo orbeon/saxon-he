@@ -110,6 +110,7 @@ public class ContentHandlerProxy implements Receiver {
      * @param pipe the pipeline configuration
      */
 
+    @Override
     public void setPipelineConfiguration(/*@NotNull*/ PipelineConfiguration pipe) {
         this.pipe = pipe;
     }
@@ -119,6 +120,7 @@ public class ContentHandlerProxy implements Receiver {
      */
 
     /*@NotNull*/
+    @Override
     public PipelineConfiguration getPipelineConfiguration() {
         return pipe;
     }
@@ -139,6 +141,7 @@ public class ContentHandlerProxy implements Receiver {
      * @param systemId the system ID (effectively the base URI)
      */
 
+    @Override
     public void setSystemId(String systemId) {
         this.systemId = systemId;
     }
@@ -149,6 +152,7 @@ public class ContentHandlerProxy implements Receiver {
      * @return the system ID (effectively the base URI)
      */
 
+    @Override
     public String getSystemId() {
         return systemId;
     }
@@ -185,6 +189,7 @@ public class ContentHandlerProxy implements Receiver {
      * @param publicID The public identifier of the unparsed entity
      */
 
+    @Override
     public void setUnparsedEntity(String name, String systemID, String publicID) throws XPathException {
         // Avoid passing unparsed entities to a general-purpose DTDHandler because it's probably
         // expecting them in the context of the rest of the DTD, which we don't make available.
@@ -266,6 +271,7 @@ public class ContentHandlerProxy implements Receiver {
      * Notify the start of the event stream
      */
 
+    @Override
     public void open() throws XPathException {
         if (handler == null) {
             throw new IllegalStateException("ContentHandlerProxy.open(): no underlying handler provided");
@@ -284,6 +290,7 @@ public class ContentHandlerProxy implements Receiver {
      * Notify the end of the event stream
      */
 
+    @Override
     public void close() throws XPathException {
         if (depth >= 0) {
             try {
@@ -300,6 +307,7 @@ public class ContentHandlerProxy implements Receiver {
      * @param properties
      */
 
+    @Override
     public void startDocument(int properties) throws XPathException {
     }
 
@@ -307,6 +315,7 @@ public class ContentHandlerProxy implements Receiver {
      * Notify the end of the document
      */
 
+    @Override
     public void endDocument() throws XPathException {
     }
 
@@ -314,6 +323,7 @@ public class ContentHandlerProxy implements Receiver {
      * Notify the start of an element
      */
 
+    @Override
     public void startElement(NodeName elemName, SchemaType type,
                              AttributeMap attributes, NamespaceMap namespaces,
                              Location location, int properties) throws XPathException {
@@ -379,6 +389,7 @@ public class ContentHandlerProxy implements Receiver {
      * End of element
      */
 
+    @Override
     public void endElement() throws XPathException {
         if (depth > 0) {
             try {
@@ -416,6 +427,7 @@ public class ContentHandlerProxy implements Receiver {
      * Character data
      */
 
+    @Override
     public void characters(CharSequence chars, Location locationId, int properties) throws XPathException {
         currentLocation = locationId;
         boolean disable = ReceiverOption.contains(properties, ReceiverOption.DISABLE_ESCAPING);
@@ -456,6 +468,7 @@ public class ContentHandlerProxy implements Receiver {
      * Processing Instruction
      */
 
+    @Override
     public void processingInstruction(String target, CharSequence data, Location locationId, int properties)
             throws XPathException {
         currentLocation = locationId;
@@ -471,6 +484,7 @@ public class ContentHandlerProxy implements Receiver {
      * is also a SAX2 LexicalHandler.
      */
 
+    @Override
     public void comment(CharSequence chars, Location locationId, int properties)
             throws XPathException {
         currentLocation = locationId;
@@ -491,6 +505,7 @@ public class ContentHandlerProxy implements Receiver {
      *         may supply untyped nodes instead of supplying the type annotation
      */
 
+    @Override
     public boolean usesTypeAnnotations() {
         return false;
     }
@@ -543,6 +558,7 @@ public class ContentHandlerProxy implements Receiver {
 
         private Stack<Item> contextItemStack;
 
+        @Override
         public void setOutputDestination(Logger stream) {
             // no action
         }
@@ -562,6 +578,7 @@ public class ContentHandlerProxy implements Receiver {
          * Method called at the start of execution, that is, when the run-time transformation starts
          */
 
+        @Override
         public void open(Controller controller) {
             contextItemStack = new Stack<>();
         }
@@ -570,6 +587,7 @@ public class ContentHandlerProxy implements Receiver {
          * Method called at the end of execution, that is, when the run-time execution ends
          */
 
+        @Override
         public void close() {
             contextItemStack = null;
         }
@@ -584,6 +602,7 @@ public class ContentHandlerProxy implements Receiver {
          *                    a reference to the Item for later use.
          */
 
+        @Override
         public void startCurrentItem(Item currentItem) {
             if (contextItemStack == null) {
                 contextItemStack = new Stack<>();
@@ -602,6 +621,7 @@ public class ContentHandlerProxy implements Receiver {
          *                    not necessarily be the same actual object.
          */
 
+        @Override
         public void endCurrentItem(Item currentItem) {
             contextItemStack.pop();
         }

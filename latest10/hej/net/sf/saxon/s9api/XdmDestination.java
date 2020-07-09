@@ -111,6 +111,7 @@ public class XdmDestination extends AbstractDestination {
      * @return the Receiver to which events are to be sent.
      */
 
+    @Override
     public Receiver getReceiver(PipelineConfiguration pipe, SerializationProperties params) {
         TreeModel model = treeModel;
         if (model == null) {
@@ -140,6 +141,7 @@ public class XdmDestination extends AbstractDestination {
      * it has finished writing to the destination.
      */
 
+    @Override
     public void close() {
         // no action
     }

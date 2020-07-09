@@ -38,6 +38,7 @@ public class ListCastableFunction extends ListConstructorFunction {
      *
      * @return the function item's type
      */
+    @Override
     public FunctionItemType getFunctionItemType() {
         return new SpecificFunctionType(
                 new SequenceType[]{SequenceType.ANY_SEQUENCE},
@@ -49,6 +50,7 @@ public class ListCastableFunction extends ListConstructorFunction {
      *
      * @return the function name, or null for an anonymous inline function
      */
+    @Override
     public StructuredQName getFunctionName() {
         return null;
     }
@@ -62,6 +64,7 @@ public class ListCastableFunction extends ListConstructorFunction {
      * @throws net.sf.saxon.trans.XPathException
      *          if a dynamic error occurs within the function
      */
+    @Override
     public BooleanValue call(XPathContext context, Sequence[] args) throws XPathException {
         SequenceIterator iter = args[0].iterate();
         AtomicValue val = (AtomicValue) iter.next();

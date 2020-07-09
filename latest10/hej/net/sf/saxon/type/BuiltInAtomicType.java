@@ -247,6 +247,7 @@ public class BuiltInAtomicType implements AtomicType, ItemType.WithSequenceTypeC
      *         anonymous type.
      */
 
+    @Override
     public String getName() {
         return StandardNames.getLocalName(fingerprint);
     }
@@ -257,6 +258,7 @@ public class BuiltInAtomicType implements AtomicType, ItemType.WithSequenceTypeC
      *
      * @return the smallest UType that subsumes this item type
      */
+    @Override
     public UType getUType() {
         return uType;
     }
@@ -268,6 +270,7 @@ public class BuiltInAtomicType implements AtomicType, ItemType.WithSequenceTypeC
      *         of an anonymous type, and in the case of a global type defined in a no-namespace schema.
      */
 
+    @Override
     public String getTargetNamespace() {
         return NamespaceConstant.SCHEMA;
     }
@@ -277,6 +280,7 @@ public class BuiltInAtomicType implements AtomicType, ItemType.WithSequenceTypeC
      *
      * @return an EQName identifying the type.
      */
+    @Override
     public String getEQName() {
         return "Q{" + NamespaceConstant.SCHEMA + "}" + getName();
     }
@@ -286,6 +290,7 @@ public class BuiltInAtomicType implements AtomicType, ItemType.WithSequenceTypeC
      * instances of some concrete subtype
      */
 
+    @Override
     public boolean isAbstract() {
         switch (fingerprint) {
             case StandardNames.XS_NOTATION:
@@ -302,6 +307,7 @@ public class BuiltInAtomicType implements AtomicType, ItemType.WithSequenceTypeC
      * Determine whether this is a built-in type or a user-defined type
      */
 
+    @Override
     public boolean isBuiltInType() {
         return true;
     }
@@ -314,6 +320,7 @@ public class BuiltInAtomicType implements AtomicType, ItemType.WithSequenceTypeC
      */
 
     /*@NotNull*/
+    @Override
     public StructuredQName getTypeName() {
         return new StructuredQName(
                 StandardNames.getPrefix(fingerprint),
@@ -340,6 +347,7 @@ public class BuiltInAtomicType implements AtomicType, ItemType.WithSequenceTypeC
      * @since 9.8.0.2
      */
 
+    @Override
     public SequenceType one() {
         if (_one == null) {
             _one = new SequenceType(this, StaticProperty.EXACTLY_ONE);
@@ -354,6 +362,7 @@ public class BuiltInAtomicType implements AtomicType, ItemType.WithSequenceTypeC
      * @since 9.8.0.2
      */
 
+    @Override
     public SequenceType zeroOrOne() {
         if (_zeroOrOne == null) {
             _zeroOrOne = new SequenceType(this, StaticProperty.ALLOWS_ZERO_OR_ONE);
@@ -368,6 +377,7 @@ public class BuiltInAtomicType implements AtomicType, ItemType.WithSequenceTypeC
      * @since 9.8.0.2
      */
 
+    @Override
     public SequenceType oneOrMore() {
         if (_oneOrMore == null) {
             _oneOrMore = new SequenceType(this, StaticProperty.ALLOWS_ONE_OR_MORE);
@@ -382,6 +392,7 @@ public class BuiltInAtomicType implements AtomicType, ItemType.WithSequenceTypeC
      * @since 9.8.0.2
      */
 
+    @Override
     public SequenceType zeroOrMore() {
         if (_zeroOrMore == null) {
             _zeroOrMore = new SequenceType(this, StaticProperty.ALLOWS_ZERO_OR_MORE);
@@ -399,6 +410,7 @@ public class BuiltInAtomicType implements AtomicType, ItemType.WithSequenceTypeC
      * @return the redefinition level
      */
 
+    @Override
     public int getRedefinitionLevel() {
         return 0;
     }
@@ -413,6 +425,7 @@ public class BuiltInAtomicType implements AtomicType, ItemType.WithSequenceTypeC
      * @return true if ordering operations are permitted
      */
 
+    @Override
     public boolean isOrdered(boolean optimistic) {
         return ordered || (optimistic && (this == DURATION || this == ANY_ATOMIC));
     }
@@ -426,6 +439,7 @@ public class BuiltInAtomicType implements AtomicType, ItemType.WithSequenceTypeC
      */
 
     /*@Nullable*/
+    @Override
     public String getSystemId() {
         return null;
     }
@@ -451,6 +465,7 @@ public class BuiltInAtomicType implements AtomicType, ItemType.WithSequenceTypeC
     /**
      * Get the validation status - always valid
      */
+    @Override
     public final ValidationStatus getValidationStatus() {
         return VALIDATED;
     }
@@ -462,6 +477,7 @@ public class BuiltInAtomicType implements AtomicType, ItemType.WithSequenceTypeC
      * @return the value of the 'block' attribute for this type
      */
 
+    @Override
     public final int getBlock() {
         return 0;
     }
@@ -473,6 +489,7 @@ public class BuiltInAtomicType implements AtomicType, ItemType.WithSequenceTypeC
      * @return a numeric code representing the derivation method, for example {@link SchemaType#DERIVATION_RESTRICTION}
      */
 
+    @Override
     public final int getDerivationMethod() {
         return SchemaType.DERIVATION_RESTRICTION;
     }
@@ -485,6 +502,7 @@ public class BuiltInAtomicType implements AtomicType, ItemType.WithSequenceTypeC
      * @return true if this kind of derivation is allowed
      */
 
+    @Override
     public final boolean allowsDerivation(int derivation) {
         return true;
     }
@@ -495,6 +513,7 @@ public class BuiltInAtomicType implements AtomicType, ItemType.WithSequenceTypeC
      * @return the types of derivation that are not permitted, as a bit-significant integer
      *         containing bits such as {@link net.sf.saxon.type.SchemaType#DERIVATION_EXTENSION}
      */
+    @Override
     public int getFinalProhibitions() {
         return 0;
     }
@@ -515,6 +534,7 @@ public class BuiltInAtomicType implements AtomicType, ItemType.WithSequenceTypeC
      * @return the fingerprint. Returns an invented fingerprint for an anonymous type.
      */
 
+    @Override
     public final int getFingerprint() {
         return fingerprint;
     }
@@ -527,6 +547,7 @@ public class BuiltInAtomicType implements AtomicType, ItemType.WithSequenceTypeC
      */
 
     /*@NotNull*/
+    @Override
     public final StructuredQName getStructuredQName() {
         return new StructuredQName("xs", NamespaceConstant.SCHEMA, StandardNames.getLocalName(fingerprint));
     }
@@ -537,6 +558,7 @@ public class BuiltInAtomicType implements AtomicType, ItemType.WithSequenceTypeC
      * @return a lexical QName identifying the type
      */
 
+    @Override
     public String getDisplayName() {
         return StandardNames.getDisplayName(fingerprint);
     }
@@ -550,6 +572,7 @@ public class BuiltInAtomicType implements AtomicType, ItemType.WithSequenceTypeC
      * @return true if the type is considered primitive under the above rules
      */
 
+    @Override
     public final boolean isPrimitiveType() {
         return Type.isPrimitiveAtomicType(fingerprint);
     }
@@ -560,6 +583,7 @@ public class BuiltInAtomicType implements AtomicType, ItemType.WithSequenceTypeC
      * @return true if this SchemaType is a complex type
      */
 
+    @Override
     public final boolean isComplexType() {
         return false;
     }
@@ -570,6 +594,7 @@ public class BuiltInAtomicType implements AtomicType, ItemType.WithSequenceTypeC
      * @return true if this SchemaType is an anonymous type
      */
 
+    @Override
     public final boolean isAnonymousType() {
         return false;
     }
@@ -580,6 +605,7 @@ public class BuiltInAtomicType implements AtomicType, ItemType.WithSequenceTypeC
      * @return true
      */
 
+    @Override
     public boolean isPlainType() {
         return true;
     }
@@ -594,6 +620,7 @@ public class BuiltInAtomicType implements AtomicType, ItemType.WithSequenceTypeC
      */
 
     /*@Nullable*/
+    @Override
     public final SchemaType getBaseType() {
         if (baseFingerprint == -1) {
             return null;
@@ -611,6 +638,7 @@ public class BuiltInAtomicType implements AtomicType, ItemType.WithSequenceTypeC
      * @param th      The type hierarchy cache
      * @return true if the item is an instance of this type; false otherwise
      */
+    @Override
     public boolean matches(Item item, TypeHierarchy th) {
         return item instanceof AtomicValue && Type.isSubType(((AtomicValue) item).getItemType(), this);
     }
@@ -625,6 +653,7 @@ public class BuiltInAtomicType implements AtomicType, ItemType.WithSequenceTypeC
      */
 
     /*@NotNull*/
+    @Override
     public BuiltInAtomicType getPrimitiveItemType() {
         if (isPrimitiveType()) {
             return this;
@@ -648,6 +677,7 @@ public class BuiltInAtomicType implements AtomicType, ItemType.WithSequenceTypeC
      * except that INTEGER is considered to be a primitive type.
      */
 
+    @Override
     public int getPrimitiveType() {
         return primitiveFingerprint;
     }
@@ -672,6 +702,7 @@ public class BuiltInAtomicType implements AtomicType, ItemType.WithSequenceTypeC
      */
 
     /*@NotNull*/
+    @Override
     public AtomicType getAtomizedItemType() {
         return this;
     }
@@ -684,6 +715,7 @@ public class BuiltInAtomicType implements AtomicType, ItemType.WithSequenceTypeC
      * @param th The type hierarchy cache
      */
 
+    @Override
     public boolean isAtomizable(TypeHierarchy th) {
         return true;
     }
@@ -708,10 +740,12 @@ public class BuiltInAtomicType implements AtomicType, ItemType.WithSequenceTypeC
      * can happen when there are multiple includes of the same file)
      */
 
+    @Override
     public boolean isSameType(SchemaType other) {
         return other.getFingerprint() == getFingerprint();
     }
 
+    @Override
     public String getDescription() {
         return getDisplayName();
     }
@@ -725,6 +759,7 @@ public class BuiltInAtomicType implements AtomicType, ItemType.WithSequenceTypeC
      * @throws SchemaException if the derivation is not allowed
      */
 
+    @Override
     public void checkTypeDerivationIsOK(SchemaType type, int block) throws SchemaException {
         if (type == AnySimpleType.getInstance()) {
             // OK
@@ -751,6 +786,7 @@ public class BuiltInAtomicType implements AtomicType, ItemType.WithSequenceTypeC
      * @return true (always)
      */
 
+    @Override
     public final boolean isSimpleType() {
         return true;
     }
@@ -761,6 +797,7 @@ public class BuiltInAtomicType implements AtomicType, ItemType.WithSequenceTypeC
      * @return true, this is an atomic type
      */
 
+    @Override
     public boolean isAtomicType() {
         return true;
     }
@@ -773,6 +810,7 @@ public class BuiltInAtomicType implements AtomicType, ItemType.WithSequenceTypeC
      * node, however, can still allow a list.
      */
 
+    @Override
     public boolean isIdType() {
         return fingerprint == StandardNames.XS_ID;
     }
@@ -783,6 +821,7 @@ public class BuiltInAtomicType implements AtomicType, ItemType.WithSequenceTypeC
      * from IDREF or IDREFS by restriction, list, or union
      */
 
+    @Override
     public boolean isIdRefType() {
         return fingerprint == StandardNames.XS_IDREF;
     }
@@ -794,6 +833,7 @@ public class BuiltInAtomicType implements AtomicType, ItemType.WithSequenceTypeC
      * @return true if this is a list type
      */
 
+    @Override
     public boolean isListType() {
         return false;
     }
@@ -804,6 +844,7 @@ public class BuiltInAtomicType implements AtomicType, ItemType.WithSequenceTypeC
      * @return true for a union type
      */
 
+    @Override
     public boolean isUnionType() {
         return false;
     }
@@ -814,6 +855,7 @@ public class BuiltInAtomicType implements AtomicType, ItemType.WithSequenceTypeC
      * @return one of PRESERVE, REPLACE, COLLAPSE
      */
 
+    @Override
     public int getWhitespaceAction() {
         switch (getFingerprint()) {
             case StandardNames.XS_STRING:
@@ -831,6 +873,7 @@ public class BuiltInAtomicType implements AtomicType, ItemType.WithSequenceTypeC
      * @return the first built-in type found when searching up the type hierarchy
      */
     /*@Nullable*/
+    @Override
     public SchemaType getBuiltInBaseType() {
         BuiltInAtomicType base = this;
         while ((base != null) && (base.getFingerprint() > 1023)) {
@@ -847,6 +890,7 @@ public class BuiltInAtomicType implements AtomicType, ItemType.WithSequenceTypeC
      * @return true if this type is derived from xs:QName or xs:NOTATION
      */
 
+    @Override
     public boolean isNamespaceSensitive() {
         BuiltInAtomicType base = this;
         int fp = base.getFingerprint();
@@ -876,6 +920,7 @@ public class BuiltInAtomicType implements AtomicType, ItemType.WithSequenceTypeC
      */
 
     /*@Nullable*/
+    @Override
     public ValidationFailure validateContent(CharSequence value, /*@Nullable*/ NamespaceResolver nsResolver,
                                              ConversionRules rules) {
         int f = getFingerprint();
@@ -921,6 +966,7 @@ public class BuiltInAtomicType implements AtomicType, ItemType.WithSequenceTypeC
      */
  
     
+    @Override
     public StringConverter getStringConverter(ConversionRules rules) {
         if (stringConverter != null) {
             return stringConverter;
@@ -960,6 +1006,7 @@ public class BuiltInAtomicType implements AtomicType, ItemType.WithSequenceTypeC
      * @since 8.5
      */
 
+    @Override
     public AtomicSequence atomize(NodeInfo node) throws XPathException {
         // Fast path for common cases
         CharSequence stringValue = node.getStringValueCS();
@@ -1000,6 +1047,7 @@ public class BuiltInAtomicType implements AtomicType, ItemType.WithSequenceTypeC
      */
 
     /*@NotNull*/
+    @Override
     public AtomicSequence getTypedValue(CharSequence value, NamespaceResolver resolver, ConversionRules rules)
             throws ValidationException {
         // Fast path for common cases
@@ -1050,6 +1098,7 @@ public class BuiltInAtomicType implements AtomicType, ItemType.WithSequenceTypeC
      */
 
     /*@Nullable*/
+    @Override
     public ValidationFailure validate(AtomicValue primValue, CharSequence lexicalValue, ConversionRules rules) {
         switch (fingerprint) {
             case StandardNames.XS_NUMERIC:
@@ -1120,6 +1169,7 @@ public class BuiltInAtomicType implements AtomicType, ItemType.WithSequenceTypeC
      *          if the expression will never deliver a value of the correct type
      */
 
+    @Override
     public void analyzeContentExpression(Expression expression, int kind) throws XPathException {
         analyzeContentExpression(this, expression, kind);
     }
@@ -1192,6 +1242,7 @@ public class BuiltInAtomicType implements AtomicType, ItemType.WithSequenceTypeC
      * @return the value after preprocessing
      */
 
+    @Override
     public CharSequence preprocess(CharSequence input) {
         return input;
     }
@@ -1206,6 +1257,7 @@ public class BuiltInAtomicType implements AtomicType, ItemType.WithSequenceTypeC
      * @return the value after postprocessing
      */
 
+    @Override
     public CharSequence postprocess(CharSequence input) {
         return input;
     }
@@ -1217,6 +1269,7 @@ public class BuiltInAtomicType implements AtomicType, ItemType.WithSequenceTypeC
      *         in its transitive membership, in declaration order
      */
     /*@NotNull*/
+    @Override
     public Set<? extends PlainType> getPlainMemberTypes() {
         return Collections.singleton(this);
     }
@@ -1234,6 +1287,7 @@ public class BuiltInAtomicType implements AtomicType, ItemType.WithSequenceTypeC
     }
 
     //#ifdefined SCHEMA
+    @Override
     public Function getComponentAsFunction() {
         return UserSimpleType.getComponentAsFunction(this);
     }

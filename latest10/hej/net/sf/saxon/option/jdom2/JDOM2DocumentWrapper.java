@@ -69,6 +69,7 @@ public class JDOM2DocumentWrapper extends GenericTreeInfo {
      * @return the element node with the given ID if there is one, otherwise null.
      */
 
+    @Override
     public NodeInfo selectID(String id, boolean getParent) {
         if (idIndex == null) {
             idIndex = new HashMap<String, Element>(100);

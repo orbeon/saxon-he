@@ -59,6 +59,7 @@ public class SubscriptExpression extends SingleItemFilter {
     }
 
     /*@NotNull*/
+    @Override
     public Expression optimize(ExpressionVisitor visitor, ContextItemStaticInfo contextInfo) throws XPathException {
         getOperand().optimize(visitor, contextInfo);
         if (Literal.isConstantOne(getSubscript())) {
@@ -75,6 +76,7 @@ public class SubscriptExpression extends SingleItemFilter {
      */
 
     /*@NotNull*/
+    @Override
     public Expression copy(RebindingMap rebindings) {
         SubscriptExpression exp = new SubscriptExpression(getBaseExpression().copy(rebindings), getSubscript().copy(rebindings));
         ExpressionTool.copyLocationInfo(this, exp);
@@ -122,6 +124,7 @@ public class SubscriptExpression extends SingleItemFilter {
                 getSubscript().isEqual(((SubscriptExpression) other).getSubscript());
     }
 
+    @Override
     public int computeHashCode() {
         return getBaseExpression().hashCode() ^ getSubscript().hashCode();
     }
@@ -131,6 +134,7 @@ public class SubscriptExpression extends SingleItemFilter {
      * return something if the input is non-empty
      */
 
+    @Override
     public int computeCardinality() {
         return StaticProperty.ALLOWS_ZERO_OR_ONE;
     }
@@ -147,6 +151,7 @@ public class SubscriptExpression extends SingleItemFilter {
         return "SubscriptExpression";
     }
 
+    @Override
     public Item evaluateItem(XPathContext context) throws XPathException {
         NumericValue index = (NumericValue) getSubscript().evaluateItem(context);
         if (index == null) {
@@ -195,6 +200,7 @@ public class SubscriptExpression extends SingleItemFilter {
      * is written to the supplied output destination.
      */
 
+    @Override
     public void export(ExpressionPresenter destination) throws XPathException {
         destination.startElement("subscript", this);
         getBaseExpression().export(destination);

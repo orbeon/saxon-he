@@ -206,6 +206,7 @@ public class KeyDefinition extends Actor implements ContextOriginator {
      * Set the map of local variables needed while evaluating the "use" expression
      */
 
+    @Override
     public void setStackFrameMap(SlotManager map) {
         if (map != null /*&& map.getNumberOfVariables() > 0 */) {
             super.setStackFrameMap(map);

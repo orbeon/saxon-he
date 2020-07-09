@@ -39,6 +39,7 @@ public abstract class UnparsedEntity extends SystemFunction implements Callable 
      * @throws net.sf.saxon.trans.XPathException
      *          if a dynamic error occurs during the evaluation of the expression
      */
+    @Override
     public StringValue call(XPathContext context, Sequence[] arguments) throws XPathException {
         int operation = getOp();
         String arg0 = arguments[0].head().getStringValue();
@@ -70,12 +71,14 @@ public abstract class UnparsedEntity extends SystemFunction implements Callable 
     }
 
     public static class UnparsedEntityUri extends UnparsedEntity {
+        @Override
         public int getOp() {
             return URI;
         }
     }
 
     public static class UnparsedEntityPublicId extends UnparsedEntity {
+        @Override
         public int getOp() {
             return PUBLIC_ID;
         }

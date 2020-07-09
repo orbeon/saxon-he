@@ -48,6 +48,7 @@ public class ArithmeticExpression extends BinaryExpression {
      *         in explain() output displaying the expression.
      */
 
+    @Override
     public String getExpressionName() {
         return "arithmetic";
     }
@@ -89,6 +90,7 @@ public class ArithmeticExpression extends BinaryExpression {
      */
 
     /*@NotNull*/
+    @Override
     public Expression typeCheck(ExpressionVisitor visitor, ContextItemStaticInfo contextInfo) throws XPathException {
 
         resetLocalStaticProperties();
@@ -292,6 +294,7 @@ public class ArithmeticExpression extends BinaryExpression {
      */
 
     /*@NotNull*/
+    @Override
     public Expression copy(RebindingMap rebindings) {
         ArithmeticExpression ae = new ArithmeticExpression(getLhsExpression().copy(rebindings), operator, getRhsExpression().copy(rebindings));
         ExpressionTool.copyLocationInfo(this, ae);
@@ -354,6 +357,7 @@ public class ArithmeticExpression extends BinaryExpression {
      */
 
     /*@NotNull*/
+    @Override
     public PlainType getItemType() {
         if (itemType != null) {
             return itemType;
@@ -419,6 +423,7 @@ public class ArithmeticExpression extends BinaryExpression {
      * Evaluate the expression.
      */
 
+    @Override
     public AtomicValue evaluateItem(XPathContext context) throws XPathException {
 
         AtomicValue v0 = (AtomicValue) getLhsExpression().evaluateItem(context);

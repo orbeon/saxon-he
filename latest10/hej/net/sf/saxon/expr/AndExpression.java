@@ -66,6 +66,7 @@ public class AndExpression extends BooleanExpression {
      */
 
     /*@NotNull*/
+    @Override
     public Expression optimize(ExpressionVisitor visitor, ContextItemStaticInfo contextInfo) throws XPathException {
 
         Expression t = super.optimize(visitor, contextInfo);
@@ -104,6 +105,7 @@ public class AndExpression extends BooleanExpression {
      */
 
     /*@NotNull*/
+    @Override
     public Expression copy(RebindingMap rebindings) {
         AndExpression a2 = new AndExpression(getLhsExpression().copy(rebindings), getRhsExpression().copy(rebindings));
         ExpressionTool.copyLocationInfo(this, a2);
@@ -118,6 +120,7 @@ public class AndExpression extends BooleanExpression {
      * @return the negation of this expression
      */
 
+    @Override
     public Expression negate() {
         // Apply de Morgan's laws
         // not(A and B) ==> not(A) or not(B)
@@ -141,6 +144,7 @@ public class AndExpression extends BooleanExpression {
      * Evaluate as a boolean.
      */
 
+    @Override
     public boolean effectiveBooleanValue(XPathContext c) throws XPathException {
         return getLhsExpression().effectiveBooleanValue(c) && getRhsExpression().effectiveBooleanValue(c);
     }

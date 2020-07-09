@@ -63,15 +63,18 @@ public class ProcessingInstruction extends SimpleNodeConstructor {
      * @return the string "xsl:processing-instruction"
      */
 
+    @Override
     public int getInstructionNameCode() {
         return StandardNames.XSL_PROCESSING_INSTRUCTION;
     }
 
     /*@NotNull*/
+    @Override
     public ItemType getItemType() {
         return NodeKindTest.PROCESSING_INSTRUCTION;
     }
 
+    @Override
     public int getCardinality() {
         return StaticProperty.EXACTLY_ONE;
     }
@@ -84,6 +87,7 @@ public class ProcessingInstruction extends SimpleNodeConstructor {
      */
 
     /*@NotNull*/
+    @Override
     public Expression copy(RebindingMap rebindings) {
         ProcessingInstruction exp = new ProcessingInstruction(getNameExp().copy(rebindings));
         ExpressionTool.copyLocationInfo(this, exp);
@@ -91,6 +95,7 @@ public class ProcessingInstruction extends SimpleNodeConstructor {
         return exp;
     }
 
+    @Override
     public void localTypeCheck(ExpressionVisitor visitor, ContextItemStaticInfo contextItemType) throws XPathException {
         StaticContext env = visitor.getStaticContext();
         nameOp.typeCheck(visitor, contextItemType);
@@ -122,6 +127,7 @@ public class ProcessingInstruction extends SimpleNodeConstructor {
         }
     }
 
+    @Override
     public int getDependencies() {
         return getNameExp().getDependencies() | super.getDependencies();
     }
@@ -136,6 +142,7 @@ public class ProcessingInstruction extends SimpleNodeConstructor {
      * @throws XPathException
      */
 
+    @Override
     public void processValue(CharSequence value, Outputter output, XPathContext context) throws XPathException {
         String expandedName = evaluateName(context);
         if (expandedName != null) {
@@ -152,6 +159,7 @@ public class ProcessingInstruction extends SimpleNodeConstructor {
      * @throws XPathException if the content is invalid
      */
 
+    @Override
     protected String checkContent(String data, XPathContext context) throws XPathException {
         if (isXSLT()) {
             return checkContentXSLT(data);
@@ -196,6 +204,7 @@ public class ProcessingInstruction extends SimpleNodeConstructor {
         return Whitespace.removeLeadingWhitespace(data).toString();
     }
 
+    @Override
     public NodeName evaluateNodeName(XPathContext context) throws XPathException {
         String expandedName = evaluateName(context);
         return new NoNamespaceName(expandedName);
@@ -252,6 +261,7 @@ public class ProcessingInstruction extends SimpleNodeConstructor {
      * is written to the supplied output destination.
      */
 
+    @Override
     public void export(ExpressionPresenter out) throws XPathException {
         out.startElement("procInst", this);
         String flags = "";

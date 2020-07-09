@@ -18,6 +18,7 @@ import net.sf.saxon.tree.iter.AxisIterator;
  */
 public class XSLGlobalContextItem extends XSLContextItem {
 
+    @Override
     public boolean isDeclaration() {
         return true;
     }

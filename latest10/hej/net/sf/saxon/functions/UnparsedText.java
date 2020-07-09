@@ -41,6 +41,7 @@ public class UnparsedText extends UnparsedTextFunction implements PushableFuncti
      * @throws net.sf.saxon.trans.XPathException
      *          if a dynamic error occurs during the evaluation of the expression
      */
+    @Override
     public ZeroOrOne<StringValue> call(XPathContext context, Sequence[] arguments) throws XPathException {
         StringValue hrefVal = (StringValue) arguments[0].head();
         String encoding = getArity() == 2 ? arguments[1].head().getStringValue() : null;

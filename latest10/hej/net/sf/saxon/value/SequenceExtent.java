@@ -169,10 +169,12 @@ public class SequenceExtent implements GroundedValue {
         }
     }
 
+    @Override
     public String getStringValue() throws XPathException {
         return SequenceTool.getStringValue(this);
     }
 
+    @Override
     public CharSequence getStringValueCS() throws XPathException {
         return SequenceTool.getStringValue(this);
     }
@@ -183,6 +185,7 @@ public class SequenceExtent implements GroundedValue {
      * @return the first item in the sequence if there is one, or null if the sequence
      *         is empty
      */
+    @Override
     public Item head() {
         return itemAt(0);
     }
@@ -193,6 +196,7 @@ public class SequenceExtent implements GroundedValue {
      * @return the number of items in the sequence
      */
 
+    @Override
     public int getLength() {
         return value.size();
     }
@@ -224,6 +228,7 @@ public class SequenceExtent implements GroundedValue {
      */
 
     /*@Nullable*/
+    @Override
     public Item itemAt(int n) {
         if (n < 0 || n >= getLength()) {
             return null;
@@ -240,6 +245,7 @@ public class SequenceExtent implements GroundedValue {
      */
 
     /*@NotNull*/
+    @Override
     public ListIterator<? extends Item> iterate() {
         return new ListIterator<>(value);
     }
@@ -259,6 +265,7 @@ public class SequenceExtent implements GroundedValue {
      * Get the effective boolean value
      */
 
+    @Override
     public boolean effectiveBooleanValue() throws XPathException {
         int len = getLength();
         if (len == 0) {
@@ -291,6 +298,7 @@ public class SequenceExtent implements GroundedValue {
      */
 
     /*@NotNull*/
+    @Override
     public GroundedValue subsequence(int start, int length) {
         if (start < 0) {
             start = 0;
@@ -320,6 +328,7 @@ public class SequenceExtent implements GroundedValue {
      *
      * @return the simplified sequence
      */
+    @Override
     public GroundedValue reduce() {
         int len = getLength();
         if (len == 0) {
@@ -337,6 +346,7 @@ public class SequenceExtent implements GroundedValue {
      * @return an Iterable containing the same sequence of items
      */
 
+    @Override
     public Iterable<? extends Item> asIterable() {
         return value;
     }

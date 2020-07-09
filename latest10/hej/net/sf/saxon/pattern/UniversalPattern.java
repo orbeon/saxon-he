@@ -40,6 +40,7 @@ public class UniversalPattern extends Pattern {
      * @return true if the item matches the Pattern, false otherwise
      */
 
+    @Override
     public boolean matches(Item item, XPathContext context) {
         return true;
     }
@@ -58,6 +59,7 @@ public class UniversalPattern extends Pattern {
      * Get a NodeTest that all the nodes matching this pattern must satisfy
      */
 
+    @Override
     public ItemType getItemType() {
         return AnyItemType.getInstance();
     }
@@ -69,6 +71,7 @@ public class UniversalPattern extends Pattern {
      * @return A fingerprint that the nodes must match, or -1 if it can match multiple fingerprints
      */
 
+    @Override
     public int getFingerprint() {
         return -1;
     }
@@ -101,6 +104,7 @@ public class UniversalPattern extends Pattern {
      * Hashcode supporting equals()
      */
 
+    @Override
     public int computeHashCode() {
         return 0x7aeccea8;
     }
@@ -114,6 +118,7 @@ public class UniversalPattern extends Pattern {
      */
 
     /*@NotNull*/
+    @Override
     public Pattern copy(RebindingMap rebindings) {
         return this;
     }

@@ -28,6 +28,7 @@ public class IntUnionPredicate implements java.util.function.IntPredicate {
      * @param value the value to be tested
      * @return true if the value matches; false if it does not
      */
+    @Override
     public boolean test(int value) {
         return p1.test(value) || p2.test(value);
     }

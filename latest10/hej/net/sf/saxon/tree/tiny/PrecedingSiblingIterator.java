@@ -39,6 +39,7 @@ final class PrecedingSiblingIterator implements AxisIterator {
     }
 
     /*@Nullable*/
+    @Override
     public NodeInfo next() {
         if (nextNodeNr < 0) {
             // This check is needed because an errant caller can call next() again after hitting the end of sequence

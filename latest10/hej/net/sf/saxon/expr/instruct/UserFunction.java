@@ -90,6 +90,7 @@ public class UserFunction extends Actor implements Function, ContextOriginator, 
      * @return the function name, as a StructuredQName. Returns null for an anonymous function
      */
 
+    @Override
     public StructuredQName getFunctionName() {
         return functionName;
     }
@@ -101,6 +102,7 @@ public class UserFunction extends Actor implements Function, ContextOriginator, 
      *
      * @return a description of the function for use in error messages
      */
+    @Override
     public String getDescription() {
         StructuredQName name = getFunctionName();
         if (name.hasURI(NamespaceConstant.ANONYMOUS)) {
@@ -151,10 +153,12 @@ public class UserFunction extends Actor implements Function, ContextOriginator, 
      * variable name, key name, element name, etc. This is used only where the name is known statically.
      */
 
+    @Override
     public StructuredQName getObjectName() {
         return functionName;
     }
 
+    @Override
     public SymbolicName.F getSymbolicName() {
         return new SymbolicName.F(functionName, getArity());
     }
@@ -166,6 +170,7 @@ public class UserFunction extends Actor implements Function, ContextOriginator, 
      * @return the function type
      */
 
+    @Override
     public FunctionItemType getFunctionItemType() {
         SequenceType[] argTypes = new SequenceType[parameterDefinitions.length];
         for (int i = 0; i < parameterDefinitions.length; i++) {
@@ -180,6 +185,7 @@ public class UserFunction extends Actor implements Function, ContextOriginator, 
      *
      * @return an array of OperandRole objects, one for each argument
      */
+    @Override
     public OperandRole[] getOperandRoles() {
         OperandRole[] roles = new OperandRole[getArity()];
         OperandUsage first = null;
@@ -254,6 +260,7 @@ public class UserFunction extends Actor implements Function, ContextOriginator, 
      * @return the list of annotations defined on this function
      */
 
+    @Override
     public AnnotationList getAnnotations() {
         return annotations;
     }
@@ -540,6 +547,7 @@ public class UserFunction extends Actor implements Function, ContextOriginator, 
      * @return the number of arguments
      */
 
+    @Override
     public int getArity() {
         return parameterDefinitions.length;
     }
@@ -595,6 +603,7 @@ public class UserFunction extends Actor implements Function, ContextOriginator, 
      * @return a new context which should be supplied to the call() method.
      */
 
+    @Override
     public XPathContextMajor makeNewContext(XPathContext oldContext, ContextOriginator originator) {
         XPathContextMajor c2 = oldContext.newCleanContext();
         //c2.setReceiver(oldContext.getReceiver());
@@ -620,6 +629,7 @@ public class UserFunction extends Actor implements Function, ContextOriginator, 
      * @throws net.sf.saxon.trans.XPathException if a dynamic error occurs while evaluating the function
      */
 
+    @Override
     public Sequence call(XPathContext context, Sequence[] actualArgs)
             throws XPathException {
         if (evaluator == null) {
@@ -780,6 +790,7 @@ public class UserFunction extends Actor implements Function, ContextOriginator, 
                 ((StylesheetPackage) getPackageData()).isRetainUnusedFunctions();
     }
 
+    @Override
     public boolean isTrustedResultType() {
         return false;
     }
@@ -799,6 +810,7 @@ public class UserFunction extends Actor implements Function, ContextOriginator, 
      *
      * @return true if this function item is a map, otherwise false
      */
+    @Override
     public boolean isMap() {
         return false;
     }
@@ -808,6 +820,7 @@ public class UserFunction extends Actor implements Function, ContextOriginator, 
      *
      * @return true if this function item is an array, otherwise false
      */
+    @Override
     public boolean isArray() {
         return false;
     }
@@ -823,6 +836,7 @@ public class UserFunction extends Actor implements Function, ContextOriginator, 
      * @return true if the two function items are deep-equal
      * @throws net.sf.saxon.trans.XPathException if the comparison cannot be performed
      */
+    @Override
     public boolean deepEquals(Function other, XPathContext context, AtomicComparer comparer, int flags) throws XPathException {
         XPathException err = new XPathException("Cannot compare functions using deep-equal", "FOTY0015");
         err.setIsTypeError(true);
@@ -836,6 +850,7 @@ public class UserFunction extends Actor implements Function, ContextOriginator, 
      * @param n the index of the required item, with 0 representing the first item in the sequence
      * @return the n'th item if it exists, or null otherwise
      */
+    @Override
     public Function itemAt(int n) {
         return n == 0 ? this : null;
     }
@@ -852,6 +867,7 @@ public class UserFunction extends Actor implements Function, ContextOriginator, 
      *               of the sequence
      * @return the required subsequence.
      */
+    @Override
     public GroundedValue subsequence(int start, int length) {
         return start <= 0 && (start + length) > 0 ? this : EmptySequence.getInstance();
     }
@@ -861,6 +877,7 @@ public class UserFunction extends Actor implements Function, ContextOriginator, 
      *
      * @return the number of items in the sequence
      */
+    @Override
     public int getLength() {
         return 1;
     }
@@ -871,6 +888,7 @@ public class UserFunction extends Actor implements Function, ContextOriginator, 
      * @return the effective boolean value
      * @throws net.sf.saxon.trans.XPathException if the sequence has no effective boolean value (for example a sequence of two integers)
      */
+    @Override
     public boolean effectiveBooleanValue() throws XPathException {
         return ExpressionTool.effectiveBooleanValue(this);
     }
@@ -883,6 +901,7 @@ public class UserFunction extends Actor implements Function, ContextOriginator, 
      *
      * @return the simplified sequence
      */
+    @Override
     public UserFunction reduce() {
         return this;
     }
@@ -894,6 +913,7 @@ public class UserFunction extends Actor implements Function, ContextOriginator, 
      * @return the first item in the sequence if there is one, or null if the sequence
      * is empty
      */
+    @Override
     public UserFunction head() {
         return this;
     }
@@ -913,6 +933,7 @@ public class UserFunction extends Actor implements Function, ContextOriginator, 
      * @see #getStringValueCS
      * @since 8.4
      */
+    @Override
     public String getStringValue() {
         throw new UnsupportedOperationException("A function has no string value");
     }
@@ -934,6 +955,7 @@ public class UserFunction extends Actor implements Function, ContextOriginator, 
      * @see #getStringValue
      * @since 8.4
      */
+    @Override
     public CharSequence getStringValueCS() {
         return getStringValue();
     }
@@ -945,6 +967,7 @@ public class UserFunction extends Actor implements Function, ContextOriginator, 
      * @throws net.sf.saxon.trans.XPathException if atomization is not allowed
      *                                           for this kind of item
      */
+    @Override
     public AtomicSequence atomize() throws XPathException {
         throw new XPathException("Functions cannot be atomized", "FOTY0013");
     }

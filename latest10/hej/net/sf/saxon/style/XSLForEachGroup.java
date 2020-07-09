@@ -49,6 +49,7 @@ public final class XSLForEachGroup extends StyleElement {
      * @return true - it is an instruction
      */
 
+    @Override
     public boolean isInstruction() {
         return true;
     }
@@ -57,6 +58,7 @@ public final class XSLForEachGroup extends StyleElement {
      * Specify that xsl:sort is a permitted child
      */
 
+    @Override
     protected boolean isPermittedChild(StyleElement child) {
         return child instanceof XSLSort;
     }
@@ -67,10 +69,12 @@ public final class XSLForEachGroup extends StyleElement {
      * @return true: yes, it may contain a template-body
      */
 
+    @Override
     public boolean mayContainSequenceConstructor() {
         return true;
     }
 
+    @Override
     public void prepareAttributes() {
 
         String selectAtt = null;
@@ -177,6 +181,7 @@ public final class XSLForEachGroup extends StyleElement {
         }
     }
 
+    @Override
     public void validate(ComponentDeclaration decl) throws XPathException {
         checkSortComesFirst(false);
         TypeChecker tc = getConfiguration().getTypeChecker(false);
@@ -228,6 +233,7 @@ public final class XSLForEachGroup extends StyleElement {
 
     }
 
+    @Override
     public Expression compile(Compilation compilation, ComponentDeclaration decl) throws XPathException {
 
         StringCollator collator = null;

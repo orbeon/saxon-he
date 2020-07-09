@@ -20,6 +20,7 @@ import java.util.Properties;
  */
 public class StAXResultHandlerImpl implements StAXResultHandler {
 
+    @Override
     public Receiver getReceiver(Result result, Properties properties) {
         if (((StAXResult) result).getXMLStreamWriter() != null) {
             return new ReceiverToXMLStreamWriter(((StAXResult) result).getXMLStreamWriter());

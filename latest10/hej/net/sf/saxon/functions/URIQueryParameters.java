@@ -264,6 +264,7 @@ public class URIQueryParameters {
          *         Returns true if the file is a directory or if it matches the glob pattern.
          */
 
+        @Override
         public boolean accept(File dir, String name) {
             return new File(dir, name).isDirectory() || pattern.matches(name);
         }

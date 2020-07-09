@@ -32,6 +32,7 @@ public class XSLLocalVariable extends XSLGeneralVariable {
      * @return the binding information if this element binds a variable of this name; otherwise null
      */
 
+    @Override
     public SourceBinding getBindingInformation(StructuredQName name) {
         if (name.equals(sourceBinding.getVariableQName())) {
             return sourceBinding;
@@ -46,6 +47,7 @@ public class XSLLocalVariable extends XSLGeneralVariable {
      * @return true - it is an instruction (well, it can be, anyway)
      */
 
+    @Override
     public boolean isInstruction() {
         return true;
     }

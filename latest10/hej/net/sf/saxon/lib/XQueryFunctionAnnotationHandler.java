@@ -100,6 +100,7 @@ public class XQueryFunctionAnnotationHandler implements FunctionAnnotationHandle
      * @return the namespace handled by this function annotation handler, namely "http://www.w3.org/2012/xquery"
      */
 
+    @Override
     public String getAssertionNamespace() {
         return "http://www.w3.org/2012/xquery";
     };
@@ -113,6 +114,7 @@ public class XQueryFunctionAnnotationHandler implements FunctionAnnotationHandle
      * @return true if the assertion is satisfied, false if not
      */
 
+    @Override
     public boolean satisfiesAssertion(Annotation assertion, AnnotationList annotationList) {
         // annotation assertions are not defined for this namespace (surprisingly)
         return true;
@@ -143,6 +145,7 @@ public class XQueryFunctionAnnotationHandler implements FunctionAnnotationHandle
      * until run-time.</p>
      */
 
+    @Override
     public Affinity relationship(AnnotationList firstList, AnnotationList secondList) {
         return Affinity.OVERLAPS;
     }

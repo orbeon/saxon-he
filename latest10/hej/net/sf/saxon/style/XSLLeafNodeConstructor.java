@@ -70,6 +70,7 @@ public abstract class XSLLeafNodeConstructor extends StyleElement {
      * @return true - it is an instruction
      */
 
+    @Override
     public boolean isInstruction() {
         return true;
     }
@@ -80,10 +81,12 @@ public abstract class XSLLeafNodeConstructor extends StyleElement {
      * @return true: yes, it may contain a template-body
      */
 
+    @Override
     public boolean mayContainSequenceConstructor() {
         return true;
     }
 
+    @Override
     public void validate(ComponentDeclaration decl) throws XPathException {
         if (select != null && hasChildNodes()) {
             String errorCode = getErrorCodeForSelectPlusContent();

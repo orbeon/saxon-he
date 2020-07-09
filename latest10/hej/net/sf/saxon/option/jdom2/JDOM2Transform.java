@@ -28,6 +28,7 @@ import java.util.List;
 
 public class JDOM2Transform extends Transform {
 
+    @Override
     public List preprocess(List sources) throws XPathException {
         try {
             ArrayList jdomSources = new ArrayList(sources.size());

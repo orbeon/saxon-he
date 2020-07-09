@@ -315,6 +315,7 @@ public final class TimeValue extends CalendarValue implements Comparable {
      */
 
     /*@NotNull*/
+    @Override
     public BuiltInAtomicType getPrimitiveType() {
         return BuiltInAtomicType.TIME;
     }
@@ -378,6 +379,7 @@ public final class TimeValue extends CalendarValue implements Comparable {
      */
 
     /*@NotNull*/
+    @Override
     public CharSequence getPrimitiveStringValue() {
 
         FastStringBuffer sb = new FastStringBuffer(FastStringBuffer.C16);
@@ -416,6 +418,7 @@ public final class TimeValue extends CalendarValue implements Comparable {
      * @return the canonical lexical representation if defined in XML Schema
      */
 
+    @Override
     public CharSequence getCanonicalLexicalRepresentation() {
         if (hasTimezone() && getTimezoneInMinutes() != 0) {
             return adjustTimezone(0).getStringValueCS();
@@ -431,6 +434,7 @@ public final class TimeValue extends CalendarValue implements Comparable {
      */
 
     /*@NotNull*/
+    @Override
     public DateTimeValue toDateTime() {
         return new DateTimeValue(1972, (byte) 12, (byte) 31, hour, minute, second, nanosecond, getTimezoneInMinutes());
     }
@@ -440,6 +444,7 @@ public final class TimeValue extends CalendarValue implements Comparable {
      */
 
     /*@NotNull*/
+    @Override
     public GregorianCalendar getCalendar() {
         // create a calendar using the specified timezone
         int tz = hasTimezone() ? getTimezoneInMinutes()*60000 : 0;
@@ -468,6 +473,7 @@ public final class TimeValue extends CalendarValue implements Comparable {
      */
 
     /*@NotNull*/
+    @Override
     public AtomicValue copyAsSubType(AtomicType typeLabel) {
         TimeValue v = new TimeValue(hour, minute, second, nanosecond, getTimezoneInMinutes(), "");
         v.typeLabel = typeLabel;
@@ -484,6 +490,7 @@ public final class TimeValue extends CalendarValue implements Comparable {
      */
 
     /*@NotNull*/
+    @Override
     public TimeValue adjustTimezone(int timezone) {
         DateTimeValue dt = toDateTime().adjustTimezone(timezone);
         return new TimeValue(dt.getHour(), dt.getMinute(), dt.getSecond(),
@@ -497,6 +504,7 @@ public final class TimeValue extends CalendarValue implements Comparable {
      */
 
     /*@Nullable*/
+    @Override
     public AtomicValue getComponent(AccessorFn.Component component) throws XPathException {
         switch (component) {
             case HOURS:
@@ -537,6 +545,7 @@ public final class TimeValue extends CalendarValue implements Comparable {
      *                            is declared as Object to satisfy the Comparable interface)
      */
 
+    @Override
     public int compareTo(Object other) {
         TimeValue otherTime = (TimeValue) other;
         if (getTimezoneInMinutes() == otherTime.getTimezoneInMinutes()) {
@@ -571,6 +580,7 @@ public final class TimeValue extends CalendarValue implements Comparable {
      *                                   (because the function is called at compile time)
      */
 
+    @Override
     public int compareTo(/*@NotNull*/ CalendarValue other, /*@NotNull*/ int implicitTimezone) throws NoDynamicContextException {
         if (!(other instanceof TimeValue)) {
             throw new ClassCastException("Time values are not comparable to " + other.getClass());
@@ -586,6 +596,7 @@ public final class TimeValue extends CalendarValue implements Comparable {
 
 
     /*@NotNull*/
+    @Override
     public Comparable getSchemaComparable() {
         return new TimeComparable();
     }
@@ -597,6 +608,7 @@ public final class TimeValue extends CalendarValue implements Comparable {
             return TimeValue.this;
         }
 
+        @Override
         public int compareTo(/*@NotNull*/ Object o) {
             if (o instanceof TimeComparable) {
                 DateTimeValue dt0 = asTimeValue().toDateTime();
@@ -637,6 +649,7 @@ public final class TimeValue extends CalendarValue implements Comparable {
      */
 
     /*@NotNull*/
+    @Override
     public TimeValue add(/*@NotNull*/ DurationValue duration) throws XPathException {
         if (duration instanceof DayTimeDurationValue) {
             DateTimeValue dt = toDateTime().add(duration);
@@ -659,6 +672,7 @@ public final class TimeValue extends CalendarValue implements Comparable {
      * @throws XPathException for example if one value is a date and the other is a time
      */
 
+    @Override
     public DayTimeDurationValue subtract(/*@NotNull*/ CalendarValue other, XPathContext context) throws XPathException {
         if (!(other instanceof TimeValue)) {
             XPathException err = new XPathException("First operand of '-' is a time, but the second is not");

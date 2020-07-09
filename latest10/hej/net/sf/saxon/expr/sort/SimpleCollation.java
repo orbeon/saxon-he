@@ -42,6 +42,7 @@ public class SimpleCollation implements StringCollator {
      *
      * @return a collation URI that can be used to reconstruct the collation when an XSLT package is reloaded.
      */
+    @Override
     public String getCollationURI() {
         return uri;
     }
@@ -59,6 +60,7 @@ public class SimpleCollation implements StringCollator {
      * @throws ClassCastException if the arguments' types prevent them from
      *                            being compared by this Comparator.
      */
+    @Override
     public int compareStrings(CharSequence o1, CharSequence o2) {
         return comparator.compare(o1, o2);
     }
@@ -72,6 +74,7 @@ public class SimpleCollation implements StringCollator {
      * @return true if and only if the strings are considered equal,
      */
 
+    @Override
     public boolean comparesEqual(CharSequence s1, CharSequence s2) {
         return comparator.compare(s1, s2) == 0;
     }
@@ -103,6 +106,7 @@ public class SimpleCollation implements StringCollator {
      * @param s
      */
 
+    @Override
     public AtomicMatchKey getCollationKey(CharSequence s) {
         return platform.getCollationKey(this, s.toString());
     }

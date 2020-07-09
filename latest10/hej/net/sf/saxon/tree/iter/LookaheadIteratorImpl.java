@@ -36,11 +36,13 @@ public class LookaheadIteratorImpl implements LookaheadIterator {
         }
     }
 
+    @Override
     public boolean hasNext() {
         return next != null;
     }
 
     /*@Nullable*/
+    @Override
     public Item next() throws XPathException {
         Item current = next;
         if (next != null) {
@@ -49,10 +51,12 @@ public class LookaheadIteratorImpl implements LookaheadIterator {
         return current;
     }
 
+    @Override
     public void close() {
         base.close();
     }
 
+    @Override
     public EnumSet<Property> getProperties() {
         return EnumSet.of(Property.LOOKAHEAD);
     }

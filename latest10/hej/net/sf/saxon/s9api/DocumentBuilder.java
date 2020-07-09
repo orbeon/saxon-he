@@ -430,6 +430,7 @@ public class DocumentBuilder {
             this.builder = b;
         }
 
+        @Override
         public XdmNode getDocumentNode() {
             return new XdmNode(builder.getCurrentRoot());
         }

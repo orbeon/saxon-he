@@ -47,6 +47,7 @@ public class AtomizingIterator implements SequenceIterator /* of AtomicValue */ 
     }
 
     /*@Nullable*/
+    @Override
     public AtomicValue next() throws XPathException {
         while (true) {
             if (currentValue != null) {
@@ -83,6 +84,7 @@ public class AtomizingIterator implements SequenceIterator /* of AtomicValue */ 
         }
     }
 
+    @Override
     public void close() {
         base.close();
     }

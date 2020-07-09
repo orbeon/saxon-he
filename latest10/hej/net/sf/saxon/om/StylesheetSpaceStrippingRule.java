@@ -55,6 +55,7 @@ public class StylesheetSpaceStrippingRule implements SpaceStrippingRule {
      * @param schemaType not used
      */
 
+    @Override
     public int isSpacePreserving(/*@NotNull*/ NodeName elementName, SchemaType schemaType) {
         int fingerprint = elementName.obtainFingerprint(namePool);
         if (fingerprint == (StandardNames.XSL_TEXT & NamePool.FP_MASK)) {
@@ -85,6 +86,7 @@ public class StylesheetSpaceStrippingRule implements SpaceStrippingRule {
      *
      * @param presenter the output handler
      */
+    @Override
     public void export(ExpressionPresenter presenter) {
         // no action
     }

@@ -38,6 +38,7 @@ public class GeneralComparison20 extends GeneralComparison {
      */
 
     /*@NotNull*/
+    @Override
     public Expression copy(RebindingMap rebindings) {
         GeneralComparison20 gc = new GeneralComparison20(getLhsExpression().copy(rebindings), operator, getRhsExpression().copy(rebindings));
         ExpressionTool.copyLocationInfo(this, gc);
@@ -49,6 +50,7 @@ public class GeneralComparison20 extends GeneralComparison {
         return gc;
     }
 
+    @Override
     protected GeneralComparison getInverseComparison() {
         GeneralComparison20 gc = new GeneralComparison20(getRhsExpression(), Token.inverse(operator), getLhsExpression());
         gc.setRetainedStaticContext(getRetainedStaticContext());

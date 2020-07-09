@@ -40,6 +40,7 @@ public class XSLTry extends StyleElement {
      * @return true - it is an instruction
      */
 
+    @Override
     public boolean isInstruction() {
         return true;
     }
@@ -50,10 +51,12 @@ public class XSLTry extends StyleElement {
      * @return true: yes, it may contain a sequence constructor
      */
 
+    @Override
     public boolean mayContainSequenceConstructor() {
         return true;
     }
 
+    @Override
     public void prepareAttributes() {
 
         String selectAtt = null;
@@ -82,10 +85,12 @@ public class XSLTry extends StyleElement {
         }
     }
 
+    @Override
     protected boolean isPermittedChild(StyleElement child) {
         return child instanceof XSLCatch;
     }
 
+    @Override
     public void validate(ComponentDeclaration decl) throws XPathException {
         select = typeCheck("select", select);
         boolean foundCatch = false;
@@ -108,6 +113,7 @@ public class XSLTry extends StyleElement {
         }
     }
 
+    @Override
     public Expression compile(Compilation exec, ComponentDeclaration decl) throws XPathException {
         Expression content = compileSequenceConstructor(exec, decl, true);
         if (select == null) {

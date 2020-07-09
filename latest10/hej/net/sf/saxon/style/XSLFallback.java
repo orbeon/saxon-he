@@ -24,6 +24,7 @@ public class XSLFallback extends StyleElement {
      * @return true - it is an instruction
      */
 
+    @Override
     public boolean isInstruction() {
         return true;
     }
@@ -34,6 +35,7 @@ public class XSLFallback extends StyleElement {
      * @return true: yes, it may contain a template-body
      */
 
+    @Override
     public boolean mayContainSequenceConstructor() {
         return true;
     }
@@ -44,10 +46,12 @@ public class XSLFallback extends StyleElement {
      * @return true for all elements except xsl:fallback and saxon:catch
      */
 
+    @Override
     protected boolean seesAvuncularVariables() {
         return false;
     }
 
+    @Override
     public void prepareAttributes() {
         for (AttributeInfo att : attributes()) {
             NodeName attName = att.getNodeName();
@@ -55,6 +59,7 @@ public class XSLFallback extends StyleElement {
         }
     }
 
+    @Override
     public void validate(ComponentDeclaration decl) throws XPathException {
         // Parent elements are now responsible for validating their children
 //        StyleElement parent = (StyleElement)getParent();
@@ -64,6 +69,7 @@ public class XSLFallback extends StyleElement {
     }
 
     /*@Nullable*/
+    @Override
     public Expression compile(Compilation exec, ComponentDeclaration decl) throws XPathException {
         // if we get here, then the parent instruction is OK, so the fallback is not activated
         return null;

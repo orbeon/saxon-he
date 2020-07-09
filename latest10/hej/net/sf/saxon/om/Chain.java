@@ -85,6 +85,7 @@ public class Chain implements GroundedValue {
         }
     }
 
+    @Override
     public Item head() {
         if (extent != null) {
             return extent.isEmpty() ? null : extent.get(0);
@@ -98,6 +99,7 @@ public class Chain implements GroundedValue {
         return null;
     }
 
+    @Override
     public UnfailingIterator iterate() {
         if (extent != null) {
             return new net.sf.saxon.tree.iter.ListIterator<>(extent);
@@ -141,6 +143,7 @@ public class Chain implements GroundedValue {
      * @param n the index of the required item, with 0 representing the first item in the sequence
      * @return the n'th item if it exists, or null otherwise
      */
+    @Override
     public Item itemAt(int n) {
         if (n == 0) {
             return head();
@@ -166,6 +169,7 @@ public class Chain implements GroundedValue {
      *               of the sequence
      * @return the required subsequence.
      */
+    @Override
     public GroundedValue subsequence(int start, int length) {
         consolidate();
         int newStart;
@@ -194,6 +198,7 @@ public class Chain implements GroundedValue {
      *
      * @return the number of items in the sequence
      */
+    @Override
     public int getLength() {
         if (extent != null) {
             return extent.size();
@@ -213,6 +218,7 @@ public class Chain implements GroundedValue {
      * @throws net.sf.saxon.trans.XPathException
      *          if the sequence has no effective boolean value (for example a sequence of two integers)
      */
+    @Override
     public boolean effectiveBooleanValue() throws XPathException {
         return ExpressionTool.effectiveBooleanValue(iterate());
     }
@@ -226,6 +232,7 @@ public class Chain implements GroundedValue {
      * @throws net.sf.saxon.trans.XPathException
      *          if the sequence contains items that have no string value (for example, function items)
      */
+    @Override
     public String getStringValue() throws XPathException {
         return SequenceTool.getStringValue(this);
     }
@@ -239,6 +246,7 @@ public class Chain implements GroundedValue {
      * @throws net.sf.saxon.trans.XPathException
      *          if the sequence contains items that have no string value (for example, function items)
      */
+    @Override
     public CharSequence getStringValueCS() throws XPathException {
         return SequenceTool.getStringValue(this);
     }
@@ -251,6 +259,7 @@ public class Chain implements GroundedValue {
      *
      * @return the simplified sequence
      */
+    @Override
     public GroundedValue reduce() {
         consolidate();
         return SequenceExtent.makeSequenceExtent(extent);
@@ -289,6 +298,7 @@ public class Chain implements GroundedValue {
          * @return the next item, or null if there are no more items.
          */
 
+        @Override
         public Item next() {
 
             // If there are iterators on the queue waiting to be processed, then take the first
@@ -343,6 +353,7 @@ public class Chain implements GroundedValue {
          *         It is acceptable for the properties of the iterator to change depending on its state.
          */
 
+        @Override
         public EnumSet<Property> getProperties() {
             return EnumSet.of(Property.GROUNDED);
         }
@@ -354,6 +365,7 @@ public class Chain implements GroundedValue {
          * @return the corresponding Value
          */
 
+        @Override
         public GroundedValue materialize() {
             return thisChain;
         }
@@ -367,6 +379,7 @@ public class Chain implements GroundedValue {
          *                        which cause evaluation of expressions while materializing the value.
          */
 
+        @Override
         public GroundedValue getResidue() throws XPathException {
             return new SequenceExtent(this);
         }

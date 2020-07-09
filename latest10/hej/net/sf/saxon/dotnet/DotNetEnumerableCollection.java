@@ -44,6 +44,7 @@ public class DotNetEnumerableCollection extends AbstractResourceCollection {
     public Iterator<? extends Resource> getResources(XPathContext context) throws XPathException {
         final Configuration config = context.getConfiguration();
         return new DotNetIterator<Resource>(list.GetEnumerator(), new DotNetIterator.Mapper<Resource>() {
+            @Override
             public Resource convert(Object o) {
                 try {
                     return makeResource(config, o.toString());
@@ -57,6 +58,7 @@ public class DotNetEnumerableCollection extends AbstractResourceCollection {
     @Override
     public Iterator<String> getResourceURIs(XPathContext context) throws XPathException {
         return new DotNetIterator<String>(list.GetEnumerator(), new DotNetIterator.Mapper<String>() {
+            @Override
             public String convert(Object o) {
                 return o.toString();
             }

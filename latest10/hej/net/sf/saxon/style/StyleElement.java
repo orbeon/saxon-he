@@ -104,6 +104,7 @@ public abstract class StyleElement extends ElementImpl {
         return getPrincipalStylesheetModule().getStylesheetPackage();
     }
 
+    @Override
     public Configuration getConfiguration() {
         return compilation.getConfiguration();
     }
@@ -132,6 +133,7 @@ public abstract class StyleElement extends ElementImpl {
      * @return the base URI
      */
 
+    @Override
     public String getBaseURI() {
         if (baseURI == null) {
             baseURI = super.getBaseURI();

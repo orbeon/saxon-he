@@ -19,6 +19,7 @@ public abstract class ExtensionInstruction extends StyleElement {
      * @return true - it is an instruction
      */
 
+    @Override
     public final boolean isInstruction() {
         return true;
     }
@@ -31,6 +32,7 @@ public abstract class ExtensionInstruction extends StyleElement {
      *         child instruction, which is ignored if the element is recognized.
      */
 
+    @Override
     public final boolean mayContainFallback() {
         return true;
     }

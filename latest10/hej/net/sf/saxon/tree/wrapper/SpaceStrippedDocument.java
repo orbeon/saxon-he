@@ -60,6 +60,7 @@ public class SpaceStrippedDocument extends GenericTreeInfo {
      *
      * @return true if the document contains elements whose type is other than UNTYPED
      */
+    @Override
     public boolean isTyped() {
         return underlyingTree.isTyped();
     }
@@ -81,6 +82,7 @@ public class SpaceStrippedDocument extends GenericTreeInfo {
      */
 
     /*@Nullable*/
+    @Override
     public NodeInfo selectID(String id, boolean getParent) {
         NodeInfo n = underlyingTree.selectID(id, false);
         if (n == null) {
@@ -98,6 +100,7 @@ public class SpaceStrippedDocument extends GenericTreeInfo {
      *         information is not available then an empty iterator is returned
      */
 
+    @Override
     public Iterator<String> getUnparsedEntityNames() {
         return underlyingTree.getUnparsedEntityNames();
     }
@@ -108,6 +111,7 @@ public class SpaceStrippedDocument extends GenericTreeInfo {
      * @param name the name of the entity
      */
 
+    @Override
     public String[] getUnparsedEntity(String name) {
         return underlyingTree.getUnparsedEntity(name);
     }

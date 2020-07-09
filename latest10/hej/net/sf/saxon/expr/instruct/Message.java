@@ -106,6 +106,7 @@ public class Message extends Instruction {
      */
 
     /*@NotNull*/
+    @Override
     public Expression copy(RebindingMap rebindings) {
         Message exp = new Message(getSelect().copy(rebindings), getTerminate().copy(rebindings), getErrorCode().copy(rebindings));
         ExpressionTool.copyLocationInfo(this, exp);
@@ -116,6 +117,7 @@ public class Message extends Instruction {
      * Get the name of this instruction for diagnostic and tracing purposes
      */
 
+    @Override
     public int getInstructionNameCode() {
         return isAssert ? StandardNames.XSL_ASSERT : StandardNames.XSL_MESSAGE;
     }
@@ -127,6 +129,7 @@ public class Message extends Instruction {
      * @return AnyItemType
      */
     /*@NotNull*/
+    @Override
     public ItemType getItemType() {
         return AnyItemType.getInstance();
     }
@@ -138,6 +141,7 @@ public class Message extends Instruction {
      * @return zero or one
      */
 
+    @Override
     public int getCardinality() {
         return StaticProperty.ALLOWS_ZERO_OR_ONE;
     }
@@ -147,6 +151,7 @@ public class Message extends Instruction {
      * This implementation returns true.
      */
 
+    @Override
     public final boolean mayCreateNewNodes() {
         return true;
     }
@@ -180,6 +185,7 @@ public class Message extends Instruction {
         return this;
     }
 
+    @Override
     public TailCall processLeavingTail(Outputter output, XPathContext context) throws XPathException {
         XsltController controller = (XsltController) context.getController();
         if (isAssert && !controller.isAssertionsEnabled()) {
@@ -289,6 +295,7 @@ public class Message extends Instruction {
      * is written to the supplied output destination.
      */
 
+    @Override
     public void export(ExpressionPresenter out) throws XPathException {
         out.startElement("message", this);
         out.setChildRole("select");

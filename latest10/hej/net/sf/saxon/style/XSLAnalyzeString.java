@@ -38,6 +38,7 @@ public class XSLAnalyzeString extends StyleElement {
      * @return true - it is an instruction
      */
 
+    @Override
     public boolean isInstruction() {
         return true;
     }
@@ -47,11 +48,13 @@ public class XSLAnalyzeString extends StyleElement {
      * instruction
      */
 
+    @Override
     public boolean mayContainFallback() {
         return true;
     }
 
 
+    @Override
     public void prepareAttributes() {
         String selectAtt = null;
         String regexAtt = null;
@@ -140,6 +143,7 @@ public class XSLAnalyzeString extends StyleElement {
         }
     }
 
+    @Override
     public void validate(ComponentDeclaration decl) throws XPathException {
         //checkWithinTemplate();
 
@@ -176,6 +180,7 @@ public class XSLAnalyzeString extends StyleElement {
 
     }
 
+    @Override
     public Expression compile(Compilation exec, ComponentDeclaration decl) throws XPathException {
         Expression matchingBlock = null;
         if (matching != null) {

@@ -46,6 +46,7 @@ final class AttributeInfoIterator implements Iterator<AttributeInfo> {
         return index < tree.numberOfAttributes && tree.attParent[index] == element;
     }
 
+    @Override
     public AttributeInfo next() {
         int nc = tree.attCode[index];
         CodedName nodeName = new CodedName(nc & NamePool.FP_MASK, tree.prefixPool.getPrefix(nc >> 20), tree.getNamePool());

@@ -34,6 +34,7 @@ final class TinyCommentImpl extends TinyNodeImpl {
      * Get the XPath string value of the comment
      */
 
+    @Override
     public final String getStringValue() {
         int start = tree.alpha[nodeNr];
         int len = tree.beta[nodeNr];
@@ -48,6 +49,7 @@ final class TinyCommentImpl extends TinyNodeImpl {
      * Returns the string value, as an instance of xs:string
      */
 
+    @Override
     public AtomicSequence atomize() {
         return new StringValue(getStringValue());
     }
@@ -59,6 +61,7 @@ final class TinyCommentImpl extends TinyNodeImpl {
      * @return Type.COMMENT
      */
 
+    @Override
     public final int getNodeKind() {
         return Type.COMMENT;
     }
@@ -67,6 +70,7 @@ final class TinyCommentImpl extends TinyNodeImpl {
      * Copy this node to a given outputter
      */
 
+    @Override
     public void copy(/*@NotNull*/ Receiver out, int copyOptions, Location locationId) throws XPathException {
         out.comment(getStringValue(), locationId, ReceiverOption.NONE);
     }

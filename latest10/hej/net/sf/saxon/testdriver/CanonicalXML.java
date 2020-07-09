@@ -134,6 +134,7 @@ public class CanonicalXML extends DefaultHandler implements LexicalHandler {
      *                                  wrapping another exception.
      * @see org.xml.sax.ContentHandler#startPrefixMapping
      */
+    @Override
     public void startPrefixMapping(String prefix, String uri) throws SAXException {
         namespaces.addAttribute("", prefix, (prefix.equals("") ? "xmlns" : "xmlns:" + prefix), "CDATA", uri);
         if (!"".equals(uri)) {
@@ -170,6 +171,7 @@ public class CanonicalXML extends DefaultHandler implements LexicalHandler {
      *                                  wrapping another exception.
      * @see org.xml.sax.ContentHandler#startElement
      */
+    @Override
     public void startElement(String uri, String localName, String qName, Attributes atts) throws SAXException {
         flushChars();
         write("<");
@@ -218,10 +220,12 @@ public class CanonicalXML extends DefaultHandler implements LexicalHandler {
         }
     }
 
+    @Override
     public void ignorableWhitespace(char[] cbuf, int start, int len) {
         characters(cbuf, start, len);
     }
 
+    @Override
     public void characters(char[] cbuf, int start, int len) {
         while (len-- > 0) {
             appendChar(cbuf[start++]);
@@ -335,6 +339,7 @@ public class CanonicalXML extends DefaultHandler implements LexicalHandler {
      *                                  wrapping another exception.
      * @see org.xml.sax.ContentHandler#endElement
      */
+    @Override
     public void endElement(String uri, String localName, String qName) throws SAXException {
         flushChars();
         write("</");
@@ -342,6 +347,7 @@ public class CanonicalXML extends DefaultHandler implements LexicalHandler {
         write(">");
     }
 
+    @Override
     public void processingInstruction(String target, String data) throws SAXException {
         flushChars();
         write("<?");
@@ -352,9 +358,11 @@ public class CanonicalXML extends DefaultHandler implements LexicalHandler {
     }
 
 
+    @Override
     public void startDocument() {
     }
 
+    @Override
     public void endDocument() throws SAXException {
         try {
             flushChars();
@@ -364,30 +372,37 @@ public class CanonicalXML extends DefaultHandler implements LexicalHandler {
         }
     }
 
+    @Override
     public void startDTD(String name, String publicId, String systemId) throws SAXException {
         //
     }
 
+    @Override
     public void endDTD() throws SAXException {
         //
     }
 
+    @Override
     public void startEntity(String name) throws SAXException {
         //
     }
 
+    @Override
     public void endEntity(String name) throws SAXException {
         //
     }
 
+    @Override
     public void startCDATA() throws SAXException {
         //
     }
 
+    @Override
     public void endCDATA() throws SAXException {
         //
     }
 
+    @Override
     public void comment(char ch[], int start, int length) throws SAXException {
         flushChars();
         write("<!--");

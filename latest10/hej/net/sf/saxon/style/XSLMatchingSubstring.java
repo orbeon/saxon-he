@@ -20,6 +20,7 @@ import net.sf.saxon.trans.XPathException;
 public class XSLMatchingSubstring extends StyleElement {
 
 
+    @Override
     public void prepareAttributes() {
         for (AttributeInfo att : attributes()) {
             NodeName attName = att.getNodeName();
@@ -34,10 +35,12 @@ public class XSLMatchingSubstring extends StyleElement {
      * @return true: yes, it may contain a template-body
      */
 
+    @Override
     public boolean mayContainSequenceConstructor() {
         return true;
     }
 
+    @Override
     public void validate(ComponentDeclaration decl) throws XPathException {
         if (!(getParent() instanceof XSLAnalyzeString)) {
             compileError(getDisplayName() + " must be immediately within xsl:analyze-string", "XTSE0010");
@@ -45,6 +48,7 @@ public class XSLMatchingSubstring extends StyleElement {
     }
 
     /*@NotNull*/
+    @Override
     public Expression compile(Compilation exec, ComponentDeclaration decl) throws XPathException {
         throw new UnsupportedOperationException("XSLMatchingSubstring#compile() should not be called");
     }

@@ -46,6 +46,7 @@ public class SQLDelete extends ExtensionInstruction {
     String table;
     Expression where;
 
+    @Override
     public void prepareAttributes() {
 
         final AttributeMap atts = attributes();
@@ -71,12 +72,14 @@ public class SQLDelete extends ExtensionInstruction {
         }
     }
 
+    @Override
     public void validate(ComponentDeclaration decl) throws XPathException {
         super.validate(decl);
         where = typeCheck("where", where);
         connection = typeCheck("connection", connection);
     }
 
+    @Override
     public Expression compile(Compilation exec, ComponentDeclaration decl) throws XPathException {
         return new DeleteInstruction(connection, "DELETE FROM " + table, where);
     }
@@ -101,15 +104,18 @@ public class SQLDelete extends ExtensionInstruction {
          * This method indicates which of the three is provided.
          */
 
+        @Override
         public int getImplementationMethod() {
             return Expression.EVALUATE_METHOD;
         }
 
+        @Override
         public String getExpressionType() {
             return "sql:delete";
         }
 
         /*@Nullable*/
+        @Override
         public Sequence call(XPathContext context, Sequence[] arguments) throws XPathException {
             // Prepare the SQL statement (only do this once)
 

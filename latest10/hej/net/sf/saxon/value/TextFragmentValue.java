@@ -83,6 +83,7 @@ public final class TextFragmentValue implements NodeInfo, SourceLocator {
      * @return the TreeInfo
      * @since 9.7
      */
+    @Override
     public TreeInfo getTreeInfo() {
         return treeInfo;
     }
@@ -113,6 +114,7 @@ public final class TextFragmentValue implements NodeInfo, SourceLocator {
      * @return Type.DOCUMENT (always)
      */
 
+    @Override
     public final int getNodeKind() {
         return Type.DOCUMENT;
     }
@@ -121,6 +123,7 @@ public final class TextFragmentValue implements NodeInfo, SourceLocator {
      * Get the String Value
      */
 
+    @Override
     public String getStringValue() {
         return text.toString();
     }
@@ -130,6 +133,7 @@ public final class TextFragmentValue implements NodeInfo, SourceLocator {
      * the version of the method that returns a String.
      */
 
+    @Override
     public CharSequence getStringValueCS() {
         return text;
     }
@@ -167,6 +171,7 @@ public final class TextFragmentValue implements NodeInfo, SourceLocator {
      * @param buffer the buffer to contain the generated ID
      */
 
+    @Override
     public void generateId(/*@NotNull*/ FastStringBuffer buffer) {
         buffer.append("tt");
         buffer.append(Long.toString(treeInfo.getDocumentNumber()));
@@ -178,6 +183,7 @@ public final class TextFragmentValue implements NodeInfo, SourceLocator {
      * @throws UnsupportedOperationException (always). This kind of tree does not have a document URI.
      */
 
+    @Override
     public void setSystemId(String systemId) {
         documentURI = systemId;
     }
@@ -186,6 +192,7 @@ public final class TextFragmentValue implements NodeInfo, SourceLocator {
      * Get the system ID (the document URI) of the document node.
      */
 
+    @Override
     public String getSystemId() {
         return documentURI;
     }
@@ -194,6 +201,7 @@ public final class TextFragmentValue implements NodeInfo, SourceLocator {
      * Get the base URI for the document node.
      */
 
+    @Override
     public String getBaseURI() {
         return baseURI;
     }
@@ -208,6 +216,7 @@ public final class TextFragmentValue implements NodeInfo, SourceLocator {
      *         return true, and the two nodes will produce the same result for generateId())
      */
 
+    @Override
     public int compareOrder(NodeInfo other) {
         if (this == other) {
             return 0;
@@ -219,6 +228,7 @@ public final class TextFragmentValue implements NodeInfo, SourceLocator {
      * Get the fingerprint of the node, used for matching names
      */
 
+    @Override
     public int getFingerprint() {
         return -1;
     }
@@ -230,6 +240,7 @@ public final class TextFragmentValue implements NodeInfo, SourceLocator {
      */
 
     /*@NotNull*/
+    @Override
     public String getPrefix() {
         return "";
     }
@@ -243,6 +254,7 @@ public final class TextFragmentValue implements NodeInfo, SourceLocator {
      */
 
     /*@NotNull*/
+    @Override
     public String getURI() {
         return "";
     }
@@ -256,6 +268,7 @@ public final class TextFragmentValue implements NodeInfo, SourceLocator {
      */
 
     /*@NotNull*/
+    @Override
     public String getDisplayName() {
         return "";
     }
@@ -268,6 +281,7 @@ public final class TextFragmentValue implements NodeInfo, SourceLocator {
      */
 
     /*@NotNull*/
+    @Override
     public String getLocalPart() {
         return "";
     }
@@ -279,6 +293,7 @@ public final class TextFragmentValue implements NodeInfo, SourceLocator {
      *         <code>false</code> otherwise.
      */
 
+    @Override
     public boolean hasChildNodes() {
         return text.length() != 0;
     }
@@ -288,6 +303,7 @@ public final class TextFragmentValue implements NodeInfo, SourceLocator {
      * should not be saved for later use. The result of this operation holds the same location information,
      * but in an immutable form.
      */
+    @Override
     public Location saveLocation() {
         return this;
     }
@@ -304,6 +320,7 @@ public final class TextFragmentValue implements NodeInfo, SourceLocator {
      *         xs:anyType if it has.
      * @since 9.4
      */
+    @Override
     public SchemaType getSchemaType() {
         return Untyped.getInstance();
     }
@@ -324,6 +341,7 @@ public final class TextFragmentValue implements NodeInfo, SourceLocator {
      */
 
     /*@Nullable*/
+    @Override
     public NamespaceBinding[] getDeclaredNamespaces(NamespaceBinding[] buffer) {
         return null;
     }
@@ -353,6 +371,7 @@ public final class TextFragmentValue implements NodeInfo, SourceLocator {
      */
 
     /*@NotNull*/
+    @Override
     public AtomicSequence atomize() {
         return new UntypedAtomicValue(text);
     }
@@ -367,6 +386,7 @@ public final class TextFragmentValue implements NodeInfo, SourceLocator {
      *         if this node is not an element.
      * @since 9.4
      */
+    @Override
     public String getAttributeValue(/*@NotNull*/ String uri, /*@NotNull*/ String local) {
         return null;
     }
@@ -380,6 +400,7 @@ public final class TextFragmentValue implements NodeInfo, SourceLocator {
      */
 
     /*@NotNull*/
+    @Override
     public AxisIterator iterateAxis(int axisNumber) {
         switch (axisNumber) {
             case AxisInfo.ANCESTOR:
@@ -420,6 +441,7 @@ public final class TextFragmentValue implements NodeInfo, SourceLocator {
      */
 
     /*@NotNull*/
+    @Override
     public AxisIterator iterateAxis(int axisNumber, Predicate<? super NodeInfo> nodeTest) {
         switch (axisNumber) {
             case AxisInfo.ANCESTOR:
@@ -472,6 +494,7 @@ public final class TextFragmentValue implements NodeInfo, SourceLocator {
      */
 
     /*@Nullable*/
+    @Override
     public NodeInfo getParent() {
         return null;
     }
@@ -483,6 +506,7 @@ public final class TextFragmentValue implements NodeInfo, SourceLocator {
      */
 
     /*@NotNull*/
+    @Override
     public NodeInfo getRoot() {
         return this;
     }
@@ -491,6 +515,7 @@ public final class TextFragmentValue implements NodeInfo, SourceLocator {
      * Copy the result tree fragment value to a given Outputter
      */
 
+    @Override
     public void copy(/*@NotNull*/ Receiver out, int copyOptions, Location locationId)
             throws XPathException {
         out.characters(text, locationId, ReceiverOption.NONE);
@@ -574,6 +599,7 @@ public final class TextFragmentValue implements NodeInfo, SourceLocator {
          * @return the TreeInfo
          * @since 9.7
          */
+        @Override
         public TreeInfo getTreeInfo() {
             return treeInfo;
         }
@@ -582,6 +608,7 @@ public final class TextFragmentValue implements NodeInfo, SourceLocator {
          * Set the system ID for the entity containing the node.
          */
 
+        @Override
         public void setSystemId(String systemId) {
         }
 
@@ -591,6 +618,7 @@ public final class TextFragmentValue implements NodeInfo, SourceLocator {
          * @return Type.TEXT (always)
          */
 
+        @Override
         public final int getNodeKind() {
             return Type.TEXT;
         }
@@ -599,6 +627,7 @@ public final class TextFragmentValue implements NodeInfo, SourceLocator {
          * Get the String Value
          */
 
+        @Override
         public String getStringValue() {
             return text.toString();
         }
@@ -608,6 +637,7 @@ public final class TextFragmentValue implements NodeInfo, SourceLocator {
          * the version of the method that returns a String.
          */
 
+        @Override
         public CharSequence getStringValueCS() {
             return text;
         }
@@ -627,6 +657,7 @@ public final class TextFragmentValue implements NodeInfo, SourceLocator {
          * Get a character string that uniquely identifies this node
          */
 
+        @Override
         public void generateId(/*@NotNull*/ FastStringBuffer buffer) {
             buffer.append("tt");
             buffer.append(Long.toString(treeInfo.getDocumentNumber()));
@@ -638,6 +669,7 @@ public final class TextFragmentValue implements NodeInfo, SourceLocator {
          */
 
         /*@Nullable*/
+        @Override
         public String getSystemId() {
             return null;
         }
@@ -647,6 +679,7 @@ public final class TextFragmentValue implements NodeInfo, SourceLocator {
          * the base URI of the parent node.
          */
 
+        @Override
         public String getBaseURI() {
             return baseURI;
         }
@@ -661,6 +694,7 @@ public final class TextFragmentValue implements NodeInfo, SourceLocator {
          *         return true, and the two nodes will produce the same result for generateId())
          */
 
+        @Override
         public int compareOrder(NodeInfo other) {
             if (this == other) {
                 return 0;
@@ -672,6 +706,7 @@ public final class TextFragmentValue implements NodeInfo, SourceLocator {
          * Get the fingerprint of the node, used for matching names
          */
 
+        @Override
         public int getFingerprint() {
             return -1;
         }
@@ -684,6 +719,7 @@ public final class TextFragmentValue implements NodeInfo, SourceLocator {
          */
 
         /*@NotNull*/
+        @Override
         public String getPrefix() {
             return "";
         }
@@ -697,6 +733,7 @@ public final class TextFragmentValue implements NodeInfo, SourceLocator {
          */
 
         /*@NotNull*/
+        @Override
         public String getURI() {
             return "";
         }
@@ -710,6 +747,7 @@ public final class TextFragmentValue implements NodeInfo, SourceLocator {
          */
 
         /*@NotNull*/
+        @Override
         public String getDisplayName() {
             return "";
         }
@@ -722,6 +760,7 @@ public final class TextFragmentValue implements NodeInfo, SourceLocator {
          */
 
         /*@NotNull*/
+        @Override
         public String getLocalPart() {
             return "";
         }
@@ -733,6 +772,7 @@ public final class TextFragmentValue implements NodeInfo, SourceLocator {
          *         <code>false</code> otherwise.
          */
 
+        @Override
         public boolean hasChildNodes() {
             return false;
         }
@@ -747,6 +787,7 @@ public final class TextFragmentValue implements NodeInfo, SourceLocator {
          *         if this node is not an element.
          * @since 9.4
          */
+        @Override
         public String getAttributeValue(/*@NotNull*/ String uri, /*@NotNull*/ String local) {
             return null;
         }
@@ -756,6 +797,7 @@ public final class TextFragmentValue implements NodeInfo, SourceLocator {
          * should not be saved for later use. The result of this operation holds the same location information,
          * but in an immutable form.
          */
+        @Override
         public Location saveLocation() {
             return this;
         }
@@ -772,6 +814,7 @@ public final class TextFragmentValue implements NodeInfo, SourceLocator {
          *         xs:anyType if it has.
          * @since 9.4
          */
+        @Override
         public SchemaType getSchemaType() {
             return null;
         }
@@ -792,6 +835,7 @@ public final class TextFragmentValue implements NodeInfo, SourceLocator {
          */
 
         /*@Nullable*/
+        @Override
         public NamespaceBinding[] getDeclaredNamespaces(NamespaceBinding[] buffer) {
             return null;
         }
@@ -821,6 +865,7 @@ public final class TextFragmentValue implements NodeInfo, SourceLocator {
          */
 
         /*@NotNull*/
+        @Override
         public AtomicSequence atomize() throws XPathException {
             return new UntypedAtomicValue(text);
         }
@@ -833,6 +878,7 @@ public final class TextFragmentValue implements NodeInfo, SourceLocator {
          */
 
         /*@NotNull*/
+        @Override
         public AxisIterator iterateAxis(int axisNumber) {
             switch (axisNumber) {
                 case AxisInfo.ANCESTOR:
@@ -873,6 +919,7 @@ public final class TextFragmentValue implements NodeInfo, SourceLocator {
          */
 
         /*@NotNull*/
+        @Override
         public AxisIterator iterateAxis(int axisNumber, Predicate<? super NodeInfo> nodeTest) {
             switch (axisNumber) {
                 case AxisInfo.ANCESTOR:
@@ -920,6 +967,7 @@ public final class TextFragmentValue implements NodeInfo, SourceLocator {
          */
 
         /*@NotNull*/
+        @Override
         public NodeInfo getParent() {
             return TextFragmentValue.this;
         }
@@ -931,6 +979,7 @@ public final class TextFragmentValue implements NodeInfo, SourceLocator {
          */
 
         /*@NotNull*/
+        @Override
         public NodeInfo getRoot() {
             return TextFragmentValue.this;
         }
@@ -939,6 +988,7 @@ public final class TextFragmentValue implements NodeInfo, SourceLocator {
          * Copy the node to a given Outputter
          */
 
+        @Override
         public void copy(/*@NotNull*/ Receiver out, int copyOptions, Location locationId)
                 throws XPathException {
             out.characters(text, locationId, ReceiverOption.NONE);

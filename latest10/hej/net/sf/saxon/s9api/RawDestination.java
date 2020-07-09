@@ -40,6 +40,7 @@ public class RawDestination extends AbstractDestination {
      * @return the Receiver to which events are to be sent.
      */
 
+    @Override
     public Receiver getReceiver(PipelineConfiguration pipe, SerializationProperties params) {
         // The Receiver returned by this method is a SequenceOutputter. The SequenceOutputter
         // builds a list of all top-level items passed to it. A top-level document or element
@@ -59,6 +60,7 @@ public class RawDestination extends AbstractDestination {
      * it has finished writing to the destination.
      */
 
+    @Override
     public void close() throws SaxonApiException {
         try {
             sequenceOutputter.close();

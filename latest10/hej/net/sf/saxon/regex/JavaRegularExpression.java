@@ -75,6 +75,7 @@ public class JavaRegularExpression implements RegularExpression {
      * to matched subgroups.
      */
 
+    @Override
     public RegexIterator analyze(CharSequence input) {
         return new JRegexIterator(input.toString(), pattern);
     }
@@ -86,6 +87,7 @@ public class JavaRegularExpression implements RegularExpression {
      * @return true if the string matches, false otherwise
      */
 
+    @Override
     public boolean containsMatch(CharSequence input) {
         return pattern.matcher(input).find();
     }
@@ -97,6 +99,7 @@ public class JavaRegularExpression implements RegularExpression {
      * @return true if the string matches, false otherwise
      */
 
+    @Override
     public boolean matches(CharSequence input) {
         return pattern.matcher(input).matches();
     }
@@ -112,6 +115,7 @@ public class JavaRegularExpression implements RegularExpression {
      *          if the replacement string is invalid
      */
 
+    @Override
     public CharSequence replace(CharSequence input, CharSequence replacement) throws XPathException {
         Matcher matcher = pattern.matcher(input);
         try {
@@ -143,6 +147,7 @@ public class JavaRegularExpression implements RegularExpression {
      * @return a SequenceIterator containing the resulting tokens, as objects of type StringValue
      */
 
+    @Override
     public AtomicIterator<StringValue> tokenize(CharSequence input) {
         if (input.length() == 0) {
             return EmptyIterator.ofAtomic();

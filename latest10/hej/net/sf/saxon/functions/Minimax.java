@@ -95,6 +95,7 @@ public abstract class Minimax extends CollatingFunctionFixed {
     }
 
     /*@NotNull*/
+    @Override
     public ItemType getResultItemType(Expression[] args) {
         TypeHierarchy th = getRetainedStaticContext().getConfiguration().getTypeHierarchy();
         ItemType base = Atomizer.getAtomizedItemType(args[0], false, th);
@@ -108,6 +109,7 @@ public abstract class Minimax extends CollatingFunctionFixed {
      * Determine the cardinality of the function.
      */
 
+    @Override
     public int getCardinality(Expression[] arguments) {
         if (!Cardinality.allowsZero(arguments[0].getCardinality())) {
             return StaticProperty.EXACTLY_ONE;
@@ -136,6 +138,7 @@ public abstract class Minimax extends CollatingFunctionFixed {
     }
 
 
+    @Override
     public AtomicComparer getAtomicComparer(XPathContext context)  {
         AtomicComparer comparer = getPreAllocatedAtomicComparer();
         if (comparer != null) {
@@ -325,6 +328,7 @@ public abstract class Minimax extends CollatingFunctionFixed {
      * @return the result of the evaluation, in the form of a Sequence
      * @throws net.sf.saxon.trans.XPathException if a dynamic error occurs during the evaluation of the expression
      */
+    @Override
     public ZeroOrOne call(XPathContext context, Sequence[] arguments) throws XPathException {
         return new ZeroOrOne(
                 minimax(arguments[0].iterate(), isMaxFunction(), getAtomicComparer(context), ignoreNaN, context));
@@ -347,6 +351,7 @@ public abstract class Minimax extends CollatingFunctionFixed {
         }
     }
 
+    @Override
     public String getStreamerName() {
         return "Minimax";
     }
@@ -356,6 +361,7 @@ public abstract class Minimax extends CollatingFunctionFixed {
      */
 
     public static class Min extends Minimax {
+        @Override
         public boolean isMaxFunction() {
             return false;
         }
@@ -366,6 +372,7 @@ public abstract class Minimax extends CollatingFunctionFixed {
      */
 
     public static class Max extends Minimax {
+        @Override
         public boolean isMaxFunction() {
             return true;
         }

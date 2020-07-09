@@ -70,6 +70,7 @@ public class TypeStrippedNode extends AbstractVirtualNode implements WrappingFun
      */
 
     /*@NotNull*/
+    @Override
     public VirtualNode makeWrapper(NodeInfo node, VirtualNode parent) {
         TypeStrippedNode wrapper = new TypeStrippedNode(node, (TypeStrippedNode) parent);
         wrapper.docWrapper = this.docWrapper;
@@ -86,6 +87,7 @@ public class TypeStrippedNode extends AbstractVirtualNode implements WrappingFun
      */
 
     /*@NotNull*/
+    @Override
     public AtomicSequence atomize() throws XPathException {
         return new UntypedAtomicValue(getStringValueCS());
     }
@@ -130,6 +132,7 @@ public class TypeStrippedNode extends AbstractVirtualNode implements WrappingFun
      *         return true, and the two nodes will produce the same result for generateId())
      */
 
+    @Override
     public int compareOrder(/*@NotNull*/ NodeInfo other) {
         if (other instanceof TypeStrippedNode) {
             return node.compareOrder(((TypeStrippedNode) other).node);
@@ -143,6 +146,7 @@ public class TypeStrippedNode extends AbstractVirtualNode implements WrappingFun
      */
 
     /*@Nullable*/
+    @Override
     public NodeInfo getParent() {
         if (parent == null) {
             NodeInfo realParent = node.getParent();
@@ -161,6 +165,7 @@ public class TypeStrippedNode extends AbstractVirtualNode implements WrappingFun
      */
 
     /*@Nullable*/
+    @Override
     public AxisIterator iterateAxis(int axisNumber) {
         return new WrappingIterator(node.iterateAxis(axisNumber), this, null);
     }
@@ -170,6 +175,7 @@ public class TypeStrippedNode extends AbstractVirtualNode implements WrappingFun
      * Copy this node to a given outputter (deep copy)
      */
 
+    @Override
     public void copy(Receiver out, int copyOptions, Location locationId) throws XPathException {
         node.copy(out, copyOptions & ~CopyOptions.TYPE_ANNOTATIONS, locationId);
     }

@@ -30,6 +30,7 @@ public class IntSetPredicate implements IntPredicate {
      * @param value the value to be tested
      * @return true if the value matches; false if it does not
      */
+    @Override
     public boolean test(int value) {
         return set.contains(value);
     }

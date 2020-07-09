@@ -33,6 +33,7 @@ public class XSLPerformSort extends StyleElement {
      * @return true - it is an instruction
      */
 
+    @Override
     public boolean isInstruction() {
         return true;
     }
@@ -43,6 +44,7 @@ public class XSLPerformSort extends StyleElement {
      * @return true: yes, it may contain a template-body
      */
 
+    @Override
     public boolean mayContainSequenceConstructor() {
         return true;
     }
@@ -51,10 +53,12 @@ public class XSLPerformSort extends StyleElement {
      * Specify that xsl:sort is a permitted child
      */
 
+    @Override
     protected boolean isPermittedChild(StyleElement child) {
         return (child instanceof XSLSort);
     }
 
+    @Override
     public void prepareAttributes() {
 
         String selectAtt = null;
@@ -73,6 +77,7 @@ public class XSLPerformSort extends StyleElement {
 
     }
 
+    @Override
     public void validate(ComponentDeclaration decl) throws XPathException {
         checkSortComesFirst(true);
 
@@ -95,6 +100,7 @@ public class XSLPerformSort extends StyleElement {
         select = typeCheck("select", select);
     }
 
+    @Override
     public Expression compile(Compilation compilation, ComponentDeclaration decl) throws XPathException {
         SortKeyDefinitionList sortKeys = makeSortKeys(compilation, decl);
         if (select != null) {

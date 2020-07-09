@@ -36,6 +36,7 @@ public class Compare extends CollatingFunctionFixed {
         }
     }
 
+    @Override
     public ZeroOrOne call(XPathContext context, Sequence[] arguments) throws XPathException {
         StringValue arg0 = (StringValue) arguments[0].head();
         StringValue arg1 = (StringValue) arguments[1].head();

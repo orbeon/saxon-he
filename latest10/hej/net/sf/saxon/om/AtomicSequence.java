@@ -25,6 +25,7 @@ public interface AtomicSequence extends GroundedValue, Iterable<AtomicValue> {
      * @return the first item in the sequence, or null if the sequence is empty
      */
 
+    @Override
     AtomicValue head();
 
     /**
@@ -32,6 +33,7 @@ public interface AtomicSequence extends GroundedValue, Iterable<AtomicValue> {
      * @return an iterator over the items in the sequence
      */
 
+    @Override
     AtomicIterator iterate();
 
     /**
@@ -40,6 +42,7 @@ public interface AtomicSequence extends GroundedValue, Iterable<AtomicValue> {
      * @return the Nth item in the sequence, or null if the index is out of range
      */
 
+    @Override
     AtomicValue itemAt(int n);
 
     /**
@@ -47,6 +50,7 @@ public interface AtomicSequence extends GroundedValue, Iterable<AtomicValue> {
      * @return the number of items in the sequence
      */
 
+    @Override
     int getLength();
 
     /**
@@ -79,6 +83,7 @@ public interface AtomicSequence extends GroundedValue, Iterable<AtomicValue> {
      * as a CharSequence.
      */
 
+    @Override
     CharSequence getStringValueCS();
 
     /**
@@ -89,6 +94,7 @@ public interface AtomicSequence extends GroundedValue, Iterable<AtomicValue> {
      * as a String.
      */
 
+    @Override
     String getStringValue();
 
 }

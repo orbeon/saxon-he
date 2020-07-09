@@ -35,6 +35,7 @@ public class AvailableSystemProperties extends SystemFunction {
      * @throws XPathException
      *          if a dynamic error occurs during the evaluation of the expression
      */
+    @Override
     public Sequence call(XPathContext context, Sequence[] arguments) throws XPathException {
         List<QNameValue> myList = new ArrayList<>();
         myList.add(new QNameValue("xsl", NamespaceConstant.XSLT, "version"));
@@ -71,6 +72,7 @@ public class AvailableSystemProperties extends SystemFunction {
     public Expression makeFunctionCall(Expression[] arguments) {
         return new SystemFunctionCall(this, arguments) {
             // Suppress early evaluation
+            @Override
             public Expression preEvaluate(ExpressionVisitor visitor) {
                 return this;
             }

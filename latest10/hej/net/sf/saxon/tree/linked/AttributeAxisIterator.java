@@ -50,6 +50,7 @@ final class AttributeAxisIterator implements AxisIterator, LookaheadIterator {
      * ("elements" is used here in the sense of the Java enumeration class, not in the XML sense)
      */
 
+    @Override
     public boolean hasNext() {
         return next != null;
     }
@@ -59,6 +60,7 @@ final class AttributeAxisIterator implements AxisIterator, LookaheadIterator {
      */
 
     /*@Nullable*/
+    @Override
     public NodeInfo next() {
         if (next == null) {
             return null;
@@ -103,6 +105,7 @@ final class AttributeAxisIterator implements AxisIterator, LookaheadIterator {
      *         It is acceptable for the properties of the iterator to change depending on its state.
      */
 
+    @Override
     public EnumSet<Property> getProperties() {
         return EnumSet.of(Property.LOOKAHEAD);
     }

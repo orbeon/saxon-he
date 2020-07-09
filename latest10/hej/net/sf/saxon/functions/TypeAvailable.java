@@ -65,6 +65,7 @@ public class TypeAvailable extends SystemFunction {
      * @throws net.sf.saxon.trans.XPathException
      *          if a dynamic error occurs during the evaluation of the expression
      */
+    @Override
     public BooleanValue call(XPathContext context, Sequence[] arguments /*@NotNull*/) throws XPathException {
         String lexicalQName = arguments[0].head().getStringValue();
         return BooleanValue.get(typeAvailable(lexicalQName, context.getConfiguration()));

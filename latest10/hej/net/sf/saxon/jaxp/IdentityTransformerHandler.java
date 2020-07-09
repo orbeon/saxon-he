@@ -55,6 +55,7 @@ public class IdentityTransformerHandler extends ReceivingContentHandler implemen
      * Get the Transformer used for this transformation
      */
 
+    @Override
     public Transformer getTransformer() {
         return controller;
     }
@@ -63,6 +64,7 @@ public class IdentityTransformerHandler extends ReceivingContentHandler implemen
      * Set the SystemId of the document
      */
 
+    @Override
     public void setSystemId(String url) {
         systemId = url;
     }
@@ -71,6 +73,7 @@ public class IdentityTransformerHandler extends ReceivingContentHandler implemen
      * Get the systemId of the document
      */
 
+    @Override
     public String getSystemId() {
         return systemId;
     }
@@ -79,6 +82,7 @@ public class IdentityTransformerHandler extends ReceivingContentHandler implemen
      * Set the output destination of the transformation
      */
 
+    @Override
     public void setResult(Result result) {
         if (result == null) {
             throw new IllegalArgumentException("Result must not be null");
@@ -100,6 +104,7 @@ public class IdentityTransformerHandler extends ReceivingContentHandler implemen
      * Override the behaviour of startDocument() in ReceivingContentHandler
      */
 
+    @Override
     public void startDocument() throws SAXException {
         if (result == null) {
             result = new StreamResult(System.out);

@@ -57,6 +57,7 @@ public class ElementImpl extends ParentNodeImpl implements NamespaceResolver {
      * @param atts the list of attributes of this element (not including namespace attributes)
      */
 
+    @Override
     public void setAttributes(AttributeMap atts) {
         this.attributeMap = atts;
     }
@@ -118,6 +119,7 @@ public class ElementImpl extends ParentNodeImpl implements NamespaceResolver {
      * used directly as the Source of a transformation
      */
 
+    @Override
     public void setSystemId(String uri) {
         getPhysicalRoot().setSystemId(getRawSequenceNumber(), uri);
     }
@@ -126,6 +128,7 @@ public class ElementImpl extends ParentNodeImpl implements NamespaceResolver {
      * Get the root node
      */
 
+    @Override
     public NodeInfo getRoot() {
         ParentNodeImpl up = getRawParent();
         if (up == null || (up instanceof DocumentImpl && ((DocumentImpl) up).isImaginary())) {
@@ -140,6 +143,7 @@ public class ElementImpl extends ParentNodeImpl implements NamespaceResolver {
      */
 
     /*@Nullable*/
+    @Override
     public final String getSystemId() {
         DocumentImpl root = getPhysicalRoot();
         return root == null ? null : root.getSystemId(getRawSequenceNumber());
@@ -150,6 +154,7 @@ public class ElementImpl extends ParentNodeImpl implements NamespaceResolver {
      * xml:base has been used.
      */
 
+    @Override
     public String getBaseURI() {
         return Navigator.getBaseURI(this, n -> getPhysicalRoot().isTopWithinEntity((ElementImpl)n));
     }
@@ -160,6 +165,7 @@ public class ElementImpl extends ParentNodeImpl implements NamespaceResolver {
      * @return true if the node has the is-nilled property
      */
 
+    @Override
     public boolean isNilled() {
         return getPhysicalRoot().isNilledElement(this);
     }
@@ -172,6 +178,7 @@ public class ElementImpl extends ParentNodeImpl implements NamespaceResolver {
      * @param type the type annotation
      */
 
+    @Override
     public void setTypeAnnotation(SchemaType type) {
         this.type = type;
     }
@@ -199,6 +206,7 @@ public class ElementImpl extends ParentNodeImpl implements NamespaceResolver {
      * Get the line number of the node within its source document entity
      */
 
+    @Override
     public int getLineNumber() {
         DocumentImpl root = getPhysicalRoot();
         if (root == null) {
@@ -212,6 +220,7 @@ public class ElementImpl extends ParentNodeImpl implements NamespaceResolver {
      * Get the line number of the node within its source document entity
      */
 
+    @Override
     public int getColumnNumber() {
         DocumentImpl root = getPhysicalRoot();
         if (root == null) {
@@ -227,6 +236,7 @@ public class ElementImpl extends ParentNodeImpl implements NamespaceResolver {
      * @param buffer to contain the generated ID
      */
 
+    @Override
     public void generateId(/*@NotNull*/ FastStringBuffer buffer) {
         int sequence = getRawSequenceNumber();
         if (sequence >= 0) {
@@ -246,6 +256,7 @@ public class ElementImpl extends ParentNodeImpl implements NamespaceResolver {
      * @return Type.ELEMENT
      */
 
+    @Override
     public final int getNodeKind() {
         return Type.ELEMENT;
     }
@@ -284,6 +295,7 @@ public class ElementImpl extends ParentNodeImpl implements NamespaceResolver {
      * @throws XPathException if any downstream error occurs
      */
 
+    @Override
     public void copy(Receiver out, int copyOptions, Location location) throws XPathException {
 
         SchemaType typeCode = CopyOptions.includes(copyOptions, CopyOptions.TYPE_ANNOTATIONS) ?
@@ -322,6 +334,7 @@ public class ElementImpl extends ParentNodeImpl implements NamespaceResolver {
      * Delete this node (that is, detach it from its parent)
      */
 
+    @Override
     public void delete() {
         DocumentImpl root = getPhysicalRoot();
         super.delete();
@@ -348,6 +361,7 @@ public class ElementImpl extends ParentNodeImpl implements NamespaceResolver {
      * @param newName the new name
      */
 
+    @Override
     public void rename(NodeName newName) {
         String prefix = newName.getPrefix();
         String uri = newName.getURI();
@@ -377,6 +391,7 @@ public class ElementImpl extends ParentNodeImpl implements NamespaceResolver {
      *
      */
 
+    @Override
     public void addNamespace(/*@NotNull*/ NamespaceBinding binding) {
         if (binding.getURI().isEmpty()) {
             throw new IllegalArgumentException("Cannot add a namespace undeclaration");
@@ -399,6 +414,7 @@ public class ElementImpl extends ParentNodeImpl implements NamespaceResolver {
      * @param stringValue the new string value
      */
 
+    @Override
     public void replaceStringValue(/*@NotNull*/ CharSequence stringValue) {
         if (stringValue.length() == 0) {
             setChildren(null);
@@ -447,6 +463,7 @@ public class ElementImpl extends ParentNodeImpl implements NamespaceResolver {
      * @throws IllegalStateException if the element already has an attribute with the given name.
      */
 
+    @Override
     public void addAttribute(/*@NotNull*/ NodeName nodeName, SimpleType attType, /*@NotNull*/ CharSequence value, int properties) {
         AttributeMapWithIdentity atts = prepareAttributesForUpdate();
         atts = atts.add(new AttributeInfo(nodeName, attType, value.toString(), Loc.NONE, ReceiverOption.NONE));
@@ -482,6 +499,7 @@ public class ElementImpl extends ParentNodeImpl implements NamespaceResolver {
      * @param attribute the attribute node to be removed
      */
 
+    @Override
     public void removeAttribute(/*@NotNull*/ NodeInfo attribute) {
         if (!(attribute instanceof AttributeImpl)) {
             return; // no action
@@ -546,6 +564,7 @@ public class ElementImpl extends ParentNodeImpl implements NamespaceResolver {
      * This method implements the upd:removeType() primitive defined in the XQuery Update specification
      */
 
+    @Override
     public void removeTypeAnnotation() {
         if (getSchemaType() != Untyped.getInstance()) {
             type = AnyType.getInstance();
@@ -571,6 +590,7 @@ public class ElementImpl extends ParentNodeImpl implements NamespaceResolver {
      */
 
     /*@Nullable*/
+    @Override
     public String getURIForPrefix(/*@NotNull*/ String prefix, boolean useDefault) {
 
         if (prefix.isEmpty()) {
@@ -590,6 +610,7 @@ public class ElementImpl extends ParentNodeImpl implements NamespaceResolver {
      */
 
     /*@Nullable*/
+    @Override
     public Iterator<String> iteratePrefixes() {
         return namespaceMap.iteratePrefixes();
     }
@@ -623,6 +644,7 @@ public class ElementImpl extends ParentNodeImpl implements NamespaceResolver {
      *         <p>For a node other than an element, the method returns null.</p>
      */
 
+    @Override
     public NamespaceBinding[] getDeclaredNamespaces(NamespaceBinding[] buffer) {
         List<NamespaceBinding> bindings = new ArrayList<>();
         for (NamespaceBinding nb : namespaceMap) {
@@ -698,6 +720,7 @@ public class ElementImpl extends ParentNodeImpl implements NamespaceResolver {
      */
 
     /*@Nullable*/
+    @Override
     public NamespaceMap getAllNamespaces() {
         return namespaceMap;
     }
@@ -713,6 +736,7 @@ public class ElementImpl extends ParentNodeImpl implements NamespaceResolver {
      */
 
     /*@Nullable*/
+    @Override
     public String getAttributeValue(/*@NotNull*/ String uri, /*@NotNull*/ String localName) {
         return attributeMap == null ? null : attributeMap.getValue(uri, localName);
     }
@@ -723,6 +747,7 @@ public class ElementImpl extends ParentNodeImpl implements NamespaceResolver {
      * @return true if the node is an ID
      */
 
+    @Override
     public boolean isId() {
         // This is an approximation. For a union type, we check that the actual value is a valid NCName,
         // but we don't check that it was validated against the member type of the union that is an ID type.
@@ -741,6 +766,7 @@ public class ElementImpl extends ParentNodeImpl implements NamespaceResolver {
      * @return true if the node is an IDREF or IDREFS element.
      */
 
+    @Override
     public boolean isIdref() {
         return isIdRefNode(this);
     }

@@ -201,6 +201,7 @@ public class GroupByIterator implements GroupIterator, LastPositionFinder, Looka
      * @return the grouping key
      */
 
+    @Override
     public synchronized AtomicSequence getCurrentGroupingKey() {
         AtomicSequence val = groupKeys.get(position - 1);
         if (val == null) {
@@ -216,6 +217,7 @@ public class GroupByIterator implements GroupIterator, LastPositionFinder, Looka
      * @return the iterator
      */
 
+    @Override
     public SequenceIterator iterateCurrentGroup() {
         return new ListIterator<>(groups.get(position - 1));
     }
@@ -230,11 +232,13 @@ public class GroupByIterator implements GroupIterator, LastPositionFinder, Looka
         return groups.get(position - 1);
     }
 
+    @Override
     public boolean hasNext() {
         return position < groups.size();
     }
 
     /*@Nullable*/
+    @Override
     public Item next() throws XPathException {
         if (position >= 0 && position < groups.size()) {
             position++;
@@ -263,6 +267,7 @@ public class GroupByIterator implements GroupIterator, LastPositionFinder, Looka
      *         It is acceptable for the properties of the iterator to change depending on its state.
      */
 
+    @Override
     public EnumSet<Property> getProperties() {
         return EnumSet.of(Property.LOOKAHEAD, Property.LAST_POSITION_FINDER);
     }
@@ -271,12 +276,14 @@ public class GroupByIterator implements GroupIterator, LastPositionFinder, Looka
      * Get the last position (that is, the number of groups)
      */
 
+    @Override
     public int getLength() throws XPathException {
         return groups.size();
     }
 
 //#if EE==true
 
+    @Override
     public ManualGroupIterator getSnapShot(XPathContext context) {
         return new ManualGroupByIterator();
     }
@@ -291,10 +298,12 @@ public class GroupByIterator implements GroupIterator, LastPositionFinder, Looka
             setLastPositionFinder(() -> groups.size());
         }
 
+        @Override
         public SequenceIterator iterateCurrentGroup()  {
             return new ListIterator<>(currentGroup);
         }
 
+        @Override
         public AtomicSequence getCurrentGroupingKey() {
             return currentGroupingKey;
         }

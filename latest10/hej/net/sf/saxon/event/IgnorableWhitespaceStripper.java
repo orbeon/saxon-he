@@ -36,6 +36,7 @@ public class IgnorableWhitespaceStripper extends ProxyReceiver {
         super(next);
     }
 
+    @Override
     public void startElement(NodeName elemName, SchemaType type,
                              AttributeMap attributes, NamespaceMap namespaces,
                              Location location, int properties) throws XPathException {
@@ -64,6 +65,7 @@ public class IgnorableWhitespaceStripper extends ProxyReceiver {
      * Handle an end-of-element event
      */
 
+    @Override
     public void endElement() throws XPathException {
         nextReceiver.endElement();
         top--;
@@ -73,6 +75,7 @@ public class IgnorableWhitespaceStripper extends ProxyReceiver {
      * Handle a text node
      */
 
+    @Override
     public void characters(CharSequence chars, Location locationId, int properties) throws XPathException {
         if (chars.length() > 0 && (!stripStack[top] || !Whitespace.isWhite(chars))) {
             nextReceiver.characters(chars, locationId, properties);
@@ -87,6 +90,7 @@ public class IgnorableWhitespaceStripper extends ProxyReceiver {
      *         may supply untyped nodes instead of supplying the type annotation
      */
 
+    @Override
     public boolean usesTypeAnnotations() {
         return true;
     }

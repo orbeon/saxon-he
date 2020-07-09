@@ -35,6 +35,7 @@ public class AllElementsSpaceStrippingRule implements SpaceStrippingRule {
      * @return STRIP_DEFAULT: strip spaces unless xml:space tells you not to.
      */
 
+    @Override
     public int isSpacePreserving(NodeName fingerprint, SchemaType schemaType) {
         return Stripper.STRIP_DEFAULT;
     }
@@ -56,6 +57,7 @@ public class AllElementsSpaceStrippingRule implements SpaceStrippingRule {
      *
      * @param presenter the output handler
      */
+    @Override
     public void export(ExpressionPresenter presenter) {
         presenter.startElement("strip.all");
         presenter.endElement();

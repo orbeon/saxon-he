@@ -78,6 +78,7 @@ public class AnalyzeStringFn extends RegexFunction {
      * @throws net.sf.saxon.trans.XPathException
      *          if a dynamic error occurs during the evaluation of the expression
      */
+    @Override
     public NodeInfo call(XPathContext context, Sequence[] arguments) throws XPathException {
         Item inputItem = arguments[0].head();
         CharSequence input;
@@ -121,10 +122,12 @@ public class AnalyzeStringFn extends RegexFunction {
                 out.startElement(matchName, matchType, Loc.NONE, ReceiverOption.NONE);
                 out.startContent();
                 iter.processMatchingSubstring(new RegexIterator.MatchHandler() {
+                    @Override
                     public void characters(CharSequence s) throws XPathException {
                         out.characters(s, Loc.NONE, ReceiverOption.NONE);
                     }
 
+                    @Override
                     public void onGroupStart(int groupNumber) throws XPathException {
                         out.startElement(groupName, groupType,
                                          Loc.NONE, ReceiverOption.NONE);
@@ -133,6 +136,7 @@ public class AnalyzeStringFn extends RegexFunction {
                         out.startContent();
                     }
 
+                    @Override
                     public void onGroupEnd(int groupNumber) throws XPathException {
                         out.endElement();
                     }

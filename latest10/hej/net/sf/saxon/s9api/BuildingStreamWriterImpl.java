@@ -32,6 +32,7 @@ public class BuildingStreamWriterImpl extends StreamWriterToReceiver implements 
     }
 
     /*@Nullable*/
+    @Override
     public XdmNode getDocumentNode() throws SaxonApiException {
         try {
             builder.close();

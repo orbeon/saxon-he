@@ -41,6 +41,7 @@ public class AttributeMapWithIdentity implements AttributeMap {
      * @return The number of attributes in the map.
      */
 
+    @Override
     public int size() {
         int count = 0;
         for (AttributeInfo att : attributes) {
@@ -130,6 +131,7 @@ public class AttributeMapWithIdentity implements AttributeMap {
         return new AttributeMapWithIdentity(newList);
     }
 
+    @Override
     public AttributeInfo getByFingerprint(int fingerprint, NamePool namePool) {
         for (AttributeInfo info : attributes) {
             NodeName name = info.getNodeName();

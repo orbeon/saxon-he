@@ -137,6 +137,7 @@ public class StringJoin extends FoldingFunction implements PushableFunction {
          *
          * @param item the item to be processed from the input sequence
          */
+        @Override
         public void processItem(Item item) {
             if (position == 0) {
                 data.cat(item.getStringValueCS());
@@ -151,6 +152,7 @@ public class StringJoin extends FoldingFunction implements PushableFunction {
          * result without reading the whole input should return true; this will be followed
          * by a call on result() to deliver the final result.
          */
+        @Override
         public boolean isFinished() {
             return false;
         }
@@ -159,6 +161,7 @@ public class StringJoin extends FoldingFunction implements PushableFunction {
          * Compute the final result of the function, when all the input has been processed
          * @return the result of the function
          */
+        @Override
         public ZeroOrOne result()  {
             if (position == 0 && returnEmptyIfEmpty) {
                 return ZeroOrOne.empty();
@@ -168,6 +171,7 @@ public class StringJoin extends FoldingFunction implements PushableFunction {
         }
     }
 
+    @Override
     public String getCompilerName() {
         return "StringJoinCompiler";
     }

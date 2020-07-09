@@ -82,6 +82,7 @@ public class BinaryResource implements Resource {
      * @return the URI of the resource
      */
 
+    @Override
     public String getResourceURI() {
         return href;
     }
@@ -148,6 +149,7 @@ public class BinaryResource implements Resource {
         }
     }
 
+    @Override
     public Item getItem(XPathContext context) throws XPathException {
         if (data != null) {
             return new Base64BinaryValue(data);
@@ -167,6 +169,7 @@ public class BinaryResource implements Resource {
 
     }
 
+    @Override
     public String getContentType() {
         return contentType;
     }

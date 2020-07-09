@@ -102,6 +102,7 @@ final class SiblingIterator implements AxisIterator, LookaheadIterator, Atomized
      */
 
     /*@Nullable*/
+    @Override
     public NodeInfo next() {
         if (needToAdvance) {
             final int thisNode = nextNodeNr;
@@ -140,6 +141,7 @@ final class SiblingIterator implements AxisIterator, LookaheadIterator, Atomized
      * @throws net.sf.saxon.trans.XPathException
      *          if a failure occurs reading or atomizing the next value
      */
+    @Override
     public AtomicSequence nextAtomizedValue() throws XPathException {
         if (needToAdvance) {
             final int thisNode = nextNodeNr;
@@ -194,6 +196,7 @@ final class SiblingIterator implements AxisIterator, LookaheadIterator, Atomized
      * @return true if there are more items in the sequence
      */
 
+    @Override
     public boolean hasNext() {
         int n = nextNodeNr;
         if (needToAdvance) {
@@ -217,6 +220,7 @@ final class SiblingIterator implements AxisIterator, LookaheadIterator, Atomized
         return n != -1;
     }
 
+    @Override
     public EnumSet<Property> getProperties() {
         return EnumSet.of(Property.LOOKAHEAD, Property.ATOMIZING);
     }

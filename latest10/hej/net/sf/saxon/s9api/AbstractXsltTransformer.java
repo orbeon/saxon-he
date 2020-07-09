@@ -527,6 +527,7 @@ abstract class AbstractXsltTransformer {
             return new TreeReceiver(stripper) {
                 boolean closed = false;
 
+                @Override
                 public void close() throws XPathException {
                     if (!closed) {
                         try {

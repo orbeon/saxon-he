@@ -85,6 +85,7 @@ public class ManualIterator implements FocusIterator, UnfailingIterator,
      * @return true if there are more items
      */
 
+    @Override
     public boolean hasNext() {
         try {
             return position() != getLength();
@@ -93,10 +94,12 @@ public class ManualIterator implements FocusIterator, UnfailingIterator,
         }
     }
 
+    @Override
     public Item next() {
         return null;
     }
 
+    @Override
     public Item current() {
         return item;
     }
@@ -107,10 +110,12 @@ public class ManualIterator implements FocusIterator, UnfailingIterator,
      * @return 0 before the first call on next(); 1 before the second call on next(); -1 after the second
      *         call on next().
      */
+    @Override
     public int position() {
         return position;
     }
 
+    @Override
     public int getLength() throws XPathException {
         if (lastPositionFinder == null) {
             throw new XPathException("Saxon streaming restriction: last() cannot be used when consuming a sequence of streamed nodes, even if the items being processed are grounded");
@@ -119,6 +124,7 @@ public class ManualIterator implements FocusIterator, UnfailingIterator,
         }
     }
 
+    @Override
     public ManualIterator getReverseIterator() {
         return new ManualIterator(item);
     }
@@ -132,6 +138,7 @@ public class ManualIterator implements FocusIterator, UnfailingIterator,
      */
 
     /*@Nullable*/
+    @Override
     public GroundedValue materialize() {
         return item;
     }
@@ -151,6 +158,7 @@ public class ManualIterator implements FocusIterator, UnfailingIterator,
      *         It is acceptable for the properties of the iterator to change depending on its state.
      */
 
+    @Override
     public EnumSet<Property> getProperties() {
         return EnumSet.of(Property.LOOKAHEAD, Property.GROUNDED, Property.LAST_POSITION_FINDER);
     }

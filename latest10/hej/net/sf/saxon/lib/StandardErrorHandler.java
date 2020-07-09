@@ -51,6 +51,7 @@ public class StandardErrorHandler implements org.xml.sax.ErrorHandler {
      * Callback interface for SAX: not for application use
      */
 
+    @Override
     public void warning(SAXParseException e) {
         try {
             warningCount++;
@@ -65,6 +66,7 @@ public class StandardErrorHandler implements org.xml.sax.ErrorHandler {
      * Callback interface for SAX: not for application use
      */
 
+    @Override
     public void error(SAXParseException e) throws SAXException {
         //System.err.println("ErrorHandler.error " + e.getMessage());
         errorCount++;
@@ -77,6 +79,7 @@ public class StandardErrorHandler implements org.xml.sax.ErrorHandler {
      * Callback interface for SAX: not for application use
      */
 
+    @Override
     public void fatalError(/*@NotNull*/ SAXParseException e) throws SAXException {
         //System.err.println("ErrorHandler.fatalError " + e.getMessage());
         fatalErrorCount++;

@@ -22,6 +22,7 @@ public abstract class SingleItemFilter extends UnaryExpression {
         super(base);
     }
 
+    @Override
     protected OperandRole getOperandRole() {
         return OperandRole.SAME_FOCUS_ACTION;
     }
@@ -43,6 +44,7 @@ public abstract class SingleItemFilter extends UnaryExpression {
      */
 
     /*@NotNull*/
+    @Override
     public Expression optimize(ExpressionVisitor visitor, ContextItemStaticInfo contextInfo) throws XPathException {
         getOperand().optimize(visitor, contextInfo);
         Expression base = getBaseExpression();
@@ -57,6 +59,7 @@ public abstract class SingleItemFilter extends UnaryExpression {
      * return something if the input is non-empty
      */
 
+    @Override
     public int computeCardinality() {
         return StaticProperty.ALLOWS_ZERO_OR_ONE;
     }

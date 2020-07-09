@@ -64,6 +64,7 @@ public interface SequenceIterator extends Closeable {
      * @since 9.1. Default implementation added in 9.9.
      */
 
+    @Override
     default void close() {}
 
     /**

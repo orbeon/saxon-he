@@ -96,6 +96,7 @@ public class HexBinaryValue extends AtomicValue implements AtomicMatchKey, Compa
      */
 
     /*@NotNull*/
+    @Override
     public AtomicValue copyAsSubType(AtomicType typeLabel) {
         HexBinaryValue v = new HexBinaryValue(binaryValue);
         v.typeLabel = typeLabel;
@@ -110,6 +111,7 @@ public class HexBinaryValue extends AtomicValue implements AtomicMatchKey, Compa
      */
 
     /*@NotNull*/
+    @Override
     public BuiltInAtomicType getPrimitiveType() {
         return BuiltInAtomicType.HEX_BINARY;
     }
@@ -152,6 +154,7 @@ public class HexBinaryValue extends AtomicValue implements AtomicMatchKey, Compa
      */
 
     /*@NotNull*/
+    @Override
     public CharSequence getPrimitiveStringValue() {
         String digits = "0123456789ABCDEF";
         FastStringBuffer sb = new FastStringBuffer(binaryValue.length * 2);
@@ -178,6 +181,7 @@ public class HexBinaryValue extends AtomicValue implements AtomicMatchKey, Compa
      */
 
     /*@NotNull*/
+    @Override
     public Comparable<HexBinaryComparable> getSchemaComparable() {
         return new HexBinaryComparable();
     }
@@ -189,6 +193,7 @@ public class HexBinaryValue extends AtomicValue implements AtomicMatchKey, Compa
             return HexBinaryValue.this;
         }
 
+        @Override
         public int compareTo(/*@NotNull*/ HexBinaryComparable o) {
             if (Arrays.equals(getHexBinaryValue().binaryValue,
                             o.getHexBinaryValue().binaryValue)) {
@@ -226,6 +231,7 @@ public class HexBinaryValue extends AtomicValue implements AtomicMatchKey, Compa
      */
 
     /*@Nullable*/
+    @Override
     public AtomicMatchKey getXPathComparable(boolean ordered, StringCollator collator, int implicitTimezone) {
         return this;
     }
@@ -242,6 +248,7 @@ public class HexBinaryValue extends AtomicValue implements AtomicMatchKey, Compa
         return Base64BinaryValue.byteArrayHashCode(binaryValue);
     }
 
+    @Override
     public int compareTo(Object o) {
         byte[] other = ((HexBinaryValue)o).binaryValue;
         int len0 = binaryValue.length;

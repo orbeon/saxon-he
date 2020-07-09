@@ -56,14 +56,17 @@ public class XSLKey extends StyleElement implements StylesheetComponent {
      * @throws UnsupportedOperationException for second-class components such as keys that support outwards references
      *                                       but not inwards references
      */
+    @Override
     public Actor getActor() {
         throw new UnsupportedOperationException();
     }
 
+    @Override
     public SymbolicName getSymbolicName() {
         return null;
     }
 
+    @Override
     public void checkCompatibility(Component component) {
         // no action: keys cannot be overridden
     }
@@ -79,6 +82,7 @@ public class XSLKey extends StyleElement implements StylesheetComponent {
      * @return true: yes, it may contain a sequence constructor
      */
 
+    @Override
     public boolean mayContainSequenceConstructor() {
         return true;
     }
@@ -87,10 +91,12 @@ public class XSLKey extends StyleElement implements StylesheetComponent {
      * Get the Procedure object that looks after any local variables declared in the content constructor
      */
 
+    @Override
     public SlotManager getSlotManager() {
         return stackFrameMap;
     }
 
+    @Override
     public void prepareAttributes() {
 
         String nameAtt = null;
@@ -162,6 +168,7 @@ public class XSLKey extends StyleElement implements StylesheetComponent {
         return getObjectName();
     }
 
+    @Override
     public void validate(ComponentDeclaration decl) throws XPathException {
 
         Configuration config = getConfiguration();
@@ -217,6 +224,7 @@ public class XSLKey extends StyleElement implements StylesheetComponent {
     }
 
     private static class ContainsGlobalVariable implements Predicate<Expression> {
+        @Override
         public boolean test(Expression e) {
             return e instanceof GlobalVariableReference ||
                     e instanceof UserFunctionCall ||
@@ -227,6 +235,7 @@ public class XSLKey extends StyleElement implements StylesheetComponent {
 
     private static ContainsGlobalVariable containsGlobalVariable = new ContainsGlobalVariable();
 
+    @Override
     public void index(ComponentDeclaration decl, PrincipalStylesheetModule top) {
         StructuredQName keyName = getKeyName();
         if (keyName != null) {
@@ -234,6 +243,7 @@ public class XSLKey extends StyleElement implements StylesheetComponent {
         }
     }
 
+    @Override
     public void compileDeclaration(Compilation compilation, ComponentDeclaration decl) throws XPathException {
         StaticContext env = getStaticContext();
         Configuration config = env.getConfiguration();
@@ -336,6 +346,7 @@ public class XSLKey extends StyleElement implements StylesheetComponent {
      * @param declaration this xsl:key declaration
      */
 
+    @Override
     public void optimize(ComponentDeclaration declaration) throws XPathException {
         ExpressionVisitor visitor = makeExpressionVisitor();
         ContextItemStaticInfo contextItemType = getConfiguration().makeContextItemStaticInfo(match.getItemType(), false);
@@ -351,5 +362,6 @@ public class XSLKey extends StyleElement implements StylesheetComponent {
      *
      * @param opt the optimizer
      */
+    @Override
     public void generateByteCode(Optimizer opt) {}
 }

@@ -67,6 +67,7 @@ public class NamespaceReducer extends ProxyReceiver implements NamespaceResolver
      * possibly adds an xmlns="" undeclaration.
      */
 
+    @Override
     public void startElement(NodeName elemName, SchemaType type,
                              AttributeMap attributes, NamespaceMap namespaceMap,
                              Location location, int properties)
@@ -198,6 +199,7 @@ public class NamespaceReducer extends ProxyReceiver implements NamespaceResolver
      */
 
 
+    @Override
     public void endElement() throws XPathException {
         if (depth-- == 0) {
             throw new IllegalStateException("Attempt to output end tag with no matching start tag");
@@ -220,6 +222,7 @@ public class NamespaceReducer extends ProxyReceiver implements NamespaceResolver
      */
 
     /*@Nullable*/
+    @Override
     public String getURIForPrefix(String prefix, boolean useDefault) {
         if (prefix.isEmpty() && !useDefault) {
             return NamespaceConstant.NULL;
@@ -240,6 +243,7 @@ public class NamespaceReducer extends ProxyReceiver implements NamespaceResolver
      * the default namespace (prefix="") and the XML namespace where appropriate
      */
 
+    @Override
     public Iterator<String> iteratePrefixes() {
         List<String> prefixes = new ArrayList<>(namespacesSize);
         for (int i = namespacesSize - 1; i >= 0; i--) {

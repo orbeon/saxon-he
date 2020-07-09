@@ -56,6 +56,7 @@ public class DotNetStandardModuleURIResolver implements ModuleURIResolver {
      *          if the module cannot be located
      */
 
+    @Override
     public StreamSource[] resolve(String moduleURI, String baseURI, String[] locations) throws XPathException {
         if (locations.length == 0) {
             XPathException err = new XPathException("Cannot locate module for namespace " + moduleURI);

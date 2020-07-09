@@ -105,6 +105,7 @@ public class ConditionalSorter extends Expression {
      */
 
     /*@NotNull*/
+    @Override
     public Expression typeCheck(ExpressionVisitor visitor, ContextItemStaticInfo contextInfo) throws XPathException {
         return rewrite(exp -> exp.typeCheck(visitor, contextInfo));
     }
@@ -121,6 +122,7 @@ public class ConditionalSorter extends Expression {
      * information).
      */
 
+    @Override
     public int getCardinality() {
         return getDocumentSorter().getCardinality();
     }
@@ -135,6 +137,7 @@ public class ConditionalSorter extends Expression {
      * @return the special properties, as a bit-significant integer
      */
 
+    @Override
     protected int computeSpecialProperties() {
         return getCondition().getSpecialProperties()
                 | StaticProperty.ORDERED_NODESET
@@ -150,6 +153,7 @@ public class ConditionalSorter extends Expression {
      * {@link #PROCESS_METHOD}
      */
 
+    @Override
     public int getImplementationMethod() {
         return ITERATE_METHOD;
     }
@@ -199,6 +203,7 @@ public class ConditionalSorter extends Expression {
      * {@link net.sf.saxon.expr.StaticProperty#ALLOWS_ZERO_OR_MORE}
      */
 
+    @Override
     protected int computeCardinality() {
         return StaticProperty.ALLOWS_ZERO_OR_MORE;
     }
@@ -211,6 +216,7 @@ public class ConditionalSorter extends Expression {
      */
 
     /*@NotNull*/
+    @Override
     public Expression copy(RebindingMap rebindings) {
         ConditionalSorter cs = new ConditionalSorter(getCondition().copy(rebindings), (DocumentSorter) getDocumentSorter().copy(rebindings));
         ExpressionTool.copyLocationInfo(this, cs);
@@ -224,6 +230,7 @@ public class ConditionalSorter extends Expression {
      * @param out the expression presenter used to display the structure
      */
 
+    @Override
     public void export(ExpressionPresenter out) throws XPathException {
         out.startElement("conditionalSort", this);
         getCondition().export(out);
@@ -244,6 +251,7 @@ public class ConditionalSorter extends Expression {
      */
 
     /*@NotNull*/
+    @Override
     public ItemType getItemType() {
         return getDocumentSorter().getItemType();
     }
@@ -264,6 +272,7 @@ public class ConditionalSorter extends Expression {
      */
 
     /*@NotNull*/
+    @Override
     public SequenceIterator iterate(XPathContext context) throws XPathException {
         boolean b = getCondition().effectiveBooleanValue(context);
         if (b) {

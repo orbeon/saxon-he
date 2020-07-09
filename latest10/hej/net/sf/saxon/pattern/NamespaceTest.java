@@ -53,6 +53,7 @@ public final class NamespaceTest extends NodeTest implements QNameTest {
      *
      * @return the smallest UType that subsumes this item type
      */
+    @Override
     public UType getUType() {
         return uType;
     }
@@ -95,6 +96,7 @@ public final class NamespaceTest extends NodeTest implements QNameTest {
         return name != null && name.hasURI(uri);
     }
 
+    @Override
     public IntPredicate getMatcher(final NodeVectorTree tree) {
         final byte[] nodeKindArray = tree.getNodeKindArray();
         final int[] nameCodeArray = tree.getNameCodeArray();
@@ -114,6 +116,7 @@ public final class NamespaceTest extends NodeTest implements QNameTest {
      * @param node the node to be matched
      */
 
+    @Override
     public boolean test(NodeInfo node) {
         return node.getNodeKind() == nodeKind && node.getURI().equals(uri);
     }
@@ -125,6 +128,7 @@ public final class NamespaceTest extends NodeTest implements QNameTest {
      * @return true if the name matches, false if not
      */
 
+    @Override
     public boolean matches(StructuredQName qname) {
         return qname.hasURI(uri);
     }
@@ -133,6 +137,7 @@ public final class NamespaceTest extends NodeTest implements QNameTest {
      * Determine the default priority of this node test when used on its own as a Pattern
      */
 
+    @Override
     public final double getDefaultPriority() {
         return -0.25;
     }
@@ -144,6 +149,7 @@ public final class NamespaceTest extends NodeTest implements QNameTest {
      * @return the type of node matched by this pattern. e.g. Type.ELEMENT or Type.TEXT
      */
 
+    @Override
     public int getPrimitiveType() {
         return nodeKind;
     }
@@ -210,6 +216,7 @@ public final class NamespaceTest extends NodeTest implements QNameTest {
      * @param targetVersion the version of Saxon-JS being targeted
      */
 
+    @Override
     public String generateJavaScriptNameTest(int targetVersion) {
         return "q.uri==='" + ExpressionPresenter.jsEscape(uri) + "'";
     }

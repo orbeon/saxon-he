@@ -69,6 +69,7 @@ public class AxiomElementNodeWrapper extends AxiomParentNodeWrapper {
      * @return one of the values Node.ELEMENT, Node.TEXT, Node.ATTRIBUTE, etc.
      */
 
+    @Override
     public int getNodeKind() {
         return Type.ELEMENT;
     }
@@ -86,6 +87,7 @@ public class AxiomElementNodeWrapper extends AxiomParentNodeWrapper {
      * @since 9.4
      */
 
+    @Override
     public SchemaType getSchemaType() {
         return Untyped.getInstance();
     }
@@ -103,6 +105,7 @@ public class AxiomElementNodeWrapper extends AxiomParentNodeWrapper {
      *         produce the same result for generateId())
      */
 
+    @Override
     public int compareOrder(NodeInfo other) {
         if (other instanceof AxiomDocument) {
             return +1;
@@ -126,6 +129,7 @@ public class AxiomElementNodeWrapper extends AxiomParentNodeWrapper {
      * @return the local part of the name. For an unnamed node, returns "".
      */
 
+    @Override
     public String getLocalPart() {
         return ((OMElement) node).getLocalName();
     }
@@ -137,6 +141,7 @@ public class AxiomElementNodeWrapper extends AxiomParentNodeWrapper {
      * @return The prefix of the name of the node.
      */
 
+    @Override
     public String getPrefix() {
         String prefix = ((OMElement) node).getPrefix();
         return (prefix == null ? "" : prefix);
@@ -150,6 +155,7 @@ public class AxiomElementNodeWrapper extends AxiomParentNodeWrapper {
      *         for a node with an empty prefix, return an empty string.
      */
 
+    @Override
     public String getURI() {
         String uri = ((OMElement) node).getNamespaceURI();
         return uri == null ? "" : uri;
@@ -159,6 +165,7 @@ public class AxiomElementNodeWrapper extends AxiomParentNodeWrapper {
      * Get the NodeInfo object representing the parent of this node
      */
 
+    @Override
     public AxiomParentNodeWrapper getParent() {
         if (parent == null) {
             OMContainer rawParent = ((OMElement) node).getParent();
@@ -175,6 +182,7 @@ public class AxiomElementNodeWrapper extends AxiomParentNodeWrapper {
      * Get the index position of this node among its siblings (starting from 0)
      */
 
+    @Override
     public int getSiblingPosition() {
         if (index != -1) {
             return index;
@@ -240,6 +248,7 @@ public class AxiomElementNodeWrapper extends AxiomParentNodeWrapper {
      * @since 9.4
      */
 
+    @Override
     public String getAttributeValue(/*@NotNull*/ String uri, /*@NotNull*/ String local) {
         return ((OMElement) node).getAttributeValue(new javax.xml.namespace.QName(uri, local, ""));
     }
@@ -251,6 +260,7 @@ public class AxiomElementNodeWrapper extends AxiomParentNodeWrapper {
      *         This will not necessarily be a document node
      */
 
+    @Override
     public NodeInfo getRoot() {
         return docWrapper.getRootNode();
     }
@@ -270,6 +280,7 @@ public class AxiomElementNodeWrapper extends AxiomParentNodeWrapper {
      *         <p>For a node other than an element, the method returns null.</p>
      */
 
+    @Override
     public NamespaceBinding[] getDeclaredNamespaces(NamespaceBinding[] buffer) {
         OMElement elem = (OMElement) node;
         List<NamespaceBinding> list = new ArrayList<>();
@@ -345,6 +356,7 @@ public class AxiomElementNodeWrapper extends AxiomParentNodeWrapper {
         }
 
 
+        @Override
         public NodeInfo next() {
             NodeInfo curr;
             do { // until we find a match

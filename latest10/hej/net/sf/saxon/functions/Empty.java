@@ -23,6 +23,7 @@ import net.sf.saxon.value.BooleanValue;
  */
 public class Empty extends Aggregate {
 
+    @Override
     public Expression makeOptimizedFunctionCall(
         ExpressionVisitor visitor, ContextItemStaticInfo contextInfo, final Expression... arguments) throws XPathException {
 
@@ -57,6 +58,7 @@ public class Empty extends Aggregate {
      * @throws net.sf.saxon.trans.XPathException
      *          if a dynamic error occurs during the evaluation of the expression
      */
+    @Override
     public BooleanValue call(XPathContext context, Sequence[] arguments) throws XPathException {
         return BooleanValue.get(empty(arguments[0].iterate()));
     }
@@ -93,6 +95,7 @@ public class Empty extends Aggregate {
              */
 
     /*@NotNull*/
+            @Override
             public Expression optimize(/*@NotNull*/ ExpressionVisitor visitor, ContextItemStaticInfo contextInfo) throws XPathException {
                 Expression e2 = super.optimize(visitor, contextInfo);
                 if (e2 != this) {
@@ -126,6 +129,7 @@ public class Empty extends Aggregate {
              * Evaluate the function
              */
 
+            @Override
             public BooleanValue evaluateItem(XPathContext context) throws XPathException {
                 return BooleanValue.get(effectiveBooleanValue(context));
             }
@@ -134,6 +138,7 @@ public class Empty extends Aggregate {
              * Evaluate the function in a boolean context
              */
 
+            @Override
             public boolean effectiveBooleanValue(XPathContext c) throws XPathException {
                 SequenceIterator iter = getArg(0).iterate(c);
                 boolean result;
@@ -153,10 +158,12 @@ public class Empty extends Aggregate {
         };
     }
 
+    @Override
     public String getCompilerName() {
         return "EmptyCompiler";
     }
 
+    @Override
     public String getStreamerName() {
         return "Empty";
     }

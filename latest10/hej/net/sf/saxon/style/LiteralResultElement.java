@@ -69,6 +69,7 @@ public class LiteralResultElement extends StyleElement {
      * @return true: yes, it may contain a sequence constructor
      */
 
+    @Override
     public boolean mayContainSequenceConstructor() {
         return true;
     }
@@ -77,6 +78,7 @@ public class LiteralResultElement extends StyleElement {
      * Specify that this is an instruction
      */
 
+    @Override
     public boolean isInstruction() {
         return true;
     }
@@ -85,6 +87,7 @@ public class LiteralResultElement extends StyleElement {
      * Process the attribute list
      */
 
+    @Override
     public void prepareAttributes() {
 
         // Process the values of all attributes. At this stage we deal with attribute
@@ -142,6 +145,7 @@ public class LiteralResultElement extends StyleElement {
      * @param decl
      */
 
+    @Override
     public void validate(ComponentDeclaration decl) throws XPathException {
 
         toplevel = (getParent() instanceof XSLStylesheet);
@@ -287,6 +291,7 @@ public class LiteralResultElement extends StyleElement {
      * @param excludeStylesheet
      */
 
+    @Override
     protected void validateChildren(ComponentDeclaration decl, boolean excludeStylesheet) throws XPathException {
         if (!toplevel) {
             super.validateChildren(decl, excludeStylesheet);
@@ -297,6 +302,7 @@ public class LiteralResultElement extends StyleElement {
      * Compile code to process the literal result element at runtime
      */
 
+    @Override
     public Expression compile(Compilation exec, ComponentDeclaration decl) throws XPathException {
         // top level elements in the stylesheet are ignored
         if (toplevel) {
@@ -457,6 +463,7 @@ public class LiteralResultElement extends StyleElement {
      * @return the name of the literal result element
      */
 
+    @Override
     public StructuredQName getObjectName() {
         return new StructuredQName(getPrefix(), getURI(), getLocalPart());
     }

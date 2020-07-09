@@ -42,18 +42,22 @@ public abstract class GroupMatchingIterator implements LookaheadIterator, LastPo
 
     protected abstract void advance() throws XPathException;
 
+    @Override
     public AtomicSequence getCurrentGroupingKey() {
         return null;
     }
 
+    @Override
     public SequenceIterator iterateCurrentGroup() {
         return new ListIterator<>(currentMembers);
     }
 
+    @Override
     public boolean hasNext() {
         return next != null;
     }
 
+    @Override
     public Item next() throws XPathException {
         if (next != null) {
             current = next;
@@ -67,16 +71,19 @@ public abstract class GroupMatchingIterator implements LookaheadIterator, LastPo
         }
     }
 
+    @Override
     public void close() {
         population.close();
     }
 
+    @Override
     public EnumSet<Property> getProperties() {
         return EnumSet.of(Property.LOOKAHEAD, Property.LAST_POSITION_FINDER);
     }
 
 //#if EE==true
 
+    @Override
     public ManualGroupIterator getSnapShot(XPathContext context) {
         return new ManualGroupMatchingIterator();
     }
@@ -90,10 +97,12 @@ public abstract class GroupMatchingIterator implements LookaheadIterator, LastPo
             setLastPositionFinder(() -> savedcontext.getLast());
         }
 
+        @Override
         public AtomicSequence getCurrentGroupingKey() {
             return null;
         }
 
+        @Override
         public SequenceIterator iterateCurrentGroup() {
             return new ListIterator<>(cMembers);
         }

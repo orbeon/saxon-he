@@ -52,6 +52,7 @@ public class NumericType extends LocalUnionType implements SimpleType {
         super(Arrays.asList(BuiltInAtomicType.DOUBLE, BuiltInAtomicType.FLOAT, BuiltInAtomicType.DECIMAL));
     }
 
+    @Override
     public StructuredQName getTypeName() {
         return new StructuredQName("xs", NamespaceConstant.SCHEMA, "numeric");
     }
@@ -83,6 +84,7 @@ public class NumericType extends LocalUnionType implements SimpleType {
      *
      * @return true of one of the member types is a list type
      */
+    @Override
     public boolean containsListType() {
         return false;
     }
@@ -93,6 +95,7 @@ public class NumericType extends LocalUnionType implements SimpleType {
      *
      * @return the atomic types and plain union types in the transitive membership of the union type.
      */
+    @Override
     public synchronized Iterable<AtomicType> getPlainMemberTypes() {
         return getMemberTypes();
     }
@@ -113,6 +116,7 @@ public class NumericType extends LocalUnionType implements SimpleType {
      * @return the result type of casting, as precisely as possible. For example, if all the member types of
      *         the union are derived from the same primitive type, this will return that primitive type.
      */
+    @Override
     public SequenceType getResultTypeOfCast() {
         return SequenceType.ATOMIC_SEQUENCE;
     }
@@ -124,6 +128,7 @@ public class NumericType extends LocalUnionType implements SimpleType {
      * @return true if this is ANY_ATOMIC_TYPE or a subtype thereof, or a
      *         "plain" union type (that is, unions of atomic types that impose no further restrictions)
      */
+    @Override
     public boolean isPlainType() {
         return true;
     }
@@ -146,6 +151,7 @@ public class NumericType extends LocalUnionType implements SimpleType {
      * @param th      The type hierarchy cache
      * @return true if the item is an instance of this type; false otherwise
      */
+    @Override
     public boolean matches(Item item, TypeHierarchy th) {
         return item instanceof NumericValue;
     }
@@ -161,6 +167,7 @@ public class NumericType extends LocalUnionType implements SimpleType {
      *
      * @return the corresponding primitive type
      */
+    @Override
     public AtomicType getPrimitiveItemType() {
         return BuiltInAtomicType.ANY_ATOMIC;
     }
@@ -175,6 +182,7 @@ public class NumericType extends LocalUnionType implements SimpleType {
      *
      * @return the integer fingerprint of the corresponding primitive type
      */
+    @Override
     public int getPrimitiveType() {
         return BuiltInAtomicType.ANY_ATOMIC.getFingerprint();
     }
@@ -185,6 +193,7 @@ public class NumericType extends LocalUnionType implements SimpleType {
      *
      * @return the smallest UType that subsumes this item type
      */
+    @Override
     public UType getUType() {
         return UType.NUMERIC;
     }
@@ -196,6 +205,7 @@ public class NumericType extends LocalUnionType implements SimpleType {
      * @return the best available item type of the atomic values that will be produced when an item
      *         of this type is atomized, or null if it is known that atomization will throw an error.
      */
+    @Override
     public PlainType getAtomizedItemType() {
         return this;
     }
@@ -207,6 +217,7 @@ public class NumericType extends LocalUnionType implements SimpleType {
      *         content, or function items, in which case return false
      * @param th The type hierarchy cache
      */
+    @Override
     public boolean isAtomizable(TypeHierarchy th) {
         return true;
     }
@@ -216,6 +227,7 @@ public class NumericType extends LocalUnionType implements SimpleType {
      *
      * @return true if this is an atomic type
      */
+    @Override
     public boolean isAtomicType() {
         return false;
     }
@@ -225,6 +237,7 @@ public class NumericType extends LocalUnionType implements SimpleType {
      *
      * @return true if this is a list type
      */
+    @Override
     public boolean isListType() {
         return false;
     }
@@ -234,6 +247,7 @@ public class NumericType extends LocalUnionType implements SimpleType {
      *
      * @return true if this is a union type
      */
+    @Override
     public boolean isUnionType() {
         return true;
     }
@@ -243,6 +257,7 @@ public class NumericType extends LocalUnionType implements SimpleType {
      *
      * @return true if this is a built-in type
      */
+    @Override
     public boolean isBuiltInType() {
         return true;
     }
@@ -253,6 +268,7 @@ public class NumericType extends LocalUnionType implements SimpleType {
      * @return the built-in type from which this type is derived by restriction. This will not necessarily
      *         be a primitive type.
      */
+    @Override
     public SchemaType getBuiltInBaseType() {
         return AnySimpleType.getInstance();
     }
@@ -273,6 +289,7 @@ public class NumericType extends LocalUnionType implements SimpleType {
      * @throws net.sf.saxon.type.ValidationException
      *          if the supplied value is not in the lexical space of the data type
      */
+    @Override
     public DoubleValue getTypedValue(CharSequence value, NamespaceResolver resolver, ConversionRules rules) throws ValidationException {
         try {
             double d = StringToDouble.getInstance().stringToNumber(value);
@@ -295,6 +312,7 @@ public class NumericType extends LocalUnionType implements SimpleType {
      * @throws UnsupportedOperationException if the type is namespace-sensitive and no namespace
      *                                       resolver is supplied
      */
+    @Override
     public ValidationFailure validateContent(CharSequence value, NamespaceResolver nsResolver, ConversionRules rules) {
         try {
             StringToDouble.getInstance().stringToNumber(value);
@@ -326,6 +344,7 @@ public class NumericType extends LocalUnionType implements SimpleType {
      *
      * @return true if the type is namespace-sensitive
      */
+    @Override
     public boolean isNamespaceSensitive() {
         return false;
     }
@@ -336,6 +355,7 @@ public class NumericType extends LocalUnionType implements SimpleType {
      * @return one of {@link net.sf.saxon.value.Whitespace#PRESERVE}, {@link net.sf.saxon.value.Whitespace#COLLAPSE},
      *         {@link net.sf.saxon.value.Whitespace#REPLACE}.
      */
+    @Override
     public int getWhitespaceAction() {
         return Whitespace.COLLAPSE;
     }
@@ -347,6 +367,7 @@ public class NumericType extends LocalUnionType implements SimpleType {
      * @param input the value to be preprocessed
      * @return the value after preprocessing
      */
+    @Override
     public CharSequence preprocess(CharSequence input) {
         return input;
     }
@@ -360,6 +381,7 @@ public class NumericType extends LocalUnionType implements SimpleType {
      *              the value to a string
      * @return the value after postprocessing
      */
+    @Override
     public CharSequence postprocess(CharSequence input) {
         return input;
     }
@@ -370,6 +392,7 @@ public class NumericType extends LocalUnionType implements SimpleType {
      * @return the local name of this type definition, if it has one. Return null in the case of an
      *         anonymous type.
      */
+    @Override
     public String getName() {
         return "numeric";
     }
@@ -380,6 +403,7 @@ public class NumericType extends LocalUnionType implements SimpleType {
      * @return the target namespace of this type definition, if it has one. Return null in the case
      *         of an anonymous type, and in the case of a global type defined in a no-namespace schema.
      */
+    @Override
     public String getTargetNamespace() {
         return NamespaceConstant.SCHEMA;
     }
@@ -389,6 +413,7 @@ public class NumericType extends LocalUnionType implements SimpleType {
      *
      * @return the fingerprint. Returns an invented fingerprint for an anonymous type.
      */
+    @Override
     public int getFingerprint() {
         return StandardNames.XS_NUMERIC;
     }
@@ -399,6 +424,7 @@ public class NumericType extends LocalUnionType implements SimpleType {
      * @return a lexical QName identifying the type. In the case of an anonymous type, an internally-generated
      *         name is returned
      */
+    @Override
     public String getDisplayName() {
         return "xs:numeric";
     }
@@ -409,6 +435,7 @@ public class NumericType extends LocalUnionType implements SimpleType {
      * @return an EQName identifying the type. In the case of an anonymous type, an internally-generated
      *         name is returned
      */
+    @Override
     public String getEQName() {
         return "Q(" + NamespaceConstant.SCHEMA + "}numeric";
     }
@@ -419,6 +446,7 @@ public class NumericType extends LocalUnionType implements SimpleType {
      * @return a StructuredQName identifying the type.  In the case of an anonymous type, an internally-generated
      * name is returned
      */
+    @Override
     public StructuredQName getStructuredQName() {
         return new StructuredQName("xs", NamespaceConstant.SCHEMA, "numeric");
     }
@@ -428,6 +456,7 @@ public class NumericType extends LocalUnionType implements SimpleType {
      *
      * @return true if this SchemaType is a complex type
      */
+    @Override
     public boolean isComplexType() {
         return false;
     }
@@ -437,6 +466,7 @@ public class NumericType extends LocalUnionType implements SimpleType {
      *
      * @return true if this SchemaType is a simple type
      */
+    @Override
     public boolean isSimpleType() {
         return true;
     }
@@ -446,6 +476,7 @@ public class NumericType extends LocalUnionType implements SimpleType {
      *
      * @return true if this SchemaType is an anonymous type
      */
+    @Override
     public boolean isAnonymousType() {
         return false;
     }
@@ -457,6 +488,7 @@ public class NumericType extends LocalUnionType implements SimpleType {
      *
      * @return the value of the 'block' attribute for this type
      */
+    @Override
     public int getBlock() {
         return 0;
     }
@@ -468,6 +500,7 @@ public class NumericType extends LocalUnionType implements SimpleType {
      *
      * @return the base type, or null if this is xs:anyType (the root of the type hierarchy)
      */
+    @Override
     public SchemaType getBaseType() {
         return AnySimpleType.getInstance();
     }
@@ -478,6 +511,7 @@ public class NumericType extends LocalUnionType implements SimpleType {
      *
      * @return a numeric code representing the derivation method, for example {@link net.sf.saxon.type.SchemaType#DERIVATION_RESTRICTION}
      */
+    @Override
     public int getDerivationMethod() {
         return SchemaType.DERIVATION_RESTRICTION;
     }
@@ -488,6 +522,7 @@ public class NumericType extends LocalUnionType implements SimpleType {
      * @return the types of derivation that are not permitted, as a bit-significant integer
      *         containing bits such as {@link net.sf.saxon.type.SchemaType#DERIVATION_EXTENSION}
      */
+    @Override
     public int getFinalProhibitions() {
         return 0;
     }
@@ -499,6 +534,7 @@ public class NumericType extends LocalUnionType implements SimpleType {
      * @param derivation the kind of derivation, for example {@link net.sf.saxon.type.SchemaType#DERIVATION_LIST}
      * @return true if this kind of derivation is allowed
      */
+    @Override
     public boolean allowsDerivation(int derivation) {
         return true;
     }
@@ -514,6 +550,7 @@ public class NumericType extends LocalUnionType implements SimpleType {
      * @throws net.sf.saxon.trans.XPathException
      *          if the expression will never deliver a value of the correct type
      */
+    @Override
     public void analyzeContentExpression(Expression expression, int kind) throws XPathException {
         BuiltInAtomicType.analyzeContentExpression(this, expression, kind);
     }
@@ -528,6 +565,7 @@ public class NumericType extends LocalUnionType implements SimpleType {
      *          with element-only content
      * @since 8.5. Changed in 9.5 to return the new type AtomicSequence
      */
+    @Override
     public AtomicSequence atomize(NodeInfo node) throws XPathException {
         throw new UnsupportedOperationException(); // nodes are never annotated with a union type
     }
@@ -540,6 +578,7 @@ public class NumericType extends LocalUnionType implements SimpleType {
      * @param other the other type
      * @return true if this is the same type as other
      */
+    @Override
     public boolean isSameType(SchemaType other) {
         return other instanceof NumericType;
     }
@@ -551,6 +590,7 @@ public class NumericType extends LocalUnionType implements SimpleType {
      *
      * @return text identifing the type, for use in a phrase such as "the type XXXX".
      */
+    @Override
     public String getDescription() {
         return "xs:numeric";
     }
@@ -561,6 +601,7 @@ public class NumericType extends LocalUnionType implements SimpleType {
      * @return the URI of the schema document. Returns null if the information is unknown or if this
      *         is a built-in type
      */
+    @Override
     public String getSystemId() {
         return null;
     }
@@ -574,6 +615,7 @@ public class NumericType extends LocalUnionType implements SimpleType {
      *
      * @return true if this type is an ID type
      */
+    @Override
     public boolean isIdType() {
         return false;
     }
@@ -585,6 +627,7 @@ public class NumericType extends LocalUnionType implements SimpleType {
      *
      * @return true if this type is an IDREF type
      */
+    @Override
     public boolean isIdRefType() {
         return false;
     }
@@ -592,6 +635,7 @@ public class NumericType extends LocalUnionType implements SimpleType {
     /**
      * Get the validation status of this component.
      */
+    @Override
     public ValidationStatus getValidationStatus() {
         return VALIDATED;
     }
@@ -605,6 +649,7 @@ public class NumericType extends LocalUnionType implements SimpleType {
      *
      * @return the redefinition level
      */
+    @Override
     public int getRedefinitionLevel() {
         return 0;
     }
@@ -637,6 +682,7 @@ public class NumericType extends LocalUnionType implements SimpleType {
      * @param block the derivations that are blocked by the relevant element declaration
      * @throws net.sf.saxon.type.SchemaException if the derivation is not allowed
      */
+    @Override
     public void checkTypeDerivationIsOK(SchemaType base, int block) throws SchemaException {
         //#ifdefined  SCHEMA
         String s = UserSimpleType.isTypeDerivationOK(this, base, block);
@@ -657,6 +703,7 @@ public class NumericType extends LocalUnionType implements SimpleType {
      *
      * @return the schema component represented as a function from property names to property values.
      */
+    @Override
     public Function getComponentAsFunction() {
         return UserSimpleType.getComponentAsFunction(this);
     }

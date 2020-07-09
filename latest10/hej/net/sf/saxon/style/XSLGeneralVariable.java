@@ -30,6 +30,7 @@ public abstract class XSLGeneralVariable extends StyleElement {
         return sourceBinding.getVariableQName();
     }
 
+    @Override
     public StructuredQName getObjectName() {
         return sourceBinding.getVariableQName();
     }
@@ -40,6 +41,7 @@ public abstract class XSLGeneralVariable extends StyleElement {
      * @return true: yes, it may contain a template-body
      */
 
+    @Override
     public boolean mayContainSequenceConstructor() {
         return true;
     }
@@ -62,6 +64,7 @@ public abstract class XSLGeneralVariable extends StyleElement {
      *             multiple declarations if it appears in a stylesheet module that is included/imported more than once
      */
 
+    @Override
     public void validate(ComponentDeclaration decl) throws XPathException {
         sourceBinding.validate();
     }
@@ -71,6 +74,7 @@ public abstract class XSLGeneralVariable extends StyleElement {
      * children have been validated.
      */
 
+    @Override
     public void postValidate() throws XPathException {
         sourceBinding.postValidate();
     }

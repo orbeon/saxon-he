@@ -105,6 +105,7 @@ public class SlashExpression extends BinaryExpression
      * @return the first operand
      */
 
+    @Override
     public Expression getSelectExpression() {
         return getStart();
     }
@@ -115,6 +116,7 @@ public class SlashExpression extends BinaryExpression
      * @return the second operand
      */
 
+    @Override
     public Expression getActionExpression() {
         return getStep();
     }
@@ -126,6 +128,7 @@ public class SlashExpression extends BinaryExpression
      */
 
     /*@NotNull*/
+    @Override
     public final ItemType getItemType() {
         return getStep().getItemType();
     }
@@ -167,6 +170,7 @@ public class SlashExpression extends BinaryExpression
      */
 
     /*@NotNull*/
+    @Override
     public Expression typeCheck(ExpressionVisitor visitor, ContextItemStaticInfo contextInfo) throws XPathException {
 
         getLhs().typeCheck(visitor, contextInfo);
@@ -341,6 +345,7 @@ public class SlashExpression extends BinaryExpression
     }
 
     /*@NotNull*/
+    @Override
     public Expression optimize(ExpressionVisitor visitor, ContextItemStaticInfo contextItemType) throws XPathException {
         Configuration config = visitor.getConfiguration();
         TypeHierarchy th = config.getTypeHierarchy();
@@ -606,6 +611,7 @@ public class SlashExpression extends BinaryExpression
      *         expression is the first operand of a path expression or filter expression
      */
 
+    @Override
     public PathMap.PathMapNodeSet addToPathMap(PathMap pathMap, PathMap.PathMapNodeSet pathMapNodeSet) {
         PathMap.PathMapNodeSet target = getStart().addToPathMap(pathMap, pathMapNodeSet);
         return getStep().addToPathMap(pathMap, target);
@@ -648,6 +654,7 @@ public class SlashExpression extends BinaryExpression
      */
 
     /*@NotNull*/
+    @Override
     public Expression copy(RebindingMap rebindings) {
         Expression exp = ExpressionTool.makePathExpression(getStart().copy(rebindings), getStep().copy(rebindings));
         ExpressionTool.copyLocationInfo(this, exp);
@@ -660,6 +667,7 @@ public class SlashExpression extends BinaryExpression
      * property bit is set, it is true, but if it is unset, the value is unknown.
      */
 
+    @Override
     public int computeSpecialProperties() {
 
         int startProperties = getStart().getSpecialProperties();
@@ -811,6 +819,7 @@ public class SlashExpression extends BinaryExpression
      * Determine the static cardinality of the expression
      */
 
+    @Override
     public int computeCardinality() {
         int c1 = getStart().getCardinality();
         int c2 = getStep().getCardinality();
@@ -904,6 +913,7 @@ public class SlashExpression extends BinaryExpression
      * get HashCode for comparing two expressions
      */
 
+    @Override
     public int computeHashCode() {
         return "SlashExpression".hashCode() + getStart().hashCode() + getStep().hashCode();
     }
@@ -915,6 +925,7 @@ public class SlashExpression extends BinaryExpression
      */
 
     /*@NotNull*/
+    @Override
     public SequenceIterator iterate(final XPathContext context) throws XPathException {
 
         // This class delivers the result of the path expression in unsorted order,
@@ -946,6 +957,7 @@ public class SlashExpression extends BinaryExpression
      * is written to the supplied output destination.
      */
 
+    @Override
     public void export(ExpressionPresenter destination) throws XPathException {
         destination.startElement("slash", this);
         if (this instanceof SimpleStepExpression) {

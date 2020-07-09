@@ -53,6 +53,7 @@ public class EmptyIterator implements SequenceIterator,
      *
      * @return the next atomic value
      */
+    @Override
     public AtomicSequence nextAtomizedValue() {
         return null;
     }
@@ -62,6 +63,7 @@ public class EmptyIterator implements SequenceIterator,
      *
      * @return the next item. For the EmptyIterator this is always null.
      */
+    @Override
     public Item next() {
         return null;
     }
@@ -72,6 +74,7 @@ public class EmptyIterator implements SequenceIterator,
      * @return the position of the last item in the sequence, always zero in
      *         this implementation
      */
+    @Override
     public int getLength() {
         return 0;
     }
@@ -83,6 +86,7 @@ public class EmptyIterator implements SequenceIterator,
      *         returns the same iterator each time)
      */
     /*@NotNull*/
+    @Override
     public EmptyIterator getReverseIterator() {
         return this;
     }
@@ -97,6 +101,7 @@ public class EmptyIterator implements SequenceIterator,
      *         It is acceptable for the properties of the iterator to change depending on its state.
      */
 
+    @Override
     public EnumSet<Property> getProperties() {
         return EnumSet.of(Property.LOOKAHEAD, Property.GROUNDED, Property.LAST_POSITION_FINDER, Property.ATOMIZING);
     }
@@ -108,6 +113,7 @@ public class EmptyIterator implements SequenceIterator,
      * @return the corresponding Value
      */
 
+    @Override
     public GroundedValue materialize() {
         return EmptySequence.getInstance();
     }
@@ -126,6 +132,7 @@ public class EmptyIterator implements SequenceIterator,
      * @return true if there are more nodes
      */
 
+    @Override
     public boolean hasNext() {
         return false;
     }
@@ -158,6 +165,7 @@ public class EmptyIterator implements SequenceIterator,
          *
          * @return the next item. For the EmptyIterator this is always null.
          */
+        @Override
         public NodeInfo next() {
             return null;
         }
@@ -177,6 +185,7 @@ public class EmptyIterator implements SequenceIterator,
          *
          * @return the next item. For the EmptyIterator this is always null.
          */
+        @Override
         public T next() {
             return null;
         }

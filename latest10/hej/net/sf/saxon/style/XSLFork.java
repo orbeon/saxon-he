@@ -27,6 +27,7 @@ public class XSLFork extends StyleElement {
      * @return true - it is an instruction
      */
 
+    @Override
     public boolean isInstruction() {
         return true;
     }
@@ -37,11 +38,13 @@ public class XSLFork extends StyleElement {
      * @return false: no, it may not contain a sequence constructor
      */
 
+    @Override
     public boolean mayContainSequenceConstructor() {
         return false;
     }
 
 
+    @Override
     public void prepareAttributes() {
 
         for (AttributeInfo att : attributes()) {
@@ -51,6 +54,7 @@ public class XSLFork extends StyleElement {
     }
 
 
+    @Override
     public void validate(ComponentDeclaration decl) throws XPathException {
         int foundGroup = 0;
         int foundSequence = 0;
@@ -73,6 +77,7 @@ public class XSLFork extends StyleElement {
         }
     }
 
+    @Override
     public Expression compile(Compilation exec, ComponentDeclaration decl) throws XPathException {
         Expression content = compileSequenceConstructor(exec, decl, true);
         if (content instanceof Block) {

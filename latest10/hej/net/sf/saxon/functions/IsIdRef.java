@@ -37,6 +37,7 @@ public class IsIdRef extends ExtensionFunctionDefinition {
      * @return the QName of the function
      */
 
+    @Override
     public StructuredQName getFunctionQName() {
         return qName;
     }
@@ -47,6 +48,7 @@ public class IsIdRef extends ExtensionFunctionDefinition {
      * @return the minimum number of arguments that must be supplied in a call to this function
      */
 
+    @Override
     public int getMinimumNumberOfArguments() {
         return 0;
     }
@@ -57,6 +59,7 @@ public class IsIdRef extends ExtensionFunctionDefinition {
      * @return the maximum number of arguments that may be supplied in a call to this function
      */
 
+    @Override
     public int getMaximumNumberOfArguments() {
         return 0;
     }
@@ -70,6 +73,7 @@ public class IsIdRef extends ExtensionFunctionDefinition {
      *         entry in the array providing the required type for all the remaining arguments.
      */
 
+    @Override
     public SequenceType[] getArgumentTypes() {
         return new SequenceType[]{};
     }
@@ -84,6 +88,7 @@ public class IsIdRef extends ExtensionFunctionDefinition {
      * @return the return type of the function, as defined by its function signature
      */
 
+    @Override
     public SequenceType getResultType(SequenceType[] suppliedArgumentTypes) {
         return SequenceType.SINGLE_BOOLEAN;
     }
@@ -94,6 +99,7 @@ public class IsIdRef extends ExtensionFunctionDefinition {
      */
 
     /*@NotNull*/
+    @Override
     public ExtensionFunctionCall makeCallExpression() {
         return new IsIdRefCall();
     }
@@ -119,6 +125,7 @@ public class IsIdRef extends ExtensionFunctionDefinition {
          *          code will add information about the error location.
          */
 
+        @Override
         public BooleanValue call(XPathContext context, Sequence[] arguments) throws XPathException {
             Item contextItem = context.getContextItem();
             return BooleanValue.get(contextItem instanceof NodeInfo && ((NodeInfo)contextItem).isIdref());
@@ -136,6 +143,7 @@ public class IsIdRef extends ExtensionFunctionDefinition {
          *          expression
          */
 
+        @Override
         public boolean effectiveBooleanValue(XPathContext context, Sequence[] arguments) throws XPathException {
             Item contextItem = context.getContextItem();
             return contextItem instanceof NodeInfo && ((NodeInfo) contextItem).isIdref();

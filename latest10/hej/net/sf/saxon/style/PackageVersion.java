@@ -123,6 +123,7 @@ public class PackageVersion implements Comparable<PackageVersion> {
         return parts.equals(other.parts);
     }
 
+    @Override
     public int compareTo(PackageVersion o) {
         PackageVersion pv = (PackageVersion) o;
         List<Integer> p = pv.parts;

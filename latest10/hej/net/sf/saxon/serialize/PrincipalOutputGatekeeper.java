@@ -48,6 +48,7 @@ public class PrincipalOutputGatekeeper extends ProxyReceiver {
         this.controller = controller;
     }
 
+    @Override
     public void open() throws XPathException {
         if (closed) {
             String uri = getSystemId().equals(XsltController.ANONYMOUS_PRINCIPAL_OUTPUT_URI) ? "(no URI supplied)" : getSystemId();
@@ -60,6 +61,7 @@ public class PrincipalOutputGatekeeper extends ProxyReceiver {
         open = true;
     }
 
+    @Override
     public synchronized void startDocument(int properties) throws XPathException {
         if (!open) {
             open();
@@ -68,6 +70,7 @@ public class PrincipalOutputGatekeeper extends ProxyReceiver {
         nextReceiver.startDocument(properties);
     }
 
+    @Override
     public void startElement(NodeName elemName, SchemaType type,
                              AttributeMap attributes, NamespaceMap namespaces,
                              Location location, int properties) throws XPathException {
@@ -75,16 +78,19 @@ public class PrincipalOutputGatekeeper extends ProxyReceiver {
         nextReceiver.startElement(elemName, type, attributes, namespaces, location, properties);
     }
 
+    @Override
     public synchronized void characters(CharSequence chars, Location locationId, int properties) throws XPathException {
         useAsPrimary();
         nextReceiver.characters(chars, locationId, properties);
     }
 
+    @Override
     public void processingInstruction(String target, CharSequence data, Location locationId, int properties) throws XPathException {
         useAsPrimary();
         nextReceiver.processingInstruction(target, data, locationId, properties);
     }
 
+    @Override
     public void comment(CharSequence chars, Location locationId, int properties) throws XPathException {
         useAsPrimary();
         nextReceiver.comment(chars, locationId, properties);
@@ -146,6 +152,7 @@ public class PrincipalOutputGatekeeper extends ProxyReceiver {
     }
 
 
+    @Override
     public void close() throws XPathException {
         closed = true;
         if (usedAsPrimaryResult) {

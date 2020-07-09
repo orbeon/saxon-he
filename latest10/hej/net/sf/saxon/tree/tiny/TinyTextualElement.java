@@ -214,6 +214,7 @@ public class TinyTextualElement extends TinyElementImpl {
          * @return the TreeInfo
          * @since 9.7
          */
+        @Override
         public TreeInfo getTreeInfo() {
             return TinyTextualElement.this.getTreeInfo();
         }
@@ -222,6 +223,7 @@ public class TinyTextualElement extends TinyElementImpl {
          * Set the system ID for the entity containing the node.
          */
 
+        @Override
         public void setSystemId(String systemId) {
         }
 
@@ -231,6 +233,7 @@ public class TinyTextualElement extends TinyElementImpl {
          * @return Type.TEXT (always)
          */
 
+        @Override
         public final int getNodeKind() {
             return Type.TEXT;
         }
@@ -239,6 +242,7 @@ public class TinyTextualElement extends TinyElementImpl {
          * Get the String Value
          */
 
+        @Override
         public String getStringValue() {
             return getStringValueCS().toString();
         }
@@ -248,6 +252,7 @@ public class TinyTextualElement extends TinyElementImpl {
          * the version of the method that returns a String.
          */
 
+        @Override
         public CharSequence getStringValueCS() {
             return TinyTextualElement.this.getStringValueCS();
         }
@@ -268,6 +273,7 @@ public class TinyTextualElement extends TinyElementImpl {
          * Get a character string that uniquely identifies this node
          */
 
+        @Override
         public void generateId(/*@NotNull*/ FastStringBuffer buffer) {
             TinyTextualElement.this.generateId(buffer);
             buffer.append("T");
@@ -278,6 +284,7 @@ public class TinyTextualElement extends TinyElementImpl {
          */
 
         /*@Nullable*/
+        @Override
         public String getSystemId() {
             return TinyTextualElement.this.getSystemId();
         }
@@ -287,6 +294,7 @@ public class TinyTextualElement extends TinyElementImpl {
          * the base URI of the parent node.
          */
 
+        @Override
         public String getBaseURI() {
             return TinyTextualElement.this.getBaseURI();
         }
@@ -301,6 +309,7 @@ public class TinyTextualElement extends TinyElementImpl {
          * return true, and the two nodes will produce the same result for generateId())
          */
 
+        @Override
         public int compareOrder(NodeInfo other) {
             if (other.equals(this)) {
                 return 0;
@@ -315,6 +324,7 @@ public class TinyTextualElement extends TinyElementImpl {
          * Get the fingerprint of the node, used for matching names
          */
 
+        @Override
         public int getFingerprint() {
             return -1;
         }
@@ -327,6 +337,7 @@ public class TinyTextualElement extends TinyElementImpl {
          */
 
         /*@NotNull*/
+        @Override
         public String getPrefix() {
             return "";
         }
@@ -340,6 +351,7 @@ public class TinyTextualElement extends TinyElementImpl {
          */
 
         /*@NotNull*/
+        @Override
         public String getURI() {
             return "";
         }
@@ -353,6 +365,7 @@ public class TinyTextualElement extends TinyElementImpl {
          */
 
         /*@NotNull*/
+        @Override
         public String getDisplayName() {
             return "";
         }
@@ -365,6 +378,7 @@ public class TinyTextualElement extends TinyElementImpl {
          */
 
         /*@NotNull*/
+        @Override
         public String getLocalPart() {
             return "";
         }
@@ -376,6 +390,7 @@ public class TinyTextualElement extends TinyElementImpl {
          * <code>false</code> otherwise.
          */
 
+        @Override
         public boolean hasChildNodes() {
             return false;
         }
@@ -390,6 +405,7 @@ public class TinyTextualElement extends TinyElementImpl {
          * if this node is not an element.
          * @since 9.4
          */
+        @Override
         public String getAttributeValue(/*@NotNull*/ String uri, /*@NotNull*/ String local) {
             return null;
         }
@@ -401,6 +417,7 @@ public class TinyTextualElement extends TinyElementImpl {
          * -1 if not available
          */
 
+        @Override
         public int getLineNumber() {
             return getParent().getLineNumber();
         }
@@ -420,6 +437,7 @@ public class TinyTextualElement extends TinyElementImpl {
          * @return The column number, or -1 if none is available.
          * @see #getLineNumber
          */
+        @Override
         public int getColumnNumber() {
             return getParent().getColumnNumber();
         }
@@ -430,6 +448,7 @@ public class TinyTextualElement extends TinyElementImpl {
          * should not be saved for later use. The result of this operation holds the same location information,
          * but in an immutable form.
          */
+        @Override
         public Location saveLocation() {
             return this;
         }
@@ -446,6 +465,7 @@ public class TinyTextualElement extends TinyElementImpl {
          * xs:anyType if it has.
          * @since 9.4
          */
+        @Override
         public SchemaType getSchemaType() {
             return null;
         }
@@ -466,6 +486,7 @@ public class TinyTextualElement extends TinyElementImpl {
          */
 
         /*@Nullable*/
+        @Override
         public NamespaceBinding[] getDeclaredNamespaces(NamespaceBinding[] buffer) {
             return null;
         }
@@ -495,6 +516,7 @@ public class TinyTextualElement extends TinyElementImpl {
          */
 
         /*@NotNull*/
+        @Override
         public AtomicSequence atomize() throws XPathException {
             return new UntypedAtomicValue(getStringValueCS());
         }
@@ -507,6 +529,7 @@ public class TinyTextualElement extends TinyElementImpl {
          */
 
         /*@NotNull*/
+        @Override
         public AxisIterator iterateAxis(int axisNumber) {
             switch (axisNumber) {
                 case AxisInfo.ANCESTOR:
@@ -554,6 +577,7 @@ public class TinyTextualElement extends TinyElementImpl {
          */
 
         /*@NotNull*/
+        @Override
         public AxisIterator iterateAxis(int axisNumber, Predicate<? super NodeInfo> nodeTest) {
             switch (axisNumber) {
                 case AxisInfo.ANCESTOR:
@@ -606,6 +630,7 @@ public class TinyTextualElement extends TinyElementImpl {
          */
 
         /*@NotNull*/
+        @Override
         public NodeInfo getParent() {
             return TinyTextualElement.this;
         }
@@ -617,6 +642,7 @@ public class TinyTextualElement extends TinyElementImpl {
          */
 
         /*@NotNull*/
+        @Override
         public NodeInfo getRoot() {
             return getParent().getRoot();
         }
@@ -625,6 +651,7 @@ public class TinyTextualElement extends TinyElementImpl {
          * Copy the node to a given Outputter
          */
 
+        @Override
         public void copy(/*@NotNull*/ Receiver out, int copyOptions, Location locationId)
                 throws XPathException {
             out.characters(getStringValueCS(), locationId, ReceiverOption.NONE);

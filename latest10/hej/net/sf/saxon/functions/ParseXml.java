@@ -44,6 +44,7 @@ public class ParseXml extends SystemFunction implements Callable {
      * @throws net.sf.saxon.trans.XPathException
      *          if a dynamic error occurs during the evaluation of the expression
      */
+    @Override
     public ZeroOrOne call(XPathContext context, Sequence[] arguments) throws XPathException {
         StringValue input = (StringValue) arguments[0].head();
         return input == null ? ZeroOrOne.empty() : new ZeroOrOne(evalParseXml(input, context));
@@ -103,14 +104,17 @@ public class ParseXml extends SystemFunction implements Callable {
         public List<SAXParseException> errors = new ArrayList<>();
         public boolean failed = false;
 
+        @Override
         public void error(SAXParseException exception) {
             errors.add(exception);
         }
 
+        @Override
         public void warning(SAXParseException exception) {
             // no action
         }
 
+        @Override
         public void fatalError(SAXParseException exception) {
             errors.add(exception);
             failed = true;

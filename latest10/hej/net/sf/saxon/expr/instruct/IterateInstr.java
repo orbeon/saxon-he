@@ -107,6 +107,7 @@ public final class IterateInstr extends Instruction implements ContextSwitchingE
      * @return the select expression
      */
 
+    @Override
     public Expression getSelectExpression() {
         return selectOp.getChildExpression();
     }
@@ -118,6 +119,7 @@ public final class IterateInstr extends Instruction implements ContextSwitchingE
      * @return the body of the xsl:iterate loop
      */
 
+    @Override
     public Expression getActionExpression() {
         return actionOp.getChildExpression();
     }
@@ -127,6 +129,7 @@ public final class IterateInstr extends Instruction implements ContextSwitchingE
      */
 
     /*@NotNull*/
+    @Override
     public Expression typeCheck(ExpressionVisitor visitor, ContextItemStaticInfo contextInfo) throws XPathException {
 
         selectOp.typeCheck(visitor, contextInfo);
@@ -152,6 +155,7 @@ public final class IterateInstr extends Instruction implements ContextSwitchingE
     }
 
     /*@NotNull*/
+    @Override
     public Expression optimize(ExpressionVisitor visitor, ContextItemStaticInfo contextInfo) throws XPathException {
 
         selectOp.optimize(visitor, contextInfo);
@@ -208,6 +212,7 @@ public final class IterateInstr extends Instruction implements ContextSwitchingE
      */
 
     /*@NotNull*/
+    @Override
     public final ItemType getItemType() {
         if (Literal.isEmptySequence(getOnCompletion())) {
             return getActionExpression().getItemType();
@@ -223,6 +228,7 @@ public final class IterateInstr extends Instruction implements ContextSwitchingE
      * (Nodes created by the condition can't contribute to the result).
      */
 
+    @Override
     public final boolean mayCreateNewNodes() {
         return (getActionExpression().getSpecialProperties() &
                 getOnCompletion().getSpecialProperties() &
@@ -266,6 +272,7 @@ public final class IterateInstr extends Instruction implements ContextSwitchingE
      * process() methods natively.
      */
 
+    @Override
     public int getImplementationMethod() {
         return PROCESS_METHOD;
     }
@@ -278,6 +285,7 @@ public final class IterateInstr extends Instruction implements ContextSwitchingE
      * static validation can continue recursively.
      */
 
+    @Override
     public void checkPermittedContents(SchemaType parentType, boolean whole) throws XPathException {
         getActionExpression().checkPermittedContents(parentType, false);
         getOnCompletion().checkPermittedContents(parentType, false);
@@ -293,6 +301,7 @@ public final class IterateInstr extends Instruction implements ContextSwitchingE
      */
 
     /*@NotNull*/
+    @Override
     public Expression copy(RebindingMap rebindings) {
         IterateInstr exp = new IterateInstr(
                 getSelectExpression().copy(rebindings),
@@ -304,6 +313,7 @@ public final class IterateInstr extends Instruction implements ContextSwitchingE
     }
 
 
+    @Override
     public TailCall processLeavingTail(Outputter output, XPathContext context) throws XPathException {
         XPathContextMajor c2 = context.newContext();
         c2.setOrigin(this);
@@ -357,6 +367,7 @@ public final class IterateInstr extends Instruction implements ContextSwitchingE
      * is written to the supplied output destination.
      */
 
+    @Override
     public void export(ExpressionPresenter out) throws XPathException {
         out.startElement("iterate", this);
         out.setChildRole("select");

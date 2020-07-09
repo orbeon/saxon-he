@@ -37,6 +37,7 @@ public class XmlResource implements Resource {
     //private int onError = URIQueryParameters.ON_ERROR_FAIL;
 
     public final static ResourceFactory FACTORY = new ResourceFactory() {
+        @Override
         public Resource makeResource(Configuration config, AbstractResourceCollection.InputDetails details) throws XPathException {
             return new XmlResource(config, details);
             //            String resourceURI = details.resourceUri;
@@ -112,6 +113,7 @@ public class XmlResource implements Resource {
 //        this.onError = onError;
 //    }
 
+    @Override
     public String getResourceURI() {
         if (doc == null) {
             return details.resourceUri;
@@ -128,6 +130,7 @@ public class XmlResource implements Resource {
      * @throws XPathException if (for example) XML parsing fails
      */
 
+    @Override
     public Item getItem(XPathContext context) throws XPathException {
         if (doc == null) {
             String resourceURI = details.resourceUri;
@@ -178,6 +181,7 @@ public class XmlResource implements Resource {
      * @return the string "application/xml"
      */
 
+    @Override
     public String getContentType() {
         return "application/xml";
     }

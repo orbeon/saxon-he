@@ -34,16 +34,20 @@ public abstract class CompareToConstant extends UnaryExpression implements Compa
         return OperandRole.SINGLE_ATOMIC;
     }
 
+    @Override
     public Expression getLhsExpression() {
         return getBaseExpression();
     }
 
+    @Override
     public Operand getLhs() {
         return getOperand();
     }
 
+    @Override
     public abstract Expression getRhsExpression();
 
+    @Override
     public Operand getRhs() {
         return new Operand(this, getRhsExpression(), OperandRole.SINGLE_ATOMIC);
     }
@@ -67,10 +71,12 @@ public abstract class CompareToConstant extends UnaryExpression implements Compa
      * @return the value {@link #EVALUATE_METHOD}
      */
 
+    @Override
     public int getImplementationMethod() {
         return EVALUATE_METHOD;
     }
 
+    @Override
     public int computeSpecialProperties() {
         return StaticProperty.NO_NODES_NEWLY_CREATED;
     }
@@ -91,6 +97,7 @@ public abstract class CompareToConstant extends UnaryExpression implements Compa
      *          expression
      */
 
+    @Override
     public BooleanValue evaluateItem(XPathContext context) throws XPathException {
         return BooleanValue.get(effectiveBooleanValue(context));
     }
@@ -112,6 +119,7 @@ public abstract class CompareToConstant extends UnaryExpression implements Compa
      */
 
     /*@NotNull*/
+    @Override
     public Expression optimize(ExpressionVisitor visitor, ContextItemStaticInfo contextInfo) throws XPathException {
         getOperand().optimize(visitor, contextInfo);
         if (getLhsExpression() instanceof Literal) {
@@ -133,6 +141,7 @@ public abstract class CompareToConstant extends UnaryExpression implements Compa
      */
 
     /*@NotNull*/
+    @Override
     public ItemType getItemType() {
         return BuiltInAtomicType.BOOLEAN;
     }
@@ -142,6 +151,7 @@ public abstract class CompareToConstant extends UnaryExpression implements Compa
      * Token.FLE, Token.FGE
      */
 
+    @Override
     public int getSingletonOperator() {
         return operator;
     }
@@ -153,6 +163,7 @@ public abstract class CompareToConstant extends UnaryExpression implements Compa
      *         should be converted to strings.
      */
 
+    @Override
     public boolean convertsUntypedToOther() {
         return true;
     }

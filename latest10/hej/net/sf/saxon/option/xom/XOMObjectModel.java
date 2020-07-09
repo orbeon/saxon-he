@@ -62,6 +62,7 @@ public class XOMObjectModel extends TreeModel implements ExternalObjectModel {
      * @return by convention (but not necessarily) the class that implements a document node in the relevant
      * external model
      */
+    @Override
     public String getDocumentClassName() {
         return "nu.xom.Document";
     }
@@ -71,22 +72,27 @@ public class XOMObjectModel extends TreeModel implements ExternalObjectModel {
      * an XPath implementation
      */
 
+    @Override
     public String getIdentifyingURI() {
         return NamespaceConstant.OBJECT_MODEL_XOM;
     }
 
+    @Override
     public String getName() {
         return "XOM";
     }
 
+    @Override
     public Builder makeBuilder(PipelineConfiguration pipe) {
         return new XOMWriter(pipe);
     }
 
     /*@Nullable*/
+    @Override
     public PJConverter getPJConverter(Class<?> targetClass) {
         if (isRecognizedNodeClass(targetClass)) {
             return new PJConverter() {
+                @Override
                 public Object convert(Sequence value, Class<?> targetClass, XPathContext context) throws XPathException {
                     return convertXPathValueToObject(value, targetClass);
                 }
@@ -96,13 +102,16 @@ public class XOMObjectModel extends TreeModel implements ExternalObjectModel {
         }
     }
 
+    @Override
     public JPConverter getJPConverter(Class sourceClass, Configuration config) {
         if (isRecognizedNodeClass(sourceClass)) {
             return new JPConverter() {
+                @Override
                 public Sequence convert(Object object, XPathContext context)  {
                     return convertObjectToXPathValue(object, context.getConfiguration());
                 }
 
+                @Override
                 public ItemType getItemType() {
                     return AnyNodeTest.getInstance();
                 }
@@ -122,6 +131,7 @@ public class XOMObjectModel extends TreeModel implements ExternalObjectModel {
      *         returns a collection of nodes in this object model
      */
 
+    @Override
     public PJConverter getNodeListCreator(Object node) {
         return null;
     }
@@ -153,6 +163,7 @@ public class XOMObjectModel extends TreeModel implements ExternalObjectModel {
      * @return always null
      */
 
+    @Override
     public Receiver getDocumentBuilder(Result result) {
         return null;
     }
@@ -163,6 +174,7 @@ public class XOMObjectModel extends TreeModel implements ExternalObjectModel {
      * Otherwise, return false.
      */
 
+    @Override
     public boolean sendSource(Source source, Receiver receiver) {
         return false;
     }
@@ -172,6 +184,7 @@ public class XOMObjectModel extends TreeModel implements ExternalObjectModel {
      * source does not belong to this object model, return null
      */
 
+    @Override
     public NodeInfo unravel(Source source, Configuration config) {
         return null;
     }

@@ -28,6 +28,7 @@ public class Exists extends Aggregate {
     public Expression makeFunctionCall(Expression[] arguments) {
         return new SystemFunctionCall(this, arguments) {
 
+            @Override
             public Expression optimize(/*@NotNull*/ ExpressionVisitor visitor, ContextItemStaticInfo contextInfo) throws XPathException {
                 Expression e2 = super.optimize(visitor, contextInfo);
                 if (e2 != this) {
@@ -89,6 +90,7 @@ public class Exists extends Aggregate {
     }
 
 
+    @Override
     public Expression makeOptimizedFunctionCall(
             ExpressionVisitor visitor, ContextItemStaticInfo contextInfo, final Expression... arguments) throws XPathException {
 
@@ -138,14 +140,17 @@ public class Exists extends Aggregate {
      * @throws net.sf.saxon.trans.XPathException
      *          if a dynamic error occurs during the evaluation of the expression
      */
+    @Override
     public BooleanValue call(XPathContext context, Sequence[] arguments) throws XPathException {
         return BooleanValue.get(exists(arguments[0].iterate()));
     }
 
+    @Override
     public String getCompilerName() {
         return "ExistsCompiler";
     }
 
+    @Override
     public String getStreamerName() {
         return "Exists";
     }

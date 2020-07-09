@@ -52,6 +52,7 @@ public class RangeKey implements MapItem {
      * @param key     the value of the key
      * @return the value associated with the given key, or null if the key is not present in the map
      */
+    @Override
     public GroundedValue get(AtomicValue key)  {
         UnicodeString k = UnicodeString.makeUnicodeString(key.getStringValueCS());
         if ((min == null || min.compareTo(k) <= 0) &&
@@ -74,6 +75,7 @@ public class RangeKey implements MapItem {
      *
      * @return the number of keys/entries present in this map
      */
+    @Override
     public int size() {
         try {
             return Count.count(keys());
@@ -87,6 +89,7 @@ public class RangeKey implements MapItem {
      *
      * @return true if and only if the size of the map is zero
      */
+    @Override
     public boolean isEmpty() {
         return keys().next() == null;
     }
@@ -96,6 +99,7 @@ public class RangeKey implements MapItem {
      *
      * @return a set containing all the key values present in the map.
      */
+    @Override
     public AtomicIterator keys() {
         return new RangeKeyIterator();
     }
@@ -105,14 +109,17 @@ public class RangeKey implements MapItem {
      *
      * @return an iterator over the key-value pairs
      */
+    @Override
     public Iterable<KeyValuePair> keyValuePairs() {
         return () -> new Iterator<KeyValuePair>() {
             AtomicIterator keys = keys();
             AtomicValue next = keys.next();
+            @Override
             public boolean hasNext() {
                 return next != null;
             }
 
+            @Override
             public KeyValuePair next() {
                 if (next == null) {
                     return null;
@@ -132,6 +139,7 @@ public class RangeKey implements MapItem {
      * @return a new map in which the requested entry has been removed; or this map
      *         unchanged if the specified key was not present
      */
+    @Override
     public MapItem remove(AtomicValue key) {
         return HashTrieMap.copy(this).remove(key);
     }
@@ -142,6 +150,7 @@ public class RangeKey implements MapItem {
      * @return the most specific type to which all the keys belong. If the map is
      *         empty, return ErrorType.getInstance() (the type with no instances)
      */
+    @Override
     public UType getKeyUType() {
         return UType.STRING;
     }
@@ -202,6 +211,7 @@ public class RangeKey implements MapItem {
      *
      * @return the function item's type
      */
+    @Override
     public MapType getFunctionItemType() {
         return new MapType(BuiltInAtomicType.STRING, SequenceType.NODE_SEQUENCE);
     }
@@ -213,6 +223,7 @@ public class RangeKey implements MapItem {
      *
      * @return a description of the function for use in error messages
      */
+    @Override
     public String getDescription() {
         return "range key";
     }
@@ -227,6 +238,7 @@ public class RangeKey implements MapItem {
      * @param flags    options for how the comparison is performed
      * @return true if the two function items are deep-equal
      */
+    @Override
     public boolean deepEquals(Function other, XPathContext context, AtomicComparer comparer, int flags)  {
         if (other instanceof RangeKey) {
             RangeKey rk = (RangeKey) other;
@@ -239,12 +251,14 @@ public class RangeKey implements MapItem {
     /**
      * Output information about this function item to the diagnostic explain() output
      */
+    @Override
     public void export(ExpressionPresenter out) throws XPathException {
         out.startElement("range-key-map");
         out.emitAttribute("size", size() + "");
         out.endElement();
     }
 
+    @Override
     public boolean isTrustedResultType() {
         return false;
     }
@@ -268,6 +282,7 @@ public class RangeKey implements MapItem {
          *
          * @return the next Item. If there are no more nodes, return null.
          */
+        @Override
         public StringValue next() {
             if (pos <= 0) {
                 if (pos < 0) {

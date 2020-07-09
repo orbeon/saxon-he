@@ -32,6 +32,7 @@ public final class DOMNodeList implements org.w3c.dom.NodeList {
      * return the number of nodes in the list (DOM method)
      */
 
+    @Override
     public int getLength() {
         return sequence.size();
     }
@@ -43,6 +44,7 @@ public final class DOMNodeList implements org.w3c.dom.NodeList {
      */
 
     /*@Nullable*/
+    @Override
     public Node item(int index) {
         if (index < 0 || index >= sequence.size()) {
             return null;

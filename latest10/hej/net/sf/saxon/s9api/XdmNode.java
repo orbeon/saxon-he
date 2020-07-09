@@ -531,6 +531,7 @@ public class XdmNode extends XdmItem {
      * @return a Stream over the items in this value
      * @since 9.9
      */
+    @Override
     public XdmStream<XdmNode> stream() {
         return new XdmStream<>(Stream.of(this));
     }

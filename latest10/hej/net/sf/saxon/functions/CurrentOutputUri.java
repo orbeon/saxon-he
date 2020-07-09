@@ -68,6 +68,7 @@ public class CurrentOutputUri extends SystemFunction implements Callable {
      * @throws net.sf.saxon.trans.XPathException
      *          if a dynamic error occurs during the evaluation of the expression
      */
+    @Override
     public ZeroOrOne<AnyURIValue> call(XPathContext context, Sequence[] arguments) throws XPathException {
         return new ZeroOrOne<>(evaluateItem(context));
     }

@@ -34,6 +34,7 @@ public final class AxisAtomizingIterator implements SequenceIterator {
         this.base = base;
     }
 
+    @Override
     public AtomicValue next() throws XPathException {
         while (true) {
             if (results != null) {
@@ -62,6 +63,7 @@ public final class AxisAtomizingIterator implements SequenceIterator {
         }
     }
 
+    @Override
     public void close() {
         base.close();
     }

@@ -30,6 +30,7 @@ public class ResolveQName extends SystemFunction {
      * @throws net.sf.saxon.trans.XPathException
      *          if a dynamic error occurs during the evaluation of the expression
      */
+    @Override
     public ZeroOrOne call(XPathContext context, Sequence[] arguments) throws XPathException {
         AtomicValue lex = (AtomicValue) arguments[0].head();
         return new ZeroOrOne(

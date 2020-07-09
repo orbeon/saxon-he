@@ -77,6 +77,7 @@ public abstract class AttributeCreator extends SimpleNodeConstructor implements 
      */
 
     /*@Nullable*/
+    @Override
     public SimpleType getSchemaType() {
         return schemaType;
     }
@@ -97,6 +98,7 @@ public abstract class AttributeCreator extends SimpleNodeConstructor implements 
      * @return the validation action, for example strict or lax
      */
 
+    @Override
     public int getValidationAction() {
         return validationAction;
     }
@@ -166,6 +168,7 @@ public abstract class AttributeCreator extends SimpleNodeConstructor implements 
      */
 
     /*@NotNull*/
+    @Override
     public ItemType getItemType() {
         return NodeKindTest.ATTRIBUTE;
     }
@@ -179,6 +182,7 @@ public abstract class AttributeCreator extends SimpleNodeConstructor implements 
      * @throws XPathException if a dynamic error occurs
      */
 
+    @Override
     public void processValue(CharSequence value, Outputter output, XPathContext context) throws XPathException {
         NodeName attName = evaluateNodeName(context);
         int opt = getOptions();

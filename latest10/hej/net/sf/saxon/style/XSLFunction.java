@@ -59,6 +59,7 @@ public class XSLFunction extends StyleElement implements StylesheetComponent {
      * Get the corresponding Procedure object that results from the compilation of this
      * StylesheetProcedure
      */
+    @Override
     public UserFunction getActor() {
         return compiledFunction;
     }
@@ -75,6 +76,7 @@ public class XSLFunction extends StyleElement implements StylesheetComponent {
         return true;
     }
 
+    @Override
     public void prepareAttributes() {
 
         if (doneAttributes) {
@@ -264,6 +266,7 @@ public class XSLFunction extends StyleElement implements StylesheetComponent {
      */
 
     /*@NotNull*/
+    @Override
     public StructuredQName getObjectName() {
         StructuredQName qn = super.getObjectName();
         if (qn == null) {
@@ -283,10 +286,12 @@ public class XSLFunction extends StyleElement implements StylesheetComponent {
      * @return true: yes, it may contain a general template-body
      */
 
+    @Override
     public boolean mayContainSequenceConstructor() {
         return true;
     }
 
+    @Override
     protected boolean mayContainParam() {
         return true;
     }
@@ -295,10 +300,12 @@ public class XSLFunction extends StyleElement implements StylesheetComponent {
      * Specify that xsl:param is a permitted child
      */
 
+    @Override
     protected boolean isPermittedChild(StyleElement child) {
         return child instanceof XSLLocalParam;
     }
 
+    @Override
     public Visibility getVisibility() {
         if (visibility == null) {
             String vAtt = getAttributeValue("", "visibility");
@@ -307,10 +314,12 @@ public class XSLFunction extends StyleElement implements StylesheetComponent {
         return visibility;
     }
 
+    @Override
     public SymbolicName.F getSymbolicName() {
         return new SymbolicName.F(getObjectName(), getNumberOfArguments());
     }
 
+    @Override
     public void checkCompatibility(Component component) {
         if (compiledFunction == null) {
             getCompiledFunction();
@@ -358,12 +367,14 @@ public class XSLFunction extends StyleElement implements StylesheetComponent {
         return overrideExtensionFunction;
     }
 
+    @Override
     public void index(ComponentDeclaration decl, PrincipalStylesheetModule top) {
         //getSkeletonCompiledFunction();
         getCompiledFunction();
         top.indexFunction(decl);
     }
 
+    @Override
     public void validate(ComponentDeclaration decl) throws XPathException {
 
         stackFrameMap = getConfiguration().makeSlotManager();
@@ -388,6 +399,7 @@ public class XSLFunction extends StyleElement implements StylesheetComponent {
      * @throws XPathException if compilation fails
      */
 
+    @Override
     public void compileDeclaration(Compilation compilation, ComponentDeclaration decl) throws XPathException {
         Expression exp = compileSequenceConstructor(compilation, decl, false);
         if (exp == null) {
@@ -418,6 +430,7 @@ public class XSLFunction extends StyleElement implements StylesheetComponent {
         }
     }
 
+    @Override
     public void optimize(ComponentDeclaration declaration) throws XPathException {
         Expression exp = compiledFunction.getBody();
         ExpressionTool.resetPropertiesWithinSubtree(exp);
@@ -475,6 +488,7 @@ public class XSLFunction extends StyleElement implements StylesheetComponent {
      * @param opt the optimizer
      * @throws net.sf.saxon.trans.XPathException if bytecode generation fails
      */
+    @Override
     public void generateByteCode(Optimizer opt) throws XPathException {
         // Generate byte code if appropriate
 
@@ -503,6 +517,7 @@ public class XSLFunction extends StyleElement implements StylesheetComponent {
      * @return the associated SlotManager object
      */
 
+    @Override
     public SlotManager getSlotManager() {
         return stackFrameMap;
     }

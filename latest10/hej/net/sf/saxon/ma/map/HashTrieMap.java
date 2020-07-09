@@ -149,6 +149,7 @@ public class HashTrieMap implements MapItem {
      * Get the size of the map
      */
 
+    @Override
     public int size() {
         if (entries >= 0) {
             return entries;
@@ -166,6 +167,7 @@ public class HashTrieMap implements MapItem {
      *
      * @return true if and only if the size of the map is zero
      */
+    @Override
     public boolean isEmpty() {
         return entries == 0 || !imap.iterator().hasNext();
     }
@@ -287,6 +289,7 @@ public class HashTrieMap implements MapItem {
      * @return the most specific type to which all the keys belong. If the map is
      *         empty, return UType.VOID (the type with no instances)
      */
+    @Override
     public UType getKeyUType() {
         return keyUType;
     }
@@ -301,6 +304,7 @@ public class HashTrieMap implements MapItem {
      * @return the new map containing the additional entry
      */
 
+    @Override
     public HashTrieMap addEntry(AtomicValue key, GroundedValue value) {
         boolean empty = isEmpty();
         ImmutableMap<AtomicMatchKey, KeyValuePair> imap2 = imap.put(makeKey(key), new KeyValuePair(key, value));
@@ -349,6 +353,7 @@ public class HashTrieMap implements MapItem {
      *         unchanged if the specified key was not present
      */
 
+    @Override
     public HashTrieMap remove(AtomicValue key) {
 //        if (Instrumentation.ACTIVE) {
 //            Instrumentation.count("remove");
@@ -373,6 +378,7 @@ public class HashTrieMap implements MapItem {
      * @return the value associated with the given key, or null if the key is not present in the map
      */
 
+    @Override
     public GroundedValue get(AtomicValue key)  {
         KeyValuePair o = imap.get(makeKey(key));
         return o==null ? null : o.value;
@@ -394,11 +400,13 @@ public class HashTrieMap implements MapItem {
      * @return an iterator over the keys, in undefined order
      */
 
+    @Override
     public AtomicIterator<? extends AtomicValue> keys() {
         return new AtomicIterator<AtomicValue>() {
 
             Iterator<Tuple2<AtomicMatchKey, KeyValuePair>> base = imap.iterator();
 
+            @Override
             public AtomicValue next() {
                 if (base.hasNext()) {
                     return base.next()._2.key;
@@ -415,6 +423,7 @@ public class HashTrieMap implements MapItem {
      *
      * @return an iterator over the key-value pairs
      */
+    @Override
     public Iterable<KeyValuePair> keyValuePairs() {
 //        if (Instrumentation.ACTIVE) {
 //            Instrumentation.count("keyValuePairs");
@@ -422,14 +431,17 @@ public class HashTrieMap implements MapItem {
         return () -> new Iterator<KeyValuePair>() {
             Iterator<Tuple2<AtomicMatchKey, KeyValuePair>> base = imap.iterator();
 
+            @Override
             public boolean hasNext() {
                 return base.hasNext();
             }
 
+            @Override
             public KeyValuePair next() {
                 return base.next()._2;
             }
 
+            @Override
             public void remove() {
                 base.remove();
             }

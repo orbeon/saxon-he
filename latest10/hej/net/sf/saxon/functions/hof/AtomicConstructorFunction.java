@@ -50,6 +50,7 @@ public class AtomicConstructorFunction extends AbstractFunction {
      *
      * @return the function item's type
      */
+    @Override
     public FunctionItemType getFunctionItemType() {
         return new SpecificFunctionType(
                 new SequenceType[]{SequenceType.OPTIONAL_ATOMIC},
@@ -61,6 +62,7 @@ public class AtomicConstructorFunction extends AbstractFunction {
      *
      * @return the function name, or null for an anonymous inline function
      */
+    @Override
     public StructuredQName getFunctionName() {
         return targetType.getTypeName();
     }
@@ -72,6 +74,7 @@ public class AtomicConstructorFunction extends AbstractFunction {
      *
      * @return a description of the function for use in error messages
      */
+    @Override
     public String getDescription() {
         return getFunctionName().getDisplayName();
     }
@@ -81,6 +84,7 @@ public class AtomicConstructorFunction extends AbstractFunction {
      *
      * @return the number of arguments in the function signature
      */
+    @Override
     public int getArity() {
         return 1;
     }
@@ -94,6 +98,7 @@ public class AtomicConstructorFunction extends AbstractFunction {
      * @throws net.sf.saxon.trans.XPathException
      *          if a dynamic error occurs within the function
      */
+    @Override
     public ZeroOrOne call(XPathContext context, Sequence[] args) throws XPathException {
         AtomicValue val = (AtomicValue) args[0].head();
         if (val == null) {
@@ -117,6 +122,7 @@ public class AtomicConstructorFunction extends AbstractFunction {
         out.endElement();
     }
 
+    @Override
     public boolean isTrustedResultType() {
         return true;
     }

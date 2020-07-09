@@ -39,6 +39,7 @@ public interface XmlProcessingError extends StaticError {
      * @return true if this is a type error
      */
 
+    @Override
     boolean isTypeError();
 
     /**
@@ -46,6 +47,7 @@ public interface XmlProcessingError extends StaticError {
      * @return QName
      */
 
+    @Override
     QName getErrorCode();
 
     /**
@@ -54,6 +56,7 @@ public interface XmlProcessingError extends StaticError {
      * @return String the error message
      */
 
+    @Override
     String getMessage();
 
     /**
@@ -62,6 +65,7 @@ public interface XmlProcessingError extends StaticError {
      * be a location with little useful information.
      */
 
+    @Override
     Location getLocation();
 
     /**
@@ -73,6 +77,7 @@ public interface XmlProcessingError extends StaticError {
      * @return the URI identifying the location of the stylesheet module or query module
      */
 
+     @Override
      default String getModuleUri() {
          return getLocation().getSystemId();
      }
@@ -86,6 +91,7 @@ public interface XmlProcessingError extends StaticError {
      * ways
      */
 
+    @Override
     boolean isWarning();
 
     /**
@@ -96,6 +102,7 @@ public interface XmlProcessingError extends StaticError {
      * or null if the information is not available
      */
 
+    @Override
     String getPath();
 
     /**

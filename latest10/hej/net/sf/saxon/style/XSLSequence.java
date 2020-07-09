@@ -30,6 +30,7 @@ public class XSLSequence extends StyleElement {
      * @return true - it is an instruction
      */
 
+    @Override
     public boolean isInstruction() {
         return true;
     }
@@ -40,6 +41,7 @@ public class XSLSequence extends StyleElement {
      * @return in XSLT 2.0, false. In XSLT 3.0 true: yes, it may contain a sequence constructor
      */
 
+    @Override
     public boolean mayContainSequenceConstructor() {
         return true;
     }
@@ -49,6 +51,7 @@ public class XSLSequence extends StyleElement {
      * instruction
      */
 
+    @Override
     public boolean mayContainFallback() {
         return true;
     }
@@ -62,6 +65,7 @@ public class XSLSequence extends StyleElement {
     }
 
 
+    @Override
     public void prepareAttributes() {
 
         String selectAtt = null;
@@ -80,6 +84,7 @@ public class XSLSequence extends StyleElement {
 
     }
 
+    @Override
     public void validate(ComponentDeclaration decl) throws XPathException {
         for (NodeInfo child : children()) {
             if (!(child instanceof XSLFallback)) {
@@ -93,6 +98,7 @@ public class XSLSequence extends StyleElement {
     }
 
     /*@Nullable*/
+    @Override
     public Expression compile(Compilation exec, ComponentDeclaration decl) throws XPathException {
         if (select == null) {
             select = compileSequenceConstructor(exec, decl, false);

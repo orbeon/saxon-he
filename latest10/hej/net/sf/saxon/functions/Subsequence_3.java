@@ -31,6 +31,7 @@ public class Subsequence_3 extends SystemFunction implements Callable {
      * @param arguments the actual arguments to the function call
      */
 
+    @Override
     public int getSpecialProperties(Expression[] arguments) {
         return arguments[0].getSpecialProperties();
     }
@@ -53,6 +54,7 @@ public class Subsequence_3 extends SystemFunction implements Callable {
      * @return the result of the function call
      * @throws XPathException if evaluation of the arguments fails
      */
+    @Override
     public Sequence call(XPathContext context, Sequence[] arguments) throws XPathException {
         return SequenceTool.toLazySequence(subSequence(
                 arguments[0].iterate(),
@@ -136,6 +138,7 @@ public class Subsequence_3 extends SystemFunction implements Callable {
 
     }
 
+    @Override
     public String getStreamerName() {
         return "Subsequence";
     }

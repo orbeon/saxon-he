@@ -28,6 +28,7 @@ final class PrecedingEnumeration extends TreeEnumeration {
      * Special code to skip the ancestors of the start node
      */
 
+    @Override
     protected boolean conforms(/*@Nullable*/ NodeImpl node) {
         // ASSERT: we'll never test the root node, because it's always
         // an ancestor, so nextAncestor will never be null.
@@ -40,6 +41,7 @@ final class PrecedingEnumeration extends TreeEnumeration {
         return super.conforms(node);
     }
 
+    @Override
     protected void step() {
         next = next.getPreviousInDocument();
     }

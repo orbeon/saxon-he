@@ -36,6 +36,7 @@ public class GlobalVariableReference extends VariableReference implements Compon
     }
 
     /*@NotNull*/
+    @Override
     public Expression copy(RebindingMap rebindings) {
         if (binding == null) {
             //System.err.println("copy unbound variable " + this);
@@ -54,6 +55,7 @@ public class GlobalVariableReference extends VariableReference implements Compon
      * @param slot the offset in the binding vector of the containing package where the target component
      *             can be found.
      */
+    @Override
     public void setBindingSlot(int slot) {
         if (bindingSlot != -1) {
             throw new AssertionError("Duplicate binding slot assignment");
@@ -68,6 +70,7 @@ public class GlobalVariableReference extends VariableReference implements Compon
      * @return the offset in the binding vector of the containing package where the target component
      * can be found.
      */
+    @Override
     public int getBindingSlot() {
         return bindingSlot;
     }
@@ -77,6 +80,7 @@ public class GlobalVariableReference extends VariableReference implements Compon
      *
      * @return the symbolic name of the target component
      */
+    @Override
     public SymbolicName getSymbolicName() {
         return new SymbolicName(StandardNames.XSL_VARIABLE, getVariableName());
     }
@@ -89,6 +93,7 @@ public class GlobalVariableReference extends VariableReference implements Compon
         return ((GlobalVariable) binding).getDeclaringComponent();
     }
 
+    @Override
     public Component getFixedTarget() {
         Component c = getTarget();
         Visibility v = c.getVisibility();
@@ -136,6 +141,7 @@ public class GlobalVariableReference extends VariableReference implements Compon
      * is written to the supplied output destination.
      */
 
+    @Override
     public void export(ExpressionPresenter out) throws XPathException {
         out.startElement("gVarRef", this);
         out.emitAttribute("name", getVariableName());

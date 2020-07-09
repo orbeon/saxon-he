@@ -37,6 +37,7 @@ public class UnionCastableFunction extends UnionConstructorFunction {
      *
      * @return the function item's type
      */
+    @Override
     public FunctionItemType getFunctionItemType() {
         // The function accepts any sequence as input, so it can do its own atomization
         return new SpecificFunctionType(
@@ -48,6 +49,7 @@ public class UnionCastableFunction extends UnionConstructorFunction {
      *
      * @return the function name, or null for an anonymous function
      */
+    @Override
     public StructuredQName getFunctionName() {
         return null;
     }
@@ -120,6 +122,7 @@ public class UnionCastableFunction extends UnionConstructorFunction {
      * @return the result of invoking the function
      * @throws net.sf.saxon.trans.XPathException if a dynamic error occurs within the function
      */
+    @Override
     public BooleanValue call(XPathContext context, Sequence[] args) throws XPathException {
         boolean value = effectiveBooleanValue(args[0].iterate(), context);
         return BooleanValue.get(value);

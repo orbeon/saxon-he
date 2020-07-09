@@ -37,6 +37,7 @@ public class EmptyIntIterator implements IntIterator {
      * @return true if there are more integers to come
      */
 
+    @Override
     public boolean hasNext() {
         return false;
     }
@@ -48,6 +49,7 @@ public class EmptyIntIterator implements IntIterator {
      * @return the next integer in the sequence
      */
 
+    @Override
     public int next() {
         return 0;
     }

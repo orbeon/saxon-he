@@ -41,6 +41,7 @@ public class XSLMerge extends StyleElement {
      * @return true - it is an instruction
      */
 
+    @Override
     public boolean isInstruction() {
         return true;
     }
@@ -51,6 +52,7 @@ public class XSLMerge extends StyleElement {
      * @return true: yes, it may contain a sequence constructor
      */
 
+    @Override
     public boolean mayContainSequenceConstructor() {
         return false;
     }
@@ -63,6 +65,7 @@ public class XSLMerge extends StyleElement {
         }
     }
 
+    @Override
     public void validate(ComponentDeclaration decl) throws XPathException {
         int childMask = 0;
         Set<String> mergeSourceNames = new HashSet<>();

@@ -47,6 +47,7 @@ final class DescendantIterator implements AxisIterator {
     }
 
     /*@Nullable*/
+    @Override
     public NodeInfo next() {
         do {
             if (pending != null) {

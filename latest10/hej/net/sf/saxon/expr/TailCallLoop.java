@@ -53,6 +53,7 @@ public final class TailCallLoop extends UnaryExpression {
      */
 
     /*@NotNull*/
+    @Override
     public Expression typeCheck(ExpressionVisitor visitor, ContextItemStaticInfo contextInfo) throws XPathException {
         getOperand().typeCheck(visitor, contextInfo);
         return this;
@@ -64,6 +65,7 @@ public final class TailCallLoop extends UnaryExpression {
      * process() methods natively.
      */
 
+    @Override
     public int getImplementationMethod() {
         return getBaseExpression().getImplementationMethod();
     }
@@ -81,6 +83,7 @@ public final class TailCallLoop extends UnaryExpression {
      */
 
     /*@NotNull*/
+    @Override
     public Expression copy(RebindingMap rebindings) {
        throw new UnsupportedOperationException("TailCallLoop.copy()");
         /*TailCallLoop e2 = new TailCallLoop(containingFunction);
@@ -93,6 +96,7 @@ public final class TailCallLoop extends UnaryExpression {
      */
 
     /*@NotNull*/
+    @Override
     public SequenceIterator iterate(XPathContext context) throws XPathException {
         final XPathContextMajor cm = (XPathContextMajor) context;
         while (true) {
@@ -115,6 +119,7 @@ public final class TailCallLoop extends UnaryExpression {
      * Evaluate as an Item.
      */
 
+    @Override
     public Item evaluateItem(XPathContext context) throws XPathException {
         final XPathContextMajor cm = (XPathContextMajor) context;
         while (true) {
@@ -152,6 +157,7 @@ public final class TailCallLoop extends UnaryExpression {
      * @param context The dynamic context, giving access to the current node,
      */
 
+    @Override
     public void process(Outputter output, XPathContext context) throws XPathException {
         final XPathContextMajor cm = (XPathContextMajor) context;
         Expression operand = getBaseExpression();
@@ -198,6 +204,7 @@ public final class TailCallLoop extends UnaryExpression {
     /**
      * Determine the data type of the items returned by the expression
      */
+    @Override
     public ItemType getItemType() {
         return getBaseExpression().getItemType();
     }
@@ -208,6 +215,7 @@ public final class TailCallLoop extends UnaryExpression {
      * @return the expression name, as a string
      */
 
+    @Override
     public String getExpressionName() {
         return "tailCallLoop";
     }

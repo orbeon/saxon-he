@@ -44,10 +44,12 @@ public abstract class SequenceReceiver implements Receiver {
     }
 
     /*@NotNull*/
+    @Override
     public final PipelineConfiguration getPipelineConfiguration() {
         return pipelineConfiguration;
     }
 
+    @Override
     public void setPipelineConfiguration(/*@NotNull*/ PipelineConfiguration pipelineConfiguration) {
         this.pipelineConfiguration = pipelineConfiguration;
     }
@@ -68,6 +70,7 @@ public abstract class SequenceReceiver implements Receiver {
      * @param systemId the URI used to identify the tree being passed across this interface
      */
 
+    @Override
     public void setSystemId(/*@Nullable*/ String systemId) {
         this.systemId = systemId;
     }
@@ -79,6 +82,7 @@ public abstract class SequenceReceiver implements Receiver {
      */
 
     /*@Nullable*/
+    @Override
     public String getSystemId() {
         return systemId;
     }
@@ -91,6 +95,7 @@ public abstract class SequenceReceiver implements Receiver {
      * @param publicID The public identifier of the unparsed entity
      */
 
+    @Override
     public void setUnparsedEntity(String name, String systemID, String publicID) throws XPathException {
     }
 
@@ -98,6 +103,7 @@ public abstract class SequenceReceiver implements Receiver {
      * Start the output process
      */
 
+    @Override
     public void open() throws XPathException {
         previousAtomic = false;
     }
@@ -110,6 +116,7 @@ public abstract class SequenceReceiver implements Receiver {
 *                       need to be copied. Values are {@link ReceiverOption#ALL_NAMESPACES}; the default (0) means
      */
 
+    @Override
     public abstract void append(Item item, Location locationId, int properties) throws XPathException;
 
     /**
@@ -121,6 +128,7 @@ public abstract class SequenceReceiver implements Receiver {
      * @throws XPathException if the operation fails
      */
 
+    @Override
     public void append(Item item) throws XPathException {
         append(item, Loc.NONE, ReceiverOption.ALL_NAMESPACES);
     }
@@ -226,6 +234,7 @@ public abstract class SequenceReceiver implements Receiver {
      *      it may reject function items.
      */
 
+    @Override
     public boolean handlesAppend() {
         return true;
     }

@@ -33,10 +33,12 @@ public class EmptyCharacterClass implements CharacterClass {
     private EmptyCharacterClass() {
     }
 
+    @Override
     public boolean test(int value) {
         return false;
     }
 
+    @Override
     public boolean isDisjoint(CharacterClass other) {
         // the empty set is disjoint with every other set including itself, in the sense that the
         // intersection of the two sets is empty

@@ -77,6 +77,7 @@ public class StandardInvalidityHandler extends StandardDiagnostics implements In
      * @param systemId optional; may be used to represent the destination of any report produced
      * @throws XPathException if initialization of the invalidity handler fails for any reason
      */
+    @Override
     public void startReporting(String systemId) throws XPathException {
         // no action
     }
@@ -86,6 +87,7 @@ public class StandardInvalidityHandler extends StandardDiagnostics implements In
      * @param failure Information about the nature of the invalidity
      */
 
+    @Override
     public void reportInvalidity(Invalidity failure) throws XPathException{
         Logger localLogger = logger;
         if (localLogger == null) {
@@ -188,6 +190,7 @@ public class StandardInvalidityHandler extends StandardDiagnostics implements In
      * @return a value (or null). This will be the value returned as the value of
      * the variable $err:value during try/catch processing
      */
+    @Override
     public Sequence endReporting() throws XPathException {
         return EmptySequence.getInstance();
     }

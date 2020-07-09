@@ -113,6 +113,7 @@ public class ApplyTemplates extends Instruction implements ITemplateCall, Compon
      */
 
 
+    @Override
     public WithParam[] getActualParams() {
         return actualParams;
     }
@@ -124,6 +125,7 @@ public class ApplyTemplates extends Instruction implements ITemplateCall, Compon
      */
 
 
+    @Override
     public WithParam[] getTunnelParams() {
         return tunnelParams;
     }
@@ -152,6 +154,7 @@ public class ApplyTemplates extends Instruction implements ITemplateCall, Compon
      * Get the name of this instruction for diagnostic and tracing purposes
      */
 
+    @Override
     public int getInstructionNameCode() {
         return StandardNames.XSL_APPLY_TEMPLATES;
     }
@@ -161,6 +164,7 @@ public class ApplyTemplates extends Instruction implements ITemplateCall, Compon
      * This method indicates which of these methods is prefered. For instructions this is the process() method.
      */
 
+    @Override
     public int getImplementationMethod() {
         return super.getImplementationMethod() | Expression.WATCH_METHOD;
     }
@@ -177,6 +181,7 @@ public class ApplyTemplates extends Instruction implements ITemplateCall, Compon
      */
 
     /*@NotNull*/
+    @Override
     public Expression simplify() throws XPathException {
         WithParam.simplify(getActualParams());
         WithParam.simplify(getTunnelParams());
@@ -185,6 +190,7 @@ public class ApplyTemplates extends Instruction implements ITemplateCall, Compon
     }
 
     /*@NotNull*/
+    @Override
     public Expression typeCheck(ExpressionVisitor visitor, ContextItemStaticInfo contextInfo) throws XPathException {
         WithParam.typeCheck(actualParams, visitor, contextInfo);
         WithParam.typeCheck(tunnelParams, visitor, contextInfo);
@@ -215,6 +221,7 @@ public class ApplyTemplates extends Instruction implements ITemplateCall, Compon
     }
 
     /*@NotNull*/
+    @Override
     public Expression optimize(ExpressionVisitor visitor, ContextItemStaticInfo contextInfo) throws XPathException {
         WithParam.optimize(visitor, actualParams, contextInfo);
         WithParam.optimize(visitor, tunnelParams, contextInfo);
@@ -227,6 +234,7 @@ public class ApplyTemplates extends Instruction implements ITemplateCall, Compon
         return this;
     }
 
+    @Override
     public int getIntrinsicDependencies() {
         // If the instruction uses mode="#current", this represents a dependency on the context
         // which means the instruction cannot be loop-lifted or moved to a global variable.
@@ -248,6 +256,7 @@ public class ApplyTemplates extends Instruction implements ITemplateCall, Compon
      */
 
     /*@NotNull*/
+    @Override
     public Expression copy(RebindingMap rebindings) {
         ApplyTemplates a2 = new ApplyTemplates(
                 getSelect().copy(rebindings), useCurrentMode, useTailRecursion, implicitSelect, inStreamableConstruct, mode, ruleManager);
@@ -267,14 +276,17 @@ public class ApplyTemplates extends Instruction implements ITemplateCall, Compon
      * doing any further analysis to find out more precisely).
      */
 
+    @Override
     public final boolean mayCreateNewNodes() {
         return true;
     }
 
+    @Override
     public void process(Outputter output, XPathContext context) throws XPathException {
         apply(output, context, false);
     }
 
+    @Override
     public TailCall processLeavingTail(Outputter output, XPathContext context) throws XPathException {
         return apply(output, context, useTailRecursion);
     }
@@ -436,6 +448,7 @@ public class ApplyTemplates extends Instruction implements ITemplateCall, Compon
      *
      * @return the bound component if the binding has been fixed
      */
+    @Override
     public Component getFixedTarget() {
         return mode.getDeclaringComponent();
     }
@@ -445,6 +458,7 @@ public class ApplyTemplates extends Instruction implements ITemplateCall, Compon
      *
      * @return the symbolic name of the mode used by this instructon, or null if the instruction uses mode="#current"
      */
+    @Override
     public SymbolicName getSymbolicName() {
         return mode==null ? null : mode.getSymbolicName();
     }
@@ -469,6 +483,7 @@ public class ApplyTemplates extends Instruction implements ITemplateCall, Compon
      *         expressions, it is the same as the input pathMapNode.
      */
 
+    @Override
     public PathMap.PathMapNodeSet addToPathMap(PathMap pathMap, PathMap.PathMapNodeSet pathMapNodeSet) {
         // This logic is assuming the mode is streamable (so that called templates can't return streamed nodes)
         PathMap.PathMapNodeSet result = super.addToPathMap(pathMap, pathMapNodeSet);
@@ -484,6 +499,7 @@ public class ApplyTemplates extends Instruction implements ITemplateCall, Compon
      * @param out output destination
      */
 
+    @Override
     public void export(ExpressionPresenter out) throws XPathException {
 
         out.startElement("applyT", this);
@@ -547,6 +563,7 @@ public class ApplyTemplates extends Instruction implements ITemplateCall, Compon
      *             can be found.
      */
 
+    @Override
     public void setBindingSlot(int slot) {
         bindingSlot = slot;
     }
@@ -560,6 +577,7 @@ public class ApplyTemplates extends Instruction implements ITemplateCall, Compon
      * can be found.
      */
 
+    @Override
     public int getBindingSlot() {
         return bindingSlot;
     }
@@ -601,6 +619,7 @@ public class ApplyTemplates extends Instruction implements ITemplateCall, Compon
             this.locationId = locationId;
         }
 
+        @Override
         public TailCall processLeavingTail() throws XPathException {
             evaluationContext.trackFocus(selectedItems.iterate());
             evaluationContext.setCurrentMode(targetMode);

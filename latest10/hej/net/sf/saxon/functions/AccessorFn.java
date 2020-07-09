@@ -41,6 +41,7 @@ public abstract class AccessorFn extends ScalarSystemFunction {
      *         unknown or not applicable.
      */
     //@Override
+    @Override
     public IntegerValue[] getIntegerBounds() {
         switch (getComponentId()) {
             case YEAR:
@@ -73,10 +74,12 @@ public abstract class AccessorFn extends ScalarSystemFunction {
      * Evaluate the expression
      */
 
+    @Override
     public AtomicValue evaluate(Item item, XPathContext context) throws XPathException {
         return ((AtomicValue)item).getComponent(getComponentId());
     }
 
+    @Override
     public String getCompilerName() {
         return "AccessorFnCompiler";
     }

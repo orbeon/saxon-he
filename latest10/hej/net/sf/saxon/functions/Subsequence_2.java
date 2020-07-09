@@ -30,6 +30,7 @@ public class Subsequence_2 extends SystemFunction implements Callable {
      * @param arguments the actual arguments to the function call
      */
 
+    @Override
     public int getSpecialProperties(Expression[] arguments) {
         return arguments[0].getSpecialProperties();
     }
@@ -39,6 +40,7 @@ public class Subsequence_2 extends SystemFunction implements Callable {
      * Determine the cardinality of the function.
      */
 
+    @Override
     public int getCardinality(Expression[] arguments) {
         return arguments[0].getCardinality() | StaticProperty.ALLOWS_ZERO_OR_ONE;
     }
@@ -62,6 +64,7 @@ public class Subsequence_2 extends SystemFunction implements Callable {
      * @throws XPathException if a dynamic error occurs
      */
 
+    @Override
     public Sequence call(XPathContext context, Sequence[] arguments) throws XPathException {
         return SequenceTool.toLazySequence(
             subSequence(arguments[0].iterate(), (NumericValue) arguments[1].head()));
@@ -131,6 +134,7 @@ public class Subsequence_2 extends SystemFunction implements Callable {
         return super.makeFunctionCall(arguments);
     }
 
+    @Override
     public String getStreamerName() {
         return "Subsequence";
     }

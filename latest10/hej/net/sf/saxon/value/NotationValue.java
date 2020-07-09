@@ -104,6 +104,7 @@ public final class NotationValue extends QualifiedNameValue {
      */
 
     /*@NotNull*/
+    @Override
     public AtomicValue copyAsSubType(AtomicType typeLabel) {
         NotationValue v = new NotationValue(getPrefix(), getNamespaceURI(), getLocalName());
         v.typeLabel = typeLabel;
@@ -118,6 +119,7 @@ public final class NotationValue extends QualifiedNameValue {
      */
 
     /*@NotNull*/
+    @Override
     public BuiltInAtomicType getPrimitiveType() {
         return BuiltInAtomicType.NOTATION;
     }
@@ -135,6 +137,7 @@ public final class NotationValue extends QualifiedNameValue {
     }
 
     /*@NotNull*/
+    @Override
     public Comparable getSchemaComparable() {
         return new NotationComparable();
     }
@@ -146,6 +149,7 @@ public final class NotationValue extends QualifiedNameValue {
             return NotationValue.this;
         }
 
+        @Override
         public int compareTo(/*@NotNull*/ Object o) {
             return equals(o) ? 0 : SequenceTool.INDETERMINATE_ORDERING;
         }

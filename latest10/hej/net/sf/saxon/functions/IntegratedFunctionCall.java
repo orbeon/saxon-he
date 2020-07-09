@@ -92,6 +92,7 @@ public class IntegratedFunctionCall extends FunctionCall implements Callable {
      *          with the declared argument types of the function.
      */
 
+    @Override
     public void checkArguments(/*@NotNull*/ ExpressionVisitor visitor) throws XPathException {
         ExtensionFunctionDefinition definition = function.getDefinition();
         checkArgumentCount(definition.getMinimumNumberOfArguments(), definition.getMaximumNumberOfArguments());
@@ -128,6 +129,7 @@ public class IntegratedFunctionCall extends FunctionCall implements Callable {
      */
 
     /*@NotNull*/
+    @Override
     public Expression typeCheck(ExpressionVisitor visitor, ContextItemStaticInfo contextInfo) throws XPathException {
         Expression exp = super.typeCheck(visitor, contextInfo);
         if (exp instanceof IntegratedFunctionCall) {
@@ -150,6 +152,7 @@ public class IntegratedFunctionCall extends FunctionCall implements Callable {
      * @return for this class: always null
      */
 
+    @Override
     public Expression preEvaluate(ExpressionVisitor visitor) {
         return this;
     }
@@ -167,6 +170,7 @@ public class IntegratedFunctionCall extends FunctionCall implements Callable {
      */
 
     /*@NotNull*/
+    @Override
     public ItemType getItemType() {
         return resultType.getPrimaryType();
     }
@@ -179,6 +183,7 @@ public class IntegratedFunctionCall extends FunctionCall implements Callable {
      *         {@link net.sf.saxon.expr.StaticProperty#ALLOWS_ZERO_OR_MORE}
      */
 
+    @Override
     protected int computeCardinality() {
         return resultType.getCardinality();
     }
@@ -193,6 +198,7 @@ public class IntegratedFunctionCall extends FunctionCall implements Callable {
      *         dependencies. The flags are documented in class net.sf.saxon.value.StaticProperty
      */
 
+    @Override
     public int getIntrinsicDependencies() {
         ExtensionFunctionDefinition definition = function.getDefinition();
         return definition.dependsOnFocus() ? StaticProperty.DEPENDS_ON_FOCUS : 0;
@@ -207,6 +213,7 @@ public class IntegratedFunctionCall extends FunctionCall implements Callable {
      * @return the special properties, as a bit-significant integer
      */
 
+    @Override
     protected int computeSpecialProperties() {
         ExtensionFunctionDefinition definition = function.getDefinition();
         return definition.hasSideEffects() ? StaticProperty.HAS_SIDE_EFFECTS : StaticProperty.NO_NODES_NEWLY_CREATED;
@@ -220,6 +227,7 @@ public class IntegratedFunctionCall extends FunctionCall implements Callable {
      */
 
     /*@NotNull*/
+    @Override
     public Expression copy(RebindingMap rebindings) {
         ExtensionFunctionCall newCall = function.getDefinition().makeCallExpression();
         newCall.setDefinition(function.getDefinition());
@@ -241,6 +249,7 @@ public class IntegratedFunctionCall extends FunctionCall implements Callable {
      * is written to the supplied output destination.
      */
 
+    @Override
     public void export(ExpressionPresenter out) throws XPathException {
         out.startElement("ifCall", this);
         out.emitAttribute("name", getFunctionName());
@@ -268,6 +277,7 @@ public class IntegratedFunctionCall extends FunctionCall implements Callable {
      */
 
     /*@NotNull*/
+    @Override
     public SequenceIterator iterate(final XPathContext context) throws XPathException {
         ExtensionFunctionDefinition definition = function.getDefinition();
         Sequence[] argValues = new Sequence[getArity()];
@@ -324,6 +334,7 @@ public class IntegratedFunctionCall extends FunctionCall implements Callable {
      *          expression
      */
 
+    @Override
     public boolean effectiveBooleanValue(XPathContext context) throws XPathException {
         Sequence[] argValues = new Sequence[getArity()];
         for (int i = 0; i < argValues.length; i++) {
@@ -337,6 +348,7 @@ public class IntegratedFunctionCall extends FunctionCall implements Callable {
         }
     }
 
+    @Override
     public Sequence call(XPathContext context, Sequence[] arguments) throws XPathException {
         return function.call(context, arguments);
     }
@@ -362,6 +374,7 @@ public class IntegratedFunctionCall extends FunctionCall implements Callable {
          * @return either the output item, or null.
          */
 
+        @Override
         public Item mapItem(Item item) throws XPathException {
             if (item instanceof NodeInfo && !config.isCompatible(((NodeInfo) item).getConfiguration())) {
                 throw new XPathException(

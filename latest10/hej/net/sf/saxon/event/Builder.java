@@ -83,6 +83,7 @@ public abstract class Builder implements Receiver {
         namePool = config.getNamePool();
     }
 
+    @Override
     public void setPipelineConfiguration(/*@NotNull*/ PipelineConfiguration pipe) {
         this.pipe = pipe;
         config = pipe.getConfiguration();
@@ -91,6 +92,7 @@ public abstract class Builder implements Receiver {
     }
 
     /*@NotNull*/
+    @Override
     public PipelineConfiguration getPipelineConfiguration() {
         return pipe;
     }
@@ -161,6 +163,7 @@ public abstract class Builder implements Receiver {
      * @param systemId the SystemId, that is, the document-uri.
      */
 
+    @Override
     public void setSystemId(/*@Nullable*/ String systemId) {
         this.systemId = systemId;
     }
@@ -175,6 +178,7 @@ public abstract class Builder implements Receiver {
      */
 
     /*@Nullable*/
+    @Override
     public String getSystemId() {
         return systemId;
     }
@@ -237,6 +241,7 @@ public abstract class Builder implements Receiver {
         return timing;
     }
 
+    @Override
     public void open() {
         if (timing && !open) {
             getConfiguration().getStandardErrorOutput().println(
@@ -246,6 +251,7 @@ public abstract class Builder implements Receiver {
         open = true;
     }
 
+    @Override
     public void close() throws XPathException {
         if (timing && open) {
             long endTime = System.nanoTime();
@@ -267,6 +273,7 @@ public abstract class Builder implements Receiver {
      *         may supply untyped nodes instead of supplying the type annotation
      */
 
+    @Override
     public boolean usesTypeAnnotations() {
         return true;
     }

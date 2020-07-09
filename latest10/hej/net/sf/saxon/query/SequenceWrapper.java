@@ -80,6 +80,7 @@ public class SequenceWrapper extends SequenceReceiver {
         out.endElement();
     }
 
+    @Override
     public void open() throws XPathException {
 
         //@SuppressWarnings({"FieldCanBeLocal"})
@@ -115,6 +116,7 @@ public class SequenceWrapper extends SequenceReceiver {
      * @param properties properties of the document node
      */
 
+    @Override
     public void startDocument(int properties) throws XPathException {
         startWrapper(resultDocument);
         depth++;
@@ -124,6 +126,7 @@ public class SequenceWrapper extends SequenceReceiver {
      * Notify the end of a document node
      */
 
+    @Override
     public void endDocument() throws XPathException {
         endWrapper();
         depth--;
@@ -133,6 +136,7 @@ public class SequenceWrapper extends SequenceReceiver {
      * Notify the start of an element
      */
 
+    @Override
     public void startElement(NodeName elemName, SchemaType type,
                              AttributeMap attributes, NamespaceMap namespaces,
                              Location location, int properties) throws XPathException {
@@ -152,6 +156,7 @@ public class SequenceWrapper extends SequenceReceiver {
      * End of element
      */
 
+    @Override
     public void endElement() throws XPathException {
         out.endElement();
         if (--depth == 0) {
@@ -164,6 +169,7 @@ public class SequenceWrapper extends SequenceReceiver {
      * Character data
      */
 
+    @Override
     public void characters(CharSequence chars, Location locationId, int properties) throws XPathException {
         if (depth == 0) {
             startWrapper(resultText);
@@ -178,6 +184,7 @@ public class SequenceWrapper extends SequenceReceiver {
      * Output a comment
      */
 
+    @Override
     public void comment(CharSequence chars, Location locationId, int properties) throws XPathException {
         if (depth == 0) {
             startWrapper(resultComment);
@@ -192,6 +199,7 @@ public class SequenceWrapper extends SequenceReceiver {
      * Processing Instruction
      */
 
+    @Override
     public void processingInstruction(String target, CharSequence data, Location locationId, int properties) throws XPathException {
         if (depth == 0) {
             startWrapper(resultPI);
@@ -206,6 +214,7 @@ public class SequenceWrapper extends SequenceReceiver {
      * Output an item (atomic value or node) to the sequence
      */
 
+    @Override
     public void append(/*@NotNull*/ Item item, Location locationId, int copyNamespaces) throws XPathException {
         if (item instanceof AtomicValue) {
             final NamePool pool = getNamePool();
@@ -271,6 +280,7 @@ public class SequenceWrapper extends SequenceReceiver {
      * Notify the end of the event stream
      */
 
+    @Override
     public void close() throws XPathException {
         endWrapper();   // close the result:sequence element
         out.endDocument();
@@ -285,6 +295,7 @@ public class SequenceWrapper extends SequenceReceiver {
      *         may supply untyped nodes instead of supplying the type annotation
      */
 
+    @Override
     public boolean usesTypeAnnotations() {
         return true;
     }

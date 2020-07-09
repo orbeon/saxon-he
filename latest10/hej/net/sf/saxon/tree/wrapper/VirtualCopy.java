@@ -116,6 +116,7 @@ public class VirtualCopy implements NodeInfo {
      * @return the TreeInfo
      * @since 9.7
      */
+    @Override
     public VirtualTreeInfo getTreeInfo() {
         return tree;
     }
@@ -200,6 +201,7 @@ public class VirtualCopy implements NodeInfo {
      * @see net.sf.saxon.type.Type
      */
 
+    @Override
     public int getNodeKind() {
         return original.getNodeKind();
     }
@@ -239,6 +241,7 @@ public class VirtualCopy implements NodeInfo {
      *         the system ID cannot.
      */
 
+    @Override
     public String getSystemId() {
         return systemIdSupplier.get();
     }
@@ -251,6 +254,7 @@ public class VirtualCopy implements NodeInfo {
      */
 
     /*@Nullable*/
+    @Override
     public String getBaseURI() {
         return Navigator.getBaseURI(this);
     }
@@ -262,6 +266,7 @@ public class VirtualCopy implements NodeInfo {
      *         -1 if not available
      */
 
+    @Override
     public int getLineNumber() {
         return original.getLineNumber();
     }
@@ -272,6 +277,7 @@ public class VirtualCopy implements NodeInfo {
      * @return the column number of the node in its original source document; or -1 if not available
      */
 
+    @Override
     public int getColumnNumber() {
         return original.getColumnNumber();
     }
@@ -281,6 +287,7 @@ public class VirtualCopy implements NodeInfo {
      * should not be saved for later use. The result of this operation holds the same location information,
      * but in an immutable form.
      */
+    @Override
     public Location saveLocation() {
         return this;
     }
@@ -297,6 +304,7 @@ public class VirtualCopy implements NodeInfo {
      *         produce the same result for generateId())
      */
 
+    @Override
     public int compareOrder(/*@NotNull*/ NodeInfo other) {
         if (other instanceof VirtualCopy) {
             int c = root.compareOrder(((VirtualCopy) other).root);
@@ -318,6 +326,7 @@ public class VirtualCopy implements NodeInfo {
      * @return the string value of the node
      */
 
+    @Override
     public String getStringValue() {
         return getStringValueCS().toString();
     }
@@ -327,6 +336,7 @@ public class VirtualCopy implements NodeInfo {
      * the version of the method that returns a String.
      */
 
+    @Override
     public CharSequence getStringValueCS() {
         return original.getStringValueCS();
     }
@@ -338,6 +348,7 @@ public class VirtualCopy implements NodeInfo {
      *         interface, this returns the full name in the case of a non-namespaced name.
      */
 
+    @Override
     public String getLocalPart() {
         return original.getLocalPart();
     }
@@ -351,6 +362,7 @@ public class VirtualCopy implements NodeInfo {
      *         string.
      */
 
+    @Override
     public String getURI() {
         return original.getURI();
     }
@@ -362,6 +374,7 @@ public class VirtualCopy implements NodeInfo {
      * @return The prefix of the name of the node.
      */
 
+    @Override
     public String getPrefix() {
         return original.getPrefix();
     }
@@ -374,6 +387,7 @@ public class VirtualCopy implements NodeInfo {
      *         an empty string.
      */
 
+    @Override
     public String getDisplayName() {
         return original.getDisplayName();
     }
@@ -382,6 +396,7 @@ public class VirtualCopy implements NodeInfo {
      * Get the configuration
      */
 
+    @Override
     public Configuration getConfiguration() {
         return original.getConfiguration();
     }
@@ -399,6 +414,7 @@ public class VirtualCopy implements NodeInfo {
      *         xs:anyType if it has.
      * @since 9.4
      */
+    @Override
     public SchemaType getSchemaType() {
         return original.getSchemaType();
     }
@@ -410,6 +426,7 @@ public class VirtualCopy implements NodeInfo {
      */
 
     /*@Nullable*/
+    @Override
     public NodeInfo getParent() {
         if (original.equals(root)) {
             return null;
@@ -439,6 +456,7 @@ public class VirtualCopy implements NodeInfo {
      * @see net.sf.saxon.om.AxisInfo
      */
 
+    @Override
     public AxisIterator iterateAxis(int axisNumber, Predicate<? super NodeInfo> nodeTest) {
         VirtualCopy newParent = null;
         switch (axisNumber) {
@@ -489,6 +507,7 @@ public class VirtualCopy implements NodeInfo {
      * @return the attribute value if it exists, or null if it does not exist. Always returns null
      *         if this node is not an element.
      */
+    @Override
     public String getAttributeValue(/*@NotNull*/ String uri, /*@NotNull*/ String local) {
         return original.getAttributeValue(uri, local);
     }
@@ -501,6 +520,7 @@ public class VirtualCopy implements NodeInfo {
      */
 
     /*@Nullable*/
+    @Override
     public NodeInfo getRoot() {
         NodeInfo n = this;
         while (true) {
@@ -520,6 +540,7 @@ public class VirtualCopy implements NodeInfo {
      * @return True if the node has one or more children
      */
 
+    @Override
     public boolean hasChildNodes() {
         return original.hasChildNodes();
     }
@@ -533,6 +554,7 @@ public class VirtualCopy implements NodeInfo {
      *               documents.
      */
 
+    @Override
     public void generateId(/*@NotNull*/ FastStringBuffer buffer) {
         buffer.append("d");
         buffer.append(Long.toString(getTreeInfo().getDocumentNumber()));
@@ -546,6 +568,7 @@ public class VirtualCopy implements NodeInfo {
      * @param locationId  Identifies the location of the instruction
      */
 
+    @Override
     public void copy(Receiver out, int copyOptions, Location locationId) throws XPathException {
         original.copy(out, copyOptions, locationId);
     }
@@ -565,6 +588,7 @@ public class VirtualCopy implements NodeInfo {
      *         namespaces of the original.</p>
      */
 
+    @Override
     @SuppressWarnings("deprecation")
     public NamespaceBinding[] getDeclaredNamespaces(NamespaceBinding[] buffer) {
         if (getNodeKind() == Type.ELEMENT) {
@@ -613,6 +637,7 @@ public class VirtualCopy implements NodeInfo {
      *
      * @param systemId The system identifier as a URL string.
      */
+    @Override
     public void setSystemId(String systemId) {
         this.systemIdSupplier = () -> systemId;
     }
@@ -626,6 +651,7 @@ public class VirtualCopy implements NodeInfo {
      * @since 8.5
      */
 
+    @Override
     public AtomicSequence atomize() throws XPathException {
         return original.atomize();
     }
@@ -636,6 +662,7 @@ public class VirtualCopy implements NodeInfo {
      * @return true if the node is an ID
      */
 
+    @Override
     public boolean isId() {
         return original.isId();
     }
@@ -646,6 +673,7 @@ public class VirtualCopy implements NodeInfo {
      * @return true if the node is an IDREF or IDREFS element or attribute
      */
 
+    @Override
     public boolean isIdref() {
         return original.isIdref();
     }
@@ -656,6 +684,7 @@ public class VirtualCopy implements NodeInfo {
      * @return true if the node has the is-nilled property
      */
 
+    @Override
     public boolean isNilled() {
         return original.isNilled();
     }
@@ -671,6 +700,7 @@ public class VirtualCopy implements NodeInfo {
      * @see #getSystemId
      */
     /*@Nullable*/
+    @Override
     public String getPublicId() {
         return original != null ? original.getPublicId() : null;
     }
@@ -727,6 +757,7 @@ public class VirtualCopy implements NodeInfo {
          */
 
         /*@Nullable*/
+        @Override
         public NodeInfo next() {
             NodeInfo next = base.next();
             if (next != null) {
@@ -744,6 +775,7 @@ public class VirtualCopy implements NodeInfo {
             return next;
         }
 
+        @Override
         public void close() {
             base.close();
         }

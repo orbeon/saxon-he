@@ -117,6 +117,7 @@ public class CurrentMergeGroup extends SystemFunction {
      * @throws net.sf.saxon.trans.XPathException
      *          if a dynamic error occurs during the evaluation of the expression
      */
+    @Override
     public Sequence call(XPathContext context, Sequence[] arguments /*@NotNull*/) throws XPathException {
         String source = null;
         if (arguments.length > 0) {
@@ -150,6 +151,7 @@ public class CurrentMergeGroup extends SystemFunction {
 
     }
 
+    @Override
     public String getStreamerName() {
         return "CurrentMergeGroup";
     }

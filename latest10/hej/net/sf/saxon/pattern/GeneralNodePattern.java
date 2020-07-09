@@ -69,6 +69,7 @@ public final class GeneralNodePattern extends Pattern {
      * node without changing the position in the streamed input file
      */
 
+    @Override
     public boolean isMotionless() {
         return false;
     }
@@ -81,6 +82,7 @@ public final class GeneralNodePattern extends Pattern {
      * @return the optimised Pattern
      */
 
+    @Override
     public Pattern typeCheck(ExpressionVisitor visitor, ContextItemStaticInfo contextItemType) throws XPathException {
         ContextItemStaticInfo cit = visitor.getConfiguration().getDefaultContextItemStaticInfo();
         equivalentExpr = equivalentExpr.typeCheck(visitor, cit);
@@ -127,6 +129,7 @@ public final class GeneralNodePattern extends Pattern {
      * @return the dependencies, as a bit-significant mask
      */
 
+    @Override
     public int getDependencies() {
         return equivalentExpr.getDependencies() &
                 (StaticProperty.DEPENDS_ON_LOCAL_VARIABLES | StaticProperty.DEPENDS_ON_USER_FUNCTIONS);
@@ -153,6 +156,7 @@ public final class GeneralNodePattern extends Pattern {
      * @param nextFree    the next slot that is free to be allocated @return the next slot that is free to be allocated
      */
 
+    @Override
     public int allocateSlots(SlotManager slotManager, int nextFree) {
         return ExpressionTool.allocateSlots(equivalentExpr, nextFree, slotManager);
     }
@@ -164,6 +168,7 @@ public final class GeneralNodePattern extends Pattern {
      * @return true if the pattern matches, else false
      */
 
+    @Override
     public boolean matches(Item item, XPathContext context) throws XPathException {
         TypeHierarchy th = context.getConfiguration().getTypeHierarchy();
         if (!itemType.matches(item, th)) {
@@ -192,6 +197,7 @@ public final class GeneralNodePattern extends Pattern {
      * @return true if the node matches the Pattern, false otherwise
      */
 
+    @Override
     public boolean matchesBeneathAnchor(NodeInfo node, NodeInfo anchor, XPathContext context) throws XPathException {
         if (!itemType.test(node)) {
             return false;
@@ -254,6 +260,7 @@ public final class GeneralNodePattern extends Pattern {
      * @return the fingerprint of nodes matched by this pattern.
      */
 
+    @Override
     public int getFingerprint() {
         return itemType.getFingerprint();
     }
@@ -262,6 +269,7 @@ public final class GeneralNodePattern extends Pattern {
      * Get a NodeTest that all the nodes matching this pattern must satisfy
      */
 
+    @Override
     public ItemType getItemType() {
         return itemType;
     }
@@ -288,6 +296,7 @@ public final class GeneralNodePattern extends Pattern {
      * hashcode supporting equals()
      */
 
+    @Override
     public int computeHashCode() {
         return 83641 ^ equivalentExpr.hashCode();
     }
@@ -300,12 +309,14 @@ public final class GeneralNodePattern extends Pattern {
      */
 
     /*@NotNull*/
+    @Override
     public Pattern copy(RebindingMap rebindings) {
         GeneralNodePattern n = new GeneralNodePattern(equivalentExpr.copy(rebindings), itemType);
         ExpressionTool.copyLocationInfo(this, n);
         return n;
     }
 
+    @Override
     public void export(ExpressionPresenter presenter) throws XPathException {
         presenter.startElement("p.genNode");
         presenter.emitAttribute("test", AlphaCode.fromItemType(itemType));

@@ -53,6 +53,7 @@ public class TreeReceiver extends SequenceReceiver {
         setPipelineConfiguration(nextInChain.getPipelineConfiguration());
     }
 
+    @Override
     public void setSystemId(String systemId) {
         if (systemId != null && !systemId.equals(this.systemId)) {
             this.systemId = systemId;
@@ -62,6 +63,7 @@ public class TreeReceiver extends SequenceReceiver {
         }
     }
 
+    @Override
     public void setPipelineConfiguration(/*@NotNull*/ PipelineConfiguration pipe) {
         if (pipelineConfiguration != pipe) {
             pipelineConfiguration = pipe;
@@ -85,6 +87,7 @@ public class TreeReceiver extends SequenceReceiver {
      * Start of event sequence
      */
 
+    @Override
     public void open() throws XPathException {
         if (nextReceiver == null) {
             throw new IllegalStateException("TreeReceiver.open(): no underlying receiver provided");
@@ -97,6 +100,7 @@ public class TreeReceiver extends SequenceReceiver {
      * End of event sequence
      */
 
+    @Override
     public void close() throws XPathException {
         if (nextReceiver != null) {
             nextReceiver.close();
@@ -108,6 +112,7 @@ public class TreeReceiver extends SequenceReceiver {
      * Start of a document node.
      */
 
+    @Override
     public void startDocument(int properties) throws XPathException {
         if (level == 0) {
             nextReceiver.startDocument(properties);
@@ -122,6 +127,7 @@ public class TreeReceiver extends SequenceReceiver {
      * Notify the end of a document node
      */
 
+    @Override
     public void endDocument() throws XPathException {
         level--;
         if (level == 0) {
@@ -133,6 +139,7 @@ public class TreeReceiver extends SequenceReceiver {
      * Notify the start of an element
      */
 
+    @Override
     public void startElement(NodeName elemName, SchemaType type,
                              AttributeMap attributes, NamespaceMap namespaces,
                              Location location, int properties)
@@ -151,6 +158,7 @@ public class TreeReceiver extends SequenceReceiver {
      * End of element
      */
 
+    @Override
     public void endElement() throws XPathException {
         nextReceiver.endElement();
         previousAtomic = false;
@@ -161,6 +169,7 @@ public class TreeReceiver extends SequenceReceiver {
      * Character data
      */
 
+    @Override
     public void characters(CharSequence chars, Location locationId, int properties) throws XPathException {
         if (chars.length() > 0) {
             nextReceiver.characters(chars, locationId, properties);
@@ -173,6 +182,7 @@ public class TreeReceiver extends SequenceReceiver {
      * Processing Instruction
      */
 
+    @Override
     public void processingInstruction(String target, CharSequence data, Location locationId, int properties) throws XPathException {
         nextReceiver.processingInstruction(target, data, locationId, properties);
         previousAtomic = false;
@@ -182,6 +192,7 @@ public class TreeReceiver extends SequenceReceiver {
      * Output a comment
      */
 
+    @Override
     public void comment(CharSequence chars, Location locationId, int properties) throws XPathException {
         nextReceiver.comment(chars, locationId, properties);
         previousAtomic = false;
@@ -192,6 +203,7 @@ public class TreeReceiver extends SequenceReceiver {
      * Set the URI for an unparsed entity in the document.
      */
 
+    @Override
     public void setUnparsedEntity(String name, String uri, String publicId) throws XPathException {
         nextReceiver.setUnparsedEntity(name, uri, publicId);
     }
@@ -200,6 +212,7 @@ public class TreeReceiver extends SequenceReceiver {
      * Append an arbitrary item (node or atomic value) to the output
      */
 
+    @Override
     public void append(/*@Nullable*/ Item item, Location locationId, int copyNamespaces) throws XPathException {
         decompose(item, locationId, copyNamespaces);
     }
@@ -212,6 +225,7 @@ public class TreeReceiver extends SequenceReceiver {
      *         may supply untyped nodes instead of supplying the type annotation
      */
 
+    @Override
     public boolean usesTypeAnnotations() {
         return nextReceiver.usesTypeAnnotations();
     }

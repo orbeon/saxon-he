@@ -52,6 +52,7 @@ public class StandardOutputResolver implements OutputURIResolver {
      * or it must return a fresh instance of itself for each call.</p>
      */
 
+    @Override
     public StandardOutputResolver newInstance() {
         return this;
     }
@@ -66,6 +67,7 @@ public class StandardOutputResolver implements OutputURIResolver {
      * @return a Result object representing the destination for the XML document
      */
 
+    @Override
     public Result resolve(String href, /*@Nullable*/ String base) throws XPathException {
 
         // System.err.println("Output URI Resolver (href='" + href + "', base='" + base + "')");
@@ -146,6 +148,7 @@ public class StandardOutputResolver implements OutputURIResolver {
      * that has been completed.
      */
 
+    @Override
     public void close(Result result) throws XPathException {
         if (result instanceof StreamResult) {
             OutputStream stream = ((StreamResult) result).getOutputStream();

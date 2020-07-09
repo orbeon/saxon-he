@@ -42,6 +42,7 @@ public class SQLExecute extends ExtensionInstruction {
     Expression statement;
 
 
+    @Override
     public void prepareAttributes() {
         // Attributes for SQL-statement
         AttributeMap atts = attributes();
@@ -61,12 +62,14 @@ public class SQLExecute extends ExtensionInstruction {
 
     }
 
+    @Override
     public void validate(ComponentDeclaration decl) throws XPathException {
         super.validate(decl);
         statement = typeCheck("statement", statement);
         connection = typeCheck("connection", connection);
     }
 
+    @Override
     public Expression compile(Compilation exec, ComponentDeclaration decl) throws XPathException {
         return new SqlStatementInstruction(connection, statement);
     }
@@ -87,15 +90,18 @@ public class SQLExecute extends ExtensionInstruction {
          * This method indicates which of the three is provided.
          */
 
+        @Override
         public int getImplementationMethod() {
             return Expression.PROCESS_METHOD;
         }
 
         /*@NotNull*/
+        @Override
         public String getExpressionType() {
             return "sql:statement";
         }
 
+        @Override
         public Sequence call(XPathContext context, Sequence[] arguments) throws XPathException {
             Connection connection = SQLFunctionSet.expectConnection(arguments[CONNECTION], context);
             String statementText = arguments[STATEMENT].head().getStringValue();

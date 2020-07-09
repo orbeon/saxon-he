@@ -33,6 +33,7 @@ public class EmptyAttributeMap implements AttributeMap {
      * @return The number of attributes in the map.
      */
 
+    @Override
     public int size() {
         return 0;
     }
@@ -47,6 +48,7 @@ public class EmptyAttributeMap implements AttributeMap {
         return null;
     }
 
+    @Override
     public AttributeInfo getByFingerprint(int fingerprint, NamePool namePool) {
         return null;
     }
@@ -67,6 +69,7 @@ public class EmptyAttributeMap implements AttributeMap {
         return Collections.emptyIterator();
     }
 
+    @Override
     public AttributeMap apply(java.util.function.Function<AttributeInfo, AttributeInfo> mapper) {
         return this;
     }

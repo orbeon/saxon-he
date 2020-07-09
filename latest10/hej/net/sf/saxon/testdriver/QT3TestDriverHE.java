@@ -51,6 +51,7 @@ public class QT3TestDriverHE extends TestDriver {
 
     //private FotsResultsDocument resultsDoc;
 
+    @Override
     public String catalogNamespace() {
         return CNS;
     }
@@ -60,6 +61,7 @@ public class QT3TestDriverHE extends TestDriver {
         super.go(args);
     }
 
+    @Override
     public void processSpec(String specStr) {
 
         switch (specStr) {
@@ -134,6 +136,7 @@ public class QT3TestDriverHE extends TestDriver {
      * @return true if the environment satisfies the dependency, else false
      */
 
+    @Override
     public boolean ensureDependencySatisfied(XdmNode dependency, Environment env) {
         String type = dependency.attribute("type");
         String value = dependency.attribute("value");
@@ -188,6 +191,7 @@ public class QT3TestDriverHE extends TestDriver {
                 }
             }
             env.resetActions.add(new Environment.ResetAction() {
+                @Override
                 public void reset(Environment env) {
                     env.processor.setConfigurationProperty(Feature.XSD_VERSION, old);
                 }
@@ -205,6 +209,7 @@ public class QT3TestDriverHE extends TestDriver {
             if (!value.equals(old)){
                 env.processor.setConfigurationProperty(Feature.DEFAULT_LANGUAGE, value);
                 env.resetActions.add(new Environment.ResetAction() {
+                    @Override
                     public void reset(Environment env) {
                         env.processor.setConfigurationProperty(Feature.DEFAULT_LANGUAGE, old);
                     }
@@ -297,6 +302,7 @@ public class QT3TestDriverHE extends TestDriver {
      * @throws SaxonApiException
      */
 
+    @Override
     @SuppressWarnings({"ThrowableResultOfMethodCallIgnored"})
     protected void runTestCase(XdmNode testCase, XPathCompiler xpc) throws SaxonApiException {
         boolean run = true;
@@ -367,6 +373,7 @@ public class QT3TestDriverHE extends TestDriver {
             }
             if (langVersion.equals("3.0") || langVersion.equals("3.1")) {
                 EnvironmentVariableResolver resolver = new EnvironmentVariableResolver() {
+                    @Override
                     public Set<String> getAvailableEnvironmentVariables() {
                         Set<String> strings = new HashSet<String>();
                         strings.add("QTTEST");
@@ -375,6 +382,7 @@ public class QT3TestDriverHE extends TestDriver {
                         return strings;
                     }
 
+                    @Override
                     public String getEnvironmentVariable(String name) {
                         if (name.equals("QTTEST")) {
                             return "42";
@@ -757,10 +765,12 @@ public class QT3TestDriverHE extends TestDriver {
     }
 
 
+    @Override
     protected void writeResultFilePreamble(Processor processor, XdmNode catalog) throws IOException, SaxonApiException, XMLStreamException {
         resultsDoc.writeResultFilePreamble(processor, catalog);
     }
 
+    @Override
     protected void writeResultFilePostamble() throws XMLStreamException {
         resultsDoc.writeResultFilePostamble();
         if (requestedTestSet != null) {
@@ -777,11 +787,13 @@ public class QT3TestDriverHE extends TestDriver {
     }
 
 
+    @Override
     protected void startTestSetElement(XdmNode testSetNode) {
         resultsDoc.startTestSetElement(testSetNode);
     }
 
 
+    @Override
     protected void writeTestSetEndElement() {
         resultsDoc.endElement();
     }
@@ -804,6 +816,7 @@ public class QT3TestDriverHE extends TestDriver {
             this.testCase = testCase;
         }
 
+        @Override
         public StreamSource[] resolve(String moduleURI, String baseURI, String[] locations) throws XPathException {
             try {
                 XdmValue files = testCase.select(child("module").where(attributeEq("uri", moduleURI))
@@ -830,6 +843,7 @@ public class QT3TestDriverHE extends TestDriver {
             this.env = env;
         }
 
+        @Override
         public Source resolve(String href, String base) throws TransformerException {
             try {
                 String abs = ResolveURI.makeAbsolute(href, base).toString();

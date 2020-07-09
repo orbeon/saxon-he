@@ -49,6 +49,7 @@ public final class SingletonAtomizer extends UnaryExpression {
         this.roleDiagnostic = role;
     }
 
+    @Override
     protected OperandRole getOperandRole() {
         return OperandRole.SINGLE_ATOMIC;
     }
@@ -68,6 +69,7 @@ public final class SingletonAtomizer extends UnaryExpression {
      */
 
     /*@NotNull*/
+    @Override
     public Expression simplify() throws XPathException {
         Expression operand = getBaseExpression().simplify();
         if (operand instanceof Literal && ((Literal) operand).getValue() instanceof AtomicValue) {
@@ -82,6 +84,7 @@ public final class SingletonAtomizer extends UnaryExpression {
      */
 
     /*@NotNull*/
+    @Override
     public Expression typeCheck(ExpressionVisitor visitor, ContextItemStaticInfo contextInfo) throws XPathException {
         getOperand().typeCheck(visitor, contextInfo);
         Expression operand = getBaseExpression();
@@ -116,6 +119,7 @@ public final class SingletonAtomizer extends UnaryExpression {
 
 
     /*@NotNull*/
+    @Override
     public Expression optimize(ExpressionVisitor visitor, ContextItemStaticInfo contextInfo) throws XPathException {
         Expression exp = super.optimize(visitor, contextInfo);
         if (exp == this) {
@@ -137,6 +141,7 @@ public final class SingletonAtomizer extends UnaryExpression {
      * @return {@link StaticProperty#NO_NODES_NEWLY_CREATED}.
      */
 
+    @Override
     public int computeSpecialProperties() {
         int p = super.computeSpecialProperties();
         return p | StaticProperty.NO_NODES_NEWLY_CREATED;
@@ -150,6 +155,7 @@ public final class SingletonAtomizer extends UnaryExpression {
      */
 
     /*@NotNull*/
+    @Override
     public Expression copy(RebindingMap rebindings) {
         Expression e2 = new SingletonAtomizer(getBaseExpression().copy(rebindings), roleDiagnostic, allowEmpty);
         ExpressionTool.copyLocationInfo(this, e2);
@@ -193,6 +199,7 @@ public final class SingletonAtomizer extends UnaryExpression {
 
 
     /*@Nullable*/
+    @Override
     public PathMap.PathMapNodeSet addToPathMap(PathMap pathMap, PathMap.PathMapNodeSet pathMapNodeSet) {
         PathMap.PathMapNodeSet result = getBaseExpression().addToPathMap(pathMap, pathMapNodeSet);
         if (result != null) {
@@ -211,6 +218,7 @@ public final class SingletonAtomizer extends UnaryExpression {
      * it throws a type error if the underlying sequence is multi-valued.
      */
 
+    @Override
     public AtomicValue evaluateItem(XPathContext context) throws XPathException {
         int found = 0;
         AtomicValue result = null;
@@ -259,6 +267,7 @@ public final class SingletonAtomizer extends UnaryExpression {
      */
 
     /*@NotNull*/
+    @Override
     public ItemType getItemType() {
         boolean isSchemaAware = true;
         try {
@@ -303,6 +312,7 @@ public final class SingletonAtomizer extends UnaryExpression {
      * Determine the static cardinality of the expression
      */
 
+    @Override
     public int computeCardinality() {
         if (allowEmpty) {
             return StaticProperty.ALLOWS_ZERO_OR_ONE;
@@ -317,6 +327,7 @@ public final class SingletonAtomizer extends UnaryExpression {
      * @return the expression name, as a string
      */
 
+    @Override
     public String getExpressionName() {
         return "atomizeSingleton";
     }

@@ -50,6 +50,7 @@ public class CollationKeyFn extends CollatingFunctionFixed {
      * @throws net.sf.saxon.trans.XPathException
      *          if a dynamic error occurs during the evaluation of the expression
      */
+    @Override
     public Base64BinaryValue call(XPathContext context, Sequence[] arguments) throws XPathException {
         String in = arguments[0].head().getStringValue();
         StringCollator collator = getStringCollator();

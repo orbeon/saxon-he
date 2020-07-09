@@ -101,11 +101,13 @@ public class ErrorExpression extends Expression {
      */
 
     /*@NotNull*/
+    @Override
     public Expression typeCheck(ExpressionVisitor visitor, ContextItemStaticInfo contextInfo) throws XPathException {
         return this;
     }
 
     /*@NotNull*/
+    @Override
     public Expression optimize(ExpressionVisitor visitor, ContextItemStaticInfo contextItemType) throws XPathException {
         return this;
     }
@@ -128,6 +130,7 @@ public class ErrorExpression extends Expression {
      * was first parsed.
      */
 
+    @Override
     public Item evaluateItem(XPathContext context) throws XPathException {
         if (exception != null) {
             // copy the exception for thread-safety, because we want to add context information
@@ -156,6 +159,7 @@ public class ErrorExpression extends Expression {
      */
 
     /*@NotNull*/
+    @Override
     public SequenceIterator iterate(XPathContext context) throws XPathException {
         evaluateItem(context);
         return null;    // to fool the compiler
@@ -168,6 +172,7 @@ public class ErrorExpression extends Expression {
      */
 
     /*@NotNull*/
+    @Override
     public ItemType getItemType() {
         return AnyItemType.getInstance();
     }
@@ -176,6 +181,7 @@ public class ErrorExpression extends Expression {
      * Determine the static cardinality
      */
 
+    @Override
     public int computeCardinality() {
         return StaticProperty.ALLOWS_ZERO_OR_MORE;
         // we return a liberal value, so that we never get a type error reported
@@ -227,6 +233,7 @@ public class ErrorExpression extends Expression {
      * is written to the supplied output destination.
      */
 
+    @Override
     public void export(ExpressionPresenter destination) throws XPathException {
         destination.startElement("error", this);
         destination.emitAttribute("message", exception.getMessage());

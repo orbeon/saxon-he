@@ -39,6 +39,7 @@ public class XSLForEach extends StyleElement {
      * @return true - it is an instruction
      */
 
+    @Override
     public boolean isInstruction() {
         return true;
     }
@@ -47,10 +48,12 @@ public class XSLForEach extends StyleElement {
      * Specify that xsl:sort is a permitted child
      */
 
+    @Override
     protected boolean isPermittedChild(StyleElement child) {
         return (child instanceof XSLSort);
     }
 
+    @Override
     protected boolean markTailCalls() {
         assert select != null;
         if (Cardinality.allowsMany(select.getCardinality())) {
@@ -68,10 +71,12 @@ public class XSLForEach extends StyleElement {
      * @return true: yes, it may contain a template-body
      */
 
+    @Override
     public boolean mayContainSequenceConstructor() {
         return true;
     }
 
+    @Override
     public void prepareAttributes() {
 
         String selectAtt = null;
@@ -110,6 +115,7 @@ public class XSLForEach extends StyleElement {
 
     }
 
+    @Override
     public void validate(ComponentDeclaration decl) throws XPathException {
         checkSortComesFirst(false);
         select = typeCheck("select", select);
@@ -124,6 +130,7 @@ public class XSLForEach extends StyleElement {
         }
     }
 
+    @Override
     public Expression compile(Compilation compilation, ComponentDeclaration decl) throws XPathException {
         SortKeyDefinitionList sortKeys = makeSortKeys(compilation, decl);
         Expression sortedSequence = select;

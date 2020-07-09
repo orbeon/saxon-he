@@ -44,6 +44,7 @@ public final class ContextMappingIterator implements SequenceIterator {
         this.context = context;
     }
 
+    @Override
     public Item next() throws XPathException {
         Item nextItem;
         while (true) {
@@ -74,6 +75,7 @@ public final class ContextMappingIterator implements SequenceIterator {
         return nextItem;
     }
 
+    @Override
     public void close() {
         base.close();
         if (stepIterator != null) {

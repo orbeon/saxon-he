@@ -59,6 +59,7 @@ public interface Receiver extends Result {
      *                 if there is no xml:base attribute)
      */
 
+    @Override
     void setSystemId(String systemId);
 
     /**

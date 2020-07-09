@@ -28,6 +28,7 @@ public class XSLOnCompletion extends StyleElement {
      * @return true - it is an instruction
      */
 
+    @Override
     public boolean isInstruction() {
         return true;
     }
@@ -38,10 +39,12 @@ public class XSLOnCompletion extends StyleElement {
      * @return true: yes, it may contain a sequence constructor
      */
 
+    @Override
     public boolean mayContainSequenceConstructor() {
         return true;
     }
 
+    @Override
     public void prepareAttributes() {
         String selectAtt = null;
 
@@ -59,6 +62,7 @@ public class XSLOnCompletion extends StyleElement {
 
     }
 
+    @Override
     public void validate(ComponentDeclaration decl) throws XPathException {
         StyleElement parent = (StyleElement) getParent();
         if (!(parent instanceof XSLIterate)) {
@@ -79,6 +83,7 @@ public class XSLOnCompletion extends StyleElement {
         select = typeCheck("select", select);
     }
 
+    @Override
     public Expression compile(Compilation exec, ComponentDeclaration decl) throws XPathException {
         if (select == null) {
             return compileSequenceConstructor(exec, decl, true);

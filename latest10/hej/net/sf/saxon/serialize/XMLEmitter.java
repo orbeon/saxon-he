@@ -132,6 +132,7 @@ public class XMLEmitter extends Emitter {
      * file is deferred until some content is written to it.
      */
 
+    @Override
     public void open() throws XPathException {
     }
 
@@ -141,6 +142,7 @@ public class XMLEmitter extends Emitter {
      * @param properties
      */
 
+    @Override
     public void startDocument(int properties) throws XPathException {
     }
 
@@ -148,6 +150,7 @@ public class XMLEmitter extends Emitter {
      * Notify the end of a document node
      */
 
+    @Override
     public void endDocument() throws XPathException {
         // Following code removed as a result of bug 2323. If a failure occurs during xsl:result-document processing,
         // and the output is being written to a SAXResult, then the ContentHandler.endDocument() method is called in order
@@ -331,6 +334,7 @@ public class XMLEmitter extends Emitter {
      * End of the document.
      */
 
+    @Override
     public void close() throws XPathException {
         // if nothing has been written, we should still create the file and write an XML declaration
         if (!started) {
@@ -350,6 +354,7 @@ public class XMLEmitter extends Emitter {
      * Start of an element. Output the start tag, escaping special characters.
      */
 
+    @Override
     public void startElement(NodeName elemName, SchemaType type,
                              AttributeMap attributes, NamespaceMap namespaces,
                              Location location, int properties) throws XPathException {
@@ -633,6 +638,7 @@ public class XMLEmitter extends Emitter {
      * End of an element.
      */
 
+    @Override
     public void endElement() throws XPathException {
         String displayName = elementStack.pop();
         try {
@@ -653,6 +659,7 @@ public class XMLEmitter extends Emitter {
      * Character data.
      */
 
+    @Override
     public void characters(CharSequence chars, Location locationId, int properties) throws XPathException {
         if (!started) {
             openDocument();
@@ -753,6 +760,7 @@ public class XMLEmitter extends Emitter {
      * Handle a processing instruction.
      */
 
+    @Override
     public void processingInstruction(String target, CharSequence data, Location locationId, int properties)
             throws XPathException {
         if (!started) {
@@ -930,6 +938,7 @@ public class XMLEmitter extends Emitter {
      * Handle a comment.
      */
 
+    @Override
     public void comment(CharSequence chars, Location locationId, int properties) throws XPathException {
         if (!started) {
             openDocument();
@@ -965,6 +974,7 @@ public class XMLEmitter extends Emitter {
      * may supply untyped nodes instead of supplying the type annotation
      */
 
+    @Override
     public boolean usesTypeAnnotations() {
         return false;
     }

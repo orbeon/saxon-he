@@ -22,6 +22,7 @@ public interface SteppingNode<N extends SteppingNode> extends NodeInfo {
      * @return the parent of this node; or null if it is the root of the tree
      */
 
+    @Override
     N getParent();
 
     /**

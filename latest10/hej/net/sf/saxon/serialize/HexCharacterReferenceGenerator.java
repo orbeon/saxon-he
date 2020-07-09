@@ -21,6 +21,7 @@ public class HexCharacterReferenceGenerator implements CharacterReferenceGenerat
     private HexCharacterReferenceGenerator() {
     }
 
+    @Override
     public void outputCharacterReference(int charval, Writer writer) throws java.io.IOException {
         writer.write("&#x");
         writer.write(Integer.toHexString(charval));

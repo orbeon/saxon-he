@@ -58,6 +58,7 @@ public class SortKeyDefinitionList extends PseudoExpression implements Iterable<
      * @param forStreaming
      */
 
+    @Override
     public boolean isLiftable(boolean forStreaming) {
         return false;
     }
@@ -87,6 +88,7 @@ public class SortKeyDefinitionList extends PseudoExpression implements Iterable<
      * @return an iterator over the sort key definitions
      */
 
+    @Override
     public Iterator<SortKeyDefinition> iterator() {
         return Arrays.asList(sortKeyDefinitions).iterator();
     }

@@ -20,10 +20,12 @@ public class IntSingletonIterator implements IntIterator {
         this.value = value;
     }
 
+    @Override
     public boolean hasNext() {
         return !gone;
     }
 
+    @Override
     public int next() {
         gone = true;
         return value;

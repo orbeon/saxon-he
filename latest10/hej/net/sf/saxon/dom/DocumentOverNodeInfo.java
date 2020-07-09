@@ -35,6 +35,7 @@ public class DocumentOverNodeInfo extends NodeOverNodeInfo implements Document {
      *         information.
      */
 
+    @Override
     public DocumentType getDoctype() {
         return null;
     }
@@ -45,6 +46,7 @@ public class DocumentOverNodeInfo extends NodeOverNodeInfo implements Document {
      * DOM method.
      */
 
+    @Override
     public DOMImplementation getImplementation() {
         return new DOMImplementationImpl();
     }
@@ -55,6 +57,7 @@ public class DocumentOverNodeInfo extends NodeOverNodeInfo implements Document {
      * @throws org.w3c.dom.DOMException always, to indicate that update is not supported in this DOM implementation
      */
 
+    @Override
     public Element createElement(String tagName) throws DOMException {
         disallowUpdate();
         return null;
@@ -67,6 +70,7 @@ public class DocumentOverNodeInfo extends NodeOverNodeInfo implements Document {
      *         DOM method: returns null, because the Saxon tree is not updateable.
      */
 
+    @Override
     public DocumentFragment createDocumentFragment() {
         return null;
     }
@@ -79,6 +83,7 @@ public class DocumentOverNodeInfo extends NodeOverNodeInfo implements Document {
      * @return The new <code>Text</code> object.
      */
 
+    @Override
     public Text createTextNode(String data) {
         return null;
     }
@@ -90,6 +95,7 @@ public class DocumentOverNodeInfo extends NodeOverNodeInfo implements Document {
      * @param data The data for the node.
      * @return The new <code>Comment</code> object.
      */
+    @Override
     public Comment createComment(String data) {
         return null;
     }
@@ -104,6 +110,7 @@ public class DocumentOverNodeInfo extends NodeOverNodeInfo implements Document {
      * @throws org.w3c.dom.DOMException always, to indicate that update is not supported in this DOM implementation
      */
 
+    @Override
     public CDATASection createCDATASection(String data) throws org.w3c.dom.DOMException {
         disallowUpdate();
         return null;
@@ -120,6 +127,7 @@ public class DocumentOverNodeInfo extends NodeOverNodeInfo implements Document {
      * @throws org.w3c.dom.DOMException always, to indicate that update is not supported in this DOM implementation
      */
 
+    @Override
     public ProcessingInstruction createProcessingInstruction(String target, String data)
             throws org.w3c.dom.DOMException {
         disallowUpdate();
@@ -138,6 +146,7 @@ public class DocumentOverNodeInfo extends NodeOverNodeInfo implements Document {
      * @throws org.w3c.dom.DOMException always, to indicate that update is not supported in this DOM implementation
      */
 
+    @Override
     public Attr createAttribute(String name) throws org.w3c.dom.DOMException {
         disallowUpdate();
         return null;
@@ -152,6 +161,7 @@ public class DocumentOverNodeInfo extends NodeOverNodeInfo implements Document {
      * @throws org.w3c.dom.DOMException always, to indicate that update is not supported in this DOM implementation
      */
 
+    @Override
     public EntityReference createEntityReference(String name) throws org.w3c.dom.DOMException {
         disallowUpdate();
         return null;
@@ -168,6 +178,7 @@ public class DocumentOverNodeInfo extends NodeOverNodeInfo implements Document {
      *         <code>Elements</code> .
      */
 
+    @Override
     public NodeList getElementsByTagName(String tagname) {
         return getElementsByTagName(node, tagname);
     }
@@ -180,6 +191,7 @@ public class DocumentOverNodeInfo extends NodeOverNodeInfo implements Document {
      *         null.
      */
 
+    @Override
     public Element getDocumentElement() {
         NodeInfo root = node.getRoot();
         if (root == null) {
@@ -216,6 +228,7 @@ public class DocumentOverNodeInfo extends NodeOverNodeInfo implements Document {
      * @since DOM Level 2
      */
 
+    @Override
     public Node importNode(Node importedNode, boolean deep) throws UnsupportedOperationException {
         disallowUpdate();
         return null;
@@ -233,6 +246,7 @@ public class DocumentOverNodeInfo extends NodeOverNodeInfo implements Document {
      * @throws org.w3c.dom.DOMException always, to indicate that update is not supported in this DOM implementation
      */
 
+    @Override
     public Element createElementNS(String namespaceURI, String qualifiedName) throws UnsupportedOperationException {
         disallowUpdate();
         return null;
@@ -250,6 +264,7 @@ public class DocumentOverNodeInfo extends NodeOverNodeInfo implements Document {
      * @throws org.w3c.dom.DOMException always, to indicate that update is not supported in this DOM implementation
      */
 
+    @Override
     public Attr createAttributeNS(String namespaceURI, String qualifiedName) throws UnsupportedOperationException {
         disallowUpdate();
         return null;
@@ -271,6 +286,7 @@ public class DocumentOverNodeInfo extends NodeOverNodeInfo implements Document {
      * @since DOM Level 2
      */
 
+    @Override
     public NodeList getElementsByTagNameNS(String namespaceURI, String localName) {
         return getElementsByTagNameNS(node, namespaceURI, localName);
     }
@@ -309,6 +325,7 @@ public class DocumentOverNodeInfo extends NodeOverNodeInfo implements Document {
      * @since DOM Level 2
      */
 
+    @Override
     public Element getElementById(String elementId) {
         // Defined on Document node; but we support it on any node.
         TreeInfo doc = node.getTreeInfo();
@@ -325,6 +342,7 @@ public class DocumentOverNodeInfo extends NodeOverNodeInfo implements Document {
      *
      * @since DOM Level 3
      */
+    @Override
     public String getInputEncoding() {
         return null;
     }
@@ -338,6 +356,7 @@ public class DocumentOverNodeInfo extends NodeOverNodeInfo implements Document {
      *
      * @since DOM Level 3
      */
+    @Override
     public String getXmlEncoding() {
         return null;
     }
@@ -355,6 +374,7 @@ public class DocumentOverNodeInfo extends NodeOverNodeInfo implements Document {
      *
      * @since DOM Level 3
      */
+    @Override
     public boolean getXmlStandalone() {
         return false;
     }
@@ -372,6 +392,7 @@ public class DocumentOverNodeInfo extends NodeOverNodeInfo implements Document {
      *                                  "XML" feature.
      * @since DOM Level 3
      */
+    @Override
     public void setXmlStandalone(boolean xmlStandalone) throws DOMException {
         disallowUpdate();
     }
@@ -401,6 +422,7 @@ public class DocumentOverNodeInfo extends NodeOverNodeInfo implements Document {
      *
      * @since DOM Level 3
      */
+    @Override
     public String getXmlVersion() {
         return "1.0";
     }
@@ -433,6 +455,7 @@ public class DocumentOverNodeInfo extends NodeOverNodeInfo implements Document {
      *                                  does not support the "XML" feature.
      * @since DOM Level 3
      */
+    @Override
     public void setXmlVersion(String xmlVersion) throws DOMException {
         disallowUpdate();
     }
@@ -448,6 +471,7 @@ public class DocumentOverNodeInfo extends NodeOverNodeInfo implements Document {
      *
      * @since DOM Level 3
      */
+    @Override
     public boolean getStrictErrorChecking() {
         return false;
     }
@@ -463,6 +487,7 @@ public class DocumentOverNodeInfo extends NodeOverNodeInfo implements Document {
      *
      * @since DOM Level 3
      */
+    @Override
     public void setStrictErrorChecking(boolean strictErrorChecking) {
         //no-op
     }
@@ -481,6 +506,7 @@ public class DocumentOverNodeInfo extends NodeOverNodeInfo implements Document {
      *
      * @since DOM Level 3
      */
+    @Override
     public String getDocumentURI() {
         return node.getSystemId();
     }
@@ -500,6 +526,7 @@ public class DocumentOverNodeInfo extends NodeOverNodeInfo implements Document {
      * @since DOM Level 3
      * @throws org.w3c.dom.DOMException always, to indicate that update is not supported in this DOM implementation
      */
+    @Override
     public void setDocumentURI(String documentURI) throws DOMException {
         disallowUpdate();
     }
@@ -574,6 +601,7 @@ public class DocumentOverNodeInfo extends NodeOverNodeInfo implements Document {
      * @since DOM Level 3
      * @throws org.w3c.dom.DOMException always, to indicate that update is not supported in this DOM implementation
      */
+    @Override
     public Node adoptNode(Node source) throws DOMException {
         disallowUpdate();
         return null;
@@ -585,6 +613,7 @@ public class DocumentOverNodeInfo extends NodeOverNodeInfo implements Document {
      *
      * @since DOM Level 3
      */
+    @Override
     public DOMConfiguration getDomConfig() {
         return null;
     }
@@ -622,6 +651,7 @@ public class DocumentOverNodeInfo extends NodeOverNodeInfo implements Document {
      * @since DOM Level 3
      * @throws org.w3c.dom.DOMException always, to indicate that update is not supported in this DOM implementation
      */
+    @Override
     public void normalizeDocument() throws DOMException {
         disallowUpdate();
     }
@@ -638,6 +668,7 @@ public class DocumentOverNodeInfo extends NodeOverNodeInfo implements Document {
      * @throws org.w3c.dom.DOMException always, to indicate that update is not supported in this DOM implementation
      */
     /*@Nullable*/
+    @Override
     public Node renameNode(Node n, String namespaceURI, String qualifiedName) throws DOMException {
         disallowUpdate();
         return null;

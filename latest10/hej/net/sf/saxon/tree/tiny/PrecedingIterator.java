@@ -48,6 +48,7 @@ final class PrecedingIterator implements AxisIterator {
     }
 
     /*@Nullable*/
+    @Override
     public NodeInfo next() {
         if (pending != null) {
             current = pending;

@@ -66,6 +66,7 @@ public class Outermost extends SystemFunction {
      * @throws net.sf.saxon.trans.XPathException
      *          if a dynamic error occurs during the evaluation of the expression
      */
+    @Override
     public Sequence call(XPathContext context, Sequence[] arguments) throws XPathException {
         SequenceIterator in = arguments[0].iterate();
         if (!presorted) {
@@ -119,6 +120,7 @@ public class Outermost extends SystemFunction {
             this.in = in;
         }
 
+        @Override
         public NodeInfo next() throws XPathException {
             while (true) {
                 NodeInfo next = (NodeInfo)in.next();
@@ -135,12 +137,14 @@ public class Outermost extends SystemFunction {
             }
         }
 
+        @Override
         public void close() {
             in.close();
         }
 
     }
 
+    @Override
     public String getStreamerName() {
         return "Outermost";
     }

@@ -78,6 +78,7 @@ public final class DoubleValue extends NumericValue {
      */
 
     /*@NotNull*/
+    @Override
     public AtomicValue copyAsSubType(AtomicType typeLabel) {
         DoubleValue v = new DoubleValue(value);
         v.typeLabel = typeLabel;
@@ -91,6 +92,7 @@ public final class DoubleValue extends NumericValue {
      * and xs:untypedAtomic. For external objects, the result is AnyAtomicType.
      */
 
+    @Override
     public BuiltInAtomicType getPrimitiveType() {
         return BuiltInAtomicType.DOUBLE;
     }
@@ -101,6 +103,7 @@ public final class DoubleValue extends NumericValue {
      * @return the value as a double
      */
 
+    @Override
     public double getDoubleValue() {
         return value;
     }
@@ -162,6 +165,7 @@ public final class DoubleValue extends NumericValue {
      * Test whether the value is the double/float value NaN
      */
 
+    @Override
     public boolean isNaN() {
         return Double.isNaN(value);
     }
@@ -171,6 +175,7 @@ public final class DoubleValue extends NumericValue {
      *
      * @return the effective boolean value (true unless the value is zero or NaN)
      */
+    @Override
     public boolean effectiveBooleanValue() {
         return value != 0.0 && !Double.isNaN(value);
     }
@@ -188,6 +193,7 @@ public final class DoubleValue extends NumericValue {
      *
      * @return the string value
      */
+    @Override
     public CharSequence getPrimitiveStringValue() {
         return doubleToString(value);
     }
@@ -198,6 +204,7 @@ public final class DoubleValue extends NumericValue {
      * representation always uses exponential notation.
      */
 
+    @Override
     public CharSequence getCanonicalLexicalRepresentation() {
         FastStringBuffer fsb = new FastStringBuffer(FastStringBuffer.C16);
         return FloatingPointConverter.appendDouble(fsb, value, true);
@@ -219,6 +226,7 @@ public final class DoubleValue extends NumericValue {
      * Negate the value
      */
 
+    @Override
     public NumericValue negate() {
         return new DoubleValue(-value);
     }
@@ -227,6 +235,7 @@ public final class DoubleValue extends NumericValue {
      * Implement the XPath floor() function
      */
 
+    @Override
     public NumericValue floor() {
         return new DoubleValue(Math.floor(value));
     }
@@ -235,6 +244,7 @@ public final class DoubleValue extends NumericValue {
      * Implement the XPath ceiling() function
      */
 
+    @Override
     public NumericValue ceiling() {
         return new DoubleValue(Math.ceil(value));
     }
@@ -243,6 +253,7 @@ public final class DoubleValue extends NumericValue {
      * Implement the XPath round() function
      */
 
+    @Override
     public NumericValue round(int scale) {
         if (Double.isNaN(value)) {
             return this;
@@ -295,6 +306,7 @@ public final class DoubleValue extends NumericValue {
      * Implement the XPath round-to-half-even() function
      */
 
+    @Override
     public NumericValue roundHalfToEven(int scale) {
         if (Double.isNaN(value)) return this;
         if (Double.isInfinite(value)) return this;
@@ -344,6 +356,7 @@ public final class DoubleValue extends NumericValue {
      * @return -1 if negative, 0 if zero (including negative zero) or NaN, +1 if positive
      */
 
+    @Override
     public int signum() {
         if (Double.isNaN(value)) {
             return 0;
@@ -366,6 +379,7 @@ public final class DoubleValue extends NumericValue {
      * equal to some integer
      */
 
+    @Override
     public boolean isWholeNumber() {
         return value == Math.floor(value) && !Double.isInfinite(value);
     }
@@ -392,6 +406,7 @@ public final class DoubleValue extends NumericValue {
      * @since 9.2
      */
 
+    @Override
     public NumericValue abs() {
         if (value > 0.0) {
             return this;
@@ -407,6 +422,7 @@ public final class DoubleValue extends NumericValue {
      * @return -1 if this is less, 0 if this is equal, +1 if this is greater or if this is NaN
      */
 
+    @Override
     public int compareTo(long other) {
         double otherDouble = (double) other;
         if (value == otherDouble) {
@@ -419,6 +435,7 @@ public final class DoubleValue extends NumericValue {
      * Get an object that implements XML Schema comparison semantics
      */
 
+    @Override
     public Comparable getSchemaComparable() {
         // Convert negative to positive zero because Double.compareTo() does the wrong thing
         // Note that for NaN, we return NaN, and rely on the user of the Comparable to use it in a way
@@ -462,6 +479,7 @@ public final class DoubleValue extends NumericValue {
      * @return true if the two values are identical, false otherwise.
      */
 
+    @Override
     public boolean isIdentical(/*@NotNull*/ AtomicValue v) {
         return v instanceof DoubleValue && DoubleSortComparer.getInstance().comparesEqual(this, v);
     }

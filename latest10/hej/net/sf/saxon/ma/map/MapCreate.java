@@ -23,6 +23,7 @@ import net.sf.saxon.trans.XPathException;
  */
 public class MapCreate extends SystemFunction {
 
+    @Override
     public Sequence call(XPathContext context, Sequence[] arguments) throws XPathException {
 
         SequenceIterator iter = arguments[0].iterate();
@@ -48,6 +49,7 @@ public class MapCreate extends SystemFunction {
 
     }
 
+    @Override
     public String getStreamerName() {
         return "NewMap";
     }

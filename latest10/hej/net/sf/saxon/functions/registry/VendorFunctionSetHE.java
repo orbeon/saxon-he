@@ -123,6 +123,7 @@ public class VendorFunctionSetHE extends BuiltInFunctionSet {
             return null;
         }
 
+        @Override
         public Sequence call(XPathContext context, Sequence[] arguments) throws XPathException {
             NumericValue val = (NumericValue) arguments[0].head();
             return BooleanValue.get(val != null && val.isWholeNumber());
@@ -145,6 +146,7 @@ public class VendorFunctionSetHE extends BuiltInFunctionSet {
 
         // TODO: this is experimental and not yet publicly documented
 
+        @Override
         public BooleanValue call(XPathContext context, Sequence[] arguments) throws XPathException {
             NodeInfo child = (NodeInfo) arguments[0].head();
             NodeInfo parent = child.getParent();
@@ -171,6 +173,7 @@ public class VendorFunctionSetHE extends BuiltInFunctionSet {
 
         // TODO: this is experimental and not yet publicly documented
 
+        @Override
         public BooleanValue call(XPathContext context, Sequence[] arguments) throws XPathException {
             NodeInfo val = (NodeInfo) arguments[0].head();
             if (val instanceof TinyElementImpl) {
@@ -201,6 +204,7 @@ public class VendorFunctionSetHE extends BuiltInFunctionSet {
             return 0; // treat as creative to avoid loop-lifting: test case try-catch-err-code-variable-14
         }
 
+        @Override
         public Sequence call(XPathContext context, Sequence[] arguments) throws XPathException {
             String var = arguments[0].head().getStringValue();
             @SuppressWarnings({"ThrowableResultOfMethodCallIgnored"})

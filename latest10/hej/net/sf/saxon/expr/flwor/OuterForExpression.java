@@ -33,6 +33,7 @@ public class OuterForExpression extends ForExpression {
      *         in a subclass
      */
 
+    @Override
     protected int getRangeVariableCardinality() {
         return StaticProperty.ALLOWS_ZERO_OR_ONE;
     }
@@ -42,6 +43,7 @@ public class OuterForExpression extends ForExpression {
      */
 
     /*@NotNull*/
+    @Override
     public Expression optimize(ExpressionVisitor visitor, ContextItemStaticInfo contextItemType) throws XPathException {
         // Very conservative optimization for the time being
 
@@ -66,6 +68,7 @@ public class OuterForExpression extends ForExpression {
      */
 
     /*@NotNull*/
+    @Override
     public Expression copy(RebindingMap rebindings) {
         OuterForExpression forExp = new OuterForExpression();
         ExpressionTool.copyLocationInfo(this, forExp);
@@ -84,6 +87,7 @@ public class OuterForExpression extends ForExpression {
      */
 
     /*@NotNull*/
+    @Override
     public SequenceIterator iterate(XPathContext context) throws XPathException {
 
         // First create an iteration of the base sequence.
@@ -109,6 +113,7 @@ public class OuterForExpression extends ForExpression {
      * outputter
      */
 
+    @Override
     public void process(Outputter output, XPathContext context) throws XPathException {
         SequenceIterator base = getSequence().iterate(context);
         int position = 1;
@@ -148,6 +153,7 @@ public class OuterForExpression extends ForExpression {
      * @param pul     the pending update list to which the results should be written
      */
 
+    @Override
     public void evaluatePendingUpdates(XPathContext context, PendingUpdateList pul) throws XPathException {
         SequenceIterator base = getSequence().iterate(context);
         int position = 1;
@@ -167,6 +173,7 @@ public class OuterForExpression extends ForExpression {
     }
 
 
+    @Override
     protected void explainSpecializedAttributes(ExpressionPresenter out) {
         out.emitAttribute("outer", "true");
     }

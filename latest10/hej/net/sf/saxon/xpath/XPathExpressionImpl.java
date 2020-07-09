@@ -143,6 +143,7 @@ public class XPathExpressionImpl implements XPathExpression {
      *                                  result cannot be converted to the requested type.
      */
     /*@Nullable*/
+    @Override
     public Object evaluate(/*@Nullable*/ Object node, /*@NotNull*/ QName qName) throws XPathExpressionException {
         Item contextItem;
         if (node instanceof ZeroOrOne) {
@@ -259,6 +260,7 @@ public class XPathExpressionImpl implements XPathExpression {
      */
 
     /*@NotNull*/
+    @Override
     public String evaluate(Object node) throws XPathExpressionException {
         return (String) evaluate(node, XPathConstants.STRING);
     }
@@ -280,6 +282,7 @@ public class XPathExpressionImpl implements XPathExpression {
      * @throws XPathExpressionException
      */
     /*@Nullable*/
+    @Override
     public Object evaluate(/*@Nullable*/ InputSource inputSource, /*@Nullable*/ QName qName) throws XPathExpressionException {
         if (qName == null) {
             throw new NullPointerException("qName");
@@ -312,6 +315,7 @@ public class XPathExpressionImpl implements XPathExpression {
      */
 
     /*@NotNull*/
+    @Override
     public String evaluate(/*@Nullable*/ InputSource inputSource) throws XPathExpressionException {
         if (inputSource == null) {
             throw new NullPointerException("inputSource");

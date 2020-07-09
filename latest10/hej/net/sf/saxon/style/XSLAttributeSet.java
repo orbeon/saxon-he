@@ -58,11 +58,13 @@ public class XSLAttributeSet extends StyleElement implements StylesheetComponent
      * Get the corresponding Procedure object that results from the compilation of this
      * StylesheetProcedure
      */
+    @Override
     public AttributeSet getActor() {
         return (AttributeSet)getPrincipalStylesheetModule().getStylesheetPackage().getComponent(
             new SymbolicName(StandardNames.XSL_ATTRIBUTE_SET, getObjectName())).getActor();
     }
 
+    @Override
     public SymbolicName getSymbolicName() {
         return new SymbolicName(StandardNames.XSL_ATTRIBUTE_SET, getObjectName());
     }
@@ -74,6 +76,7 @@ public class XSLAttributeSet extends StyleElement implements StylesheetComponent
      * @throws XPathException if the components are not compatible (differing signatures)
      */
 
+    @Override
     public void checkCompatibility(Component component) throws XPathException {
         if (((AttributeSet)component.getActor()).isDeclaredStreamable() && !isDeclaredStreamable()) {
             compileError("The overridden attribute set is declared streamable, " +
@@ -113,6 +116,7 @@ public class XSLAttributeSet extends StyleElement implements StylesheetComponent
     }
 
 
+    @Override
     public void prepareAttributes() {
         useAtt = null;
         String streamableAtt = null;
@@ -168,6 +172,7 @@ public class XSLAttributeSet extends StyleElement implements StylesheetComponent
      * @return the name of the object declared in this element, if any
      */
 
+    @Override
     public StructuredQName getObjectName() {
         StructuredQName o = super.getObjectName();
         if (o == null) {
@@ -177,6 +182,7 @@ public class XSLAttributeSet extends StyleElement implements StylesheetComponent
         return o;
     }
 
+    @Override
     public void validate(ComponentDeclaration decl) throws XPathException {
 
         if (validated) {
@@ -214,6 +220,7 @@ public class XSLAttributeSet extends StyleElement implements StylesheetComponent
         return useAttributeSetNames;
     }
 
+    @Override
     public void index(ComponentDeclaration decl, PrincipalStylesheetModule top) throws XPathException {
         top.indexAttributeSet(decl);
     }
@@ -264,6 +271,7 @@ public class XSLAttributeSet extends StyleElement implements StylesheetComponent
      * Get details of stack frame
      */
 
+    @Override
     public SlotManager getSlotManager() {
         return stackFrameMap;
     }
@@ -275,6 +283,7 @@ public class XSLAttributeSet extends StyleElement implements StylesheetComponent
      * @param decl        this attribute set declaration
      * @throws XPathException if a failure is detected
      */
+    @Override
     public void compileDeclaration(Compilation compilation, ComponentDeclaration decl) throws XPathException {
 
         if (isActionCompleted(ACTION_COMPILE)) {
@@ -334,6 +343,7 @@ public class XSLAttributeSet extends StyleElement implements StylesheetComponent
      * @param declaration this attribute set declaration
      */
 
+    @Override
     public void optimize(ComponentDeclaration declaration) throws XPathException {
         // Already done earlier
     }
@@ -344,6 +354,7 @@ public class XSLAttributeSet extends StyleElement implements StylesheetComponent
      *
      * @param opt the optimizer
      */
+    @Override
     public void generateByteCode(Optimizer opt) {}
 
 //    private void checkStreamability() throws XPathException {

@@ -41,6 +41,7 @@ public abstract class SuperId extends SystemFunction {
      * @param arguments the actual arguments to the call
      */
 
+    @Override
     public int getSpecialProperties(Expression[] arguments) {
         int prop = StaticProperty.ORDERED_NODESET |
                 StaticProperty.SINGLE_DOCUMENT_NODESET |
@@ -106,6 +107,7 @@ public abstract class SuperId extends SystemFunction {
      * @throws net.sf.saxon.trans.XPathException
      *          if a dynamic error occurs during the evaluation of the expression
      */
+    @Override
     public Sequence call(XPathContext context, Sequence[] arguments) throws XPathException {
         NodeInfo start = arguments.length == 1 ? getContextNode(context) : (NodeInfo) arguments[1].head();
         NodeInfo arg1 = start.getRoot();
@@ -134,6 +136,7 @@ public abstract class SuperId extends SystemFunction {
          * (implements the MappingFunction interface)
          */
 
+        @Override
         public SequenceIterator map(Item item) {
 
             String idrefs = Whitespace.trim(item.getStringValueCS());

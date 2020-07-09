@@ -69,6 +69,7 @@ public class SpecificFunctionType extends AnyFunctionType {
      * @return the list of argument types
      */
 
+    @Override
     public SequenceType[] getArgumentTypes() {
         return argTypes;
     }
@@ -79,6 +80,7 @@ public class SpecificFunctionType extends AnyFunctionType {
      * @return the result type
      */
 
+    @Override
     public SequenceType getResultType() {
         return resultType;
     }
@@ -133,6 +135,7 @@ public class SpecificFunctionType extends AnyFunctionType {
         return sb.toString();
     }
 
+    @Override
     public String toExportString() {
         FastStringBuffer sb = new FastStringBuffer(100);
         sb.append("(function(");
@@ -195,6 +198,7 @@ public class SpecificFunctionType extends AnyFunctionType {
      * @return for example {@link Affinity#SUBSUMES}, {@link Affinity#SAME_TYPE}
      */
 
+    @Override
     public Affinity relationship(FunctionItemType other, TypeHierarchy th) {
         if (other == AnyFunctionType.getInstance() || other instanceof AnyFunctionTypeWithAssertions) {
             return Affinity.SUBSUMED_BY;
@@ -463,6 +467,7 @@ public class SpecificFunctionType extends AnyFunctionType {
         return Optional.empty();
     }
 
+    @Override
     public Expression makeFunctionSequenceCoercer(Expression exp, RoleDiagnostic role)
             throws XPathException {
         return new FunctionSequenceCoercer(exp, this, role);

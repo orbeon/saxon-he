@@ -33,6 +33,7 @@ public class GenerateId_1 extends ScalarSystemFunction {
      * @param arguments the expressions supplied as arguments in the function call
      */
 
+    @Override
     public int getSpecialProperties(Expression[] arguments) {
         int p = super.getSpecialProperties(arguments);
         return p & ~StaticProperty.NO_NODES_NEWLY_CREATED;
@@ -56,6 +57,7 @@ public class GenerateId_1 extends ScalarSystemFunction {
 
     }
 
+    @Override
     public String getCompilerName() {
         return "GenerateIdCompiler";
     }

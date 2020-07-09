@@ -53,6 +53,7 @@ public class XSLAccumulator extends StyleElement implements StylesheetComponent 
      * Get the corresponding Procedure object that results from the compilation of this
      * StylesheetProcedure
      */
+    @Override
     public Actor getActor() {
         if (accumulator.getDeclaringComponent() == null) {
             accumulator.makeDeclaringComponent(Visibility.PRIVATE, getContainingPackage());
@@ -60,11 +61,13 @@ public class XSLAccumulator extends StyleElement implements StylesheetComponent 
         return accumulator;
     }
 
+    @Override
     public SymbolicName getSymbolicName() {
         StructuredQName qname = accumulator.getAccumulatorName();
         return qname==null ? null : new SymbolicName(StandardNames.XSL_ACCUMULATOR, null);
     }
 
+    @Override
     public void checkCompatibility(Component component) {
         // no action: accumulators cannot be overridden
     }
@@ -114,6 +117,7 @@ public class XSLAccumulator extends StyleElement implements StylesheetComponent 
 
     }
 
+    @Override
     public void prepareAttributes() {
 
         //prepareSimpleAttributes();
@@ -230,6 +234,7 @@ public class XSLAccumulator extends StyleElement implements StylesheetComponent 
      */
 
     /*@NotNull*/
+    @Override
     public StructuredQName getObjectName() {
         StructuredQName qn = super.getObjectName();
         if (qn == null) {
@@ -244,6 +249,7 @@ public class XSLAccumulator extends StyleElement implements StylesheetComponent 
     }
 
 
+    @Override
     public void index(ComponentDeclaration decl, PrincipalStylesheetModule top) {
         if (accumulator.getAccumulatorName() == null) {
             prepareSimpleAttributes();
@@ -270,6 +276,7 @@ public class XSLAccumulator extends StyleElement implements StylesheetComponent 
         mgr.addAccumulator(accumulator);
     }
 
+    @Override
     public void validate(ComponentDeclaration decl) throws XPathException {
 
         //stackFrameMap = getConfiguration().makeSlotManager();
@@ -295,10 +302,12 @@ public class XSLAccumulator extends StyleElement implements StylesheetComponent 
 
     }
 
+    @Override
     public SlotManager getSlotManager() {
         return null;
     }
 
+    @Override
     public void optimize(ComponentDeclaration declaration) throws XPathException {
         // no action
     }
@@ -319,6 +328,7 @@ public class XSLAccumulator extends StyleElement implements StylesheetComponent 
      * Generate byte code if appropriate
      * @param opt the optimizer
      */
+    @Override
     public void generateByteCode(Optimizer opt) {
         // no action currently
     }

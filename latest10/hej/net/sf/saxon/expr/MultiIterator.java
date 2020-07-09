@@ -37,6 +37,7 @@ public class MultiIterator<T> implements Iterator<T> {
      * @return <tt>true</tt> if the iterator has more elements.
      */
 
+    @Override
     public boolean hasNext() {
         while (true) {
             if (current >= array.size()) {
@@ -56,6 +57,7 @@ public class MultiIterator<T> implements Iterator<T> {
      * @throws java.util.NoSuchElementException
      *          iteration has no more elements.
      */
+    @Override
     public T next() {
         return array.get(current).next();
     }
@@ -74,6 +76,7 @@ public class MultiIterator<T> implements Iterator<T> {
      *                                       been called after the last call to the <tt>next</tt>
      *                                       method.
      */
+    @Override
     public void remove() {
         throw new UnsupportedOperationException();
     }

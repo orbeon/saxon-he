@@ -400,6 +400,7 @@ public interface XQItemType extends XQSequenceType {
      *
      * @return int      indicating the occurrence indicator
      */
+    @Override
     public int getItemOccurrence();
 
     /**

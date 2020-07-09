@@ -128,6 +128,7 @@ public class MapType extends AnyFunctionType {
      * @param th The type hierarchy cache
      */
 
+    @Override
     public boolean isAtomizable(TypeHierarchy th) {
         return false; 
     }
@@ -182,6 +183,7 @@ public class MapType extends AnyFunctionType {
      * @return the list of argument types of this map, viewed as a function
      */
 
+    @Override
     public SequenceType[] getArgumentTypes() {
         // regardless of the key type, a function call on this map can supply any atomic value
         return new SequenceType[]{SequenceType.makeSequenceType(BuiltInAtomicType.ANY_ATOMIC, StaticProperty.EXACTLY_ONE)};
@@ -193,6 +195,7 @@ public class MapType extends AnyFunctionType {
      * @return the result type of this map, viewed as a function
      */
 
+    @Override
     public SequenceType getResultType() {
         // a function call on this map can always return ()
         if (Cardinality.allowsZero(valueType.getCardinality())) {
@@ -280,6 +283,7 @@ public class MapType extends AnyFunctionType {
      * @return for example {@link Affinity#SUBSUMES}, {@link Affinity#SAME_TYPE}
      */
 
+    @Override
     public Affinity relationship(FunctionItemType other, TypeHierarchy th) {
         if (other == AnyFunctionType.getInstance()) {
             return Affinity.SUBSUMED_BY;

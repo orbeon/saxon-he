@@ -24,28 +24,40 @@ import java.util.List;
 
 public interface UnfailingPullProvider extends PullProvider {
 
+    @Override
     Event next() throws XPathException;
 
+    @Override
     Event current();
 
+    @Override
     AttributeMap getAttributes();
 
+    @Override
     NamespaceBinding[] getNamespaceDeclarations();
 
+    @Override
     Event skipToMatchingEnd();
 
+    @Override
     void close();
 
+    @Override
     NodeName getNodeName();
 
+    @Override
     CharSequence getStringValue() throws XPathException;
 
+    @Override
     SchemaType getSchemaType();
 
+    @Override
     AtomicValue getAtomicValue();
 
+    @Override
     Location getSourceLocator();
 
+    @Override
     List<UnparsedEntity> getUnparsedEntities();
 
 }

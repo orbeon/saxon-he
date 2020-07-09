@@ -531,6 +531,7 @@ public class TransformFn extends SystemFunction implements Callable {
     }
 
 
+    @Override
     public Sequence call(XPathContext context, Sequence[] arguments) throws XPathException {
         Map<String, Sequence> options = getDetails().optionDetails.processSuppliedOptions((MapItem) arguments[0].head(), context);
 
@@ -1092,6 +1093,7 @@ public class TransformFn extends SystemFunction implements Callable {
             return destination.getReceiver(pipe, properties);
         }
 
+        @Override
         public HashTrieMap populateResultMap(HashTrieMap resultMap) {
             for (Map.Entry<String, TreeInfo> entry : results.entrySet()) {
                 String uri = entry.getKey();

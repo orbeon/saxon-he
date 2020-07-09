@@ -51,6 +51,7 @@ public class JDOM2Writer extends net.sf.saxon.event.Builder {
      * @param publicID The public identifier of the unparsed entity
      */
 
+    @Override
     public void setUnparsedEntity(String name, String systemID, String publicID) throws XPathException {
         // no-op
     }
@@ -59,6 +60,7 @@ public class JDOM2Writer extends net.sf.saxon.event.Builder {
      * Start of the document.
      */
 
+    @Override
     public void open() {
     }
 
@@ -66,6 +68,7 @@ public class JDOM2Writer extends net.sf.saxon.event.Builder {
      * End of the document.
      */
 
+    @Override
     public void close() {
     }
 
@@ -74,6 +77,7 @@ public class JDOM2Writer extends net.sf.saxon.event.Builder {
      * @param properties
      */
 
+    @Override
     public void startDocument(int properties) throws XPathException {
         document = new Document();
         document.setBaseURI(systemId);
@@ -85,6 +89,7 @@ public class JDOM2Writer extends net.sf.saxon.event.Builder {
      * Notify the end of a document node
      */
 
+    @Override
     public void endDocument() throws XPathException {
         ancestors.pop();
     }
@@ -93,6 +98,7 @@ public class JDOM2Writer extends net.sf.saxon.event.Builder {
      * Start of an element.
      */
 
+    @Override
     public void startElement(NodeName elemName, SchemaType type,
                              AttributeMap attributes, NamespaceMap namespaces,
                              Location location, int properties) throws XPathException {
@@ -160,6 +166,7 @@ public class JDOM2Writer extends net.sf.saxon.event.Builder {
      * End of an element.
      */
 
+    @Override
     public void endElement() throws XPathException {
         flush();
         ancestors.pop();
@@ -174,6 +181,7 @@ public class JDOM2Writer extends net.sf.saxon.event.Builder {
      * Character data.
      */
 
+    @Override
     public void characters(CharSequence chars, Location locationId, int properties) throws XPathException {
         textBuffer.cat(chars);
     }
@@ -191,6 +199,7 @@ public class JDOM2Writer extends net.sf.saxon.event.Builder {
      * Handle a processing instruction.
      */
 
+    @Override
     public void processingInstruction(String target, CharSequence data, Location locationId, int properties)
             throws XPathException {
         flush();
@@ -202,6 +211,7 @@ public class JDOM2Writer extends net.sf.saxon.event.Builder {
      * Handle a comment.
      */
 
+    @Override
     public void comment(CharSequence chars, Location locationId, int properties) throws XPathException {
         flush();
         Comment comment = new Comment(chars.toString());
@@ -216,6 +226,7 @@ public class JDOM2Writer extends net.sf.saxon.event.Builder {
      *         may supply untyped nodes instead of supplying the type annotation
      */
 
+    @Override
     public boolean usesTypeAnnotations() {
         return false;
     }
@@ -236,6 +247,7 @@ public class JDOM2Writer extends net.sf.saxon.event.Builder {
      * @return a Saxon wrapper around the constructed XOM document node
      */
 
+    @Override
     public NodeInfo getCurrentRoot() {
         return new JDOM2DocumentWrapper(document, config).getRootNode();
     }

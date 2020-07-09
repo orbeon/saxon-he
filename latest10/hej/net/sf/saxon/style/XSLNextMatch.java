@@ -30,6 +30,7 @@ public class XSLNextMatch extends StyleElement {
      * @return true - it is an instruction
      */
 
+    @Override
     public boolean isInstruction() {
         return true;
     }
@@ -39,10 +40,12 @@ public class XSLNextMatch extends StyleElement {
      * instruction
      */
 
+    @Override
     public boolean mayContainFallback() {
         return true;
     }
 
+    @Override
     public void prepareAttributes() {
 
         for (AttributeInfo att : attributes()) {
@@ -51,6 +54,7 @@ public class XSLNextMatch extends StyleElement {
         }
     }
 
+    @Override
     public void validate(ComponentDeclaration decl) throws XPathException {
         for (NodeInfo child : children()) {
             if (child instanceof XSLWithParam || child instanceof XSLFallback) {
@@ -74,12 +78,14 @@ public class XSLNextMatch extends StyleElement {
      * For most instructions, this does nothing.
      */
 
+    @Override
     protected boolean markTailCalls() {
         useTailRecursion = true;
         return true;
     }
 
     /*@NotNull*/
+    @Override
     public Expression compile(Compilation exec, ComponentDeclaration decl) throws XPathException {
         NextMatch inst = new NextMatch(useTailRecursion);
         inst.setLocation(allocateLocation());

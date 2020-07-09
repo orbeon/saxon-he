@@ -30,6 +30,7 @@ public class MemoFunction extends UserFunction {
      * Determine the preferred evaluation mode for this function
      */
 
+    @Override
     public void computeEvaluationMode() {
         evaluator = ExpressionTool.eagerEvaluator(getBody());
     }
@@ -40,6 +41,7 @@ public class MemoFunction extends UserFunction {
      * @return true if this function is marked as a memo function
      */
 
+    @Override
     public boolean isMemoFunction() {
         return true;
     }

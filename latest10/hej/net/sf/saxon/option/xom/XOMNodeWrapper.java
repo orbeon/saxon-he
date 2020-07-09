@@ -131,6 +131,7 @@ public class XOMNodeWrapper extends AbstractNodeWrapper implements SiblingCounti
      * Get the configuration
      */
 
+    @Override
     public Configuration getConfiguration() {
         return docWrapper.getConfiguration();
     }
@@ -139,6 +140,7 @@ public class XOMNodeWrapper extends AbstractNodeWrapper implements SiblingCounti
      * Get the underlying XOM node, to implement the VirtualNode interface
      */
 
+    @Override
     public Node getUnderlyingNode() {
         return node;
     }
@@ -150,6 +152,7 @@ public class XOMNodeWrapper extends AbstractNodeWrapper implements SiblingCounti
      * @return the NamePool
      */
 
+    @Override
     public NamePool getNamePool() {
         return docWrapper.getNamePool();
     }
@@ -160,6 +163,7 @@ public class XOMNodeWrapper extends AbstractNodeWrapper implements SiblingCounti
      * @return one of the values Node.ELEMENT, Node.TEXT, Node.ATTRIBUTE, etc.
      */
 
+    @Override
     public int getNodeKind() {
         return nodeKind;
     }
@@ -173,6 +177,7 @@ public class XOMNodeWrapper extends AbstractNodeWrapper implements SiblingCounti
      * @since 8.5
      */
 
+    @Override
     public AtomicSequence atomize() {
         switch (getNodeKind()) {
             case Type.COMMENT:
@@ -218,6 +223,7 @@ public class XOMNodeWrapper extends AbstractNodeWrapper implements SiblingCounti
      *         but the system ID cannot.
      */
 
+    @Override
     public String getSystemId() {
         return docWrapper.getBaseURI();
     }
@@ -228,6 +234,7 @@ public class XOMNodeWrapper extends AbstractNodeWrapper implements SiblingCounti
      * relative URI contained in the node.
      */
 
+    @Override
     public String getBaseURI() {
         return node.getBaseURI();
     }
@@ -244,6 +251,7 @@ public class XOMNodeWrapper extends AbstractNodeWrapper implements SiblingCounti
      *         produce the same result for generateId())
      */
 
+    @Override
     public int compareOrder(NodeInfo other) {
         if (other instanceof XOMNodeWrapper) {
             return compareOrderFast(node, ((XOMNodeWrapper) other).node);
@@ -370,6 +378,7 @@ public class XOMNodeWrapper extends AbstractNodeWrapper implements SiblingCounti
      * @return the string value of the node
      */
 
+    @Override
     public String getStringValue() {
         return node.getValue();
     }
@@ -379,6 +388,7 @@ public class XOMNodeWrapper extends AbstractNodeWrapper implements SiblingCounti
      * the version of the method that returns a String.
      */
 
+    @Override
     public CharSequence getStringValueCS() {
         return node.getValue();
     }
@@ -390,6 +400,7 @@ public class XOMNodeWrapper extends AbstractNodeWrapper implements SiblingCounti
      * @return the local part of the name. For an unnamed node, returns "".
      */
 
+    @Override
     public String getLocalPart() {
         switch (nodeKind) {
             case Type.ELEMENT:
@@ -410,6 +421,7 @@ public class XOMNodeWrapper extends AbstractNodeWrapper implements SiblingCounti
      * @return The prefix of the name of the node.
      */
 
+    @Override
     public String getPrefix() {
         switch (nodeKind) {
             case Type.ELEMENT:
@@ -429,6 +441,7 @@ public class XOMNodeWrapper extends AbstractNodeWrapper implements SiblingCounti
      *         for a node with an empty prefix, return an empty string.
      */
 
+    @Override
     public String getURI() {
         switch (nodeKind) {
             case Type.ELEMENT:
@@ -448,6 +461,7 @@ public class XOMNodeWrapper extends AbstractNodeWrapper implements SiblingCounti
      *         empty string.
      */
 
+    @Override
     public String getDisplayName() {
         switch (nodeKind) {
             case Type.ELEMENT:
@@ -465,6 +479,7 @@ public class XOMNodeWrapper extends AbstractNodeWrapper implements SiblingCounti
      * Get the NodeInfo object representing the parent of this node
      */
 
+    @Override
     public XOMNodeWrapper getParent() {
         if (parent == null) {
             ParentNode p = node.getParent();
@@ -475,6 +490,7 @@ public class XOMNodeWrapper extends AbstractNodeWrapper implements SiblingCounti
         return parent;
     }
 
+    @Override
     public XOMNodeWrapper getNextSibling() {
         ParentNode parenti = node.getParent();
         if (parenti == null) {
@@ -495,6 +511,7 @@ public class XOMNodeWrapper extends AbstractNodeWrapper implements SiblingCounti
         return null;
     }
 
+    @Override
     public XOMNodeWrapper getPreviousSibling() {
         ParentNode parenti = node.getParent();
         if (parenti == null) {
@@ -514,6 +531,7 @@ public class XOMNodeWrapper extends AbstractNodeWrapper implements SiblingCounti
         return null;
     }
 
+    @Override
     public XOMNodeWrapper getFirstChild() {
         if (node.getChildCount() > 0) {
             for (int i = 0; i < node.getChildCount(); i++) {
@@ -526,6 +544,7 @@ public class XOMNodeWrapper extends AbstractNodeWrapper implements SiblingCounti
         return null;
     }
 
+    @Override
     public XOMNodeWrapper getSuccessorElement(XOMNodeWrapper anchor, String uri, String local) {
         Node stop = anchor == null ? null : anchor.node;
         Node next = node;
@@ -578,6 +597,7 @@ public class XOMNodeWrapper extends AbstractNodeWrapper implements SiblingCounti
      * Get the index position of this node among its siblings (starting from 0)
      */
 
+    @Override
     public int getSiblingPosition() {
         // This method is used only to support generate-id()
         if (index != -1) {
@@ -664,6 +684,7 @@ public class XOMNodeWrapper extends AbstractNodeWrapper implements SiblingCounti
      * @since 9.4
      */
 
+    @Override
     public String getAttributeValue(/*@NotNull*/ String uri, /*@NotNull*/ String local) {
         if (nodeKind == Type.ELEMENT) {
             Attribute att = ((Element) node).getAttribute(local, uri);
@@ -681,6 +702,7 @@ public class XOMNodeWrapper extends AbstractNodeWrapper implements SiblingCounti
      *         This will not necessarily be a document node
      */
 
+    @Override
     public NodeInfo getRoot() {
         return docWrapper;
     }
@@ -691,6 +713,7 @@ public class XOMNodeWrapper extends AbstractNodeWrapper implements SiblingCounti
      * <code>getEnumeration(Axis.CHILD, AnyNodeTest.getInstance()).hasNext()</code></p>
      */
 
+    @Override
     public boolean hasChildNodes() {
         return node.getChildCount() > 0;
     }
@@ -702,6 +725,7 @@ public class XOMNodeWrapper extends AbstractNodeWrapper implements SiblingCounti
      * @param buffer a buffer to contain a string that uniquely identifies this node, across all documents
      */
 
+    @Override
     public void generateId(FastStringBuffer buffer) {
         Navigator.appendSequentialKey(this, buffer, true);
         //buffer.append(Navigator.getSequentialKey(this));
@@ -722,6 +746,7 @@ public class XOMNodeWrapper extends AbstractNodeWrapper implements SiblingCounti
      *         <p>For a node other than an element, the method returns null.</p>
      */
 
+    @Override
     public NamespaceBinding[] getDeclaredNamespaces(NamespaceBinding[] buffer) {
         if (node instanceof Element) {
             Element elem = (Element) node;
@@ -791,6 +816,7 @@ public class XOMNodeWrapper extends AbstractNodeWrapper implements SiblingCounti
      * @return true if the node is an ID
      */
 
+    @Override
     public boolean isId() {
         return getNodeKind() == Type.ATTRIBUTE && ((Attribute) node).getType() == Attribute.Type.ID;
     }
@@ -801,6 +827,7 @@ public class XOMNodeWrapper extends AbstractNodeWrapper implements SiblingCounti
      * @return true if the node is an IDREF or IDREFS element or attribute
      */
 
+    @Override
     public boolean isIdref() {
         return getNodeKind() == Type.ATTRIBUTE && (
                 ((Attribute) node).getType() == Attribute.Type.IDREF ||
@@ -834,6 +861,7 @@ public class XOMNodeWrapper extends AbstractNodeWrapper implements SiblingCounti
         }
 
 
+        @Override
         public NodeInfo next() {
             NodeInfo curr;
             do { // until we find a match
@@ -900,6 +928,7 @@ public class XOMNodeWrapper extends AbstractNodeWrapper implements SiblingCounti
         }
 
 
+        @Override
         public NodeInfo next() {
             NodeInfo curr;
             do { // until we find a match
