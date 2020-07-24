@@ -7,6 +7,7 @@
 
 package net.sf.saxon.expr;
 
+import net.sf.saxon.Configuration;
 import net.sf.saxon.expr.parser.ContextItemStaticInfo;
 import net.sf.saxon.expr.parser.ExpressionTool;
 import net.sf.saxon.expr.parser.ExpressionVisitor;
@@ -14,6 +15,7 @@ import net.sf.saxon.expr.parser.RebindingMap;
 import net.sf.saxon.expr.sort.DocumentSorter;
 import net.sf.saxon.om.SequenceIterator;
 import net.sf.saxon.pattern.AnyNodeTest;
+import net.sf.saxon.pattern.Pattern;
 import net.sf.saxon.trans.XPathException;
 import net.sf.saxon.tree.iter.HomogeneityCheckerIterator;
 import net.sf.saxon.type.Affinity;
@@ -78,6 +80,18 @@ public class HomogeneityChecker extends UnaryExpression {
             return ds;
         }
         return this;
+    }
+
+    /**
+     * Convert this expression to an equivalent XSLT pattern
+     *
+     * @param config the Saxon configuration
+     * @return the equivalent pattern
+     * @throws net.sf.saxon.trans.XPathException if conversion is not possible
+     */
+    @Override
+    public Pattern toPattern(Configuration config) throws XPathException {
+        return getBaseExpression().toPattern(config);
     }
 
     /*@NotNull*/

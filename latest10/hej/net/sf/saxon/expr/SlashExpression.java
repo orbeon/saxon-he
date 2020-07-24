@@ -869,8 +869,18 @@ public class SlashExpression extends BinaryExpression
             }
         }
         if (headPattern == null) {
-            axis = PatternMaker.getAxisForPathStep(tail);
-            headPattern = head.toPattern(config);
+            if (tail instanceof VennExpression) {
+                Expression lhExpansion = new SlashExpression(
+                        head.copy(new RebindingMap()), ((VennExpression)tail).getLhsExpression());
+                Expression rhExpansion = new SlashExpression(
+                        head.copy(new RebindingMap()), ((VennExpression) tail).getRhsExpression());
+                VennExpression topExpansion = new VennExpression(
+                        lhExpansion, ((VennExpression)tail).operator, rhExpansion);
+                return topExpansion.toPattern(config);
+            } else {
+                axis = PatternMaker.getAxisForPathStep(tail);
+                headPattern = head.toPattern(config);
+            }
         }
         return new AncestorQualifiedPattern(tailPattern, headPattern, axis);
     }
