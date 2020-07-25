@@ -23,6 +23,9 @@ import net.sf.saxon.tree.util.Navigator;
 import net.sf.saxon.type.Type;
 import net.sf.saxon.value.AtomicValue;
 
+import java.util.ArrayList;
+import java.util.List;
+
 
 public class KeyFn extends SystemFunction implements StatefulSystemFunction {
 
@@ -269,20 +272,21 @@ public class KeyFn extends SystemFunction implements StatefulSystemFunction {
             return new LazySequence(new ItemMappingIterator(all, new SubtreeFilter(origin)));
 
         } else {
-            // Changed by bug 2929
+            // Changed by bug 2929 and bug 4656
             SequenceIterator allResults = null;
             SequenceIterator keys = sought.iterate();
             AtomicValue keyValue;
+            List<SequenceIterator> allKeyIterators = new ArrayList<>();
             while ((keyValue = (AtomicValue)keys.next()) != null) {
                 SequenceIterator someResults = keyManager.selectByKey(selectedKeySet, doc.getTreeInfo(), keyValue, context);
-                if (allResults == null) {
-                    allResults = someResults;
-                } else {
-                    allResults = new UnionEnumeration(allResults, someResults, LocalOrderComparer.getInstance());
-                }
+                allKeyIterators.add(someResults);
             }
-            if (allResults == null) {
+            if (allKeyIterators.isEmpty()) {
                 allResults = EmptyIterator.ofNodes();
+            } else if (allKeyIterators.size() == 1) {
+                allResults = allKeyIterators.get(0);
+            } else {
+                allResults = new UnionIterator(allKeyIterators, LocalOrderComparer.getInstance());
             }
             if (origin.equals(doc)) {
                 return new LazySequence(allResults);

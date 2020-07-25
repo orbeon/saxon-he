@@ -552,6 +552,7 @@ latest10/hej/net/sf/saxon/expr/UnaryExpression.java svn_eol_002dstyle=native
 latest10/hej/net/sf/saxon/expr/UnionCastableFunction.java svn_eol_002dstyle=native
 latest10/hej/net/sf/saxon/expr/UnionConstructorFunction.java svn_eol_002dstyle=native
 latest10/hej/net/sf/saxon/expr/UnionEnumeration.java svn_eol_002dstyle=native
+latest10/hej/net/sf/saxon/expr/UnionIterator.java svn_eol_002dstyle=native
 latest10/hej/net/sf/saxon/expr/UntypedSequenceConverter.java svn_eol_002dstyle=native
 latest10/hej/net/sf/saxon/expr/UserFunctionCall.java svn_eol_002dstyle=native
 latest10/hej/net/sf/saxon/expr/UserFunctionResolvable.java svn_eol_002dstyle=native
