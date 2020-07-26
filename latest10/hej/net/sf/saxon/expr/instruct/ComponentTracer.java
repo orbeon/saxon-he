@@ -85,6 +85,9 @@ public class ComponentTracer extends Instruction {
     @Override
     public Expression copy(RebindingMap rebindings) {
         ComponentTracer t = new ComponentTracer(component);
+        Expression newBody = getBody().copy(rebindings);  // Bug 4642
+        t.baseOp = new Operand(t, newBody, OperandRole.SAME_FOCUS_ACTION);
+        t.adoptChildExpression(newBody);
         t.setLocation(getLocation());   // Bug 3034
         return t;
     }
