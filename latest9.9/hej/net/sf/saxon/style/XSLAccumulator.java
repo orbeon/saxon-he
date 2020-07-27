@@ -193,6 +193,7 @@ public class XSLAccumulator extends StyleElement implements StylesheetComponent 
 
         AxisIterator kids = iterateAxis(AxisInfo.CHILD);
         NodeInfo curr;
+        int position = 0;
         while ((curr = kids.next()) != null) {
             if (curr instanceof XSLAccumulatorRule) {
                 XSLAccumulatorRule rule = (XSLAccumulatorRule) curr;
@@ -209,7 +210,7 @@ public class XSLAccumulator extends StyleElement implements StylesheetComponent 
                 boolean isPreDescent = !rule.isPostDescent();
                 SimpleMode mode = isPreDescent ? accumulator.getPreDescentRules() : accumulator.getPostDescentRules();
                 AccumulatorRule action = new AccumulatorRule(newValueExp, stackFrameMap, rule.isPostDescent());
-                mode.addRule(pattern, action, decl.getModule(), decl.getModule().getPrecedence(), 1, 0, 0);
+                mode.addRule(pattern, action, decl.getModule(), decl.getModule().getPrecedence(), 1, position++, 0);
 
                 checkRuleStreamability(rule, pattern, newValueExp);
 
