@@ -75,7 +75,7 @@ public final class ComplexContentOutputter extends Outputter implements Receiver
     // are ignored unless they occur at the outermost level, except that they
     // still change the level number
     private boolean[] currentLevelIsDocument = new boolean[20];
-    private List<AttributeInfo> pendingAttributes = new ArrayList<>();
+    private final List<AttributeInfo> pendingAttributes = new ArrayList<>();
 //    private NodeName[] pendingAttCode = new NodeName[20];
 //    private SimpleType[] pendingAttType = new SimpleType[20];
 //    private String[] pendingAttValue = new String[20];
@@ -84,7 +84,7 @@ public final class ComplexContentOutputter extends Outputter implements Receiver
 //    private int pendingAttListSize = 0;
 
     private NamespaceMap pendingNSMap;
-    private Stack<NamespaceMap> inheritedNamespaces = new Stack<>();
+    private final Stack<NamespaceMap> inheritedNamespaces = new Stack<>();
 //    private int pendingNSListSize = 0;
 
     private SchemaType currentSimpleType = null;  // any other value means we are currently writing an
@@ -344,8 +344,8 @@ public final class ComplexContentOutputter extends Outputter implements Receiver
                 if (uri != null && !uri.equals(namespaceUri)) {
                     XPathException err = new XPathException(
                             "Cannot create two namespace nodes with the same prefix "
-                                    + "mapped to different URIs (prefix=\"" + prefix + "\", URIs=(" +
-                                    uri + "\", \"" + namespaceUri + "\")");
+                                    + "mapped to different URIs (prefix=\"" + prefix + "\", URIs=(\"" +
+                                    uri + "\", \"" + namespaceUri + "\"))");
                     err.setErrorCode(hostLanguage == HostLanguage.XSLT ? "XTDE0430" : "XQDY0102");
                     throw err;
                 }
