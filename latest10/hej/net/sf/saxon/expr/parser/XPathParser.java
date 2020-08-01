@@ -3725,8 +3725,8 @@ public class XPathParser {
         String uri = sq.getURI();
         String local = sq.getLocalPart();
         if (uri.isEmpty()) {
-            int fp = env.getConfiguration().getNamePool().allocateFingerprint("", qname);
-            return new NoNamespaceName(qname, fp);
+            int fp = env.getConfiguration().getNamePool().allocateFingerprint("", local);
+            return new NoNamespaceName(local, fp);
         } else {
             int fp = env.getConfiguration().getNamePool().allocateFingerprint(uri, local);
             return new FingerprintedQName(prefix, uri, local, fp);

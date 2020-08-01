@@ -3649,6 +3649,10 @@ public class XQueryParser extends XPathParser {
                     }
                     throw staticError;
                 }
+                if (attributeName.getPrefix().isEmpty() && !attributeName.hasURI("")) {
+                    attributeName = new FingerprintedQName("_", attributeName.getLocalPart(),
+                                                           attributeName.getURI(), attributeName.getFingerprint());
+                }
                 FixedAttribute fatt = new FixedAttribute(attributeName,
                                                          Validation.STRIP,
                                                          null);

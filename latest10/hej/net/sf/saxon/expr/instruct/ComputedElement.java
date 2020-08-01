@@ -301,20 +301,29 @@ public class ComputedElement extends ElementCreator {
         //nameValue = nameValue.getPrimitiveValue();
         if (nameValue instanceof StringValue) {  // which includes UntypedAtomic
             // this will always be the case in XSLT
-            CharSequence rawName = nameValue.getStringValueCS();
-            rawName = Whitespace.trimWhitespace(rawName);
-            try {
-                String[] parts = NameChecker.getQNameParts(rawName);
-                prefix = parts[0];
-                localName = parts[1];
-            } catch (QNameException err) {
-                String message = "Invalid element name. " + err.getMessage();
-                if (rawName.length() == 0) {
-                    message = "Supplied element name is a zero-length string";
+            String rawName = nameValue.getStringValue();
+            rawName = Whitespace.trimWhitespace(rawName).toString();
+            if (rawName.startsWith("Q{") && allowNameAsQName) {
+                // Unclear whether this is allowed: see https://github.com/w3c/qtspecs/issues/9
+                // It clearly is NOT allowed in XSLT 3.0 (though for no good reason)
+                StructuredQName qn = StructuredQName.fromEQName(rawName);
+                prefix = "";
+                localName = qn.getLocalPart();
+                uri = qn.getURI();
+            } else {
+                try {
+                    String[] parts = NameChecker.getQNameParts(rawName);
+                    prefix = parts[0];
+                    localName = parts[1];
+                } catch (QNameException err) {
+                    String message = "Invalid element name. " + err.getMessage();
+                    if (rawName.length() == 0) {
+                        message = "Supplied element name is a zero-length string";
+                    }
+                    String errorCode = isXSLT() ? "XTDE0820" : "XQDY0074";
+                    XPathException err1 = new XPathException(message, errorCode, getLocation());
+                    throw dynamicError(getLocation(), err1, context);
                 }
-                String errorCode = isXSLT() ? "XTDE0820" : "XQDY0074";
-                XPathException err1 = new XPathException(message, errorCode, getLocation());
-                throw dynamicError(getLocation(), err1, context);
             }
         } else if (nameValue instanceof QNameValue && allowNameAsQName) {
             // this is allowed in XQuery

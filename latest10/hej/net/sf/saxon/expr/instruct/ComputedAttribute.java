@@ -335,22 +335,29 @@ public final class ComputedAttribute extends AttributeCreator {
 
         if (nameValue instanceof StringValue) {
             // this will always be the case in XSLT
-            CharSequence rawName = nameValue.getStringValueCS();
-            rawName = Whitespace.trimWhitespace(rawName); // required in XSLT; possibly wrong in XQuery
-            try {
-                String[] parts = NameChecker.getQNameParts(rawName);
-                prefix = parts[0];
-                localName = parts[1];
-            } catch (QNameException err) {
-                String errorCode = isXSLT() ? "XTDE0850" : "XQDY0074";
-                XPathException err1 = new XPathException("Invalid attribute name: " + rawName, errorCode, this.getLocation());
-                throw dynamicError(getLocation(), err1, context);
-            }
-            if (rawName.toString().equals("xmlns")) {
-                if (getNamespaceExp() == null) {
-                    String errorCode = isXSLT() ? "XTDE0855" : "XQDY0044";
-                    XPathException err = new XPathException("Invalid attribute name: " + rawName, errorCode, this.getLocation());
-                    throw dynamicError(getLocation(), err, context);
+            String rawName = nameValue.getStringValue();
+            rawName = Whitespace.trimWhitespace(rawName).toString(); // required in XSLT; possibly wrong in XQuery
+            if (rawName.startsWith("Q{") && allowNameAsQName) { // not allowed in XSLT; a little unclear in XQuery
+                StructuredQName qn = StructuredQName.fromEQName(rawName);
+                prefix = "";
+                localName = qn.getLocalPart();
+                uri = qn.getURI();
+            } else {
+                try {
+                    String[] parts = NameChecker.getQNameParts(rawName);
+                    prefix = parts[0];
+                    localName = parts[1];
+                } catch (QNameException err) {
+                    String errorCode = isXSLT() ? "XTDE0850" : "XQDY0074";
+                    XPathException err1 = new XPathException("Invalid attribute name: " + rawName, errorCode, this.getLocation());
+                    throw dynamicError(getLocation(), err1, context);
+                }
+                if (rawName.toString().equals("xmlns")) {
+                    if (getNamespaceExp() == null) {
+                        String errorCode = isXSLT() ? "XTDE0855" : "XQDY0044";
+                        XPathException err = new XPathException("Invalid attribute name: " + rawName, errorCode, this.getLocation());
+                        throw dynamicError(getLocation(), err, context);
+                    }
                 }
             }
             if (prefix.equals("xmlns")) {
