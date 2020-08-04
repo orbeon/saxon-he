@@ -509,11 +509,11 @@ public final class ComplexContentOutputter extends Outputter implements Receiver
         boolean inherit = !ReceiverOption.contains(properties, ReceiverOption.DISINHERIT_NAMESPACES);
         NamespaceMap ns2;
         if (inherit) {
-            final NamespaceMap inherited = inheritedNamespaces.peek();
-            ns2 = inherited.putAll(namespaces);
+            NamespaceMap inherited = inheritedNamespaces.peek();
             if (!inherited.getDefaultNamespace().isEmpty() && elemName.getURI().isEmpty()) {
-                ns2 = ns2.remove("");
+                inherited = inherited.remove("");
             }
+            ns2 = inherited.putAll(namespaces);
             if (ReceiverOption.contains(properties, ReceiverOption.BEQUEATH_INHERITED_NAMESPACES_ONLY)) {
                 inheritedNamespaces.push(inherited);
             } else {
