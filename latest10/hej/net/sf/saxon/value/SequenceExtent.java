@@ -18,7 +18,10 @@ import net.sf.saxon.tree.iter.ReverseListIterator;
 import net.sf.saxon.tree.iter.UnfailingIterator;
 import net.sf.saxon.tree.util.FastStringBuffer;
 
-import java.util.*;
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.Iterator;
+import java.util.List;
 
 
 /**
@@ -151,7 +154,8 @@ public class SequenceExtent implements GroundedValue {
     /**
      * Factory method to make a Value holding the contents of any List of items
      *
-     * @param input a List containing the items in the sequence
+     * @param input a List containing the items in the sequence. The caller guarantees
+     *              that this list will not be subsequently modified.
      * @return a ValueRepresentation holding the items in the list. If the
      *         sequence is empty the result will be an instance of {@link EmptySequence}. If it is of length
      *         one, the result will be an {@link Item}. In all other cases, it will be an instance of
@@ -165,7 +169,7 @@ public class SequenceExtent implements GroundedValue {
         } else if (len == 1) {
             return input.get(0);
         } else {
-            return new SequenceExtent(new ArrayList<>(input));
+            return new SequenceExtent(input);
         }
     }
 

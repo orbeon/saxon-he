@@ -17,19 +17,19 @@ import java.util.Map;
 
 public class Instrumentation {
 
-    public static final boolean ACTIVE = true;
+    public static final boolean ACTIVE = false;
 
-    public static HashMap<String, Integer> counters = new HashMap<>();
+    public static HashMap<String, Long> counters = new HashMap<>();
 
     public static void count(String counter) {
         if (counters.containsKey(counter)) {
             counters.put(counter, counters.get(counter) + 1);
         } else {
-            counters.put(counter, 1);
+            counters.put(counter, 1L);
         }
     }
 
-    public static void count(String counter, int increment) {
+    public static void count(String counter, long increment) {
         if (counters.containsKey(counter)) {
             counters.put(counter, counters.get(counter) + increment);
         } else {
@@ -40,7 +40,7 @@ public class Instrumentation {
     public static void report() {
         if (ACTIVE && !counters.isEmpty()) {
             System.err.println("COUNTERS");
-            for (Map.Entry<String, Integer> c : counters.entrySet()) {
+            for (Map.Entry<String, Long> c : counters.entrySet()) {
                 System.err.println(c.getKey() + " = " + c.getValue());
             }
         }
