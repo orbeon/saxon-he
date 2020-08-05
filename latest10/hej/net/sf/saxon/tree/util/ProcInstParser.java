@@ -63,10 +63,7 @@ public class ProcInstParser {
                 }
             };
 
-           /* SAXParserFactory factory = SAXParserFactory.newInstance();
-            factory.setNamespaceAware(false);  // allows attribute names containing colons or unbound prefixes
-            SAXParser parser = factory.newSAXParser();                         */
-            XMLReader reader = Version.platform.loadParserForXmlFragments(); //parser.getXMLReader();
+            XMLReader reader = Version.platform.loadParserForXmlFragments();
             reader.setContentHandler(filter);
             StringReader in = new StringReader("<e " + content + "/>");
             reader.parse(new InputSource(in));
