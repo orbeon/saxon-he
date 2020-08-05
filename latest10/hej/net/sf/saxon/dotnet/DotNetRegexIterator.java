@@ -35,9 +35,9 @@ import java.util.List;
 
 public class DotNetRegexIterator implements RegexIterator, LastPositionFinder {
 
-    private String theString;   // the input string being matched
-    private Regex pattern;      // the regex against which the string is matched
-    private IEnumerator matcher;    // the Matcher object that does the matching, and holds the state
+    private final String theString;   // the input string being matched
+    private final Regex pattern;      // the regex against which the string is matched
+    private final IEnumerator matcher;    // the Matcher object that does the matching, and holds the state
     private Match match;        // the current match
     private String current;     // the string most recently returned by the iterator
     private String next;        // if the last string was a matching string, null; otherwise the next substring

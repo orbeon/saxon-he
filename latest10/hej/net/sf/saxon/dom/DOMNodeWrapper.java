@@ -955,9 +955,9 @@ public class DOMNodeWrapper extends AbstractNodeWrapper implements SiblingCounti
 
     private final class AttributeEnumeration implements AxisIterator, LookaheadIterator {
 
-        private ArrayList<Node> attList = new ArrayList<>(10);
+        private final ArrayList<Node> attList = new ArrayList<>(10);
         private int ix = 0;
-        private DOMNodeWrapper start;
+        private final DOMNodeWrapper start;
         private DOMNodeWrapper current;
 
         public  AttributeEnumeration(DOMNodeWrapper start) {
@@ -997,8 +997,8 @@ public class DOMNodeWrapper extends AbstractNodeWrapper implements SiblingCounti
          * Get properties of this iterator, as a bit-significant integer.
          *
          * @return the properties of this iterator. This will be some combination of
-         *         properties such as {@link net.sf.saxon.om.SequenceIterator.Property#GROUNDED}, {@link net.sf.saxon.om.SequenceIterator.Property#LAST_POSITION_FINDER},
-         *         and {@link net.sf.saxon.om.SequenceIterator.Property#LOOKAHEAD}. It is always
+         *         properties such as {@link Property#GROUNDED}, {@link Property#LAST_POSITION_FINDER},
+         *         and {@link Property#LOOKAHEAD}. It is always
          *         acceptable to return the value zero, indicating that there are no known special properties.
          *         It is acceptable for the properties of the iterator to change depending on its state.
          */
@@ -1019,11 +1019,11 @@ public class DOMNodeWrapper extends AbstractNodeWrapper implements SiblingCounti
 
     private final class ChildEnumeration implements AxisIterator, LookaheadIterator {
 
-        private DOMNodeWrapper start;
-        private DOMNodeWrapper commonParent;
-        private boolean downwards;  // iterate children of start node (not siblings)
-        private boolean forwards;   // iterate in document order (not reverse order)
-        private boolean elementsOnly;
+        private final DOMNodeWrapper start;
+        private final DOMNodeWrapper commonParent;
+        private final boolean downwards;  // iterate children of start node (not siblings)
+        private final boolean forwards;   // iterate in document order (not reverse order)
+        private final boolean elementsOnly;
         NodeList childNodes;
         private int childNodesLength;
         private int ix;             // index of the current DOM node within childNodes;
@@ -1186,8 +1186,8 @@ public class DOMNodeWrapper extends AbstractNodeWrapper implements SiblingCounti
          * Get properties of this iterator, as a bit-significant integer.
          *
          * @return the properties of this iterator. This will be some combination of
-         *         properties such as {@link net.sf.saxon.om.SequenceIterator.Property#GROUNDED}, {@link net.sf.saxon.om.SequenceIterator.Property#LAST_POSITION_FINDER},
-         *         and {@link net.sf.saxon.om.SequenceIterator.Property#LOOKAHEAD}. It is always
+         *         properties such as {@link Property#GROUNDED}, {@link Property#LAST_POSITION_FINDER},
+         *         and {@link Property#LOOKAHEAD}. It is always
          *         acceptable to return the value zero, indicating that there are no known special properties.
          *         It is acceptable for the properties of the iterator to change depending on its state.
          */

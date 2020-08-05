@@ -729,6 +729,9 @@ public abstract class JPConverter {
             if (controller != null) {
                 options.setSchemaValidationMode(controller.getSchemaValidationMode());
             }
+            if (object instanceof TreeInfo) {
+                return ((TreeInfo)object).getRootNode();
+            }
             return context.getConfiguration().buildDocumentTree((Source) object, options).getRootNode();
         }
 

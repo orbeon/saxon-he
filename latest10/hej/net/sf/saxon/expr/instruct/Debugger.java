@@ -19,7 +19,7 @@ public interface Debugger {
      * @return the SlotManager
      */
 
-    public SlotManager makeSlotManager();
+    SlotManager makeSlotManager();
 
 }
 

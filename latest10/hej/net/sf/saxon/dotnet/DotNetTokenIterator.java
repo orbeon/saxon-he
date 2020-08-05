@@ -20,9 +20,9 @@ import net.sf.saxon.value.StringValue;
 
 public class DotNetTokenIterator implements AtomicIterator {
 
-    private String input;
-    private Regex pattern;
-    private IEnumerator matches;
+    private final String input;
+    private final Regex pattern;
+    private final IEnumerator matches;
     private int prevEnd = 0;
 
 

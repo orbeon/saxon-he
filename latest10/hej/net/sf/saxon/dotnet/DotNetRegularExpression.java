@@ -263,7 +263,6 @@ public class DotNetRegularExpression implements RegularExpression {
             if (inFlags.charAt(i) == 'x') {
                 return true;
             }
-            ;
         }
         return false;
     }
@@ -280,7 +279,6 @@ public class DotNetRegularExpression implements RegularExpression {
             if (inFlags.charAt(i) == 'i') {
                 return true;
             }
-            ;
         }
         return false;
     }

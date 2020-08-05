@@ -29,7 +29,7 @@ import java.util.List;
 
 public class EventBuffer extends SequenceReceiver {
 
-    private List<Event> buffer = new ArrayList<>();
+    private final List<Event> buffer = new ArrayList<>();
 
     public EventBuffer(PipelineConfiguration pipe){
         super(pipe);

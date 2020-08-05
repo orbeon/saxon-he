@@ -16,7 +16,7 @@ import java.io.IOException;
  */
 public class DotNetReader extends java.io.Reader {
 
-    private TextReader reader;
+    private final TextReader reader;
 
     /**
      * Create a Java Reader that wraps a .NET Reader
@@ -63,7 +63,7 @@ public class DotNetReader extends java.io.Reader {
      * @throws java.io.IOException If an I/O error occurs
      */
     @Override
-    public int read(char cbuf[], int off, int len) throws IOException {
+    public int read(char[] cbuf, int off, int len) throws IOException {
         int n = reader.Read(cbuf, off, len);
         return (n == 0 ? -1 : n);
     }

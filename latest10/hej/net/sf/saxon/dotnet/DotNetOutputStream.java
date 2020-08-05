@@ -68,7 +68,7 @@ public class DotNetOutputStream extends OutputStream {
      *                             stream is closed.
      */
     @Override
-    public void write(byte b[], int off, int len) throws IOException {
+    public void write(byte[] b, int off, int len) throws IOException {
         stream.Write(b, off, len);
     }
 
@@ -83,7 +83,7 @@ public class DotNetOutputStream extends OutputStream {
      * @see java.io.OutputStream#write(byte[], int, int)
      */
     @Override
-    public void write(byte b[]) throws IOException {
+    public void write(byte[] b) throws IOException {
         stream.Write(b, 0, b.length);
     }
 

@@ -632,6 +632,7 @@ public class UserFunction extends Actor implements Function, ContextOriginator, 
     @Override
     public Sequence call(XPathContext context, Sequence[] actualArgs)
             throws XPathException {
+//        long start = System.nanoTime();
         if (evaluator == null) {
             // should have been done at compile time
             computeEvaluationMode();
@@ -653,6 +654,10 @@ public class UserFunction extends Actor implements Function, ContextOriginator, 
                     + (getSystemId() != null ? " in module " + getSystemId() : "");
             throw new RuntimeException(message, err2);
         }
+//        result = result.materialize();
+//        long end = System.nanoTime();
+//        Instrumentation.count(functionName.getLocalPart());
+//        Instrumentation.count(functionName.getLocalPart() + "--nanosecs", end - start);
         return result;
     }
 

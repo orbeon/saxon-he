@@ -25,7 +25,7 @@ import net.sf.saxon.type.SimpleType;
 public class EventMonitor extends Outputter {
 
     private boolean written = false;
-    private Outputter next;
+    private final Outputter next;
 
     public EventMonitor(Outputter next){
         this.next = next;

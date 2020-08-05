@@ -7,8 +7,8 @@
 
 package net.sf.saxon.expr;
 
-import net.sf.saxon.expr.compat.ArithmeticExpression10;
 import net.sf.saxon.Configuration;
+import net.sf.saxon.expr.compat.ArithmeticExpression10;
 import net.sf.saxon.expr.parser.*;
 import net.sf.saxon.om.GroundedValue;
 import net.sf.saxon.om.StandardNames;
@@ -425,7 +425,6 @@ public class ArithmeticExpression extends BinaryExpression {
 
     @Override
     public AtomicValue evaluateItem(XPathContext context) throws XPathException {
-
         AtomicValue v0 = (AtomicValue) getLhsExpression().evaluateItem(context);
         if (v0 == null) {
             return null;

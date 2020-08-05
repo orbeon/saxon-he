@@ -10,7 +10,10 @@ package net.sf.saxon.expr;
 import net.sf.saxon.om.GroundedValue;
 import net.sf.saxon.trans.XPathException;
 import net.sf.saxon.tree.iter.*;
-import net.sf.saxon.value.*;
+import net.sf.saxon.value.BigIntegerValue;
+import net.sf.saxon.value.Int64Value;
+import net.sf.saxon.value.IntegerRange;
+import net.sf.saxon.value.IntegerValue;
 
 import java.util.EnumSet;
 

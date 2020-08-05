@@ -143,7 +143,7 @@ public class UcaCollatorUsingJava implements SubstringMatcher {
                 error("lang", "a valid language code");
             }
             String language, country = "", variant = "";
-            String parts[] = lang.split("-");
+            String[] parts = lang.split("-");
             language = parts[0];
             if (parts.length > 1) {
                 country = parts[1];
@@ -213,7 +213,7 @@ public class UcaCollatorUsingJava implements SubstringMatcher {
         String query = AnyURIValue.decode(uuri.getRawQuery());
         if (query != null && !query.isEmpty()) {
             for (String s : query.split(";")) {
-                String tokens[] = s.split("=");
+                String[] tokens = s.split("=");
                 if (!keys.contains(tokens[0])) {
                     unknownKeys.add(tokens[0]);
                 }

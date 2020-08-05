@@ -29,7 +29,7 @@ public interface TailCall {
      *          if any error occurs processing the tail call
      */
 
-    public TailCall processLeavingTail() throws XPathException;
+    TailCall processLeavingTail() throws XPathException;
 
 }
 

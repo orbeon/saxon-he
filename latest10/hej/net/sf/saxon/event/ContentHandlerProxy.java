@@ -55,8 +55,8 @@ public class ContentHandlerProxy implements Receiver {
     private int depth = 0;
     private boolean requireWellFormed = false;
     private boolean undeclareNamespaces = false;
-    private Stack<String> elementStack = new Stack<>();
-    private Stack<String> namespaceStack = new Stack<>();
+    private final Stack<String> elementStack = new Stack<>();
+    private final Stack<String> namespaceStack = new Stack<>();
     private ContentHandlerProxyTraceListener traceListener;
     //protected AttributeCollectionImpl pendingAttributes;
     //private NodeName pendingElement = null;

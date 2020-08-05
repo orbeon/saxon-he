@@ -624,7 +624,7 @@ public class DotNetNodeWrapper extends AbstractNodeWrapper implements SteppingNo
 
     @Override
     public DotNetNodeWrapper getSuccessorElement(DotNetNodeWrapper anchor, String uri, String local) {
-        XmlNode stop = (anchor == null ? null : ((DotNetNodeWrapper) anchor).node);
+        XmlNode stop = (anchor == null ? null : anchor).node;
         XmlNode next = node;
         do {
             next = getSuccessorNode(next, stop);
@@ -667,9 +667,9 @@ public class DotNetNodeWrapper extends AbstractNodeWrapper implements SteppingNo
 
     private final class AttributeEnumeration implements AxisIterator, LookaheadIterator {
 
-        private ArrayList<XmlNode> attList = new ArrayList<>(10);
+        private final ArrayList<XmlNode> attList = new ArrayList<>(10);
         private int ix = 0;
-        private DotNetNodeWrapper start;
+        private final DotNetNodeWrapper start;
         private DotNetNodeWrapper current;
 
         public AttributeEnumeration(DotNetNodeWrapper start) {
@@ -706,8 +706,8 @@ public class DotNetNodeWrapper extends AbstractNodeWrapper implements SteppingNo
          * Get properties of this iterator, as a bit-significant integer.
          *
          * @return the properties of this iterator. This will be some combination of
-         *         properties such as {@link net.sf.saxon.om.SequenceIterator.Property#GROUNDED}, {@link net.sf.saxon.om.SequenceIterator.Property#LAST_POSITION_FINDER},
-         *         and {@link net.sf.saxon.om.SequenceIterator.Property#LOOKAHEAD}. It is always
+         *         properties such as {@link Property#GROUNDED}, {@link Property#LAST_POSITION_FINDER},
+         *         and {@link Property#LOOKAHEAD}. It is always
          *         acceptable to return the value zero, indicating that there are no known special properties.
          *         It is acceptable for the properties of the iterator to change depending on its state.
          */
@@ -728,8 +728,8 @@ public class DotNetNodeWrapper extends AbstractNodeWrapper implements SteppingNo
 
     private final class ChildEnumeration implements AxisIterator, LookaheadIterator {
 
-        private DotNetNodeWrapper start;
-        private ArrayList<DotNetNodeWrapper> items = new ArrayList<DotNetNodeWrapper>(20);
+        private final DotNetNodeWrapper start;
+        private final ArrayList<DotNetNodeWrapper> items = new ArrayList<DotNetNodeWrapper>(20);
         private int ix;
         private int position;
         private boolean downwards;  // iterate children of start node (not siblings)
@@ -746,7 +746,7 @@ public class DotNetNodeWrapper extends AbstractNodeWrapper implements SteppingNo
             if (downwards) {
                 commonParent = start;
             } else {
-                commonParent = (DotNetNodeWrapper) start.getParent();
+                commonParent = start.getParent();
             }
 
             XmlNodeList childNodes = commonParent.node.get_ChildNodes();
@@ -873,8 +873,8 @@ public class DotNetNodeWrapper extends AbstractNodeWrapper implements SteppingNo
          * Get properties of this iterator, as a bit-significant integer.
          *
          * @return the properties of this iterator. This will be some combination of
-         *         properties such as {@link net.sf.saxon.om.SequenceIterator.Property#GROUNDED}, {@link net.sf.saxon.om.SequenceIterator.Property#LAST_POSITION_FINDER},
-         *         and {@link net.sf.saxon.om.SequenceIterator.Property#LOOKAHEAD}. It is always
+         *         properties such as {@link Property#GROUNDED}, {@link Property#LAST_POSITION_FINDER},
+         *         and {@link Property#LOOKAHEAD}. It is always
          *         acceptable to return the value zero, indicating that there are no known special properties.
          *         It is acceptable for the properties of the iterator to change depending on its state.
          */

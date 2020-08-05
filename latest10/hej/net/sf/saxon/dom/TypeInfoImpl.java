@@ -19,8 +19,8 @@ import org.w3c.dom.TypeInfo;
 
 public class TypeInfoImpl implements TypeInfo {
 
-    private Configuration config;
-    private SchemaType schemaType;
+    private final Configuration config;
+    private final SchemaType schemaType;
 
     /**
      * Construct a TypeInfo based on a SchemaType

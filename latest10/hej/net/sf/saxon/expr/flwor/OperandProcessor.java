@@ -16,7 +16,7 @@ import net.sf.saxon.trans.XPathException;
  */
 public interface OperandProcessor {
 
-    public void processOperand(Operand expr) throws XPathException;
+    void processOperand(Operand expr) throws XPathException;
 
 }
 

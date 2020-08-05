@@ -55,7 +55,7 @@ public class DotNetPlatform implements Platform {
      * loading.
      */
 
-    private static CharsetProvider provider = new sun.nio.cs.ext.ExtendedCharsets();
+    private static final CharsetProvider provider = new sun.nio.cs.ext.ExtendedCharsets();
 
     public DotNetPlatform() {
     }

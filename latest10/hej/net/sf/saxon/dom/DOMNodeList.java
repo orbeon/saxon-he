@@ -16,7 +16,7 @@ import java.util.List;
  */
 
 public final class DOMNodeList implements org.w3c.dom.NodeList {
-    private List<Node> sequence;
+    private final List<Node> sequence;
 
     /**
      * Construct an node list that wraps a supplied list of DOM Nodes.

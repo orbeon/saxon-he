@@ -556,6 +556,7 @@ public class UserFunctionCall extends FunctionCall implements UserFunctionResolv
         }
 
         try {
+            //Instrumentation.count(function.getFunctionName().getLocalPart());
             return targetFunction.call(c2, actualArgs);
         } catch (UncheckedXPathException e) {
             XPathException xe = e.getXPathException();

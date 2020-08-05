@@ -36,7 +36,7 @@ import javax.xml.xpath.XPathConstants;
 
 public class DOMEnvelope implements ExternalObjectModel {
 
-    private static DOMEnvelope THE_INSTANCE = new DOMEnvelope();
+    private static final DOMEnvelope THE_INSTANCE = new DOMEnvelope();
 
     /**
      * Get the singular instance (this class is stateless)

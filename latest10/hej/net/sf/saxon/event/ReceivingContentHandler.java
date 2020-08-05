@@ -97,7 +97,7 @@ public class ReceivingContentHandler
      * namecodes.
      */
 
-    private HashMap<String, HashMap<String, NodeName>> nameCache = new HashMap<>(10);
+    private final HashMap<String, HashMap<String, NodeName>> nameCache = new HashMap<>(10);
     private HashMap<String, NodeName> noNamespaceNameCache = new HashMap<>(10);
 
     // Action to be taken with defaulted attributes. 0=process normally, -1=suppress, +1=mark as defaulted
@@ -772,7 +772,7 @@ public class ReceivingContentHandler
 
     public static class LocalLocator implements Location {
 
-        private Locator saxLocator;
+        private final Locator saxLocator;
         public int levelInEntity;
 
         LocalLocator(Locator saxLocator) {

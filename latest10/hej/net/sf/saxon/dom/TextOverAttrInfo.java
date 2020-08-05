@@ -16,7 +16,7 @@ import org.w3c.dom.Node;
  */
 public class TextOverAttrInfo extends TextOverNodeInfo {
 
-    private AttrOverNodeInfo attr;
+    private final AttrOverNodeInfo attr;
 
     public TextOverAttrInfo(AttrOverNodeInfo attr) {
         this.attr = attr;

@@ -21,6 +21,6 @@ public interface Talker {
      */
     String exchange(String out);
 
-    default void setAutoCompletion(List<String> candidates) {};
+    default void setAutoCompletion(List<String> candidates) {}
 }
 

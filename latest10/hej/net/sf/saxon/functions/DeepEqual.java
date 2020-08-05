@@ -173,7 +173,7 @@ public class DeepEqual extends CollatingFunctionFixed {
                 if (item1 instanceof ObjectValue || item2 instanceof ObjectValue) {
                     if (!item1.equals(item2)) {
                         return false;
-                    };
+                    }
                     continue;
                 }
 

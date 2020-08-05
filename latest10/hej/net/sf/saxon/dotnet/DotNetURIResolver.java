@@ -33,7 +33,7 @@ import java.io.IOException;
 
 public class DotNetURIResolver implements RelativeURIResolver, EntityResolver {
 
-    private XmlResolver resolver;
+    private final XmlResolver resolver;
 
     /**
      * Create a URIResolver that wraps a .NET XmlResolver

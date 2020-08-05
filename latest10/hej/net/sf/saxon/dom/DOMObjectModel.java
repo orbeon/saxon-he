@@ -46,7 +46,7 @@ import java.util.List;
 
 public class DOMObjectModel extends TreeModel implements ExternalObjectModel {
 
-    private static DOMObjectModel THE_INSTANCE = new DOMObjectModel();
+    private static final DOMObjectModel THE_INSTANCE = new DOMObjectModel();
     private static DocumentBuilderFactory factory = null;
 
     /**

@@ -21,9 +21,9 @@ import net.sf.saxon.value.Base64BinaryValue;
  */
 public class DotNetComparator implements SubstringMatcher {
 
-    private transient CompareInfo comparer;
-    private transient CompareOptions options;
-    private String collationURI;
+    private final transient CompareInfo comparer;
+    private final transient CompareOptions options;
+    private final String collationURI;
 
     /**
      * Create a collation based on a given .NET CompareInfo and CompareOptions
@@ -217,7 +217,7 @@ public class DotNetComparator implements SubstringMatcher {
 
     private static class SortKeyWrapper implements AtomicMatchKey {
 
-        private SortKey key;
+        private final SortKey key;
 
         public SortKeyWrapper(SortKey key) {
             this.key = key;

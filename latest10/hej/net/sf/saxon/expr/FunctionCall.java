@@ -97,7 +97,7 @@ public abstract class FunctionCall extends Expression {
         setOperanda(new OperandArray(this, args));
     }
 
-    protected void setOperanda(Expression[] args, OperandRole roles[]) {
+    protected void setOperanda(Expression[] args, OperandRole[] roles) {
         setOperanda(new OperandArray(this, args, roles));
     }
 

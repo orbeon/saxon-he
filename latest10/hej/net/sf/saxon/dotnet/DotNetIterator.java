@@ -22,7 +22,7 @@ public class DotNetIterator<T extends Object> implements Iterator<T> {
         T convert(Object o);
     }
 
-    private IEnumerator enumerator;
+    private final IEnumerator enumerator;
     private Mapper<T> mapper;
 
 

@@ -29,7 +29,7 @@ import net.sf.saxon.type.SchemaType;
 public class CommentStripper extends ProxyReceiver {
 
     /*@Nullable*/ private CompressedWhitespace savedWhitespace = null;
-    private FastStringBuffer buffer = new FastStringBuffer(FastStringBuffer.C256);
+    private final FastStringBuffer buffer = new FastStringBuffer(FastStringBuffer.C256);
 
     /**
      * Default constructor for use in subclasses

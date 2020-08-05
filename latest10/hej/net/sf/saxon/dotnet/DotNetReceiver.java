@@ -22,7 +22,7 @@ import net.sf.saxon.type.SimpleType;
 
 public class DotNetReceiver extends Outputter {
 
-    private XmlWriter writer;
+    private final XmlWriter writer;
     private PipelineConfiguration pipe;
     private String systemId;
     private boolean closeAfterUse = true;

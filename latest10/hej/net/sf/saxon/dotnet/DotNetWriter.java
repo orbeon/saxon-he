@@ -17,7 +17,7 @@ import java.io.Writer;
  */
 public class DotNetWriter extends Writer {
 
-    private TextWriter textWriter;
+    private final TextWriter textWriter;
 
     /**
      * Create a Java Writer that wraps a supplied .NET TextWriter
@@ -77,7 +77,7 @@ public class DotNetWriter extends Writer {
      * @throws java.io.IOException If an I/O error occurs
      */
     @Override
-    public void write(char cbuf[], int off, int len) throws IOException {
+    public void write(char[] cbuf, int off, int len) throws IOException {
         try {
             textWriter.Write(cbuf, off, len);
         } catch (Exception e) {
@@ -111,7 +111,7 @@ public class DotNetWriter extends Writer {
      * @throws java.io.IOException If an I/O error occurs
      */
     @Override
-    public void write(char cbuf[]) throws IOException {
+    public void write(char[] cbuf) throws IOException {
         try {
             textWriter.Write(cbuf);
         } catch (Exception e) {

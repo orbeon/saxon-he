@@ -113,7 +113,6 @@ public class RangeKey implements MapItem {
     public Iterable<KeyValuePair> keyValuePairs() {
         // For .NEU - don't use a lambda expression here
         return new Iterable<KeyValuePair>() {
-            @NotNull
             @Override
             public Iterator<KeyValuePair> iterator() {
                 return new Iterator<KeyValuePair>() {

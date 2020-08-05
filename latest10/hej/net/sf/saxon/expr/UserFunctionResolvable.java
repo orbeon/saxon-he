@@ -15,6 +15,6 @@ import net.sf.saxon.expr.instruct.UserFunction;
  */
 public interface UserFunctionResolvable {
 
-    public void setFunction(UserFunction function);
+    void setFunction(UserFunction function);
 }
 

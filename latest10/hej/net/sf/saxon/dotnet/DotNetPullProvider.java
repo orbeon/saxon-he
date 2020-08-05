@@ -34,12 +34,12 @@ import java.util.Stack;
 public class DotNetPullProvider implements PullProvider, Location {
 
     private PipelineConfiguration pipe;
-    private XmlReader parser;
+    private final XmlReader parser;
     private String baseURI;
     private boolean isEmptyElement = false;
     private Event current = Event.START_OF_INPUT;
     private boolean expandDefaults = true;
-    private Stack<NamespaceMap> namespaceStack = new Stack<>();
+    private final Stack<NamespaceMap> namespaceStack = new Stack<>();
 
     /**
      * Create a PullProvider that wraps a .NET XML parser
@@ -65,7 +65,7 @@ public class DotNetPullProvider implements PullProvider, Location {
 
     /**
      * Close the event reader. This indicates that no further events are required.
-     * It is not necessary to close an event reader after {@link net.sf.saxon.pull.PullProvider.Event#END_OF_INPUT} has
+     * It is not necessary to close an event reader after {@link Event#END_OF_INPUT} has
      * been reported, but it is recommended to close it if reading terminates
      * prematurely. Once an event reader has been closed, the effect of further
      * calls on next() is undefined.
@@ -141,9 +141,9 @@ public class DotNetPullProvider implements PullProvider, Location {
 
     /**
      * Get the NodeName identifying the name of the current node. This method
-     * can be used after the {@link net.sf.saxon.pull.PullProvider.Event#START_ELEMENT}, {@link net.sf.saxon.pull.PullProvider.Event#PROCESSING_INSTRUCTION},
-     * {@link net.sf.saxon.pull.PullProvider.Event#ATTRIBUTE}, or {@link net.sf.saxon.pull.PullProvider.Event#NAMESPACE} events. With some PullProvider implementations,
-     * it can also be used after {@link net.sf.saxon.pull.PullProvider.Event#END_ELEMENT}, but this is not guaranteed: a client who
+     * can be used after the {@link Event#START_ELEMENT}, {@link Event#PROCESSING_INSTRUCTION},
+     * {@link Event#ATTRIBUTE}, or {@link Event#NAMESPACE} events. With some PullProvider implementations,
+     * it can also be used after {@link Event#END_ELEMENT}, but this is not guaranteed: a client who
      * requires the information at that point (for example, to do serialization) should insert an
      * {@link com.saxonica.xqj.pull.ElementNameTracker} into the pipeline.
      * If called at other times, the result is undefined and may result in an IllegalStateException.

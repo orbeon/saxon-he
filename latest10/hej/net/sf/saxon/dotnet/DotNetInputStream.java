@@ -115,7 +115,7 @@ public class DotNetInputStream extends InputStream {
      * @see java.io.InputStream#read()
      */
     @Override
-    public int read(byte b[], int off, int len) throws IOException {
+    public int read(byte[] b, int off, int len) throws IOException {
         int i = stream.Read(b, off, len);
         if (i > 0) {
             currentOffset += i;

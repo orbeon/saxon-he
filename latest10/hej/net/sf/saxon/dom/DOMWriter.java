@@ -36,7 +36,7 @@ public class DOMWriter extends Builder {
     private int level = 0;
     private boolean canNormalize = true;
     private String systemId;
-    private Stack<NamespaceMap> nsStack = new Stack<>();
+    private final Stack<NamespaceMap> nsStack = new Stack<>();
 
     public DOMWriter() {
         nsStack.push(NamespaceMap.emptyMap());

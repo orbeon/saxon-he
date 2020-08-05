@@ -25,8 +25,8 @@ import java.util.Stack;
 
 public class PathMaintainer extends ProxyReceiver {
 
-    private Stack<AbsolutePath.PathElement> path = new Stack<>();
-    private Stack<HashMap<NodeName, Integer>> siblingCounters = new Stack<>();
+    private final Stack<AbsolutePath.PathElement> path = new Stack<>();
+    private final Stack<HashMap<NodeName, Integer>> siblingCounters = new Stack<>();
 
     public PathMaintainer(/*@NotNull*/ Receiver next) {
         super(next);

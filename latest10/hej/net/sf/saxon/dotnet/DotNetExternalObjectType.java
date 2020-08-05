@@ -23,9 +23,9 @@ import net.sf.saxon.value.Whitespace;
 
 public class DotNetExternalObjectType extends ExternalObjectType {
 
-    private transient cli.System.Type dotNetType;
-    private Configuration config;
-    private StructuredQName qName;
+    private final transient cli.System.Type dotNetType;
+    private final Configuration config;
+    private final StructuredQName qName;
 
     public DotNetExternalObjectType(cli.System.Type dotNetType, Configuration config) {
         this.dotNetType = dotNetType;

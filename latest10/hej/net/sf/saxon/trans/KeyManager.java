@@ -15,14 +15,16 @@ import net.sf.saxon.functions.IntegratedFunctionLibrary;
 import net.sf.saxon.functions.IsIdRef;
 import net.sf.saxon.functions.SystemFunction;
 import net.sf.saxon.lib.ConversionRules;
-import net.sf.saxon.om.*;
+import net.sf.saxon.om.SequenceIterator;
+import net.sf.saxon.om.StandardNames;
+import net.sf.saxon.om.StructuredQName;
+import net.sf.saxon.om.TreeInfo;
 import net.sf.saxon.pattern.BasePatternWithPredicate;
 import net.sf.saxon.pattern.MultipleNodeKindTest;
 import net.sf.saxon.pattern.NodeTestPattern;
 import net.sf.saxon.pattern.Pattern;
 import net.sf.saxon.sxpath.IndependentContext;
 import net.sf.saxon.trace.ExpressionPresenter;
-import net.sf.saxon.trace.Instrumentation;
 import net.sf.saxon.tree.iter.EmptyIterator;
 import net.sf.saxon.type.BuiltInAtomicType;
 import net.sf.saxon.type.Converter;
@@ -250,7 +252,7 @@ public class KeyManager {
                                              TreeInfo doc,
                                              XPathContext context) throws XPathException {
         //System.err.println("Building index " + keySet.getKeyName() + " for doc " + doc.getDocumentNumber() + " in thread " + Thread.currentThread().getId());
-        Instrumentation.count("buildIndex");
+        //Instrumentation.count("buildIndex");
         KeyIndex index = new KeyIndex(keySet.isRangeKey());
         index.buildIndex(keySet, doc, context);
         //System.err.println("Done building index " + keySet.getKeyName() + " for doc " + doc.getDocumentNumber() + " in thread " + Thread.currentThread().getId());

@@ -145,7 +145,7 @@ public class PushToReceiver implements Push {
 
     private class DocImpl extends ContainerImpl implements Document {
 
-        private boolean wellFormed;
+        private final boolean wellFormed;
         private boolean foundElement = false;
 
         DocImpl(boolean wellFormed) throws SaxonApiException {

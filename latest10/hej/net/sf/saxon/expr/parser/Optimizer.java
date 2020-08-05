@@ -529,7 +529,7 @@ public class Optimizer {
 
     public void injectByteCodeCandidates(Expression exp) throws XPathException {
 
-    };
+    }
 
     public Expression optimizeNumberInstruction(NumberInstruction ni, ContextItemStaticInfo contextInfo) {
         return null;

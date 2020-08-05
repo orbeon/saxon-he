@@ -19,7 +19,7 @@ import java.util.List;
 
 public class CloseNotifier extends ProxyReceiver {
 
-    private List<Action> actionList;
+    private final List<Action> actionList;
 
     public CloseNotifier(Receiver next, List<Action> actionList) {
         super(next);

@@ -35,7 +35,7 @@ import java.util.Stack;
  */
 
 public class DOMSender {
-    private Receiver receiver;
+    private final Receiver receiver;
     protected Node root;
     protected String systemId;
     private Stack<NamespaceMap> namespaces = new Stack<>();
