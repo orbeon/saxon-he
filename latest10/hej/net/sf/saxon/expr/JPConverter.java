@@ -154,7 +154,8 @@ public abstract class JPConverter {
      * @param javaClass the class of the Java object to be converted (this may be the static type
      *                  or the dynamic type, depending when the converter is allocated)
      * @param genericType the generic type of the Java object; may be null if unknown
-     * @param config    the Saxon Configuration  @return a suitable converter
+     * @param config    the Saxon Configuration
+     * @return a suitable converter
      */
 
     public static JPConverter allocate(Class javaClass, java.lang.reflect.Type genericType, Configuration config) {
