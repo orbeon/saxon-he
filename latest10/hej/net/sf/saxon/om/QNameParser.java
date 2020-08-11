@@ -133,7 +133,10 @@ public class QNameParser {
             } else if (endBrace == name.length() - 1) {
                 throw new XPathException("Invalid EQName: local part is missing", errorOnBadSyntax);
             }
-            String uri = name.substring(2, endBrace).toString();
+            String uri = Whitespace.collapseWhitespace(name.substring(2, endBrace)).toString();
+            if (uri.contains("{")) {
+                throw new XPathException("Invalid EQName: URI contains opening brace", errorOnBadSyntax);
+            }
             //String uri = Whitespace.collapseWhitespace(name.substring(2, endBrace)).toString();
             if (unescaper != null && uri.contains("&")) {
                 uri = unescaper.unescape(uri).toString();

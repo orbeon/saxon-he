@@ -3506,7 +3506,10 @@ public class XQueryParser extends XPathParser {
             if (vName instanceof StringValue && !(vName instanceof AnyURIValue)) {
                 String lex = ((StringValue) vName).getStringValue();
                 try {
+                    QNameParser oldQP = getQNameParser();
+                    setQNameParser(oldQP.withUnescaper(null));
                     elemName = makeNodeName(lex, true);
+                    setQNameParser(oldQP);
                     elemName.obtainFingerprint(env.getConfiguration().getNamePool());
                 } catch (XPathException staticError) {
                     String code = staticError.getErrorCodeLocalPart();
@@ -3637,7 +3640,10 @@ public class XQueryParser extends XPathParser {
                 }
                 NodeName attributeName;
                 try {
+                    QNameParser oldQP = getQNameParser();
+                    setQNameParser(oldQP.withUnescaper(null));
                     attributeName = makeNodeName(lex, false);
+                    setQNameParser(oldQP);
                 } catch (XPathException staticError) {
                     String code = staticError.getErrorCodeLocalPart();
                     staticError.setLocator(makeLocation());
@@ -3650,8 +3656,9 @@ public class XQueryParser extends XPathParser {
                     throw staticError;
                 }
                 if (attributeName.getPrefix().isEmpty() && !attributeName.hasURI("")) {
-                    attributeName = new FingerprintedQName("_", attributeName.getLocalPart(),
-                                                           attributeName.getURI(), attributeName.getFingerprint());
+                    attributeName = new FingerprintedQName("_", attributeName.getURI(),
+                                                           attributeName.getLocalPart(),
+                                                           attributeName.getFingerprint());
                 }
                 FixedAttribute fatt = new FixedAttribute(attributeName,
                                                          Validation.STRIP,

@@ -7,20 +7,29 @@
 
 package net.sf.saxon.om;
 
+import net.sf.saxon.style.PackageVersion;
+
 import java.io.File;
+import java.util.Objects;
 
 /**
  * This class encapsulates a string used as the value of the document-uri() property of a document,
  * together with a normalized representation of the string used for equality comparisons. The idea
  * is that on Windows systems, document URIs are compared using case-blind comparison, but the original
  * case is retained for display purposes.
+ *
+ * <p>The package name and version of the document reference are retained, because calls of doc()
+ * in different packages, using the same absolute URI, may return different documents, as a result
+ * of the treatment of whitespace and type annotations varying.</p>
  */
-public class DocumentURI {
+public class DocumentKey {
 
     public final static boolean CASE_BLIND_FILES = new File("a").equals(new File("A"));
 
     private String displayValue;
     private String normalizedValue;
+    private String packageName = "";
+    private PackageVersion packageVersion = PackageVersion.ONE;
 
     /**
      * Create a DocumentURI object that wraps a given URI
@@ -29,13 +38,24 @@ public class DocumentURI {
      * @throws NullPointerException if uri is null
      */
 
-    public DocumentURI(/*@Nullable*/ String uri) {
-        if (uri == null) {
-            throw new NullPointerException("uri");
-        }
+    public DocumentKey(String uri) {
+        Objects.requireNonNull(uri);
         this.displayValue = uri;
         this.normalizedValue = normalizeURI(uri);
     }
+
+    public DocumentKey(String uri, String packageName, PackageVersion version) {
+        Objects.requireNonNull(uri);
+        this.displayValue = uri;
+        this.normalizedValue = normalizeURI(uri);
+        this.packageName = packageName;
+        this.packageVersion = version;
+    }
+
+    public String getAbsoluteURI() {
+        return displayValue;
+    }
+
 
     @Override
     public String toString() {
@@ -44,7 +64,10 @@ public class DocumentURI {
 
     @Override
     public boolean equals(Object obj) {
-        return obj instanceof DocumentURI && normalizedValue.equals(((DocumentURI) obj).normalizedValue);
+        return obj instanceof DocumentKey
+                && normalizedValue.equals(((DocumentKey) obj).normalizedValue)
+                && packageName.equals(((DocumentKey)obj).packageName)
+                && packageVersion.equals(((DocumentKey)obj).packageVersion);
     }
 
     @Override

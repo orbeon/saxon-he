@@ -12,7 +12,7 @@ import net.sf.saxon.PreparedStylesheet;
 import net.sf.saxon.event.*;
 import net.sf.saxon.expr.parser.Loc;
 import net.sf.saxon.lib.*;
-import net.sf.saxon.om.DocumentURI;
+import net.sf.saxon.om.DocumentKey;
 import net.sf.saxon.om.NoElementsSpaceStrippingRule;
 import net.sf.saxon.om.NodeInfo;
 import net.sf.saxon.om.StylesheetSpaceStrippingRule;
@@ -82,7 +82,7 @@ public class StylesheetModule {
             Source styleSource, boolean topLevelModule, Compilation compilation, NestedIntegerValue precedence) throws XPathException {
 
         String systemId = styleSource.getSystemId();
-        DocumentURI docURI = systemId == null ? null : new DocumentURI(systemId);
+        DocumentKey docURI = systemId == null ? null : new DocumentKey(systemId);
         if (systemId != null && compilation.getImportStack().contains(docURI)) {
             throw new XPathException("The stylesheet module includes/imports itself directly or indirectly", "XTSE0180");
         }
@@ -183,7 +183,7 @@ public class StylesheetModule {
         }
 
         String systemId = styleSource.getSystemId();
-        DocumentURI docURI = systemId == null ? null : new DocumentURI(systemId);
+        DocumentKey docURI = systemId == null ? null : new DocumentKey(systemId);
         if (systemId != null && compilation.getImportStack().contains(docURI)) {
             throw new XPathException("The stylesheet module includes/imports itself directly or indirectly", "XTSE0180");
         }

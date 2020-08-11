@@ -199,7 +199,7 @@ public class DocumentFn extends SystemFunction implements Callable {
         }
 
         // Resolve relative URI
-        DocumentURI documentKey = computeDocumentKey(href, baseURI, packageData, c);
+        DocumentKey documentKey = computeDocumentKey(href, baseURI, packageData, c);
 
         // see if the document is already loaded
 
@@ -417,7 +417,7 @@ public class DocumentFn extends SystemFunction implements Callable {
      * Compute a document key
      */
 
-    protected static DocumentURI computeDocumentKey(String href, String baseURI, PackageData packageData, XPathContext c) throws XPathException {
+    protected static DocumentKey computeDocumentKey(String href, String baseURI, PackageData packageData, XPathContext c) throws XPathException {
         // Resolve relative URI
         Controller controller = c.getController();
 
@@ -439,15 +439,15 @@ public class DocumentFn extends SystemFunction implements Callable {
      *              otherwise (typically a stylesheet module)
      */
 
-    public static DocumentURI computeDocumentKey(
+    public static DocumentKey computeDocumentKey(
             String href, String baseURI, PackageData packageData, URIResolver resolver, boolean strip) {
-        String documentKey;
+        String absURI;
         if (resolver instanceof RelativeURIResolver) {
             // If this is the case, the URIResolver is responsible for absolutization as well as dereferencing
             try {
-                documentKey = ((RelativeURIResolver) resolver).makeAbsolute(href, baseURI);
+                absURI = ((RelativeURIResolver) resolver).makeAbsolute(href, baseURI);
             } catch (TransformerException e) {
-                documentKey = '/' + href;
+                absURI = '/' + href;
             }
         } else {
             // Saxon takes charge of absolutization, leaving the user URIResolver to handle dereferencing only
@@ -455,20 +455,20 @@ public class DocumentFn extends SystemFunction implements Callable {
             if (baseURI == null) {    // no base URI available
                 try {
                     // the href might be an absolute URL
-                    documentKey = new URI(href).toString();
+                    absURI = new URI(href).toString();
                 } catch (URISyntaxException err) {
                     // it isn't; but the URI resolver might know how to cope
-                    documentKey = '/' + href;
+                    absURI = '/' + href;
                 }
             } else if (href.isEmpty()) {
                 // common case in XSLT, which java.net.URI#resolve() does not handle correctly
-                documentKey = baseURI;
+                absURI = baseURI;
             } else {
                 try {
                     URI uri = new URI(baseURI).resolve(href);
-                    documentKey = uri.toString();
+                    absURI = uri.toString();
                 } catch (URISyntaxException | IllegalArgumentException err) {
-                    documentKey = baseURI + "/../" + href;
+                    absURI = baseURI + "/../" + href;
                 }
             }
         }
@@ -476,10 +476,10 @@ public class DocumentFn extends SystemFunction implements Callable {
                 ((StylesheetPackage) packageData).getSpaceStrippingRule() != NoElementsSpaceStrippingRule.getInstance()) {
             String name = ((StylesheetPackage) packageData).getPackageName();
             if (name != null) {
-                documentKey = name + " " + ((StylesheetPackage) packageData).getPackageVersion() + " " + documentKey;
+                return new DocumentKey(absURI, name, ((StylesheetPackage) packageData).getPackageVersion());
             }
         }
-        return new DocumentURI(documentKey);
+        return new DocumentKey(absURI);
     }
 
     /**

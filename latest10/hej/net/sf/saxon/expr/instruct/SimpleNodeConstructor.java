@@ -281,7 +281,7 @@ public abstract class SimpleNodeConstructor extends Instruction {
 
     /**
      * Run-time method to compute the name of the node being constructed. This is overridden
-     * for nodes that have a name. The default implementation returns -1, which is suitable for
+     * for nodes that have a name. The default implementation returns null, which is suitable for
      * unnamed nodes such as comments
      *
      * @param context the XPath dynamic evaluation context

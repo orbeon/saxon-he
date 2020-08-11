@@ -45,8 +45,8 @@ public class Compilation {
     private boolean schemaAware;
     private QNameParser qNameParser;
     private Map<StructuredQName, ValueAndPrecedence> staticVariables = new HashMap<>();
-    private Map<DocumentURI, TreeInfo> stylesheetModules = new HashMap<>();
-    private Stack<DocumentURI> importStack = new Stack<>(); // handles both include and import
+    private Map<DocumentKey, TreeInfo> stylesheetModules = new HashMap<>();
+    private Stack<DocumentKey> importStack = new Stack<>(); // handles both include and import
     private PackageData packageData;
     private boolean preScan = true;
     private boolean createsSecondaryResultDocuments = false;
@@ -610,7 +610,7 @@ public class Compilation {
      * @return the map from absolute URIs to (documents containing) stylesheet modules
      */
 
-    public Map<DocumentURI, TreeInfo> getStylesheetModules() {
+    public Map<DocumentKey, TreeInfo> getStylesheetModules() {
         return stylesheetModules;
     }
 
@@ -620,7 +620,7 @@ public class Compilation {
      * @return the include/import stack
      */
 
-    public Stack<DocumentURI> getImportStack() {
+    public Stack<DocumentKey> getImportStack() {
         return importStack;
     }
 

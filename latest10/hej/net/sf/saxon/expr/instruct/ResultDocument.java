@@ -568,7 +568,7 @@ public class ResultDocument extends Instruction
                 throw err;
             }
 
-            DocumentURI documentKey = new DocumentURI(uri);
+            DocumentKey documentKey = new DocumentKey(uri);
             //noinspection SynchronizationOnLocalVariableOrMethodParameter
             synchronized(controller) {
                 if (!controller.checkUniqueOutputDestination(documentKey)) {

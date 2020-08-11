@@ -31,13 +31,13 @@ public final class DocumentPool {
     // each time. For this purpose we use a hashtable from
     // URI to DocumentInfo object.
 
-    private Map<DocumentURI, TreeInfo> documentNameMap = new HashMap<DocumentURI, TreeInfo>(10);
+    private Map<DocumentKey, TreeInfo> documentNameMap = new HashMap<DocumentKey, TreeInfo>(10);
 
 
     // The set of documents known to be unavailable. These documents must remain
     // unavailable for the duration of a transformation or query!
 
-    private Set<DocumentURI> unavailableDocuments = new HashSet<DocumentURI>(10);
+    private Set<DocumentKey> unavailableDocuments = new HashSet<DocumentKey>(10);
 
     /**
      * Add a document to the pool
@@ -48,7 +48,7 @@ public final class DocumentPool {
 
     public synchronized void add(TreeInfo doc, /*@Nullable*/ String uri) {
         if (uri != null) {
-            documentNameMap.put(new DocumentURI(uri), doc);
+            documentNameMap.put(new DocumentKey(uri), doc);
         }
     }
 
@@ -59,7 +59,7 @@ public final class DocumentPool {
      * @param uri The document-uri property of the document.
      */
 
-    public synchronized void add(TreeInfo doc, /*@Nullable*/ DocumentURI uri) {
+    public synchronized void add(TreeInfo doc, /*@Nullable*/ DocumentKey uri) {
         if (uri != null) {
             documentNameMap.put(uri, doc);
         }
@@ -74,7 +74,7 @@ public final class DocumentPool {
      */
 
     public synchronized TreeInfo find(String uri) {
-        return documentNameMap.get(new DocumentURI(uri));
+        return documentNameMap.get(new DocumentKey(uri));
     }
 
     /**
@@ -85,7 +85,7 @@ public final class DocumentPool {
      *         or null if it is not found.
      */
 
-    public synchronized TreeInfo find(DocumentURI uri) {
+    public synchronized TreeInfo find(DocumentKey uri) {
         return documentNameMap.get(uri);
     }
 
@@ -100,7 +100,7 @@ public final class DocumentPool {
 
     /*@Nullable*/
     public synchronized String getDocumentURI(NodeInfo doc) {
-        for (DocumentURI uri : documentNameMap.keySet()) {
+        for (DocumentKey uri : documentNameMap.keySet()) {
             TreeInfo found = find(uri);
             if (found == null) {
                 continue; // can happen when discard-document() is used concurrently
@@ -133,8 +133,8 @@ public final class DocumentPool {
      */
 
     public synchronized TreeInfo discard(TreeInfo doc) {
-        for (Map.Entry<DocumentURI, TreeInfo> e : documentNameMap.entrySet()) {
-            DocumentURI name = e.getKey();
+        for (Map.Entry<DocumentKey, TreeInfo> e : documentNameMap.entrySet()) {
+            DocumentKey name = e.getKey();
             TreeInfo entry = e.getValue();
             if (entry.equals(doc)) {
                 documentNameMap.remove(name);
@@ -163,7 +163,7 @@ public final class DocumentPool {
      * @param uri the URI of the unavailable document
      */
 
-    public void markUnavailable(DocumentURI uri) {
+    public void markUnavailable(DocumentKey uri) {
         unavailableDocuments.add(uri);
     }
 
@@ -172,7 +172,7 @@ public final class DocumentPool {
      * has been previously called and has returned false
      */
 
-    public boolean isMarkedUnavailable(DocumentURI uri) {
+    public boolean isMarkedUnavailable(DocumentKey uri) {
         return unavailableDocuments.contains(uri);
     }
 

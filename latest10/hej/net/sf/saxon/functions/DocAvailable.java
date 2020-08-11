@@ -45,7 +45,7 @@ public class DocAvailable extends SystemFunction  {
     public boolean docAvailable(String href, XPathContext context) {
         try {
             PackageData packageData = getRetainedStaticContext().getPackageData();
-            DocumentURI documentKey = DocumentFn.computeDocumentKey(href, getStaticBaseUriString(), packageData, context);
+            DocumentKey documentKey = DocumentFn.computeDocumentKey(href, getStaticBaseUriString(), packageData, context);
             DocumentPool pool = context.getController().getDocumentPool();
             if (pool.isMarkedUnavailable(documentKey)) {
                 return false;

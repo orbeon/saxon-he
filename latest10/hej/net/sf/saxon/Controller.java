@@ -957,7 +957,7 @@ public class Controller implements ContextOriginator {
      *            in the document pool with this as its document URI.
      * @throws XPathException if an error occurs
      */
-    public void registerDocument(TreeInfo doc, DocumentURI uri) throws XPathException {
+    public void registerDocument(TreeInfo doc, DocumentKey uri) throws XPathException {
         if (!getExecutable().isSchemaAware() && !Untyped.getInstance().equals(doc.getRootNode().getSchemaType())) {
             boolean isXSLT = getExecutable().getHostLanguage() == HostLanguage.XSLT;
             String message;
@@ -1316,7 +1316,7 @@ public class Controller implements ContextOriginator {
         //globalContextItem = doc;
         sourceBuilder.reset();
         if (source.getSystemId() != null) {
-            registerDocument(doc.getTreeInfo(), new DocumentURI(source.getSystemId()));
+            registerDocument(doc.getTreeInfo(), new DocumentKey(source.getSystemId()));
         }
         doc.getTreeInfo().setSpaceStrippingRule(spaceStrippingRule);
         return doc;

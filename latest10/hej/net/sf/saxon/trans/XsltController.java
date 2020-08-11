@@ -49,7 +49,7 @@ public class XsltController extends Controller {
     private Supplier<Receiver> messageFactory = () -> new NamespaceDifferencer(new MessageEmitter(), new Properties());
     private boolean assertionsEnabled = true;
     private ResultDocumentResolver resultDocumentResolver;
-    private HashSet<DocumentURI> allOutputDestinations;
+    private HashSet<DocumentKey> allOutputDestinations;
     private Component.M initialMode = null;
     private Function initialFunction = null;
     private Map<StructuredQName, Sequence> initialTemplateParams;
@@ -226,7 +226,7 @@ public class XsltController extends Controller {
      * @return true if the URI is available for use; false if it has already been used.
      */
 
-    public synchronized boolean checkUniqueOutputDestination(/*@Nullable*/ DocumentURI uri) {
+    public synchronized boolean checkUniqueOutputDestination(/*@Nullable*/ DocumentKey uri) {
         if (uri == null) {
             return true;    // happens when writing say to an anonymous StringWriter
         }
@@ -244,7 +244,7 @@ public class XsltController extends Controller {
      * @param uri A URI that is not available as an output destination
      */
 
-    public void addUnavailableOutputDestination(DocumentURI uri) {
+    public void addUnavailableOutputDestination(DocumentKey uri) {
         if (allOutputDestinations == null) {
             allOutputDestinations = new HashSet<>(20);
         }
@@ -258,7 +258,7 @@ public class XsltController extends Controller {
      * @param uri A URI that is being made available as an output destination
      */
 
-    public void removeUnavailableOutputDestination(DocumentURI uri) {
+    public void removeUnavailableOutputDestination(DocumentKey uri) {
         if (allOutputDestinations != null) {
             allOutputDestinations.remove(uri);
         }
@@ -275,7 +275,7 @@ public class XsltController extends Controller {
      * it may return different results for the same URI at different points in the transformation.
      */
 
-    public boolean isUnusedOutputDestination(DocumentURI uri) {
+    public boolean isUnusedOutputDestination(DocumentKey uri) {
         return allOutputDestinations == null || !allOutputDestinations.contains(uri);
     }
 

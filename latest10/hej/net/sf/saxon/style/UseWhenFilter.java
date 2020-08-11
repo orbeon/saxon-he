@@ -290,8 +290,8 @@ public class UseWhenFilter extends ProxyReceiver {
 
         URIResolver resolver = compilation.getCompilerInfo().getURIResolver();
         String baseUriStr = baseUri.toString();
-        DocumentURI key = DocumentFn.computeDocumentKey(href, baseUriStr, compilation.getPackageData(), resolver, false);
-        Map<DocumentURI, TreeInfo> map = compilation.getStylesheetModules();
+        DocumentKey key = DocumentFn.computeDocumentKey(href, baseUriStr, compilation.getPackageData(), resolver, false);
+        Map<DocumentKey, TreeInfo> map = compilation.getStylesheetModules();
         if (map.containsKey(key)) {
             return (DocumentImpl)map.get(key);
         } else {

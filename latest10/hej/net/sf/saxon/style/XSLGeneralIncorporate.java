@@ -10,7 +10,7 @@ package net.sf.saxon.style;
 import net.sf.saxon.Configuration;
 import net.sf.saxon.functions.DocumentFn;
 import net.sf.saxon.om.AttributeInfo;
-import net.sf.saxon.om.DocumentURI;
+import net.sf.saxon.om.DocumentKey;
 import net.sf.saxon.om.NodeName;
 import net.sf.saxon.trans.XPathException;
 import net.sf.saxon.tree.linked.DocumentImpl;
@@ -108,7 +108,7 @@ public abstract class XSLGeneralIncorporate extends StyleElement {
             XSLStylesheet includedSheet;
             StylesheetModule incModule;
 
-            DocumentURI key = DocumentFn.computeDocumentKey(href, getBaseURI(), getCompilation().getPackageData(), resolver, false);
+            DocumentKey key = DocumentFn.computeDocumentKey(href, getBaseURI(), getCompilation().getPackageData(), resolver, false);
             includedSheet = (XSLStylesheet)psm.getStylesheetDocument(key);
             if (includedSheet != null) {
                 // we already have the stylesheet document in cache; but we need to create a new module,
@@ -184,8 +184,8 @@ public abstract class XSLGeneralIncorporate extends StyleElement {
 
         if (source.getSystemId() != null) {
             while (anc != null) {
-                if (DocumentURI.normalizeURI(source.getSystemId())
-                        .equals(DocumentURI.normalizeURI(anc.getRootElement().getSystemId()))) {
+                if (DocumentKey.normalizeURI(source.getSystemId())
+                        .equals(DocumentKey.normalizeURI(anc.getRootElement().getSystemId()))) {
                     compileError("A stylesheet cannot " + getLocalPart() + " itself",
                             this instanceof XSLInclude ? "XTSE0180" : "XTSE0210");
                     return true;

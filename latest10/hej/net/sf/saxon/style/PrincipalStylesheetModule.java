@@ -96,7 +96,7 @@ public class PrincipalStylesheetModule extends StylesheetModule implements Globa
 
     // cache of stylesheet documents. Note that multiple imports of the same URI
     // lead to the stylesheet tree being reused
-    private HashMap<DocumentURI, XSLModuleRoot> moduleCache = new HashMap<>(4);
+    private HashMap<DocumentKey, XSLModuleRoot> moduleCache = new HashMap<>(4);
 
     private TypeAliasManager typeAliasManager;
 
@@ -290,7 +290,7 @@ public class PrincipalStylesheetModule extends StylesheetModule implements Globa
      * @param module the stylesheet document tree corresponding to this absolute URI
      */
 
-    public void putStylesheetDocument(DocumentURI key, XSLStylesheet module) {
+    public void putStylesheetDocument(DocumentKey key, XSLStylesheet module) {
         moduleCache.put(key, module);
     }
 
@@ -301,7 +301,7 @@ public class PrincipalStylesheetModule extends StylesheetModule implements Globa
      * @return the stylesheet document tree corresponding to this absolute URI
      */
 
-    public XSLModuleRoot getStylesheetDocument(DocumentURI key) {
+    public XSLModuleRoot getStylesheetDocument(DocumentKey key) {
         XSLModuleRoot sheet = moduleCache.get(key);
         if (sheet != null) {
             XPathException warning = new XPathException(
@@ -519,7 +519,7 @@ public class PrincipalStylesheetModule extends StylesheetModule implements Globa
             } else if (use instanceof XSLInclude) {
                 String href = Whitespace.trim(use.getAttributeValue("", "href"));
                 URIResolver resolver = compilation.getCompilerInfo().getURIResolver();
-                DocumentURI key = DocumentFn.computeDocumentKey(href, use.getBaseURI(), compilation.getPackageData(), resolver, false);
+                DocumentKey key = DocumentFn.computeDocumentKey(href, use.getBaseURI(), compilation.getPackageData(), resolver, false);
                 TreeInfo includedTree = compilation.getStylesheetModules().get(key);
                 StyleElement incWrapper = (StyleElement) ((DocumentImpl) includedTree.getRootNode()).getDocumentElement();
                 gatherUsePackageDeclarations(compilation, incWrapper, declarations);
