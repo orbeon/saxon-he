@@ -63,6 +63,7 @@ public class TemplatesHandlerImpl extends ReceivingContentHandler implements Tem
 
         CompilerInfo info = new CompilerInfo(config.getDefaultXsltCompilerInfo());
         Compilation compilation = new Compilation(config, info);
+        compilation.setMinimalPackageData();
         nodeFactory = compilation.getStyleNodeFactory(true);
 
         builder = new LinkedTreeBuilder(getPipelineConfiguration());
