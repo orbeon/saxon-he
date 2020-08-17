@@ -651,6 +651,9 @@ public class DotNetNodeWrapper extends AbstractNodeWrapper implements SteppingNo
         if (start.get_HasChildNodes()) {
             return start.get_FirstChild();
         }
+        if (anchor != null && start == anchor) {
+            return null;
+        }
         XmlNode p = start;
         while (true) {
             XmlNode s = p.get_NextSibling();
