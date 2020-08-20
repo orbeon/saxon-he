@@ -7,6 +7,7 @@
 
 package net.sf.saxon.lib;
 
+import net.sf.saxon.s9api.StaticError;
 import net.sf.saxon.s9api.XmlProcessingError;
 import net.sf.saxon.trans.UncheckedXPathException;
 import org.xml.sax.ErrorHandler;
@@ -41,7 +42,7 @@ public interface ErrorReporter {
      * returns true.</p>
      *
      * <p>The application can indicate to Saxon that the error should be considered fatal
-     * by calling {@link XmlProcessingError#setFatal(String)}. The precise effect of marking
+     * by calling {@link StaticError#setFatal(String)}. The precise effect of marking
      * an error as fatal is not defined, and may depend on the circumstances; in some cases
      * it may have no effect. If a dynamic error is marked as fatal then an attempt to
      * catch the error using a try/catch construct in XSLT or XQuery will generally be

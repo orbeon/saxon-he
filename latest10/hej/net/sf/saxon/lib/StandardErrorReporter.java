@@ -11,10 +11,7 @@ import net.sf.saxon.expr.EarlyEvaluationContext;
 import net.sf.saxon.expr.Expression;
 import net.sf.saxon.expr.XPathContext;
 import net.sf.saxon.expr.parser.XPathParser;
-import net.sf.saxon.s9api.HostLanguage;
-import net.sf.saxon.s9api.Location;
-import net.sf.saxon.s9api.QName;
-import net.sf.saxon.s9api.XmlProcessingError;
+import net.sf.saxon.s9api.*;
 import net.sf.saxon.trans.Err;
 import net.sf.saxon.trans.XPathException;
 import net.sf.saxon.trans.XmlProcessingException;
@@ -248,7 +245,7 @@ public class StandardErrorReporter
      *
      * <p>After calling this method to report a static error, the compiler will normally
      * continue to detect and report further errors, but the method can abort the
-     * compilation by calling {@link XmlProcessingError#setFatal(String)}</p>
+     * compilation by calling {@link StaticError#setFatal(String)}</p>
      *
      * @param error The error information.
      */
