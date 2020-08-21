@@ -133,6 +133,7 @@ public class DotNetPullProvider implements PullProvider, Location {
                                                       Loc.NONE, ReceiverOption.NONE));
                 }
             }
+            parser.MoveToElement();
             return atts;
         } else {
             return EmptyAttributeMap.getInstance();
@@ -198,6 +199,7 @@ public class DotNetPullProvider implements PullProvider, Location {
             if (used < limit) {
                 nsBindings[used] = null;
             }
+            parser.MoveToElement();
             return nsBindings;
         } else {
             return NamespaceBinding.EMPTY_ARRAY;
