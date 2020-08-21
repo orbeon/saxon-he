@@ -125,6 +125,7 @@ public class DotNetPullProvider implements PullProvider, Location {
                     atts.addAttribute(nc, BuiltInAtomicType.UNTYPED_ATOMIC, parser.get_Value(), ExplicitLocation.UNKNOWN_LOCATION, 0);
                 }
             }
+            parser.MoveToElement();
             return atts;
         } else {
             return AttributeCollectionImpl.EMPTY_ATTRIBUTE_COLLECTION;
@@ -185,6 +186,7 @@ public class DotNetPullProvider implements PullProvider, Location {
                     // ignore real attributes
                 }
             }
+            parser.MoveToElement();
             if (used < limit) {
                 nsBindings[used] = null;
             }
