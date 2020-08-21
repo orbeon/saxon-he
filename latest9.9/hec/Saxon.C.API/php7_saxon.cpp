@@ -134,7 +134,7 @@ PHP_METHOD(SaxonProcessor, __construct)
 	    const size_t newsize = wcslen(s)*2;
 	    char* cwd = new char[newsize];
 	    wcstombs_s(0, cwd, newsize, s, _TRUNCATE);
-	    // -- code above returns the apache installtion directory as the CWD
+	    // -- code above returns the apache installation directory as the CWD
 
 	    char* cwd2;
 
