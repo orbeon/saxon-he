@@ -40,6 +40,7 @@ import javax.xml.transform.TransformerException;
 import javax.xml.transform.dom.DOMResult;
 import javax.xml.transform.sax.SAXResult;
 import javax.xml.transform.stream.StreamResult;
+import java.net.URISyntaxException;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.Map;
@@ -428,8 +429,16 @@ public class ResultDocument extends Instruction
         checkNotTemporaryOutputState(context);
 
         Properties computedLocalProps = gatherOutputProperties(context);
-        if (localProperties.contains(SaxonOutputKeys.PARAMETER_DOCUMENT) && getStaticBaseURIString() != null) {
-            computedLocalProps.setProperty(SaxonOutputKeys.PARAMETER_DOCUMENT_BASE_URI, getStaticBaseURIString());
+        if (computedLocalProps.getProperty(SaxonOutputKeys.PARAMETER_DOCUMENT) != null && getStaticBaseURIString() != null) {
+            try {
+                String abs = ResolveURI.makeAbsolute(
+                        computedLocalProps.getProperty(SaxonOutputKeys.PARAMETER_DOCUMENT),
+                        getStaticBaseURIString()).toASCIIString();
+                computedLocalProps.setProperty(SaxonOutputKeys.PARAMETER_DOCUMENT, abs);
+            } catch (URISyntaxException e) {
+                throw XPathException.makeXPathException(e);
+            }
+            //computedLocalProps.setProperty(SaxonOutputKeys.PARAMETER_DOCUMENT_BASE_URI, getStaticBaseURIString());
         }
         SerializationProperties serParams = new SerializationProperties(computedLocalProps, characterMapIndex);
 

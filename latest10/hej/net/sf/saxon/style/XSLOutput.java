@@ -8,6 +8,7 @@
 package net.sf.saxon.style;
 
 import net.sf.saxon.functions.ResolveQName;
+import net.sf.saxon.functions.ResolveURI;
 import net.sf.saxon.lib.NamespaceConstant;
 import net.sf.saxon.lib.SaxonOutputKeys;
 import net.sf.saxon.lib.SerializerFactory;
@@ -16,6 +17,7 @@ import net.sf.saxon.trans.XPathException;
 import net.sf.saxon.value.Whitespace;
 
 import javax.xml.transform.OutputKeys;
+import java.net.URISyntaxException;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.Properties;
@@ -64,8 +66,13 @@ public class XSLOutput extends StyleElement {
                 useCharacterMaps = value;
             } else if (f.equals("parameter-document")) {
                 String val = Whitespace.trim(value);
+                try {
+                    val = ResolveURI.makeAbsolute(val, getBaseURI()).toASCIIString();
+                } catch (URISyntaxException e) {
+                    compileError(XPathException.makeXPathException(e));
+                }
                 serializationAttributes.put(f, val);
-                serializationAttributes.put(SaxonOutputKeys.PARAMETER_DOCUMENT_BASE_URI, getBaseURI());
+                //serializationAttributes.put(SaxonOutputKeys.PARAMETER_DOCUMENT_BASE_URI, getBaseURI());
             } else if (XSLResultDocument.fans.contains(f) && !f.equals("output-version")) {
                 String val = value;
                 if (!f.equals(SaxonOutputKeys.ITEM_SEPARATOR) && !f.equals(SaxonOutputKeys.NEWLINE)) {
