@@ -309,7 +309,14 @@ public class MapType extends AnyFunctionType {
         } else {
             int rel = TypeHierarchy.DISJOINT;
             //#ifdefined HOF
-            rel = new SpecificFunctionType(getArgumentTypes(), getResultType()).relationship(other, th);
+            // see Bug #4692
+            SequenceType st = getResultType();
+            if (!Cardinality.allowsZero(st.getCardinality())) {
+                st = SequenceType.makeSequenceType(st.getPrimaryType(), Cardinality.union(st.getCardinality(), StaticProperty.ALLOWS_ZERO));
+            }
+            rel = new SpecificFunctionType(
+                    new SequenceType[]{SequenceType.ATOMIC_SEQUENCE}, st)
+                    .relationship(other, th);
             //#endif
             return rel;
         }
