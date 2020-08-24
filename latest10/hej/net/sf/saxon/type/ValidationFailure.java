@@ -368,7 +368,7 @@ public class ValidationFailure
 
     /**
      * Get the error code associated with the validity error. This is relevant only when validation
-     * is run from within XSLT or XQuery, which define different error codes for validition errors
+     * is run from within XSLT or XQuery, which define different error codes for validation errors.
      *
      * @return the error code associated with the error, if any. The error is returned as a simple
      * string if it is in the standard error namespace, or as an EQName (that is Q{uri}local) otherwise.
