@@ -25,6 +25,7 @@ import net.sf.saxon.query.AnnotationList;
 import net.sf.saxon.trans.Err;
 import net.sf.saxon.trans.XPathException;
 import net.sf.saxon.tree.util.FastStringBuffer;
+import net.sf.saxon.value.Cardinality;
 import net.sf.saxon.value.SequenceType;
 
 import java.util.Objects;
@@ -308,9 +309,11 @@ public class SpecificFunctionType extends AnyFunctionType {
         if (item instanceof MapItem) {
             // Bug 2938: Essentially a map is an instance of function(X) as Y
             // if (a) X is a subtype of xs:anyAtomicType, and (b) all the values in the map are instances of Y
+            // Bug 4692: adds the condition (c) the empty sequence is an instance of Y
             if (getArity() == 1 &&
                     argTypes[0].getCardinality() == StaticProperty.EXACTLY_ONE &&
-                    argTypes[0].getPrimaryType().isPlainType()) {
+                    argTypes[0].getPrimaryType().isPlainType() &&
+                    Cardinality.allowsZero(resultType.getCardinality())) {
                 for (KeyValuePair pair : ((MapItem) item).keyValuePairs()) {
                     try {
                         if (!resultType.matches(pair.value, th)) {

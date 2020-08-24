@@ -321,7 +321,14 @@ public class MapType extends AnyFunctionType {
             }
             return Affinity.OVERLAPS;
         } else {
-            return new SpecificFunctionType(getArgumentTypes(), getResultType()).relationship(other, th);
+            // see Bug #4692
+            SequenceType st = getResultType();
+            if (!Cardinality.allowsZero(st.getCardinality())) {
+                st = SequenceType.makeSequenceType(st.getPrimaryType(), Cardinality.union(st.getCardinality(), StaticProperty.ALLOWS_ZERO));
+            }
+            return new SpecificFunctionType(
+                        new SequenceType[]{SequenceType.ATOMIC_SEQUENCE}, st)
+                    .relationship(other, th);
         }
     }
 
