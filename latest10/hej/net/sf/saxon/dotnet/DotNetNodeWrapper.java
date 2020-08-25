@@ -482,6 +482,50 @@ public class DotNetNodeWrapper extends AbstractNodeWrapper implements SteppingNo
         return new SteppingNavigator.DescendantAxisIterator(this, includeSelf, nodeTest);
     }
 
+
+    @Override
+    public NamespaceMap getAllNamespaces() {
+        // Note: in a DOM created by the XML parser, all namespaces are present as attribute nodes. But
+        // in a DOM created programmatically, this is not necessarily the case. So we need to add
+        // namespace bindings for the namespace of the element and any attributes
+        if (node.get_NodeType().Value == XmlNodeType.Element) {
+            XmlElement elem = (XmlElement) node;
+            XmlNamedNodeMap atts = elem.get_Attributes();
+
+            NamespaceMap codes =  NamespaceMap.emptyMap();
+            for (int i = 0; i < atts.get_Count(); i++) {
+                XmlAttribute att = (XmlAttribute) atts.Item(i);
+                String attName = att.get_Name();
+                if (attName.equals("xmlns")) {
+                    String prefix = "";
+                    String uri = att.get_Value();
+                    codes.put(prefix, uri);
+                } else if (attName.startsWith("xmlns:")) {
+                    String prefix = attName.substring(6);
+                    String uri = att.get_Value();
+                    codes.put(prefix, uri);
+                } else if (att.get_NamespaceURI().length() != 0) {
+                    codes.put(att.get_Prefix(), att.get_NamespaceURI());
+                }
+            }
+
+            if (elem.get_NamespaceURI().length() != 0) {
+                codes.put(elem.get_Prefix(), elem.get_NamespaceURI());
+            }
+            /*int count = codes.size();
+            NamespaceMap result = new NamespaceBinding[count];
+
+            int p = 0;
+            for (NamespaceBinding code : codes) {
+                result[p++] = code;
+            } */
+            return codes;
+        } else {
+            return null;
+        }
+
+    }
+
     /**
      * Get the string value of a given attribute of this node
      *
