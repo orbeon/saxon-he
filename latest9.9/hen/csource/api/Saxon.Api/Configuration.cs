@@ -110,17 +110,7 @@ namespace Saxon.Api
             processor.getUnderlyingConfiguration().registerExternalObjectModel(new DotNetObjectModelDefinition());
         }
 
-        /// <summary>
-        /// Declare a mapping from a specific namespace URI to a .NET class. 
-        /// This will get applied to Saxon-PEN or Saxon-EEN product
-        /// </summary>
-        /// <param name="uri">the namespace URI of the function name</param>
-        /// <param name="type">the .NET class that implements the functions in thid namespace</param>
-        public void BindExtensions(string uri, System.Type type)
-        {
-            JConfiguration config = processor.getUnderlyingConfiguration();
-            config.BindExtensions(uri, type);
-        }
+
 
         /// <summary>
         /// Create a <c>Processor</c>, based on configuration information supplied in a configuration file.
