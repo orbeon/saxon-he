@@ -44,7 +44,7 @@ namespace TestRunner
 
 
         //file:////C:/work/repositories/hg/xslt30-test/ C:/work/repositories/hg/xslt30-test/results/saxon/ -lang:XT30 -xt30:on
-        public static void Main(string[] args) {
+        public static void Mainxxxxx(string[] args) {
         if (args.Length == 0 || args[0].Equals("-?")) {
             System.Console.WriteLine("testsuiteDir catalog [-o:resultsdir] [-s:testSetName]" +
                     " [-t:testNamePattern] [-bytecode:on|off|debug] [-tree] [-lang] [-save][-export][-strict]");

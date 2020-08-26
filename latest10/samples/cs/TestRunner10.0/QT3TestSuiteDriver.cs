@@ -83,7 +83,7 @@ namespace TestRunner
 
         //C:/work/repositories/hg/qt3-testsuite/ C:/work/repositories/hg/qt3-testsuite/results/saxon/ -lang:XQ31
         //file:////C:/work/repositories/hg/qt3tests/ C:/work/repositories/hg/qt3tests/results/saxon/ -lang:XQ30
-        public static void Mainxxxx(string[] args)
+        public static void Main(string[] args)
         {
 
             if (args.Length == 0 || args[0].Equals("-?"))
