@@ -1,6 +1,0 @@
-<project basedir="." default="all" name="Saxon: The XSLT and XQuery Processor: file locations">
-    <!-- Example file locations on machine -->
-    <property name="repo-os" value="C:/project/opensource"/>
-    <property name="repo-priv" value="C:/project/prv-saxonica"/>
-
-</project>
