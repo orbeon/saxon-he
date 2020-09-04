@@ -8,6 +8,7 @@
 package net.sf.saxon.trans;
 
 import net.sf.saxon.Configuration;
+import net.sf.saxon.Version;
 import net.sf.saxon.lib.Logger;
 import net.sf.saxon.serialize.MessageEmitter;
 
@@ -190,13 +191,11 @@ public class DynamicLoader {
 
     private String getJarFileForClass(String className) {
         if (className.startsWith("net.sf.saxon.option.sql.")) {
-            return "saxon9-sql.jar";
-        } else if (className.startsWith("com.saxonica.StatsTransform")) {
-            return "saxon9-stats.jar";
+            return "saxon-sql-"+ Version.getProductVersion() +".jar";
         } else if (className.startsWith("com.ibm.icu.")) {
-            return "saxon9-icu.jar";
+            return "icu4j-59.1.jar";
         } else if (className.startsWith("com.saxonica")) {
-            return "saxon9ee.jar";
+            return "saxon-"+Version.softwareEdition.toLowerCase()+"-"+Version.getProductVersion() +".jar";
         } else {
             return null;
         }
