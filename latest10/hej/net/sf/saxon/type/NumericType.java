@@ -295,7 +295,8 @@ public class NumericType extends LocalUnionType implements SimpleType {
             double d = StringToDouble.getInstance().stringToNumber(value);
             return new DoubleValue(d);
         } catch (NumberFormatException e) {
-            throw new ValidationFailure(e.getMessage()).makeException();
+            String message = String.format("Cannot convert string \"%s\" to xs:numeric", value);
+            throw new ValidationFailure(message).makeException();
         }
     }
 
