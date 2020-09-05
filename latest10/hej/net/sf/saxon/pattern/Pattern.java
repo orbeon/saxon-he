@@ -173,7 +173,7 @@ public abstract class Pattern extends PseudoExpression {
             // Typically happens when this is a pseudo-pattern used for scannable expressions when streaming
             throw ex;
         }
-        context.getController().warning("An error occurred matching pattern {" + this + "}: ",
+        context.getController().warning("An error occurred matching pattern {" + this + "}: " + ex.getMessage(),
                                         ex.getErrorCodeQName().getEQName(),
                                         getLocation());
     }
