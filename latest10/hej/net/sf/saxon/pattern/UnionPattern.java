@@ -157,6 +157,7 @@ public class UnionPattern extends VennPattern {
     public Pattern copy(RebindingMap rebindings) {
         UnionPattern n = new UnionPattern(p1.copy(rebindings), p2.copy(rebindings));
         ExpressionTool.copyLocationInfo(this, n);
+        n.setOriginalText(getOriginalText());
         return n;
     }
 

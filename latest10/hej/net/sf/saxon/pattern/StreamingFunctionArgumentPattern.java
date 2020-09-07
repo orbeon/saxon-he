@@ -93,8 +93,8 @@ public class StreamingFunctionArgumentPattern extends Pattern {
         return AnyNodeTest.getInstance();
     }
 
-    /*@NotNull*/
-    public String toString() {
+    @Override
+    public String reconstruct() {
         return "$$";
     }
 

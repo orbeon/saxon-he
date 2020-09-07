@@ -165,6 +165,7 @@ public class ExceptPattern extends VennPattern {
     public Pattern copy(RebindingMap rebindings) {
         ExceptPattern n = new ExceptPattern(p1.copy(rebindings), p2.copy(rebindings));
         ExpressionTool.copyLocationInfo(this, n);
+        n.setOriginalText(getOriginalText());
         return n;
     }
 

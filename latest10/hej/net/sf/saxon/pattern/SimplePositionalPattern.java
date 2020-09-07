@@ -176,6 +176,7 @@ public final class SimplePositionalPattern extends Pattern {
     public Pattern copy(RebindingMap rebindings) {
         SimplePositionalPattern n = new SimplePositionalPattern(nodeTest.copy(), position);
         ExpressionTool.copyLocationInfo(this, n);
+        n.setOriginalText(getOriginalText());
         return n;
     }
 
@@ -183,7 +184,7 @@ public final class SimplePositionalPattern extends Pattern {
      * Get the original pattern text
      */
     @Override
-    public String toString() {
+    public String reconstruct() {
         return nodeTest + "[" + position + "]";
     }
 

@@ -80,7 +80,8 @@ public class UniversalPattern extends Pattern {
      * Display the pattern for diagnostics
      */
 
-    public String toString() {
+    @Override
+    public String reconstruct() {
         return ".";
     }
 

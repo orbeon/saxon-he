@@ -361,6 +361,7 @@ public class GeneralPositionalPattern extends Pattern {
     public Pattern copy(RebindingMap rebindings) {
         GeneralPositionalPattern n = new GeneralPositionalPattern(nodeTest.copy(), positionExpr.copy(rebindings));
         ExpressionTool.copyLocationInfo(this, n);
+        n.setOriginalText(getOriginalText());
         return n;
     }
 
@@ -370,7 +371,7 @@ public class GeneralPositionalPattern extends Pattern {
      * in legal pattern syntax.
      */
     @Override
-    public String toString() {
+    public String reconstruct() {
         return nodeTest + "[" + positionExpr + "]";
     }
 

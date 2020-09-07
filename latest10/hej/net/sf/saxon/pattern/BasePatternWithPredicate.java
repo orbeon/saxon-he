@@ -262,7 +262,8 @@ public class BasePatternWithPredicate extends Pattern implements PatternWithPred
      * Display the pattern for diagnostics
      */
 
-    public String toString() {
+    @Override
+    public String reconstruct() {
         return getBasePattern() + "[" + getPredicate() + "]";
     }
 
@@ -285,6 +286,7 @@ public class BasePatternWithPredicate extends Pattern implements PatternWithPred
         BasePatternWithPredicate n = new BasePatternWithPredicate(
                 getBasePattern().copy(rebindings), getPredicate().copy(rebindings));
         ExpressionTool.copyLocationInfo(this, n);
+        n.setOriginalText(getOriginalText());
         return n;
     }
 

@@ -172,7 +172,7 @@ public class PatternThatSetsCurrent extends Pattern {
      * Get the original pattern text
      */
     @Override
-    public String toString() {
+    public String reconstruct() {
         return wrappedPattern.toString();
     }
 
@@ -247,6 +247,7 @@ public class PatternThatSetsCurrent extends Pattern {
         rebindings.put(binding, newCurrent);
         PatternThatSetsCurrent n = new PatternThatSetsCurrent(wrappedPattern.copy(rebindings), newCurrent);
         ExpressionTool.copyLocationInfo(this, n);
+        n.setOriginalText(getOriginalText());
         return n;
     }
 

@@ -252,6 +252,7 @@ public class NodeSetPattern extends Pattern {
     public Pattern copy(RebindingMap rebindings) {
         NodeSetPattern n = new NodeSetPattern(getSelectionExpression().copy(rebindings));
         ExpressionTool.copyLocationInfo(this, n);
+        n.setOriginalText(getOriginalText());
         return n;
     }
 

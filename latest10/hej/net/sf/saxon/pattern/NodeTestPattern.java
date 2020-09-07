@@ -87,13 +87,18 @@ public class NodeTestPattern extends Pattern {
      * Display the pattern for diagnostics
      */
 
-    public String toString() {
+    @Override
+    public String reconstruct() {
         return nodeTest.toString();
     }
 
     @Override
     public String toShortString() {
-        return nodeTest.toShortString();
+        if (getOriginalText() != null) {
+            return getOriginalText();
+        } else {
+            return nodeTest.toShortString();
+        }
     }
 
     /**
@@ -165,6 +170,7 @@ public class NodeTestPattern extends Pattern {
         NodeTestPattern n = new NodeTestPattern(nodeTest.copy());
         n.setPriority(getDefaultPriority());
         ExpressionTool.copyLocationInfo(this, n);
+        n.setOriginalText(getOriginalText());
         return n;
     }
 

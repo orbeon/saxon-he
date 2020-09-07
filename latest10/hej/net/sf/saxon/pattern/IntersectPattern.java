@@ -165,6 +165,7 @@ public class IntersectPattern extends VennPattern {
     public Pattern copy(RebindingMap rebindings) {
         IntersectPattern n = new IntersectPattern(p1.copy(rebindings), p2.copy(rebindings));
         ExpressionTool.copyLocationInfo(this, n);
+        n.setOriginalText(getOriginalText());
         return n;
     }
 

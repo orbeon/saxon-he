@@ -103,20 +103,26 @@ public class StandardDiagnostics {
                 kind = "parameter";
             } else if (loc instanceof GlobalVariable) {
                 kind = "variable";
+            } else if (loc instanceof Mode) {
+                kind = "mode";
             }
             systemId = loc.getSystemId();
             lineNumber = loc.getLineNumber();
             nodeMessage = "at " + kind + " ";
             StructuredQName name = ((Actor) loc).getComponentName();
             if (name != null) {
-                nodeMessage += name.toString();
+                String n = name.toString();
+                if (n.equals("xsl:unnamed")) {
+                    n = "(unnamed)";
+                }
+                nodeMessage += n;
                 nodeMessage += " ";
             }
         }
         if (lineNumber == -1) {
             lineNumber = loc.getLineNumber();
         }
-        boolean containsLineNumber = lineNumber != -1;
+        boolean containsLineNumber = lineNumber > 0;
         if (node != null && !containsLineNumber) {
             nodeMessage = "at " + Navigator.getPath(node) + ' ';
         }

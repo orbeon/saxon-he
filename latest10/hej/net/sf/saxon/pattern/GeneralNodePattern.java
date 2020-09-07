@@ -313,6 +313,7 @@ public final class GeneralNodePattern extends Pattern {
     public Pattern copy(RebindingMap rebindings) {
         GeneralNodePattern n = new GeneralNodePattern(equivalentExpr.copy(rebindings), itemType);
         ExpressionTool.copyLocationInfo(this, n);
+        n.setOriginalText(getOriginalText());
         return n;
     }
 

@@ -77,7 +77,8 @@ public class ItemTypePattern extends Pattern {
      * Display the pattern for diagnostics
      */
 
-    public String toString() {
+    @Override
+    public String reconstruct() {
         return itemType.toString();
     }
 

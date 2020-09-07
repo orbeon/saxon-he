@@ -717,6 +717,7 @@ public abstract class StyleElement extends ElementImpl {
         try {
             StaticContext env = getStaticContext(new StructuredQName("", "", attributeName));
             Pattern p = Pattern.make(pattern, env, getCompilation().getPackageData());
+            p.setOriginalText(pattern);
             p.setLocation(allocateLocation());
             return p;
         } catch (XPathException err) {

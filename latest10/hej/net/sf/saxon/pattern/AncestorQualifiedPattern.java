@@ -321,7 +321,7 @@ public final class AncestorQualifiedPattern extends Pattern {
      * Get the original pattern text
      */
     @Override
-    public String toString() {
+    public String reconstruct() {
         return upperPattern + (upwardsAxis == AxisInfo.PARENT ? "/" : "//") + basePattern;
     }
 
@@ -372,6 +372,7 @@ public final class AncestorQualifiedPattern extends Pattern {
         AncestorQualifiedPattern n = new AncestorQualifiedPattern(basePattern.copy(rebindings),
                                                                   upperPattern.copy(rebindings), upwardsAxis);
         ExpressionTool.copyLocationInfo(this, n);
+        n.setOriginalText(getOriginalText());
         return n;
     }
 

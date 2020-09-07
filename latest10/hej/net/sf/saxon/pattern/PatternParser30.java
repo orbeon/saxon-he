@@ -131,6 +131,7 @@ public class PatternParser30 extends XPathParser implements PatternParser {
             } catch (XPathException e) {
                 pat = PatternMaker.fromExpression(exp.simplify(), env.getConfiguration(), true);
             }
+            pat.setOriginalText(pattern);
             if (exp instanceof FilterExpression && ((FilterExpression)exp).getBase() instanceof ContextItemExpression) {
                 if (allowSaxonExtensions && (pattern.startsWith("tuple") || pattern.startsWith("map") || pattern.startsWith("array") || pattern.startsWith("union"))) {
                     // no action, this is OK

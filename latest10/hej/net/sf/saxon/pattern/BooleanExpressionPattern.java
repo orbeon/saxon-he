@@ -180,7 +180,8 @@ public class BooleanExpressionPattern extends Pattern implements PatternWithPred
      * Display the pattern for diagnostics
      */
 
-    public String toString() {
+    @Override
+    public String reconstruct() {
         return ".[" + getPredicate() + "]";
     }
 
@@ -216,6 +217,7 @@ public class BooleanExpressionPattern extends Pattern implements PatternWithPred
     public Pattern copy(RebindingMap rebindings) {
         BooleanExpressionPattern n = new BooleanExpressionPattern(getPredicate().copy(rebindings));
         ExpressionTool.copyLocationInfo(this, n);
+        n.setOriginalText(getOriginalText());
         return n;
     }
 

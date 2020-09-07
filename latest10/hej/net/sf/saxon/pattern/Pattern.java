@@ -35,6 +35,7 @@ public abstract class Pattern extends PseudoExpression {
 
     private double priority = 0.5;
     private boolean recoverable = true;
+    private String originalText;
 
     /**
      * Static factory method to make a Pattern by parsing a String. <br>
@@ -129,7 +130,7 @@ public abstract class Pattern extends PseudoExpression {
      */
 
     public void setOriginalText(String text) {
-        /*originalText = text;*/
+        originalText = text;
     }
 
     /**
@@ -406,12 +407,36 @@ public abstract class Pattern extends PseudoExpression {
     }
 
     /**
+     * Get the original text of the pattern, if known
+     * @return the original text of the pattern as written; this may be null
+     * in the case of a pattern constructed programmatically
+     */
+
+    public String getOriginalText() {
+        return originalText;
+    }
+
+    /**
      * Get a string representation of the pattern. This will be in a form similar to the
      * original pattern text, but not necessarily identical. It is not guaranteed to be
      * in legal pattern syntax.
      */
 
     public String toString() {
+        if (originalText != null) {
+            return originalText;
+        } else {
+            return reconstruct();
+
+        }
+    }
+
+    /**
+     * Reconstruct a string representation of the pattern in cases where the original
+     * string is not available
+     */
+
+    public String reconstruct() {
         return "pattern matching " + getItemType();
     }
 
