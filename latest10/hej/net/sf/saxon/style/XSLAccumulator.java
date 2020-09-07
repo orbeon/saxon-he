@@ -48,6 +48,7 @@ import java.util.List;
 public class XSLAccumulator extends StyleElement implements StylesheetComponent {
 
     private Accumulator accumulator = new Accumulator();
+    private SlotManager slotManager;
 
     /**
      * Get the corresponding Procedure object that results from the compilation of this
@@ -178,7 +179,7 @@ public class XSLAccumulator extends StyleElement implements StylesheetComponent 
             RoleDiagnostic role = new RoleDiagnostic(RoleDiagnostic.INSTRUCTION, "xsl:accumulator-rule/select", 0);
             init = config.getTypeChecker(false).staticTypeCheck(init, accumulator.getType(), role, visitor);
             init = init.optimize(visitor, config.getDefaultContextItemStaticInfo());
-            SlotManager stackFrameMap = config.makeSlotManager();
+            SlotManager stackFrameMap = slotManager;
             ExpressionTool.allocateSlots(init, 0, stackFrameMap);
             accumulator.setSlotManagerForInitialValueExpression(stackFrameMap);
             checkInitialStreamability(init);
@@ -280,7 +281,7 @@ public class XSLAccumulator extends StyleElement implements StylesheetComponent 
     @Override
     public void validate(ComponentDeclaration decl) throws XPathException {
 
-        //stackFrameMap = getConfiguration().makeSlotManager();
+        slotManager = getConfiguration().makeSlotManager();
 
         // check the element is at the top level of the stylesheet
 
@@ -305,7 +306,7 @@ public class XSLAccumulator extends StyleElement implements StylesheetComponent 
 
     @Override
     public SlotManager getSlotManager() {
-        return null;
+        return slotManager;
     }
 
     @Override
