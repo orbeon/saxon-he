@@ -97,8 +97,7 @@ public class NamespaceDifferencer extends ProxyReceiver {
                 }
             } else {
                 // undeclare the default namespace if the child element is in the default namespace
-                if (elementInDefaultNamespace &&
-                        !parentMap.getDefaultNamespace().isEmpty() &&
+                if (!parentMap.getDefaultNamespace().isEmpty() &&
                         thisMap.getDefaultNamespace().isEmpty()) {
                     delta = delta.put("", "");
                 }
