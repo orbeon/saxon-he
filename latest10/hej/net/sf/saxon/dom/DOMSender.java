@@ -11,6 +11,7 @@ import net.sf.saxon.event.NamespaceReducer;
 import net.sf.saxon.event.Receiver;
 import net.sf.saxon.event.ReceiverOption;
 import net.sf.saxon.expr.parser.Loc;
+import net.sf.saxon.functions.ResolveURI;
 import net.sf.saxon.lib.NamespaceConstant;
 import net.sf.saxon.om.*;
 import net.sf.saxon.s9api.Location;
@@ -135,8 +136,7 @@ public class DOMSender {
                                 if (!systemIdURI.isAbsolute()) {
                                     String base = root.getBaseURI();
                                     if (base != null) {
-                                        systemIdURI = new URI(base).resolve(systemIdURI);
-                                        systemId = systemIdURI.toString();
+                                        systemId = ResolveURI.makeAbsolute(systemId, base).toString();
                                     } else {
                                         // base URI unknown: return the relative URI as written
                                     }

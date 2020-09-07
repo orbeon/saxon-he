@@ -11,6 +11,7 @@ package net.sf.saxon.testdriver;
 import net.sf.saxon.Configuration;
 import net.sf.saxon.Query;
 import net.sf.saxon.functions.ResolveQName;
+import net.sf.saxon.functions.ResolveURI;
 import net.sf.saxon.lib.*;
 import net.sf.saxon.om.StructuredQName;
 import net.sf.saxon.s9api.*;
@@ -1519,7 +1520,7 @@ public class Xslt30TestSuiteDriverHE extends TestDriver {
         @Override
         public Result resolve(String href, String base) throws XPathException {
             try {
-                uri = new URI(base).resolve(href);
+                uri = ResolveURI.makeAbsolute(href, base);
                 if (serialized) {
                     //destination = proc.newSerializer();
                     stringWriter = new StringWriter();

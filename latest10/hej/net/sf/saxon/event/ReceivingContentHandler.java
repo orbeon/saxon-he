@@ -9,6 +9,7 @@ package net.sf.saxon.event;
 
 import net.sf.saxon.Configuration;
 import net.sf.saxon.expr.parser.Loc;
+import net.sf.saxon.functions.ResolveURI;
 import net.sf.saxon.lib.Feature;
 import net.sf.saxon.om.*;
 import net.sf.saxon.s9api.Location;
@@ -748,8 +749,7 @@ public class ReceivingContentHandler
                 if (!suppliedURI.isAbsolute()) {
                     String baseURI = localLocator.getSystemId();
                     if (baseURI != null) {   // See bug 21679
-                        URI absoluteURI = new URI(baseURI).resolve(systemId);
-                        uri = absoluteURI.toString();
+                        uri = ResolveURI.makeAbsolute(systemId, baseURI).toString();
                     }
                 }
             } catch (URISyntaxException err) {

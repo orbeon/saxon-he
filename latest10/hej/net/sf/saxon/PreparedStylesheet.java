@@ -10,6 +10,7 @@ package net.sf.saxon;
 import net.sf.saxon.expr.Component;
 import net.sf.saxon.expr.accum.Accumulator;
 import net.sf.saxon.expr.instruct.*;
+import net.sf.saxon.functions.ResolveURI;
 import net.sf.saxon.s9api.HostLanguage;
 import net.sf.saxon.functions.ExecutableFunctionLibrary;
 import net.sf.saxon.functions.FunctionLibrary;
@@ -309,7 +310,7 @@ public class PreparedStylesheet extends Executable {
     public PreparedStylesheet getCachedStylesheet(String href, String baseURI) {
         URI abs = null;
         try {
-            abs = new URI(baseURI).resolve(href);
+            abs = ResolveURI.makeAbsolute(href, baseURI);
         } catch (URISyntaxException err) {
             //
         }
@@ -332,7 +333,7 @@ public class PreparedStylesheet extends Executable {
     public void putCachedStylesheet(String href, String baseURI, PreparedStylesheet pss) {
         URI abs = null;
         try {
-            abs = new URI(baseURI).resolve(href);
+            abs = ResolveURI.makeAbsolute(href, baseURI);
         } catch (URISyntaxException err) {
             //
         }

@@ -465,8 +465,7 @@ public class DocumentFn extends SystemFunction implements Callable {
                 absURI = baseURI;
             } else {
                 try {
-                    URI uri = new URI(baseURI).resolve(href);
-                    absURI = uri.toString();
+                    absURI = ResolveURI.makeAbsolute(href, baseURI).toString();
                 } catch (URISyntaxException | IllegalArgumentException err) {
                     absURI = baseURI + "/../" + href;
                 }
@@ -527,11 +526,8 @@ public class DocumentFn extends SystemFunction implements Callable {
                 documentKey = baseURI;
             } else {
                 try {
-                    URI uri = new URI(baseURI).resolve(href);
-                    documentKey = uri.toString();
-                } catch (URISyntaxException err) {
-                    documentKey = baseURI + "/../" + href;
-                } catch (IllegalArgumentException err) {
+                    documentKey = ResolveURI.makeAbsolute(href, baseURI).toString();
+                } catch (URISyntaxException | IllegalArgumentException err) {
                     documentKey = baseURI + "/../" + href;
                 }
             }
@@ -625,11 +621,8 @@ public class DocumentFn extends SystemFunction implements Callable {
             documentKey = baseURL;
         } else {
             try {
-                URI url = new URI(baseURL).resolve(href);
-                documentKey = url.toString();
-            } catch (URISyntaxException err) {
-                documentKey = baseURL + "/../" + href;
-            } catch (IllegalArgumentException err) {
+                documentKey = ResolveURI.makeAbsolute(href, baseURL).toString();
+            } catch (URISyntaxException | IllegalArgumentException err) {
                 documentKey = baseURL + "/../" + href;
             }
         }

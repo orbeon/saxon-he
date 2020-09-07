@@ -15,6 +15,7 @@ import net.sf.saxon.expr.sort.AtomicSortComparer;
 import net.sf.saxon.expr.sort.CodepointCollator;
 import net.sf.saxon.expr.sort.GenericAtomicComparer;
 import net.sf.saxon.functions.DeepEqual;
+import net.sf.saxon.functions.ResolveURI;
 import net.sf.saxon.lib.Feature;
 import net.sf.saxon.lib.NamespaceConstant;
 import net.sf.saxon.lib.StringCollator;
@@ -414,7 +415,7 @@ public class TestOutcome {
                 //URI uri = new File(driver.resultsDir + "/results/output.xml").toURI().resolve(assertion.attribute("uri"));
                 URI uri;
                 try {
-                    uri = new URI(outcome.getBaseOutputUri()).resolve(assertion.attribute("uri"));
+                    uri = ResolveURI.makeAbsolute(assertion.attribute("uri"), outcome.getBaseOutputUri());
                 } catch (URISyntaxException e) {
                     System.err.println("**** Invalid output uri " + outcome.getBaseOutputUri());
                     return false;

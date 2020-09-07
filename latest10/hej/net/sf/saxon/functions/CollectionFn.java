@@ -115,7 +115,7 @@ public class CollectionFn extends SystemFunction implements Callable {
                 } else {
                     String base = getRetainedStaticContext().getStaticBaseUriString();
                     if (base != null) {
-                        absoluteURI = new URI(base).resolve(href).toString();
+                        absoluteURI = ResolveURI.makeAbsolute(href, base).toString();
                     } else {
                         throw new XPathException("Relative collection URI cannot be resolved: no base URI available", "FODC0002");
                     }

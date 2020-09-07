@@ -8,6 +8,7 @@
 package net.sf.saxon.dom;
 
 import net.sf.saxon.Configuration;
+import net.sf.saxon.functions.ResolveURI;
 import net.sf.saxon.lib.NamespaceConstant;
 import net.sf.saxon.om.AxisInfo;
 import net.sf.saxon.om.GenericTreeInfo;
@@ -219,8 +220,7 @@ public class DocumentWrapper extends GenericTreeInfo {
                     if (!systemIdURI.isAbsolute()) {
                         String base = getRootNode().getBaseURI();
                         if (base != null) {
-                            systemIdURI = new URI(base).resolve(systemIdURI);
-                            systemId = systemIdURI.toString();
+                            systemId = ResolveURI.makeAbsolute(systemId, base).toString();
                         } else {
                             // base URI unknown: return the relative URI as written
                         }

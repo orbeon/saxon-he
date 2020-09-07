@@ -10,6 +10,7 @@ package net.sf.saxon.testdriver;
 import net.sf.saxon.Configuration;
 import net.sf.saxon.dom.DocumentWrapper;
 import net.sf.saxon.expr.XPathContext;
+import net.sf.saxon.functions.ResolveURI;
 import net.sf.saxon.s9api.HostLanguage;
 import net.sf.saxon.expr.sort.SimpleCollation;
 import net.sf.saxon.lib.*;
@@ -1089,7 +1090,7 @@ public class Environment implements URIResolver {
                 href = "";
             }
             try {
-                uri = new URI(base).resolve(href).toString();
+                uri = ResolveURI.makeAbsolute(href, base).toString();
             } catch (URISyntaxException | IllegalArgumentException e) {
                 uri = href;
             }

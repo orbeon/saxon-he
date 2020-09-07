@@ -10,6 +10,7 @@ package net.sf.saxon.pull;
 
 import net.sf.saxon.event.PipelineConfiguration;
 import net.sf.saxon.expr.parser.Loc;
+import net.sf.saxon.functions.ResolveURI;
 import net.sf.saxon.om.*;
 import net.sf.saxon.trans.SaxonErrorCode;
 import net.sf.saxon.trans.XPathException;
@@ -606,7 +607,7 @@ public class StaxBridge implements PullProvider {
             if (name != null) {
                 if (baseURI != null && systemId != null) {
                     try {
-                        systemId = new URI(baseURI).resolve(systemId).toString();
+                        systemId = ResolveURI.makeAbsolute(systemId, baseURI).toString();
                     } catch (URISyntaxException err) {
                         //
                     }

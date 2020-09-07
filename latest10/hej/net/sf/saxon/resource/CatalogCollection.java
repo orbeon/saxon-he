@@ -10,6 +10,7 @@ package net.sf.saxon.resource;
 import net.sf.saxon.Configuration;
 import net.sf.saxon.expr.XPathContext;
 import net.sf.saxon.functions.DocumentFn;
+import net.sf.saxon.functions.ResolveURI;
 import net.sf.saxon.functions.URIQueryParameters;
 import net.sf.saxon.lib.ParseOptions;
 import net.sf.saxon.lib.Resource;
@@ -203,7 +204,7 @@ public class CatalogCollection extends AbstractResourceCollection {
             }
             String uri;
             try {
-                uri = new URI(item.getBaseURI()).resolve(hrefAtt).toString();
+                uri = ResolveURI.makeAbsolute(hrefAtt, item.getBaseURI()).toString();
             } catch (URISyntaxException e) {
                 XPathException err = new XPathException("Invalid base URI or href URI in collection catalog: ("
                                                                 + item.getBaseURI() + ", " + hrefAtt + ")");
