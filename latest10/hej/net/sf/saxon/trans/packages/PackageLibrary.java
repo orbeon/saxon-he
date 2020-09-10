@@ -118,8 +118,10 @@ public class PackageLibrary {
         PackageDetails details = new PackageDetails();
         details.nameAndVersion = vp;
         details.loadedPackage = packageIn;
-        packages.put(vp, details);
-        addPackage(details);
+        if (vp.packageName != null) {
+            packages.put(vp, details);
+            addPackage(details);
+        }
     }
 
     /**
