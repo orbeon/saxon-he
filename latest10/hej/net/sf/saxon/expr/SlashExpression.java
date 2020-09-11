@@ -942,15 +942,17 @@ public class SlashExpression extends BinaryExpression
         // without removal of duplicates. If sorting and deduplication are needed,
         // this is achieved by wrapping the path expression in a DocumentSorter
 
-        if (contextFree) {
+        Expression step = getStep();
+        if (contextFree && step instanceof AxisExpression) {
+            // see bug 4730, the step might have been rewritten since the flag was set
             return new MappingIterator(
                     getStart().iterate(context),
-                    item -> ((AxisExpression) getRhsExpression()).iterate((NodeInfo)item));
+                    item -> ((AxisExpression) step).iterate((NodeInfo)item));
         }
 
         XPathContext context2 = context.newMinorContext();
         context2.trackFocus(getStart().iterate(context));
-        return new ContextMappingIterator(c1 -> getStep().iterate(c1), context2);
+        return new ContextMappingIterator(step::iterate, context2);
     }
 
 //    /**
