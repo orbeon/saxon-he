@@ -741,7 +741,7 @@ public class CommandLineOptions {
                 if (files != null) {
                     for (String file1 : files) {
                         File file = new File(sourceFile, file1);
-                        if (!file.isDirectory()) {
+                        if (!file.isDirectory() && !file.isHidden()) {
                             if (useSAXSource) {
                                 InputSource eis = new InputSource(file.toURI().toString());
                                 sourceInput = new SAXSource(parser, eis);
