@@ -217,10 +217,10 @@ public class XPath30FunctionSet extends BuiltInFunctionSet {
         register("outermost", 1, Outermost.class, AnyNodeTest.getInstance(), STAR, AS_ARG0 | FILTER)
                 .arg(0, AnyNodeTest.getInstance(), STAR | TRA, null);
 
-        register("parse-xml", 1, ParseXml.class, NodeKindTest.DOCUMENT, OPT, LATE)
+        register("parse-xml", 1, ParseXml.class, NodeKindTest.DOCUMENT, OPT, LATE | NEW)
                 .arg(0, BuiltInAtomicType.STRING, OPT, EMPTY);
 
-        register("parse-xml-fragment", 1, ParseXmlFragment.class, NodeKindTest.DOCUMENT, OPT, LATE)
+        register("parse-xml-fragment", 1, ParseXmlFragment.class, NodeKindTest.DOCUMENT, OPT, LATE | NEW)
                 .arg(0, BuiltInAtomicType.STRING, OPT, EMPTY);
 
         register("path", 0, ContextItemAccessorFunction.class, BuiltInAtomicType.STRING, OPT, CITEM | LATE);

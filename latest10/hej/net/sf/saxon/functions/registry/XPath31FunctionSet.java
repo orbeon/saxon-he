@@ -139,7 +139,7 @@ public class XPath31FunctionSet extends BuiltInFunctionSet {
                 .arg(1, MapType.ANY_MAP_TYPE, ONE, null)
                 .optionDetails(ParseJsonFn.OPTION_DETAILS);
 
-        register("parse-xml", 1, ParseXml.class, NodeKindTest.DOCUMENT, OPT, LATE)
+        register("parse-xml", 1, ParseXml.class, NodeKindTest.DOCUMENT, OPT, LATE | NEW)
                 .arg(0, BuiltInAtomicType.STRING, OPT, EMPTY);
 
         register("random-number-generator", 0, RandomNumberGenerator.class, RandomNumberGenerator.RETURN_TYPE, ONE, LATE);
@@ -147,7 +147,7 @@ public class XPath31FunctionSet extends BuiltInFunctionSet {
         register("random-number-generator", 1, RandomNumberGenerator.class, RandomNumberGenerator.RETURN_TYPE, ONE, LATE)
                 .arg(0, BuiltInAtomicType.ANY_ATOMIC, OPT, null);
 
-        register("parse-xml-fragment", 1, ParseXmlFragment.class, NodeKindTest.DOCUMENT, OPT, LATE)
+        register("parse-xml-fragment", 1, ParseXmlFragment.class, NodeKindTest.DOCUMENT, OPT, LATE | NEW)
                 .arg(0, BuiltInAtomicType.STRING, OPT, EMPTY);
 
         register("serialize", 2, Serialize.class, BuiltInAtomicType.STRING, ONE, 0)
