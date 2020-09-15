@@ -1098,7 +1098,7 @@ namespace Saxon.Api
     /// </remarks>
 
     [Serializable]
-    public class XsltTransformer : XdmDestination
+    public class XsltTransformer : XmlDestination
     {
 
         /* private JXsltController controller;
@@ -1467,8 +1467,14 @@ namespace Saxon.Api
             set
             {
                 this.destination = value;
+                transformer.setDestination(value.GetUnderlyingDestination());
             }
 
+        }
+
+        public JDestination GetUnderlyingDestination()
+        {
+            return transformer;
         }
 
 
