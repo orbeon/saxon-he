@@ -3773,7 +3773,10 @@ public class Configuration implements SourceResolver, NotationSet {
      * @param model The external object model.
      *              This can either be one of the system-supplied external
      *              object models for JDOM, XOM, or DOM, or a user-supplied external object model.
-     *              <p>This method is intended for advanced users only, and is subject to change.</p>
+     * @see net.sf.saxon.option.axiom.AxiomObjectModel
+     * @see net.sf.saxon.option.dom4j.DOM4JObjectModel
+     * @see net.sf.saxon.option.jdom2.JDOM2ObjectModel
+     * @see net.sf.saxon.option.xom.XOMObjectModel
      */
 
     public void registerExternalObjectModel(ExternalObjectModel model) {
