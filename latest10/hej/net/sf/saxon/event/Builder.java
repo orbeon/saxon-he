@@ -244,8 +244,12 @@ public abstract class Builder implements Receiver {
     @Override
     public void open() {
         if (timing && !open) {
+            String sysId = getSystemId();
+            if (sysId == null) {
+                sysId = "(unknown systemId)";
+            }
             getConfiguration().getStandardErrorOutput().println(
-                    "Building tree for " + getSystemId() + " using " + getClass());
+                    "Building tree for " + sysId + " using " + getClass());
             startTime = System.nanoTime();
         }
         open = true;
