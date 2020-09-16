@@ -46,7 +46,9 @@ public class XSLUsePackage extends StyleElement {
                 reportAbsence("name");
                 nameAtt = "unnamed-package";
             }
-            PackageDetails pack = info.getPackageLibrary().findPackage(nameAtt, getPackageVersionRanges());
+
+            PackageVersionRanges ranges = getPackageVersionRanges();
+            PackageDetails pack = ranges == null ? null : info.getPackageLibrary().findPackage(nameAtt, ranges);
             usedPackage = pack == null ? null : pack.loadedPackage;
             if (usedPackage == null) {
                 compileErrorInAttribute("Package " + nameAtt + " could not be found", "XTSE3000", "name");
