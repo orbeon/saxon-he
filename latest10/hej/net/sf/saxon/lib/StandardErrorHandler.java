@@ -100,7 +100,7 @@ public class StandardErrorHandler implements org.xml.sax.ErrorHandler {
         try {
             Loc loc = new Loc(e.getSystemId(), e.getLineNumber(), e.getColumnNumber());
             if (errorReporter != null) {
-                XmlProcessingIncident err = new XmlProcessingIncident("Error reported by XML parser", SaxonErrorCode.SXXP0003, loc);
+                XmlProcessingIncident err = new XmlProcessingIncident(" Error reported by XML parser: "+ e.getMessage(), SaxonErrorCode.SXXP0003, loc);
                 err.setCause(e);
                 errorReporter.report(err);
             }
