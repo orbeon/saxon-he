@@ -18,6 +18,7 @@ import net.sf.saxon.trans.ConfigurationReader;
 import net.sf.saxon.trans.XPathException;
 import org.xml.sax.XMLFilter;
 
+import javax.xml.XMLConstants;
 import javax.xml.transform.*;
 import javax.xml.transform.dom.DOMResult;
 import javax.xml.transform.dom.DOMSource;
@@ -319,8 +320,14 @@ public class SaxonTransformerFactory extends SAXTransformerFactory implements Co
                     throw new IllegalArgumentException(err);
                 }
                 break;
+            case XMLConstants.ACCESS_EXTERNAL_DTD:
+                getConfiguration().setConfigurationProperty(Feature.XML_PARSER_PROPERTY.name + XMLConstants.ACCESS_EXTERNAL_DTD, value);
+                break;
+            case XMLConstants.ACCESS_EXTERNAL_STYLESHEET:
+                getConfiguration().setConfigurationProperty(Feature.ALLOWED_PROTOCOLS, value.toString());
+                break;
             default:
-                processor.getUnderlyingConfiguration().setConfigurationProperty(name, value);
+                getConfiguration().setConfigurationProperty(name, value);
                 break;
         }
     }
@@ -338,7 +345,14 @@ public class SaxonTransformerFactory extends SAXTransformerFactory implements Co
     /*@Nullable*/
     @Override
     public Object getAttribute(String name) throws IllegalArgumentException {
-        return getConfiguration().getConfigurationProperty(name);
+        if (name.equals(XMLConstants.ACCESS_EXTERNAL_DTD)) {
+            return getConfiguration().getConfigurationProperty(
+                    Feature.XML_PARSER_PROPERTY + XMLConstants.ACCESS_EXTERNAL_DTD);
+        } else if (name.equals(XMLConstants.ACCESS_EXTERNAL_STYLESHEET)) {
+            return getConfiguration().getConfigurationProperty(Feature.ALLOWED_PROTOCOLS);
+        } else {
+            return getConfiguration().getConfigurationProperty(name);
+        }
     }
 
     /**
