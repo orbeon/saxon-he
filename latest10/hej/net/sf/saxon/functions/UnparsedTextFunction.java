@@ -63,16 +63,6 @@ public abstract class UnparsedTextFunction extends SystemFunction {
         final Configuration config = context.getConfiguration();
         IntPredicate checker = config.getValidCharacterChecker();
 
-        // Check that the URI scheme is allowed
-
-        if (!config.isPermittedURI(absoluteURI)) {
-            XPathException err = new XPathException(
-                    "Document URI uses a disallowed URI scheme: " + absoluteURI.getScheme());
-            err.setXPathContext(context);
-            err.setErrorCode("FOUT1170");
-            throw err;
-        }
-
         // Use the URI machinery to validate and resolve the URIs
 
         Reader reader;
