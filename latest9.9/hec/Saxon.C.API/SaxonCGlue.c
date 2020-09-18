@@ -134,7 +134,15 @@ HANDLE loadDll(char* name)
 	}
 
 #if !(defined (__linux__) || (defined (__APPLE__) && defined(__MACH__)))
-	HANDLE hDll = LoadLibrary(name); // Used for windows only
+#ifdef UNICODE
+  wchar_t* wc = malloc(sizeof(wchar_t)*(strlen(name)+1));
+  size_t convertedChars = 0;
+  mbstowcs_s( &convertedChars, wc, strlen(name)+1, name, _TRUNCATE );
+  HANDLE hDll = LoadLibraryW(wc); // Used for windows only
+  free(wc);
+#else
+  HANDLE hDll = LoadLibraryA(name); // Used for windows only
+#endif
 #else
 	HANDLE hDll = LoadLibrary(name);
 #endif

@@ -50,20 +50,14 @@ public:
 	/**
 		 * A default Constructor. Create a empty value
 		 */
-	XdmValue() {
-		xdmSize = 0;
-		refCount = 1;
-		jValues = NULL;
-		valueType = NULL;
-		proc = NULL;
-	}
+    XdmValue() {
+        initialize();
+    }
 
-	XdmValue(SaxonProcessor * p) {
-		proc = p;
-		jValues = NULL;
-		refCount = 1;
-		valueType = NULL;
-	}
+  XdmValue(SaxonProcessor * p) {
+    initialize();
+    proc = p;
+  }
 
 
 	/**
@@ -189,6 +183,13 @@ int exceptionCount();*/
 	virtual XDM_TYPE getType();
 
 protected:
+   inline void initialize() noexcept {
+    jValues   = nullptr;
+    proc      = nullptr;
+    refCount  = 1;
+    valueType = nullptr;
+    xdmSize   = 0;
+  }
 	SaxonProcessor *proc;
 	char* valueType;  /*!< Cached. The type of the XdmValue */
 
