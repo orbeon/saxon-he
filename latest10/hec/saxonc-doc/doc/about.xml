@@ -1,0 +1,41 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<article id="about" title="About Saxon/C">
+   <h1>About Saxon/C</h1>
+
+   <p>Saxon/C is a version of Saxon developed by cross-compiling the Java source code to executables
+      that run on the C/C++ platform, with extensions for PHP and Python. All features of Saxon have
+      been ported, other than those (such as collations) that are necessarily platform dependent. In
+      particular, Saxon/C provides processing in XSLT, XQuery and XPath, and Schema validation. It
+      therefore makes these processing capabilities available to a plethora of other languages that
+      are strongly coupled to C/C++ such as PHP, Perl, Python, and Ruby. (For instance, <a
+         href="https://github.com/rimmartin/saxon-node" target="_blank">saxon-node</a> uses Saxon/C
+      to create an interface with Node.js.) </p>
+
+   <!--<p>
+      <figure>
+         <img src="/doc/SaxonJSDiag.svg"/>
+         <figcaption>Figure 1. Architecture diagram showing server compile time and browser run time
+            using Saxon-JS.</figcaption>
+      </figure>
+   </p>-->
+
+   <p>Saxon/C 1.2 is built from the Saxon 9.9.1.5 Java product using Excelsior JET Enterprise 15.3
+      edition (MP1). The APIs support the current W3C Recommendations: XSLT 3.0, XQuery 3.1, XPath
+      3.1 and Schema Validation 1.0/1.1. See the Saxon 9.9 documentation <a
+         href="https://saxonica.com/documentation/index.html#!conformance">Standards Conformance</a>
+      section for full details.</p>
+
+   <p>Saxon/C is released in three separate editions, as on the Java platform: the commercial
+      products Enterprise Edition (Saxon-EE/C) and Professional Edition (Saxon-PE/C), and the
+      opensource product Home Edition (Saxon-HE/C). See the <a target="_blank"
+         href="https://saxonica.com/products/feature-matrix-9-9.xml">feature matrix</a> to compare
+      the features of the HE, PE and EE products.</p>
+
+   <p>Versions are available for the following platforms: Linux 64-bit, Mac OS and Windows 64-bit.
+      (Note that from Saxon/C 1.2 versions are no longer available for 32-bit systems.)</p>
+
+
+
+
+
+</article>

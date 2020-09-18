@@ -1,0 +1,304 @@
+
+/* 
+Text blue: #3D5B96
+Dark blue: #C1CEDE
+Mid blue: #E4EEF0
+Light blue: #F6FFFB
+mid green: #B1CCC7
+rust: #96433D
+brown: #B3956F
+
+
+dark grey: #7F7396
+purple-ish grey: #9FA6B4
+light grey: #F5F5F5 (Menu dropdown blocks)
+
+font-family: Verdana, Arial, Helvetica, sans-serif;
+font-family: "Lucida Sans Unicode", "Lucida Grande", sans-serif;
+"Lucida Console", Monaco, monospace;
+Georgia,"Times New Roman",Times,serif;
+
+*/
+
+/* RESET PAGE STYLING - for consistency across browsers (avoid using their differing defaults) */
+
+html, body, div, span, applet, object, iframe,
+h1, h2, h3, h4, h5, h6, p, blockquote, pre,
+a, abbr, acronym, address, big, cite, code,
+del, dfn, em, img, ins, kbd, q, s, samp,
+small, strike, strong, sub, sup, tt, var,
+b, u, i, center,
+dl, dt, dd, ol, ul, li,
+fieldset, form, label, legend,
+table, caption, tbody, tfoot, thead, tr, th, td,
+article, aside, canvas, details, embed, 
+figure, figcaption, footer, header, hgroup, 
+menu, nav, output, ruby, section, summary,
+time, mark, audio, video {
+	margin: 0;
+	padding: 0;
+	border: 0;
+	font-size: 100%;
+	font: inherit;
+	vertical-align: baseline;
+}
+/* HTML5 display-role reset for older browsers */
+article, aside, details, figcaption, figure, 
+footer, header, hgroup, menu, nav, section {
+	display: block;
+}
+body {
+	line-height: 1;	
+}
+ol, ul {
+	list-style: none;
+}
+blockquote, q {
+	quotes: none;
+}
+blockquote:before, blockquote:after,
+q:before, q:after {
+	content: '';
+	content: none;
+}
+table {
+	border-collapse: collapse;
+	border-spacing: 0;
+}
+/* Prevent mobile browsers from default adapting font sizes of content to make it readable */
+body{
+    -webkit-text-size-adjust: 100%;
+}
+
+/** SAXONICA PAGE STYLING */
+
+/* Body class */
+
+html,body{
+    height: 100%;
+}
+
+body{
+    -webkit-text-size-adjust: 100%;
+    padding:0;
+    margin:0;
+    background:white;
+    font-family:"Lucida Sans Unicode", "Lucida Grande", sans-serif;    
+}
+
+/* Body general content */
+
+/* Any link (e.g. links within a page) */
+a{
+    font-family:inherit;
+    font-size:inherit;
+    font-style:normal;
+    color:#3D5B96;
+    font-weight:normal;
+    text-decoration:none;
+}
+
+/* used for in body links */
+a.bodylink{
+    font-family:inherit;
+    font-size:inherit;
+    font-style:inherit;
+    color:#96433D;
+    font-weight:normal;
+    text-decoration:none;
+}
+
+/*/\* used for main page headings *\/
+h1,
+h2,
+h3,
+.subhead{
+    text-decoration:none;
+    margin-top:0.7em;
+    margin-bottom:0.7em;
+    line-height:1.6em;
+}
+
+h1{
+    font-size:13pt;
+    font-style:normal;
+    color:#3D5B96;
+    font-weight:bold;
+}
+
+h2{
+    font-size:11pt;
+    font-style:normal;
+    color:#3D5B96;
+    font-weight:bold;
+}
+
+h3{
+    font-size:10pt;
+    font-style:italic;
+    color:#3D5B96;
+    font-weight:normal;
+}
+
+/\* used for subheads in pref. to H2 etc, to limit underlining width *\/
+.subhead{
+    font-size:inherit;
+    font-style:normal;
+    color:#3D5B96;
+    font-weight:normal;
+    border-bottom:thin dashed #3D5B96;
+    padding-right:5px;
+}*/
+
+/* used for standard text */
+p{
+    font-family:inherit;
+    font-size:10pt;
+    font-style:normal;
+    color:#3D5B96;
+    font-weight:normal;
+    text-decoration:none;
+    line-height:1.4em;
+    padding-right:15px;
+    padding-left:15px;
+    margin-top:10px;
+    margin-bottom:10px;
+}
+
+/* used for right-aligned text */
+.align-right{
+    text-align:right;
+}
+
+strong, b{
+    font-family:inherit;
+    font-weight:bold;
+}
+
+i{
+    font-family:inherit;
+    font-size:inherit;
+    font-style:italic;
+    font-weight:normal;
+    text-decoration:none;
+}
+
+blockquote{
+	 margin: 15px 30px;
+    font-family:inherit;
+    font-size:10pt;
+    font-style:normal;
+    color:#3D5B96;
+    font-weight:normal;
+    text-decoration:none;
+    line-height:1.4em;
+}
+
+code{
+    font-family:"lucida sans typewriter", courier, monospace;
+    font-size:inherit;
+    font-style:inherit;
+    font-weight:normal;
+    text-decoration:none;
+    color:#3D5B96;
+}
+
+/* Used for general lists */
+ol{
+    font-family:inherit;
+    font-size:10pt;
+    font-style:normal;
+    color:#3D5B96;
+    font-weight:normal;
+    text-decoration:none;
+    line-height:1.4em;
+    list-style-type:decimal;
+}
+
+ul{
+    font-family:inherit;
+    font-size:10pt;
+    font-style:normal;
+    color:#3D5B96;
+    font-weight:normal;
+    text-decoration:none;
+    line-height:1.4em;
+    list-style-type:disc;
+    list-style-position:outside;
+    padding-right:15px;
+    padding-left:40px;
+    margin-top:10px;
+    margin-bottom:10px;
+}
+li{
+    font-family:inherit;
+    font-size:inherit;
+    font-style:normal;
+    color:#3D5B96;
+    font-weight:normal;
+}
+ul ul{
+    margin-top:5px;
+    margin-bottom:5px;
+}
+
+
+/* Used for all tables */
+table{
+    table-layout:fixed;
+    width:auto;
+    /*border-collapse:collapse;*/
+}
+th,
+td{
+    font-family:inherit;
+    font-size:inherit;
+    font-style:normal;
+    color:#3D5B96;
+    text-decoration:none;
+    padding-left:15px;
+    padding-right:15px;
+    padding-top:0px;
+    padding-bottom:10px;
+}
+th{
+    font-weight:bold;
+    line-height:1.3em;
+}
+td{
+    font-weight:normal;
+    text-decoration:none;
+    line-height:1.4em;
+}
+
+
+/* used for example code */
+.codeblock{    
+    font-family:"lucida sans typewriter", courier, monospace;
+    font-size:9pt;
+    font-style:normal;
+    font-weight:normal;
+    color:#3D5B96;
+    background-color:#F5F5F5;
+    text-decoration:none;
+    line-height:1.4em;
+    white-space:pre-wrap;
+    display:block;
+    border:none;
+    margin-left:15px;
+    margin-right:15px;    
+    margin-top:10px;
+    margin-bottom:10px;
+    padding:10px;
+}
+
+/* used for example commands */
+.command{
+    font-size:8pt;
+    font-style:normal;
+    color:#96433D;
+    font-weight:bold;
+    text-decoration:none;
+    padding-right:15px;
+}
+

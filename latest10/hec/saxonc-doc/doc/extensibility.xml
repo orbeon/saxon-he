@@ -1,0 +1,196 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<article id="extensibility" title="Extension Functions in C++/PHP">
+   <h1>Extension Functions in C++/PHP</h1>
+
+   <p>This section describes how to extend the capability of Saxon XSLT stylesheets and XQuery
+      queries by adding user written extension functions in the C++ and PHP languages. It is not
+      currently possible to write extension functions in Python.</p>
+
+   <nav>
+      <ul/>
+   </nav>
+
+   <p>Extension functions allow code written in a host programming language such as C++ to be
+      invoked directly from a function call in an XPath expression (whether in XSLT, XQuery, or pure
+      XPath). For this to work, (a) the Saxon processor needs to be able to locate the executable
+      code corresponding to a particular function name, and (b) function arguments need to be
+      converted from the XDM type system to the host language type system, with the opposite
+      conversion applied to the function result.</p>
+
+   <p>XSLT, XQuery, and XPath are functional languages where it is assumed that functions do not
+      have side effects. Saxon cannot stop you calling extension functions that have side effects,
+      but the effect of doing so is not always guaranteed. For example, the optimizer might
+      eliminate a call to an extension function whose results are never used, or it might execute
+      calls to extension functions in an unexpected order.</p>
+
+   <p>Allowing untrusted stylesheets or queries to call extension functions is a potential security
+      risk. Stylesheets and queries will only be able to call extension functions that have been
+      explicitly registered by the application; it is the responsibility of the application designer
+      to ensure that this does not create vulnerabilities.</p>
+
+
+   <section id="extensions_cpp" title="Writing Extension Functions in C++">
+      <h1>Writing Extension Functions in C++</h1>
+
+      <p>A full example of the use of extension functions can be found in the files
+            <code>cppExtensionFunction.cpp</code> and <code>testXSLT.cpp</code> in the
+            <code>samples/cppTest</code> directory. This sample test registers a user written C++
+         extension function called "userFunction", which is then called from an XSLT stylesheet by
+         calling the <code>saxon:native()</code> function.</p>
+
+      <h2 class="subtitle">Calling extension functions from XSLT and XQuery</h2>
+
+      <p>User written C++ extension functions can be called from XSLT and XQuery by using the
+            <code>saxon:native()</code> function. This is a Saxon extension function in the Saxon
+         namespace ("http://saxon.sf.net/"), which takes two arguments: the function name, as an
+            <code>xs:string</code>, and the arguments to the function, supplied as an XDM array.</p>
+
+      <p>For instance, the C++ "userFunction" extension function is called from the XSLT stylesheet
+            <code>testExtension.xsl</code> as shown in the following code snippet:</p>
+
+      <samp><![CDATA[<xsl:variable name="args" select="['param1-data', .]"/>
+<xsl:variable name="resultVar" select="saxon:native('userFunction', $args)"/>]]></samp>
+
+      <h2 class="subtitle">Registering the use of C++ extension functions</h2>
+
+      <p>The user written C++ extension function must be compiled, and a function library built
+         containing this function.</p>
+
+      <p>For instance, to compile the "userFunction" extension function defined in
+            <code>cppExtensionFunction.cpp</code>, and create a corresponding extension function
+         library containing this function, use the following commands:</p>
+
+      <kbd>g++ -fPIC -shared -m64 cppExtensionFunction.cpp -o bin/cppExtensionFunction.o</kbd>
+      <kbd>g++ -m64 -shared -Wl,-soname,cppExtensionFunction.so -o cppExtensionFunction.so
+         bin/cppExtensionFunction.o</kbd>
+
+      <p>The C++ code below (taken from <code>testXSLT.cpp</code>) shows how to register this
+         extension function library, before running the testExtension.xsl stylesheet, using the C++
+         API:</p>
+
+      <samp><![CDATA[char fname[] = "_nativeCall";
+char funcParameters[] = "(Ljava/lang/String;[Ljava/lang/Object;[Ljava/lang/String;)Ljava/lang/Object;";
+
+JNINativeMethod cppMethods[] =
+{
+  {
+    fname,
+    funcParameters,
+    (void *)&cppNativeCall
+  }
+};
+
+/*
+* Test transform to String. Source and stylesheet supplied as arguments
+*/
+void testTransformToStringExtensionFunc(SaxonProcessor * processor, XsltProcessor * trans){
+  
+  trans->setProperty("extc", "/path/cppExtensionFunction");
+
+  bool nativeFound = processor->registerNativeMethods(SaxonProcessor::sxn_environ->env,
+      "com/saxonica/functions/extfn/cpp/NativeCall",
+      cppMethods, sizeof(cppMethods) / sizeof(cppMethods[0]));
+  
+  if(nativeFound) {
+    const char * output = trans->transformFileToString("cat.xml", "testExtension.xsl");
+
+    if(output == NULL) {
+      printf("result is null \n");
+
+    } else {
+      //printf("%s", output);
+      printf("result is OK \n");
+    }
+    fflush(stdout);
+    delete output;
+    
+  } else {
+    printf("native Class not found");
+  }
+}
+]]></samp>
+
+      <p>To run the <code>testXSLT.cpp</code> sample, use the following command:</p>
+
+      <kbd>g++ -m64 bin/SaxonCGlue.o bin/SaxonCXPath.o bin/SaxonProcessor.o bin/XQueryProcessor.o
+         bin/XsltProcessor.o bin/Xslt30Processor.o bin/XPathProcessor.o bin/XdmValue.o bin/XdmItem.o
+         bin/XdmNode.o bin/XdmAtomicValue.o bin/SchemaValidator.o testXSLT.cpp -o testXSLT -ldl
+         -lc</kbd>
+
+   </section>
+
+   <section id="extensions_php" title="Writing Extension Functions in PHP">
+      <h1>Writing Extension Functions in PHP</h1>
+
+      <p>An example of the use of extension functions can be found in the sample file
+            <code>xsltExamples.php</code> in the <code>samples/php</code> directory. The example
+         registers a user written PHP extension function called "userFunction", which is then called
+         from an XSLT stylesheet by calling the <code>php:function()</code> function.</p>
+
+      <h2 class="subtitle">Calling extension functions from XSLT and XQuery</h2>
+
+      <p>User written PHP extension functions can be called from XSLT and XQuery by using the
+            <code>php:function()</code> function. This is a Saxon extension function in a special
+         namespace ("http://php.net/xsl"), which takes two arguments: the function name, as an
+            <code>xs:string</code>, and the arguments to the function, supplied as an XDM array.</p>
+
+      <p>For instance, the PHP "userFunction" extension function is called from the XSLT stylesheet
+            <code>testExFunc.xsl</code> (in the <code>samples/php/xsl</code> directory), where the
+            <code>php</code> namespace has been declared (using
+            <code>xmlns:php="http://php.net/xsl"</code>), as shown in the following code
+         snippet:</p>
+
+      <samp><![CDATA[<xsl:variable name="args" select="['param1-data', .]"/>
+<xsl:variable name="phpCall" select="php:function('userFunction', $args)"/>]]></samp>
+
+      <h2 class="subtitle">Registering the use of PHP extension functions</h2>
+
+      <p>The example below illustrates how to write user written extension functions in PHP which
+         can be used in XSLT and XQuery. As shown, the use of extension functions is enabled by
+         registering the PHP extension library in Saxon/C, by using the
+            <code>registerPHPFunctions</code> function of the <code>SaxonProcessor</code>, before
+         running a transform as specified:</p>
+
+      <samp><![CDATA[// define an extension function
+function userFunction($param , $param2)
+{
+  if(is_numeric($param2)){
+    echo("userspace function called cp1\n");
+    $result = $param2*2;
+    return $result;
+  }
+}
+
+function userFunctionExample($saxon, $proc, $xmlfile, $xslFile){
+  echo '<b>userFunctionExample:</b><br/>';
+  global $resultg;
+
+  $saxon->registerPHPFunctions(" /usr/lib/php/20170718/saxon");
+  $proc->setSourceFromFile($xmlfile);
+  $proc->compileFromFile($xslFile);
+
+  $result = $proc->transformToString();
+  if($result != null) {
+    echo 'Output=======:'.$result;
+  } else {
+    echo "Result is null";
+    if($proc->exceptionOccurred()){
+      echo "Exception occurred";
+    }
+    $errCount = $proc->getExceptionCount();
+    for($i=0;$i<$errCount;$i++) {
+      echo 'Error Message='.$proc->getErrorMessage($i);
+    }
+  }
+
+  $proc->clearParameters();
+  $proc->clearProperties();
+
+}
+
+]]></samp>
+
+   </section>
+
+
+</article>

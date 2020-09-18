@@ -1,0 +1,670 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<section id="configuration" title="Configuration">
+
+   <h1>Configuration</h1>
+
+   <p>There are many parameters and options that can be set to control the way in which Saxon
+      behaves. For a comprehensive guide to the Saxon configuration features see the <a
+         href="http://saxonica.com/documentation/index.html#!configuration/config-features"
+         target="_blank">Saxon 9.9 documentation</a>.</p>
+
+   <aside>Note that a small number of the features are not available with Saxon/C. Please see the <a
+         href="/technical">Technical Information</a> Limitations section for details.</aside>
+
+   <h2 class="subtitle">Setting properties on the SaxonProcessor</h2>
+
+   <p>In the Saxon/C API in C++, PHP and Python, these configuration features can be set at a global
+      level when the <code>SaxonProcessor</code> is created, using the
+         <code>setConfigurationProperty()</code> method. For example:</p>
+
+   <samp><![CDATA[saxonProcessor->setConfigurationProperty("xsdversion", "1.1");
+
+saxonProcessor->setConfigurationProperty("http://saxon.sf.net/feature/multipleSchemaImports",
+  "on");]]></samp>
+
+   <h2 class="subtitle">Setting properties on the specific processors</h2>
+
+   <p>Alternatively, the configuration features can be set on the XSLT, XQuery, XPath or XML Schema
+      processors (<code>XsltProcessor</code>, <code>XQueryProcessor</code>, etc.) created from the
+      main <code>SaxonProcessor</code>. See the following sections for details about which
+      properties and parameters can be configured in the different XSLT, XQuery, XPath or XML Schema
+      processors, using the <code>setProperty()</code> and <code>setParameter()</code> methods.
+      Depending on the specific processor the exact purpose of these methods may differ. Further
+      details can be found in the <a href="/api">Saxon/C API documentation</a>.</p>
+
+   <nav>
+      <ul/>
+   </nav>
+
+   <section id="xslt" title="XSLT Processors">
+      <h1>XSLT Processors</h1>
+
+      <p>Details about parameters and properties which can be set on an <code>XsltProcessor</code>
+         or <code>Xslt30Processor</code>.</p>
+
+      <h3 class="codeTitle">setParameter(string $name, XdmValue $value)</h3>
+
+      <table>
+         <thead>
+            <tr>
+               <th>Name</th>
+               <th>Example</th>
+               <th>Description</th>
+            </tr>
+         </thead>
+         <tr>
+            <td>'node'</td>
+            <td>
+               <code>setParameter("node", xdmNodeObj)</code>
+            </td>
+            <td>
+               <p>Sets the source document for the transformation to the <code>XdmNode</code>
+                  supplied.</p>
+            </td>
+         </tr>
+         <!--<tr>
+            <td>'item'</td>
+            <td>
+               <code>setParameter("item", xdmItemObj)</code>
+            </td>
+            <td>
+               <p>In the <code>Xslt30Processor</code>, this sets the global context item for the
+                  transformation to the <code>XdmItem</code> supplied. In the
+                     <code>XsltProcessor</code>, if the <code>XdmItem</code> is actually an
+                     <code>XdmNode</code>, then this sets the source document (i.e. "item" works in
+                  the same way as "node" above).</p>
+            </td>
+         </tr>-->
+         <tr>
+            <td>[parameter name]</td>
+            <td>
+               <code>setParameter("numParam", value1)</code>
+            </td>
+            <td>
+               <p>Sets the value of a stylesheet parameter.</p>
+            </td>
+         </tr>
+      </table>
+
+      <h3 class="codeTitle">setProperty(string $name, string $propValue)</h3>
+
+      <p>The properties available are a subset of those specified for running XSLT from the command
+         line (see the <a target="_blank"
+            href="http://www.saxonica.com/documentation/index.html#!using-xsl/commandline">Saxon 9.9
+            documentation</a> for more information).</p>
+
+      <table>
+         <thead>
+            <tr>
+               <th>Name</th>
+               <th>Example</th>
+               <th>Description</th>
+            </tr>
+         </thead>
+         <tr>
+            <td>'![serialization property]'</td>
+            <td>
+               <code>setProperty("!indent", "yes")</code>
+            </td>
+            <td>
+               <p>Influence the serialization of the result output. Serialization parameters are
+                  specified by name, preceded by a leading exclamation mark (!). This is equivalent
+                  to specifying the corresponding attribute (e.g. <code>indent="yes"</code>) on an
+                     <code>xsl:output</code> declaration in the stylesheet. An output parameter
+                  specified on the command line overrides one specified within the stylesheet.</p>
+            </td>
+         </tr>
+         <tr>
+            <td>'o'</td>
+            <td>
+               <code>setProperty("o", "output.xml")</code>
+            </td>
+            <td>
+               <p>Set the destination for the result of the transformation to the specified
+                  filename.</p>
+            </td>
+         </tr>
+         <tr>
+            <td>'it'</td>
+            <td>
+               <code>setProperty("it", "name")</code>
+            </td>
+            <td>
+               <p>Set the initial template for the transformation by name.</p>
+            </td>
+         </tr>
+         <tr>
+            <td>'dtd'</td>
+            <td>
+               <code>setProperty("dtd", "true")</code>
+            </td>
+            <td>
+               <p>Set whether or not DTD validation should be applied to documents loaded.</p>
+            </td>
+         </tr>
+         <tr>
+            <td>'im'</td>
+            <td>
+               <code>setProperty("im", "mode-name")</code>
+            </td>
+            <td>
+               <p>Set the initial mode for the transformation.</p>
+            </td>
+         </tr>
+         <tr>
+            <td>'s'</td>
+            <td>
+               <code>setProperty("s", "filename")</code>
+            </td>
+            <td>
+               <p>Identifies the source file or directory.</p>
+            </td>
+         </tr>
+         <tr>
+            <td>'resources'</td>
+            <td>
+               <code>setProperty("resources", "dir")</code>
+            </td>
+            <td>
+               <p>Specifies the directory where the resources files are found.</p>
+            </td>
+         </tr>
+         <tr>
+            <td>'tunnel'</td>
+            <td>
+               <code>setProperty("tunnel", "true")</code>
+            </td>
+            <td>XSLT 3.0 only. Accepts the values "true", "false", "yes", "no". Set to true if the
+               initial template parameter values are to be used for setting tunnel parameters; or
+               false if they are to be used for non-tunnel parameters.</td>
+         </tr>
+         <tr>
+            <td>'outvalue'</td>
+            <td>
+               <code>setProperty("outvalue", "true")</code>
+            </td>
+            <td>XSLT 3.0 only. Accepts the values "true", "false", "yes", "no". Set to true if the
+               transform invocation methods are to return the raw <code>XdmValue</code> result,
+               otherwise the result is returned as an <code>XdmNode</code> object with a Document
+               node as its root.</td>
+         </tr>
+         <tr>
+            <td>'extc'</td>
+            <td>
+               <code>setProperty("extc", "dir/saxonc")</code>
+            </td>
+            <td>
+               <p>Specifies the full path to the Saxon/C API library for extension functions. (For
+                  more information on extension functions, see <a href="/extensibility">Extension
+                     Functions in C++/PHP</a>.)</p>
+            </td>
+         </tr>
+         <tr>
+            <td>'m'</td>
+            <td>
+               <code>setProperty("m", "")</code>
+            </td>
+            <td>Creates a message listener which is available in the Saxon/C API.</td>
+         </tr>
+      </table>
+   </section>
+
+   <section id="xquery" title="XQuery Processor">
+      <h1>XQuery Processor</h1>
+
+      <p>Details about parameters and properties which can be set on an
+         <code>XQueryProcessor</code>.</p>
+
+      <h3 class="codeTitle">setParameter(string $name, XdmValue $value)</h3>
+
+      <table>
+         <thead>
+            <tr>
+               <th>Name</th>
+               <th>Example</th>
+               <th>Description</th>
+            </tr>
+         </thead>
+         <tr>
+            <td>'node'</td>
+            <td>
+               <code>setParameter("node", xdmNodeObj)</code>
+            </td>
+            <td>
+               <p>Sets the context item for the query to the <code>XdmNode</code> supplied.</p>
+            </td>
+         </tr>
+         <!--<tr>
+            <td>'item'</td>
+            <td>
+               <code>setParameter("item", xdmItemObj)</code>
+            </td>
+            <td>
+               <p>Sets the context item for the query to the <code>XdmItem</code> supplied.</p>
+            </td>
+         </tr>-->
+         <tr>
+            <td>[parameter name]</td>
+            <td>
+               <code>setParameter("numParam", value1)</code>
+            </td>
+            <td>
+               <p>Sets the value of an external variable defined in the query.</p>
+            </td>
+         </tr>
+      </table>
+
+      <h3 class="codeTitle">setProperty(string $name, string $propValue)</h3>
+
+      <p>The properties available are a subset of those specified for running XQuery from the
+         command line (see the <a target="_blank"
+            href="http://www.saxonica.com/documentation/index.html#!using-xquery/commandline">Saxon
+            9.9 documentation</a> for more information).</p>
+
+      <table>
+         <thead>
+            <tr>
+               <th>Name</th>
+               <th>Example</th>
+               <th>Description</th>
+            </tr>
+         </thead>
+         <tr>
+            <td>![serialization property]</td>
+            <td>
+               <code>setProperty("!indent", "yes")</code>
+            </td>
+            <td>
+               <p>Influence the serialization of the result output. Serialization parameters are
+                  specified by name, preceded by a leading exclamation mark (!). This is equivalent
+                  to specifying the corresponding output declaration (e.g. <code>declare option
+                     output:indent "yes";</code>) in the query prolog.</p>
+            </td>
+         </tr>
+         <tr>
+            <td>'base'</td>
+            <td>
+               <code>setProperty("base", "/home/username/example")</code>
+            </td>
+            <td>
+               <p>Set the static base URI for a query. This is used to resolve any relative URIs
+                  appearing within a query.</p>
+            </td>
+         </tr>
+         <tr>
+            <td>'q'</td>
+            <td>
+               <code>setProperty("q", "filename")</code>
+            </td>
+            <td>
+               <p>Identifies the file containing the query.</p>
+            </td>
+         </tr>
+         <tr>
+            <td>'qs'</td>
+            <td>
+               <code>setProperty("qs", "saxon:line-number((//person)[1])")</code>
+            </td>
+            <td>
+               <p>Allows the query to be specified inline.</p>
+            </td>
+         </tr>
+         <tr>
+            <td>'o'</td>
+            <td>
+               <code>setProperty("o", "output.xml")</code>
+            </td>
+            <td>
+               <p>Sets the destination for the result of the XQuery to the specified filename.</p>
+            </td>
+         </tr>
+         <tr>
+            <td>'dtd'</td>
+            <td>
+               <code>setProperty("dtd", "true")</code>
+            </td>
+            <td>
+               <p>Set whether or not DTD validation should be applied to documents loaded.</p>
+            </td>
+         </tr>
+         <tr>
+            <td>'s'</td>
+            <td>
+               <code>setProperty("s", "filename")</code>
+            </td>
+            <td>
+               <p>Identifies the source file or directory.</p>
+            </td>
+         </tr>
+         <tr>
+            <td>'resources'</td>
+            <td>
+               <code>setProperty("resources", "dir")</code>
+            </td>
+            <td>
+               <p>Specifies the directory where the resources files are found.</p>
+            </td>
+         </tr>
+         <tr>
+            <td>'sa'</td>
+            <td>
+               <code>setProperty("sa", "true")</code>
+            </td>
+            <td>
+               <p>Invoke a schema-aware query. Requires Saxon-EE/C.</p>
+            </td>
+         </tr>
+         <tr>
+            <td>'extc'</td>
+            <td>
+               <code>setProperty("extc", "dir/saxonc")</code>
+            </td>
+            <td>
+               <p>Specifies the full path to the Saxon/C API library for extension functions. (For
+                  more information on extension functions, see <a href="/extensibility">Extension
+                     Functions in C++/PHP</a>.)</p>
+            </td>
+         </tr>
+      </table>
+   </section>
+
+   <section id="xpath" title="XPath Processor">
+      <h1>XPath Processor</h1>
+
+      <p>Details about parameters and properties which can be set on an
+         <code>XPathProcessor</code>.</p>
+
+      <h3 class="codeTitle">setParameter(string $name, XdmValue $value)</h3>
+
+      <table>
+         <thead>
+            <tr>
+               <th>Name</th>
+               <th>Example</th>
+               <th>Description</th>
+            </tr>
+         </thead>
+         <tr>
+            <td>'node'</td>
+            <td>
+               <code>setParameter("node", xdmNodeObj)</code>
+            </td>
+            <td>
+               <p>Sets the context item for the XPath expression to the <code>XdmNode</code>
+                  supplied.</p>
+            </td>
+         </tr>
+         <!--<tr>
+            <td>'item'</td>
+            <td>
+               <code>setParameter("item", xdmItemObj)</code>
+            </td>
+            <td>
+               <p>Sets the context item for the XPath expression to the <code>XdmItem</code>
+                  supplied.</p>
+            </td>
+         </tr>-->
+         <tr>
+            <td>[parameter name]</td>
+            <td>
+               <code>setParameter("numParam", value1)</code>
+            </td>
+            <td>
+               <p>Sets the value of an external variable defined in the XPath expression.</p>
+            </td>
+         </tr>
+      </table>
+
+      <h3 class="codeTitle">setProperty(string $name, string $propValue)</h3>
+
+      <table>
+         <thead>
+            <tr>
+               <th>Name</th>
+               <th>Example</th>
+               <th>Description</th>
+            </tr>
+         </thead>
+         <tr>
+            <td>![serialization property]</td>
+            <td>
+               <code>setProperty("!indent", "yes")</code>
+            </td>
+            <td>
+               <p>Influence the serialization of the result output. Serialization parameters are
+                  specified by name, preceded by a leading exclamation mark (!). This is equivalent
+                  to specifying the corresponding attribute on an <code>xsl:output</code>
+                  declaration in a stylesheet, or the corresponding output declaration in a query
+                  prolog.</p>
+            </td>
+         </tr>
+         <tr>
+            <td>'o'</td>
+            <td>
+               <code>setProperty("o", "output.xml")</code>
+            </td>
+            <td>
+               <p>Sets the destination for the result of evaluating the XPath expression to the
+                  specified filename.</p>
+            </td>
+         </tr>
+         <tr>
+            <td>'dtd'</td>
+            <td>
+               <code>setProperty("dtd", "true")</code>
+            </td>
+            <td>
+               <p>Sets whether or not DTD validation should be applied to documents loaded.</p>
+            </td>
+         </tr>
+         <tr>
+            <td>'s'</td>
+            <td>
+               <code>setProperty("s", "filename")</code>
+            </td>
+            <td>
+               <p>Identifies the source file or directory.</p>
+            </td>
+         </tr>
+         <tr>
+            <td>'resources'</td>
+            <td>
+               <code>setProperty("resources", "dir")</code>
+            </td>
+            <td>
+               <p>Specifies the directory where the resources files are found.</p>
+            </td>
+         </tr>
+         <tr>
+            <td>'extc'</td>
+            <td>
+               <code>setProperty("extc", "dir/saxonc")</code>
+            </td>
+            <td>
+               <p>Specifies the full path to the Saxon/C API library for extension functions. (For
+                  more information on extension functions, see <a href="/extensibility">Extension
+                     Functions in C++/PHP</a>.)</p>
+            </td>
+         </tr>
+      </table>
+   </section>
+
+   <section id="schema" title="Schema Validator">
+      <h1>Schema Validator</h1>
+
+      <p>Details about parameters and properties which can be set on a
+         <code>SchemaValidator</code>.</p>
+
+      <h3 class="codeTitle">setParameter(string $name, XdmValue $value)</h3>
+
+      <table>
+         <thead>
+            <tr>
+               <th>Name</th>
+               <th>Example</th>
+               <th>Description</th>
+            </tr>
+         </thead>
+         <tr>
+            <td>'node'</td>
+            <td>
+               <code>setParameter("node", xdmNodeObj)</code>
+            </td>
+            <td>
+               <p>Sets the source document for the validation.</p>
+            </td>
+         </tr>
+         <tr>
+            <td>[parameter name]</td>
+            <td>
+               <code>setParameter("numParam", value1)</code>
+            </td>
+            <td>
+               <p>Sets the value of a Saxon extension parameter defined in the schema (see <a
+                     target="_blank"
+                     href="http://www.saxonica.com/documentation/index.html#!schema-processing/parameterizing-schemas"
+                     >Parameterizing Schemas</a> in the Saxon 9.9 documentation for more
+                  information).</p>
+            </td>
+         </tr>
+      </table>
+
+      <h3 class="codeTitle">setProperty(string $name, string $propValue)</h3>
+
+      <p>The properties available are a subset of those specified for running schema validation from
+         the command line (see the <a target="_blank"
+            href="http://www.saxonica.com/documentation/index.html#!schema-processing/commandline"
+            >Saxon 9.9 documentation</a> for more information).</p>
+
+      <table>
+         <thead>
+            <tr>
+               <th>Name</th>
+               <th>Example</th>
+               <th>Description</th>
+            </tr>
+         </thead>
+         <tr>
+            <td>![serialization property]</td>
+            <td>
+               <code>setProperty("!indent", "yes")</code>
+            </td>
+            <td>
+               <p>Influence the serialization of the result output. Serialization parameters are
+                  specified by name, preceded by a leading exclamation mark (!). This is equivalent
+                  to specifying the corresponding attribute on an <code>xsl:output</code>
+                  declaration in a stylesheet, or the corresponding output declaration in a query
+                  prolog.</p>
+            </td>
+         </tr>
+         <tr>
+            <td>'o'</td>
+            <td>
+               <code>setProperty("o", "output.xml")</code>
+            </td>
+            <td>
+               <p>Sets the destination for the result of the validation to the specified
+                  filename.</p>
+            </td>
+         </tr>
+         <tr>
+            <td>'string'</td>
+            <td>
+               <code>setProperty("string", [xml-string])</code>
+            </td>
+            <td>
+               <p>Sets the source document for validation as a string. Parsing will happen when the
+                  validate method has been called.</p>
+            </td>
+         </tr>
+         <tr>
+            <td>'dtd'</td>
+            <td>
+               <code>setProperty("dtd", "true")</code>
+            </td>
+            <td>
+               <p>Set whether or not DTD validation should be applied to documents loaded.</p>
+            </td>
+         </tr>
+         <tr>
+            <td>'s'</td>
+            <td>
+               <code>setProperty("s", "filename")</code>
+            </td>
+            <td>
+               <p>Identifies the source file or directory.</p>
+            </td>
+         </tr>
+         <tr>
+            <td>'resources'</td>
+            <td>
+               <code>setProperty("resources", "dir")</code>
+            </td>
+            <td>
+               <p>Specifies the directory where the resources files are found.</p>
+            </td>
+         </tr>
+         <tr>
+            <td>'report-node'</td>
+            <td>
+               <code>setProperty("report-node", "true")</code>
+            </td>
+            <td>
+               <p>Switches on the validation reporting feature. Validation failure errors are
+                  represented in an XML document.</p>
+            </td>
+         </tr>
+         <tr>
+            <td>'report-file'</td>
+            <td>
+               <code>setProperty("report-file", "filename")</code>
+            </td>
+            <td>
+               <p>Switches on the validation reporting feature. Validation failure errors are
+                  collected and saved in an XML file.</p>
+            </td>
+         </tr>
+         <tr>
+            <td>'verbose'</td>
+            <td>
+               <code>setProperty("verbose", "true")</code>
+            </td>
+            <td>
+               <p>Set verbose mode to output to the terminal validation exceptions. The default is
+                  on providing the reporting feature has not been enabled.</p>
+            </td>
+         </tr>
+         <tr>
+            <td>'element-type'</td>
+            <td>
+               <code>setProperty("element-type", "{uri}local")</code>
+            </td>
+            <td>
+               <p>Set the name of the required type of the top-level element of the document to be
+                  validated. The string should be in the Clark notation: {uri}local.</p>
+            </td>
+         </tr>
+         <tr>
+            <td>'element-name'</td>
+            <td>
+               <code>setProperty("element-name", "{uri}local")</code>
+            </td>
+            <td>
+               <p>Set the name of the required top-level element of the document to be validated
+                  (that is, the name of the outermost element of the document). The string should be
+                  in the Clark notation: {uri}local.</p>
+            </td>
+         </tr>
+         <tr>
+            <td>'lax'</td>
+            <td>
+               <code>setProperty("lax", "true")</code>
+            </td>
+            <td>
+               <p>The validation mode may be either strict or lax. The default is strict. This
+                  property indicates that lax validation is required.</p>
+            </td>
+         </tr>
+      </table>
+   </section>
+</section>

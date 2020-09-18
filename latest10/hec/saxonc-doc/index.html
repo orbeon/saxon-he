@@ -1,0 +1,130 @@
+<!DOCTYPE HTML>
+<html>
+    <head>
+        <meta http-equiv="X-UA-Compatible" content="IE=edge"/>
+        <meta http-equiv="Content-Type" content="text/html; charset=utf-8"/>
+        <title>Saxon/C Documentation</title>
+        <meta name="robots" content="noindex, nofollow"/>
+        <meta name="viewport" content="width=768, minimum-scale=1.0, maximum-scale=1.0"/>
+        <script type="text/javascript" src="jstree.js"></script>
+        <script src="SaxonJS/SaxonJS.min.js"></script>
+        <script>
+      window.onload = function() {
+        SaxonJS.transform({
+           stylesheetLocation: "xsl/jstree.sef.xml",
+           initialTemplate: "main",
+           stylesheetParams: {"product": "Saxon/C"}
+           });
+      }     
+        </script>
+        <link href="jstree.css?v=1.2" rel="stylesheet" type="text/css"/>
+            
+    </head>
+
+<body>
+
+    <div id="wrap">
+        
+        <div id="header" class="unselectable">
+            
+            <!-- bread-crumb trail -->
+            
+            <ul class="trail" id="trail">
+                
+                <li id="trail1"><a href="http://saxonica.com">Saxonica ▷</a></li>
+                
+                <li id="trail2"><a href="http://www.saxonica.com/saxon-c/index.xml">Saxon/C ▷</a></li>
+                
+            </ul>
+            
+        </div>
+        
+        <!-- find box appears in top-left of display - normally hidden -->
+        
+        <div class="found">
+            
+            <p class="foundClosed"></p>
+            
+            <p class="foundNext"></p>
+            
+            <p class="foundPrev"></p>
+            
+            <p id="findstatus" class="foundCount">searching...</p>
+            
+        </div>
+        
+        <div id="foundPaths"></div>
+        
+        <div id="nav" class="unselectable">
+            
+            
+            <!-- logo and search -->
+            
+            <div id="logo">
+                
+                <p class="logoBox"><img src="image/logo_crop-mid-blue-background.gif" width="120" height="24"
+                    alt="saxonica.com"/></p>
+                
+                
+                <p class="arrowNone"></p>
+                
+                <p class="search"></p>
+                <input id="search"
+                    style="font-family:inherit;font-size:12px;float:right;padding:2px;margin-top:4px;width:110px;border:none;"/>
+                    
+            </div>
+            
+            
+            <!-- tree-view -->
+            
+            <ul id="list">
+                <!-- completed by xslt - sample entry below: -->
+                <!--
+                <li class="closed" id="index-entries"><span class="item">Alphabetical Index</span></li>
+                -->
+            </ul>
+            
+        </div>
+        
+        <!-- main page -->
+        
+        <div id="main" style="float:left">
+            <p>&#160;</p>
+            <p id="no_script" style="display:none">Loading documentation... </p>
+            <!-- use script to show loading message only if javascript is enabled -->
+            <script type="text/javascript">
+                document.getElementById("no_script").style.display = "block";
+            </script>
+            <noscript>
+                <p><em>JavaScript is disabled on this browser.</em></p>
+            </noscript>
+            
+        </div>
+        
+        <!-- footnote anchored to bottom of display -->
+        
+        <div id="footer">
+            
+            <div id="info" class="footnote">
+                
+                <p>Saxon/C 1.2 Documentation</p>
+                
+            </div>
+            
+            <div>
+                
+                <p class="arrowRight"></p>
+                
+                <p class="arrowLeft"></p> 
+                
+            </div>
+            
+        </div>
+        
+        
+    </div>
+      
+</body>
+   
+</html>
+

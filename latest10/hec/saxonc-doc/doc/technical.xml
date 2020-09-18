@@ -1,0 +1,77 @@
+<article id="technical" title="Technical Information">
+   <h1>Technical Information</h1>
+
+   <p>Saxon/C is built by cross compiling the Java code of Saxon 9.9.1.5 using the Excelsior JET
+      15.3 Enterprise edition (MP1). This generates platform specific machine code, which we
+      interface with C/C++ using the Java Native Interace (JNI).</p>
+
+   <p><b>Embedded systems</b>: It is also possible to build Saxon/C for embedded systems, for
+      example on a Linux/ARM System. If such a build is required please contact Saxonica to discuss
+      further: <a href="mailto:support@saxonica.com">support@saxonica.com</a>.</p>
+
+   <p>The PHP interface is in the form of a C/C++ PHP extension to Saxon/C created using the Zend
+      module API. Supports PHP5 and PHP7.</p>
+
+   <p>The Python interface is in the form of a Cython module interfaced with the C/C++ Saxon/C API.
+      Currently supports Python3.</p>
+
+   <p>The XML parser used is the one supplied by the Excelsior JET runtime which is cross compiled
+      from the openJDK 8u181. There are currently no links to libxml.</p>
+
+
+
+   <h2>Limitations</h2>
+
+   <p>The following limitations apply to the 1.2.1 release:</p>
+   <ul>
+      <li>No support for the XDM function type in the XDM data model.</li>
+      <li>The bytecode generation feature available in Saxon-EE on Java is not available in
+         Saxon-EE/C.</li>
+      <li>It is currently not possible to create and export to file a precompiled schema component
+         model (SCM).</li>
+   </ul>
+
+   <h2>Feedback/Comments:</h2>
+
+   <p>Please use the help forums and bug trackers for Saxon/C at <a
+         href="https://saxonica.plan.io/projects/saxon-c" target="_blank">saxonica.plan.io</a> if
+      you need help or advice. Or send email to <a href="mailto:support@saxonica.com"
+         >support@saxonica.com</a>.</p>
+
+
+   <section id="debugging" title="Debugging">
+      <h1>Debugging</h1>
+
+      <p>Exceptions and errors are captured and maintained silently in Saxon/C, but can be accessed.
+         This is due to the restrictions in JNI: "There is no uniform and general way to throw and
+         catch exceptions in native languages compared to Java. The JNI therefore requires you to
+         check for possible exceptions after calling JNI functions".</p>
+
+      <p>Any exceptions or errors found in a Saxon/C method can be retrieved by the method call
+               <code>getErrorMessage(<i>n</i>)</code>, where <i>n</i> is an index number referring
+         to the <i>n</i>th error message. The method <code>getErrorCount()</code> gets the total
+         number of errors reported, which helps to loop through the errors if there is more than one
+         of them. For example, see the following PHP code snippet:</p>
+
+      <samp><![CDATA[<?php
+  ...
+  $result = $query->runQueryToString();
+  if($result == NULL) {
+    $errCount = $query->getExceptionCount();
+    if($errCount > 0 ){
+      for ($i = 0; $i &lt; $errCount; $i++) {
+        $errC = $query->getErrorCode(intval(i));
+        $errMessage = $query->getErrorMessage(intval(i));
+        if($errC != NULL) {
+          echo 'Error found: '. $errC.' :'.$errMessage;
+        }
+        $query->exceptionClear();
+      }
+    }
+  }
+  ...
+?>]]></samp>
+
+   </section>
+
+</article>
