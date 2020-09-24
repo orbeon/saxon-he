@@ -29,14 +29,13 @@ import java.util.stream.StreamSupport;
  * wishing to control error handling should take care to catch this exception.</p>
  */
 public class XdmSequenceIterator<T extends XdmItem> implements Iterator<T> {
-
-    /*@Nullable*/ private T next = null;
-    private int state;
-    private SequenceIterator base;
-
     private final static int BEFORE_ITEM = 0;
     private final static int ON_ITEM = 1;
     private final static int FINISHED = 2;
+
+    /*@Nullable*/ private T next = null;
+    private int state = BEFORE_ITEM;
+    private SequenceIterator base;
 
     protected XdmSequenceIterator(SequenceIterator base) {
         this.base = base;
@@ -114,6 +113,7 @@ public class XdmSequenceIterator<T extends XdmItem> implements Iterator<T> {
                 throw new java.util.NoSuchElementException();
             case BEFORE_ITEM:
                 if (hasNext()) {
+                    state = BEFORE_ITEM;
                     return next;
                 } else {
                     throw new java.util.NoSuchElementException();
