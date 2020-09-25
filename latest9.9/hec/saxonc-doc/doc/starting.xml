@@ -70,7 +70,7 @@
                <kbd>sudo cp -r saxon-data /usr/lib/.</kbd>
             </li>
             <li>
-               <p><b>Set the SAXONC_HOME environmental variable</b></p>
+               <p><b>Set the SAXONC_HOME environment variable</b></p>
                <p>The SAXONC_HOME variable must be set to the location where the Saxon/C files have
                   been installed. For instance:</p>
                <kbd>export SAXONC_HOME=/usr/lib</kbd>
@@ -205,7 +205,7 @@
                <kbd>sudo cp -r saxon-data /usr/local/lib/.</kbd>
             </li>
             <li>
-               <p><b>Set the SAXONC_HOME environmental variable</b></p>
+               <p><b>Set the SAXONC_HOME environment variable</b></p>
                <p>The SAXONC_HOME variable must be set to the location where the Saxon/C files have
                   been installed. For instance:</p>
                <kbd>export SAXONC_HOME=/usr/local/lib</kbd>
@@ -293,7 +293,7 @@
                <p>Selected as a step in the installer executable???</p>-->
             </li>
             <li>
-               <p><b>Set SAXONC_HOME environmental variable</b></p>
+               <p><b>Set SAXONC_HOME environment variable</b></p>
                <p>If the Saxon/C files were installed to a location other than the default
                   <code>C:\Program Files\Saxonica\Saxon[EDITION][VERSION]</code>, then the
                   SAXONC_HOME variable must be set to the correct location.</p>

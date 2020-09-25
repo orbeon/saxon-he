@@ -13,16 +13,15 @@
     extension-element-prefixes="ixsl"
     version="3.0">
     
-    <!-- Stylesheet to generate the Saxon-JS documentation viewer app using Saxon-JS in the browser. 
+    <!-- Stylesheet to generate the Saxon/C documentation viewer app using Saxon-JS in the browser. 
         The initial template is named 'main'.
         
         Note that functions-body.xsl and elements-body.xsl are adapted from the versions for the
         main Saxon documentation viewer_app: 
-            - All 'elements' and 'functions' are found in sections of ixsl-extensions.xml, 
-             for extension instructions and functions respectively
-             
-            - Various simplifications are made because all instructions and functions referenced are
+            - The versions here are as used for the Saxon-JS documentation.
+            - e.g. Various simplifications are made to assume all instructions and functions referenced are
             those in the ixsl namespace
+            - But these are not actually currently used in Saxon/C documentation
             
             - use shared templates in el-fnd-body.xsl for corresponding elements in fnd and el namespaces
     -->
@@ -31,12 +30,14 @@
     <xsl:import href="findtext.xsl"/>
     <xsl:import href="app-functions.xsl"/>
     <xsl:import href="el-fnd-body.xsl"/><!-- Must be imported before functions-body.xsl and
-        elements-body.xsl to ensure correct import precendence -->
+        elements-body.xsl to ensure correct import precedence -->
     <xsl:import href="functions-body.xsl"/>
     <xsl:import href="elements-body.xsl"/>
     <!--<xsl:import href="changes.xsl"/>-->
    
-    <xsl:param name="product" select="'Saxon-JS'" as="xs:string"/>
+    <xsl:param name="product" select="'Saxon/C'" as="xs:string"/>
+    <xsl:param name="SEFbuildDate" select="'2020-08-24'" as="xs:string" static="yes"/>
+    <xsl:param name="showStatusMessage" select="false()" as="xs:boolean"/>
 
     <xsl:variable name="location" select="resolve-uri('doc', ixsl:location())"/>
     <xsl:variable name="implement-doc" select="concat($location, '/implement.xml')"/>
@@ -48,6 +49,10 @@
 
     <xsl:template name="main">
         <xsl:variable name="catDocName" select="concat($location, '/catalog.xml')"/>
+        
+        <xsl:if test="$showStatusMessage">
+            <xsl:message expand-text="yes">{$SEFbuildDate} {$product} documentation app running with Saxon-JS {ixsl:eval('SaxonJS.getProcessorInfo()["productVersion"]')}</xsl:message>
+        </xsl:if>
         <ixsl:schedule-action document="{$catDocName}">
             <xsl:call-template name="list">
                 <xsl:with-param name="docName" select="$catDocName"/>

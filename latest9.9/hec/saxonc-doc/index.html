@@ -7,14 +7,14 @@
         <meta name="robots" content="noindex, nofollow"/>
         <meta name="viewport" content="width=768, minimum-scale=1.0, maximum-scale=1.0"/>
         <script type="text/javascript" src="jstree.js"></script>
-        <script src="SaxonJS/SaxonJS.min.js"></script>
+        <script src="SaxonJS/SaxonJS2.rt.js"></script>
         <script>
       window.onload = function() {
         SaxonJS.transform({
-           stylesheetLocation: "xsl/jstree.sef.xml",
+           stylesheetLocation: "xsl/jstree.sef.json",
            initialTemplate: "main",
-           stylesheetParams: {"product": "Saxon/C"}
-           });
+           stylesheetParams: {"product": "Saxon/C", "showStatusMessage": true}
+           }, "async");
       }     
         </script>
         <link href="jstree.css?v=1.2" rel="stylesheet" type="text/css"/>
