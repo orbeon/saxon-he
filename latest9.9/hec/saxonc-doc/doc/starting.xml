@@ -82,80 +82,6 @@
          
          <aside>The use of symbolic links to specify where the Saxon/C library is installed is no longer
             recommended. It is better to set the SAXONC_HOME environment variable directly.</aside>
-         
-         <!--TODO what about JET-home environment variable? If you use the same location as for saxon
-         library, as above, then it doesn't need to be set separately???
-            - similarly what about LD_LIBRARY_PATH ?-->
-         
-
-         <!--<ol>
-            <li>
-               <p>To install the Saxon-[EDITION]/C release, first unzip the file
-                  <code>libsaxon-[EDITION]C-setupv[VERSION].zip</code> and execute the
-                  command:</p>
-               <kbd>./libsaxon-[EDITION]C-setup-v[VERSION]</kbd>
-            </li>
-
-            <li>
-               <p>The next step is to select the destination where the product files will be
-                  installed. The product files are unpacked in the <code>Saxon-[EDITION]C</code>
-                  directory.</p>
-
-               <kbd>cd Saxonica/Saxon-[EDITION]C[VERSION]/</kbd>
-               <kbd>sudo cp libsaxon[EDITION].so /usr/lib/.</kbd>
-
-               <p>Alternatively you can either create a symbolic link to where the saxon library is
-                  installed so it can be found or use the SAXONC_HOME environment variable to set the location of the library. For example:</p>
-
-               <kbd>ln -s path/Saxonica/Saxon-[EDITION]C[VERSION]/libsaxon[EDITION].so
-                  /usr/lib/libsaxon[EDITION].so</kbd>
-
-               <p>Or</p>
-               <kbd>export SAXONC_HOME=path/Saxonica/Saxon-[EDITION]C[VERSION]</kbd>
-               <p>You may also need to set the LD_LIBRARY_PATH to the same location.</p>
-               
-            </li>
-
-            <li>
-               <p>You need to set up the environment for the JET JVM. The JVM is in the
-                     <code>Saxonica/Saxon-[EDITION]C[VERSION]/rt</code> directory.</p>
-
-               <kbd>sudo cp -r rt /usr/lib/.</kbd>
-
-               <p>Alternatively you can create a symbolic link to the JetVM library so it can be
-                  found. For example:</p>
-
-               <kbd>ln -s path/Saxonica/Saxon-[EDITION]C[VERSION]/rt /usr/lib/rt</kbd>
-            </li>
-
-            <li>
-               <p>Set the JET-home environment accordingly to where it is installed, e.g.
-                     <code>JET-home=/usr/lib/Saxon-[EDITION]C[VERSION]/rt</code>. The directory
-                     <code>JET-home/lib/amd64</code> must be listed in the
-                     <code>LD_LIBRARY_PATH</code> environment variable. For instance, if you are
-                  using a bash or Bourne shell, use the following command:</p>
-               <kbd style="word-wrap: break-word;">export JET_HOME=/usr/lib/rt</kbd>
-               <kbd style="word-wrap: break-word;">export
-                  LD_LIBRARY_PATH=$JET_HOME/lib/amd64/jetvm:$JET_HOME/lib/amd64:$LD_LIBRARY_PATH</kbd>
-
-               <p>Alternatively, for Ubuntu, you can create a file <code>/etc/ld.so.conf.d/jetvm.conf</code>
-                  with content:</p>
-
-               <samp><![CDATA[# JetVM env path (required for Saxon)
-      /usr/lib/rt/lib/amd64
-      /usr/lib/rt/lib/amd64/jetvm]]></samp>
-
-               <p>Next run: </p>
-               <kbd>sudo ldconfig</kbd>
-               <p>Ignore the message 'file /lib/libsaxon[EDITION].so is truncated'. The library was created using
-               Excelsior JET. The library is loaded from within the Saxon/C application and not in the usual way of shared libraries.</p>
-            </li>
-            
-            <li>
-               <p>You must also copy the <code>saxon-data</code> directory into the same directory
-                  as the <code>libsaxon[EDITION].so</code>.</p>
-            </li>
-         </ol>-->
 
          <p>Saxon/C is now installed, and ready to run. Please see <a href="../running">Running
                Saxon/C</a> to get started. Note that the commercial products Saxon-PE/C and
@@ -203,6 +129,9 @@
                <kbd>sudo cp libsaxon[EDITION].dylib /usr/local/lib/.</kbd>
                <kbd>sudo cp -r rt /usr/local/lib/.</kbd>
                <kbd>sudo cp -r saxon-data /usr/local/lib/.</kbd>
+               
+               <aside>If you encounter permission issues after copying, then the privileges of
+                  the folders and files may need adjusting.</aside>
             </li>
             <li>
                <p><b>Set the SAXONC_HOME environment variable</b></p>
@@ -214,42 +143,6 @@
                   location.</p>
             </li>
          </ol>
-         
-         <!-- TODO Would it be useful to add the following back to step 3? 
-               "The privileges of the folders and files may need adjusting after copying everything
-               if you encounter permission issues." -->
-         
-         <!-- TODO Also note previously had info about setting DYLD_LIBRARY_PATH, is that still
-            necessary? -->
-
-         <!--<ol>
-            <li>
-               <p>To install any of the Saxon/C releases on the Mac OS system, first unzip the
-                  self-contained file <code>libsaxon-[EDITION]-mac-setup-v[VERSION].zip</code>.</p>
-            </li>
-
-            <li>
-               <p>The next step is to copy the <code>libsaxon[EDITION].dylib</code> library and the
-                     <code>rt</code> directories to your install location. The C/C++ interface by
-                  default assumes the library files and directories are installed in the
-                     <code>/usr/local/lib</code> directory. The location of the Saxon/C library can
-                  be set using the <code>SAXONC_HOME</code> environment variable. The privileges of
-                  the folders and files may need adjusting after copying everything if you encounter
-                  permission issues. Use for instance the following commands:</p>
-
-               <kbd>cd libsaxon-HEC-mac-setup-v[VERSION]/</kbd>
-               <kbd>sudo cp libsaxonhec.dylib /usr/local/lib/.</kbd>
-               <kbd>sudo cp -r rt /usr/local/lib/.</kbd>
-            </li>
-
-            <li>
-               <p>The <code>DYLD_LIBRARY_PATH</code> environment variable must be set as
-                  follows:</p>
-
-               <kbd>export JET_HOME=/usr/local/lib/rt</kbd>
-               <kbd>export DYLD_LIBRARY_PATH=$JET_HOME/lib/jetvm:$DYLD_LIBRARY_PATH</kbd>
-            </li>
-         </ol>-->
 
          <p>Saxon/C is now installed, and ready to run. Please see <a href="../running">Running
                Saxon/C</a> to get started. Note that the commercial products Saxon-PE/C and
@@ -300,21 +193,6 @@
                <!--<p>TODO how?</p>-->
             </li>
          </ol>
-
-         <!--<ol>
-            <li>
-               <p>To install the Saxon-[EDITION]/C release, first run the executable
-                     <code>libsaxon-[EDITION]-win-setup-v[VERSION].exe</code>.</p>
-            </li>
-
-            <li>
-               <p>The next step is to select the destination where the product files will be
-                  installed - the default and recommended location is <code>C:\Program
-                     Files\Saxonica\Saxon[EDITION][VERSION]</code>. This is the location that the
-                  PHP extension looks for the Saxon/C DLL library, so we advise using this default
-                  location. </p>
-            </li>
-         </ol>-->
 
          <p>Saxon/C is now installed, and ready to run. Please see <a href="../running">Running
                Saxon/C</a> to get started. Note that the commercial products Saxon-PE/C and
