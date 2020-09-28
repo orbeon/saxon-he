@@ -165,32 +165,30 @@
                   operating systems.</p>
             </li>
             <li>
-               <p><b>Unpack</b></p>
-               <p>To install the Saxon-[EDITION]/C release on Windows, first run the executable
-                  <code>libsaxon-[EDITION]-win-setup-v[VERSION].exe</code>.</p>
-               <p>This installation script unpacks the Saxon/C files in the <code>C:\Program
-                  Files\Saxonica\Saxon[EDITION][VERSION]</code> directory by default.</p>
-            </li>
-            <li>
-               <p><b>Choose the install location for the core Saxon/C installation files</b></p>
+               <p><b>Run the installation tool</b></p>
+               <p>To install the Saxon-[EDITION]/C release on Windows, run the installer executable
+                  <code>libsaxon-[EDITION]-win-setup-v[VERSION].exe</code>, and follow the installer
+                  steps.</p>
                
-               <p>On Windows, the default and recommended location is <code>C:\Program
-                  Files\Saxonica\Saxon[EDITION][VERSION]</code>. This is the location that the
+               <p>During the installation process, you will be asked to <b>select the destination
+                  folder</b>, which is the directory in which the core Saxon/C files will be installed.
+                  The default and recommended location is <code>C:\Program
+                     Files\Saxonica\Saxon[EDITION][VERSION]</code>. This is the location that the
                   PHP extension looks for the Saxon/C DLL library, so we advise using this default
                   location.</p>
                
                <p>If you choose to install to a different location, then the SAXONC_HOME variable
                   must be set accordingly (see the next step).</p>
-               
-               <!--<p>TODO: how does the user specify the installation destination?</p>
-               <p>Selected as a step in the installer executable???</p>-->
             </li>
             <li>
-               <p><b>Set SAXONC_HOME environment variable</b></p>
+               <p><b>Set the SAXONC_HOME environment variable</b></p>
                <p>If the Saxon/C files were installed to a location other than the default
                   <code>C:\Program Files\Saxonica\Saxon[EDITION][VERSION]</code>, then the
                   SAXONC_HOME variable must be set to the correct location.</p>
-               <!--<p>TODO how?</p>-->
+               <p>On Windows, this can be done in various ways. The environment variable can be set
+                  from Window Settings &gt; System Properties &gt; Environment Variables; or from
+                  the command line using a set command like:</p>
+               <kbd>set SAXONC_HOME="C:\Program Files\Saxonica\Saxon[EDITION][VERSION]"</kbd>
             </li>
          </ol>
 
