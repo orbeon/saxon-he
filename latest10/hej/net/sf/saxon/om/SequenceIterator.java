@@ -8,6 +8,7 @@
 package net.sf.saxon.om;
 
 import net.sf.saxon.trans.XPathException;
+import net.sf.saxon.tree.iter.AtomizingIterator;
 import net.sf.saxon.value.SequenceExtent;
 
 import java.io.Closeable;
@@ -27,7 +28,6 @@ import java.util.EnumSet;
  * iterator in an XPathContext. SequenceIterators than maintain the value of position()
  * and last() are represented by the interface {@link FocusIterator}.</p>
  *
- * @author Michael H. Kay
  * @since 8.4. Significant changes in 9.6. Generics added in 9.9, removed again in 10.0
  */
 
@@ -68,7 +68,7 @@ public interface SequenceIterator extends Closeable {
     default void close() {}
 
     /**
-     * Get properties of this iterator, as a bit-significant integer.
+     * Get properties of this iterator.
      *
      * @return the properties of this iterator. This will be some combination of
      *         properties such as {@link Property#GROUNDED}, {@link Property#LAST_POSITION_FINDER},
@@ -115,7 +115,7 @@ public interface SequenceIterator extends Closeable {
 
         /**
          * Property value: the iterator can deliver an atomized result. This means that the iterator
-         * must be an instance of AtomizingIterator.
+         * must be an instance of {@link AtomizingIterator}.
          */
 
         ATOMIZING
