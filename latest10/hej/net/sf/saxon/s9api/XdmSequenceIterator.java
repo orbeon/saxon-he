@@ -11,6 +11,8 @@ import net.sf.saxon.om.SequenceIterator;
 import net.sf.saxon.s9api.streams.XdmStream;
 import net.sf.saxon.trans.XPathException;
 import net.sf.saxon.tree.iter.AxisIterator;
+import net.sf.saxon.tree.iter.LookaheadIterator;
+import net.sf.saxon.tree.iter.LookaheadIteratorImpl;
 import net.sf.saxon.tree.iter.SingletonIterator;
 import net.sf.saxon.tree.iter.UnfailingIterator;
 
@@ -29,22 +31,22 @@ import java.util.stream.StreamSupport;
  * wishing to control error handling should take care to catch this exception.</p>
  */
 public class XdmSequenceIterator<T extends XdmItem> implements Iterator<T> {
-    private final static int BEFORE_ITEM = 0;
-    private final static int ON_ITEM = 1;
-    private final static int FINISHED = 2;
-
-    /*@Nullable*/ private T next = null;
-    private int state = BEFORE_ITEM;
-    private SequenceIterator base;
+    private final LookaheadIterator base;
 
     protected XdmSequenceIterator(SequenceIterator base) {
-        this.base = base;
-        this.state = BEFORE_ITEM;
+        try {
+            this.base = LookaheadIteratorImpl.makeLookaheadIterator(base);
+        } catch (XPathException xe) {
+            throw new SaxonApiUncheckedException(xe);
+        }
     }
 
     public XdmSequenceIterator(UnfailingIterator base) {
-        this.base = base;
-        this.state = BEFORE_ITEM;
+        try {
+            this.base = LookaheadIteratorImpl.makeLookaheadIterator(base);
+        } catch (XPathException xe) {
+            throw new SaxonApiUncheckedException(xe);
+        }
     }
 
     public static XdmSequenceIterator<XdmNode> ofNodes(AxisIterator base) {
@@ -70,28 +72,7 @@ public class XdmSequenceIterator<T extends XdmItem> implements Iterator<T> {
      */
     @Override
     public boolean hasNext() throws SaxonApiUncheckedException {
-        switch (state) {
-            case ON_ITEM:
-                return true;
-            case FINISHED:
-                return false;
-            case BEFORE_ITEM:
-                try {
-                    //noinspection unchecked
-                    next = (T)XdmItem.wrapItem(base.next());
-                    if (next == null) {
-                        state = FINISHED;
-                        return false;
-                    } else {
-                        state = ON_ITEM;
-                        return true;
-                    }
-                } catch (XPathException err) {
-                    throw new SaxonApiUncheckedException(err);
-                }
-            default:
-                throw new IllegalStateException();
-        }
+        return base.hasNext();
     }
 
     /**
@@ -105,23 +86,13 @@ public class XdmSequenceIterator<T extends XdmItem> implements Iterator<T> {
      */
     @Override
     public T next() {
-        switch (state) {
-            case ON_ITEM:
-                state = BEFORE_ITEM;
-                return next;
-            case FINISHED:
-                throw new java.util.NoSuchElementException();
-            case BEFORE_ITEM:
-                if (hasNext()) {
-                    state = BEFORE_ITEM;
-                    return next;
-                } else {
-                    throw new java.util.NoSuchElementException();
-                }
-            default:
-                throw new IllegalStateException();
+        try {
+            //noinspection unchecked
+            return (T) XdmItem.wrapItem(base.next());
+        } catch (XPathException xe) {
+            // I don't believe this is actually possible in this case
+            throw new SaxonApiUncheckedException(xe);
         }
-
     }
 
     /**
@@ -145,7 +116,6 @@ public class XdmSequenceIterator<T extends XdmItem> implements Iterator<T> {
 
     public void close() {
         base.close();
-        state = FINISHED;
     }
 
 
