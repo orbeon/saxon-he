@@ -7,16 +7,14 @@
 
 package net.sf.saxon.s9api;
 
+import net.sf.saxon.om.Item;
 import net.sf.saxon.om.SequenceIterator;
 import net.sf.saxon.s9api.streams.XdmStream;
 import net.sf.saxon.trans.XPathException;
-import net.sf.saxon.tree.iter.AxisIterator;
-import net.sf.saxon.tree.iter.LookaheadIterator;
-import net.sf.saxon.tree.iter.LookaheadIteratorImpl;
-import net.sf.saxon.tree.iter.SingletonIterator;
-import net.sf.saxon.tree.iter.UnfailingIterator;
+import net.sf.saxon.tree.iter.*;
 
 import java.util.Iterator;
+import java.util.NoSuchElementException;
 import java.util.Spliterator;
 import java.util.Spliterators;
 import java.util.stream.Stream;
@@ -67,11 +65,9 @@ public class XdmSequenceIterator<T extends XdmItem> implements Iterator<T> {
      * rather than throwing an exception.)
      *
      * @return <tt>true</tt> if the iterator has more elements.
-     * @throws SaxonApiUncheckedException if a dynamic error occurs during XPath evaluation that
-     *                                    is detected at this point.
      */
     @Override
-    public boolean hasNext() throws SaxonApiUncheckedException {
+    public boolean hasNext() {
         return base.hasNext();
     }
 
@@ -81,16 +77,18 @@ public class XdmSequenceIterator<T extends XdmItem> implements Iterator<T> {
      * return each element in the underlying collection exactly once.
      *
      * @return the next element in the iteration.
-     * @throws java.util.NoSuchElementException
-     *          iteration has no more elements.
+     * @throws java.util.NoSuchElementException iteration has no more elements.
      */
     @Override
     public T next() {
         try {
-            //noinspection unchecked
-            return (T) XdmItem.wrapItem(base.next());
+            Item it = base.next();
+            if (it == null) {
+                throw new NoSuchElementException();
+            } else {
+                return (T) XdmItem.wrapItem(it);
+            }
         } catch (XPathException xe) {
-            // I don't believe this is actually possible in this case
             throw new SaxonApiUncheckedException(xe);
         }
     }
@@ -111,6 +109,7 @@ public class XdmSequenceIterator<T extends XdmItem> implements Iterator<T> {
      * data before reaching the end. This is particularly relevant if the query uses saxon:stream()
      * to read its input, since there will then be another thread supplying data, which will be left
      * in suspended animation if no-one is consuming the data.
+     *
      * @since 9.5.1.5 (see bug 2016)
      */
 
