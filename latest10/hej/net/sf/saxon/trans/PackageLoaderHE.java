@@ -324,10 +324,13 @@ public class PackageLoaderHE implements IPackageLoader {
     }
 
     private void readGlobalContext(NodeInfo packageElement) throws XPathException {
-        final GlobalContextRequirement req = new GlobalContextRequirement();
-        packStack.peek().setContextItemRequirements(req);
+        GlobalContextRequirement req = null;
         NameTest condition = new NameTest(Type.ELEMENT, NamespaceConstant.SAXON_XSLT_EXPORT, "glob", config.getNamePool());
         for (NodeInfo varElement : packageElement.children(condition)) {
+            if (req == null) {
+                req = new GlobalContextRequirement();
+                packStack.peek().setContextItemRequirements(req);
+            }
             String use = varElement.getAttributeValue("", "use");
             if ("opt".equals(use)) {
                 req.setMayBeOmitted(true);

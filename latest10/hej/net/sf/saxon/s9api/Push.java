@@ -17,6 +17,11 @@ package net.sf.saxon.s9api;
  * a single element node child, plus optionally comment and processing instruction children).
  * Some implementations may only accept well-formed documents.</p>
  *
+ * <p>The document created using the {@code Push} interface is set to the {@link Destination}
+ * defined when {@code Push} is created using the factory method {@link Processor#newPush(Destination)}.
+ * The {@link Destination} will commonly be an {@link XdmDestination} or a {@link Serializer},
+ * but it could also be, for example, an {@link XsltTransformer} or an {@link SchemaValidator}.</p>
+ *
  * <p>Here is an example of application code written to construct a simple XML document:</p>
  *
  * <pre>{@code

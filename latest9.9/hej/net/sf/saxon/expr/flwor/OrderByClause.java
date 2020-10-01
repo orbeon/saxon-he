@@ -23,12 +23,19 @@ import net.sf.saxon.value.SequenceType;
  */
 public class OrderByClause extends Clause {
 
+    public final static OperandRole SORT_KEYS_ROLE =
+            new OperandRole(OperandRole.HIGHER_ORDER | OperandRole.CONSTRAINED_CLASS,
+                            OperandUsage.NAVIGATION,
+                            SequenceType.ANY_SEQUENCE,
+                            expr -> expr instanceof SortKeyDefinitionList);
+
+
     Operand sortKeysOp; // Holds a SortKeyDefinitionList
     AtomicComparer[] comparators;
     Operand tupleOp; // Holds a TupleExpression
 
     public OrderByClause(FLWORExpression flwor, SortKeyDefinition[] sortKeys, TupleExpression tupleExpression) {
-        this.sortKeysOp = new Operand(flwor, new SortKeyDefinitionList(sortKeys), OperandRole.REPEAT_NAVIGATE_CONSTRAINED);
+        this.sortKeysOp = new Operand(flwor, new SortKeyDefinitionList(sortKeys), SORT_KEYS_ROLE);
         this.tupleOp = new Operand(flwor, tupleExpression, OperandRole.REPEAT_NAVIGATE_CONSTRAINED);
     }
 

@@ -10,6 +10,7 @@ package net.sf.saxon.om;
 import net.sf.saxon.style.PackageVersion;
 
 import java.io.File;
+import java.io.IOException;
 import java.util.Objects;
 
 /**
@@ -95,6 +96,15 @@ public class DocumentKey {
         if (uri.startsWith("file:")) {
             if (uri.startsWith("file:///")) {
                 uri = "file:/" + uri.substring(8);
+            }
+            if (uri.startsWith("file:/")) {
+                // Use getCanonicalPath() to remove any "." and ".." path segments
+                try {
+                    String cpath = new File(uri.substring(5)).getCanonicalPath();
+                    uri = "file:" + cpath;
+                } catch (IOException ioe) {
+                    // nop
+                }
             }
             if (CASE_BLIND_FILES) {
                 uri = uri.toLowerCase();

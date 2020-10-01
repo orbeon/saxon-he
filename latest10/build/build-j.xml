@@ -5,8 +5,8 @@
     <!-- The use of ant:if and ant:unless requires Ant 1.9.1 -
         for IntelliJ the built-in is 1.8.2, but an external Ant can be configured on the Ant menu  -->
 
-    <!-- Build file for Saxon on the Java platform. This build file is designed to be imported
-         from build.xml -->
+    <!-- Build file for Saxon on the Java platform. This build file is
+         designed to be imported from build.xml -->
 
     <import file="build-constants.xml"/>
 

@@ -8,6 +8,7 @@
 package net.sf.saxon.om;
 
 import java.io.File;
+import java.io.IOException;
 
 /**
  * This class encapsulates a string used as the value of the document-uri() property of a document,
@@ -72,6 +73,15 @@ public class DocumentURI {
         if (uri.startsWith("file:")) {
             if (uri.startsWith("file:///")) {
                 uri = "file:/" + uri.substring(8);
+            }
+            if (uri.startsWith("file:/")) {
+                // Use getCanonicalPath() to remove any "." and ".." path segments
+                try {
+                    String cpath = new File(uri.substring(5)).getCanonicalPath();
+                    uri = "file:" + cpath;
+                } catch (IOException ioe) {
+                    // nop
+                }
             }
             if (CASE_BLIND_FILES) {
                 uri = uri.toLowerCase();

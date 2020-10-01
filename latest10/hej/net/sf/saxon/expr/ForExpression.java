@@ -278,7 +278,7 @@ public class ForExpression extends Assignation {
                     // the whole if() condition has been promoted
                     Expression oldThen = ((Choose) getAction()).getAction(0);
                     setAction(oldThen);
-                    return Choose.makeConditional(condition, this);
+                    return Choose.makeConditional(promotedCondition, this);
                 } else {
                     // one or more terms of the if() condition have been promoted
                     Expression retainedCondition = list.get(0);
