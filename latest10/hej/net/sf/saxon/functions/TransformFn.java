@@ -680,12 +680,10 @@ public class TransformFn extends SystemFunction implements Callable {
                     break;
                 }
                 case "global-context-item":
-                    if (useXslt30Processor) {
-                        if (!allowTypedNodes && head instanceof NodeInfo && ((NodeInfo) head).getTreeInfo().isTyped()) {
-                            throw new XPathException("Schema-validated nodes cannot be passed to fn:transform() when it runs under a different Saxon Configuration", "FOXT0002");
-                        }
-                        globalContextItem = (XdmItem) XdmValue.wrap(head);
+                    if (!allowTypedNodes && head instanceof NodeInfo && ((NodeInfo) head).getTreeInfo().isTyped()) {
+                        throw new XPathException("Schema-validated nodes cannot be passed to fn:transform() when it runs under a different Saxon Configuration", "FOXT0002");
                     }
+                    globalContextItem = (XdmItem) XdmValue.wrap(head);
                     break;
                 case "template-params": {
                     MapItem params = (MapItem) head;
