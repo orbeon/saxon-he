@@ -8,11 +8,9 @@
 package net.sf.saxon.functions;
 
 import net.sf.saxon.expr.Expression;
+import net.sf.saxon.expr.SystemFunctionCall;
 import net.sf.saxon.expr.XPathContext;
-import net.sf.saxon.expr.parser.ContextItemStaticInfo;
-import net.sf.saxon.expr.parser.Loc;
-import net.sf.saxon.expr.parser.ExpressionVisitor;
-import net.sf.saxon.expr.parser.RoleDiagnostic;
+import net.sf.saxon.expr.parser.*;
 import net.sf.saxon.functions.registry.BuiltInFunctionSet;
 import net.sf.saxon.ma.arrays.ArrayFunctionSet;
 import net.sf.saxon.ma.arrays.ArrayItem;
@@ -20,7 +18,8 @@ import net.sf.saxon.ma.arrays.ArrayItemType;
 import net.sf.saxon.ma.arrays.SquareArrayConstructor;
 import net.sf.saxon.ma.map.MapFunctionSet;
 import net.sf.saxon.ma.map.MapType;
-import net.sf.saxon.om.*;
+import net.sf.saxon.om.Function;
+import net.sf.saxon.om.Sequence;
 import net.sf.saxon.trace.ExpressionPresenter;
 import net.sf.saxon.trans.XPathException;
 import net.sf.saxon.type.*;
@@ -105,6 +104,15 @@ public class ApplyFn extends SystemFunction  {
         Expression key = ((SquareArrayConstructor)arguments[1]).getOperanda().getOperand(0).getChildExpression();
         Expression getter = fnSet.makeFunction("get", 2).makeFunctionCall(target, key);
         getter.setRetainedStaticContext(target.getRetainedStaticContext());
+        // Use custom diagnostics for type errors on the argument of the call (bug 4772)
+        TypeChecker tc = visitor.getConfiguration().getTypeChecker(visitor.getStaticContext().isInBackwardsCompatibleMode());
+        if (fnSet == MapFunctionSet.getInstance()) {
+            RoleDiagnostic role = new RoleDiagnostic(RoleDiagnostic.MISC, "key value supplied when calling a map as a function", 0);
+            ((SystemFunctionCall) getter).setArg(1, tc.staticTypeCheck(key, SequenceType.SINGLE_ATOMIC, role, visitor));
+        } else {
+            RoleDiagnostic role = new RoleDiagnostic(RoleDiagnostic.MISC, "subscript supplied when calling an array as a function", 0);
+            ((SystemFunctionCall) getter).setArg(1, tc.staticTypeCheck(key, SequenceType.SINGLE_INTEGER, role, visitor));
+        }
         return getter.typeCheck(visitor, contextInfo);
     }
 
