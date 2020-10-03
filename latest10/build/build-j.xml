@@ -28,9 +28,7 @@
 
     <property name="build-hej.dir" value="${product.dir}/hej"/>
     
-
     <property name="javadoc.dir" value="${build-resources.dir}/doc/javadoc"/>
-
 
     <path id="classpath-j">
         <fileset dir="${lib.dir}">
