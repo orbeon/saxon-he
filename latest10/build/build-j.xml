@@ -24,7 +24,6 @@
     <property name="temp-src-prep-test.dir" value="${temp.dir}/preprocessed/testdriver"/>
     <property name="classes-j.dir" value="${temp.dir}/j/classes"/>
 
-
     <!-- following locations are relative to the destination directory -->
 
     <property name="build-hej.dir" value="${product.dir}/hej"/>
