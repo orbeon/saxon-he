@@ -162,6 +162,7 @@ public class Configuration implements SourceResolver, NotationSet {
     private IntSet enabledProperties = new IntHashSet(64);
 
     private List<ExternalObjectModel> externalObjectModels = new ArrayList<>(4);
+    protected IndependentContext staticContextForSystemFunctions;
 
     private DocumentPool globalDocumentPool = new DocumentPool();
     private IntegratedFunctionLibrary integratedFunctionLibrary = new IntegratedFunctionLibrary();
@@ -1511,11 +1512,23 @@ public class Configuration implements SourceResolver, NotationSet {
      * @param arity the arity of the required function
      * @return the requested function, or null if there is no such function. Note that some functions
      * (those with particular context dependencies) may be unsuitable for dynamic calling.
-     * @throws XPathException if dynamic function calls are not permitted by this Saxon Configuration
      */
 
-    public Function getSystemFunction(StructuredQName name, int arity) throws XPathException {
-        throw new XPathException("Dynamic functions require Saxon-PE or higher");
+    public Function getSystemFunction(StructuredQName name, int arity)  {
+        try {
+            if (staticContextForSystemFunctions == null) {
+                staticContextForSystemFunctions = new IndependentContext(this);
+            }
+            FunctionLibraryList lib = new FunctionLibraryList();
+            lib.addFunctionLibrary(XPath31FunctionSet.getInstance());
+            lib.addFunctionLibrary(getBuiltInExtensionLibraryList());
+            lib.addFunctionLibrary(new ConstructorFunctionLibrary(this));
+            lib.addFunctionLibrary(getIntegratedFunctionLibrary());
+            SymbolicName.F symbolicName = new SymbolicName.F(name, arity);
+            return lib.getFunctionItem(symbolicName, staticContextForSystemFunctions);
+        } catch (XPathException e) {
+            return null;
+        }
     }
 
     /**
