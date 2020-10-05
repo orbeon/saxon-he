@@ -29,7 +29,7 @@
          Saxon-EE/C.</li>
       <li>It is currently not possible to create and export to file a precompiled schema component
          model (SCM).</li>
-      <l>The XQuery Update feature is not support</l>
+      <li>The XQuery Update feature is not support</li>
    </ul>
 
    <h2>Feedback/Comments:</h2>
