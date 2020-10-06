@@ -347,7 +347,7 @@ public class ConfigurationReader implements ContentHandler, NamespaceResolver {
         applyProperty(props, "allowOldJavaUriFormat", Feature.ALLOW_OLD_JAVA_URI_FORMAT);
         applyProperty(props, "allowSyntaxExtensions", Feature.ALLOW_SYNTAX_EXTENSIONS);
         applyProperty(props, "collationUriResolver", Feature.COLLATION_URI_RESOLVER_CLASS);
-        //applyProperty(props, "collectionUriResolver", Feature.COLLECTION_URI_RESOLVER_CLASS);
+        applyProperty(props, "collectionFinder", Feature.COLLECTION_FINDER_CLASS);
         applyProperty(props, "compileWithTracing", Feature.COMPILE_WITH_TRACING);
         applyProperty(props, "debugByteCode", Feature.DEBUG_BYTE_CODE);
         applyProperty(props, "debugByteCodeDirectory", Feature.DEBUG_BYTE_CODE_DIR);
