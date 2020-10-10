@@ -570,6 +570,9 @@ public class VirtualCopy implements NodeInfo {
 
     @Override
     public void copy(Receiver out, int copyOptions, Location locationId) throws XPathException {
+        if (dropNamespaces) {
+            copyOptions &= ~CopyOptions.ALL_NAMESPACES;
+        }
         original.copy(out, copyOptions, locationId);
     }
 
