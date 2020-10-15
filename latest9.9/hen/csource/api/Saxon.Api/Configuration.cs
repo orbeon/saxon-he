@@ -100,7 +100,7 @@ namespace Saxon.Api
 		/// <param name="licensedEdition">Set to true if the <c>Processor</c> is to use a licensed edition of Saxon
 		/// (that is, Saxon-PE or Saxon-EE). If true, the <c>Processor</c> will attempt to enable the capabilities
         /// of the licensed edition of Saxon, according to the version of the software that is loaded, and will
-		/// verify the license key. If fals(that is, Saxon-PE or Saxon-EE)e, the <c>Processor</c> will load a default <c>Configuration</c> that gives restricted
+		/// verify the license key. If false (that is, Saxon-PE or Saxon-EE), the <c>Processor</c> will load a default <c>Configuration</c> that gives restricted
         /// capability and does not require a license, regardless of which version of the software is actually being run.</param>
         /// <param name="loadLocally">This option has no effect at this release.</param>
 
