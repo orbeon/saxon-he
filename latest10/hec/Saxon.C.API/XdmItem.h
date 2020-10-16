@@ -50,8 +50,9 @@ virtual void decrementRefCount() {
     
     virtual bool isAtomic();
 
-//TODO: isNode
-//TODO: isFunction
+    virtual bool isNode();
+
+    virtual bool isFunction();
 
     /**
      * Get Java XdmValue object.
@@ -59,9 +60,6 @@ virtual void decrementRefCount() {
      */
      virtual  jobject getUnderlyingValue();
 
-     sxnc_value * getUnderlyingCValue(){
-	return value;
-     }
 
 
     /**
@@ -110,7 +108,7 @@ virtual void decrementRefCount() {
 	virtual XDM_TYPE getType();
 
  protected:  
-	sxnc_value* value;
+	jobject value;
 	std::string stringValue;  /*!< Cached. String representation of the XdmValue, if available */
 };
 

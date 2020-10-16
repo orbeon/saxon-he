@@ -2707,7 +2707,7 @@ cdef class PyXPathProcessor:
         evaluate_single(self, xpath_str)
 
         Args:
-            xpath_str (str): The XPath query suplied as a string
+            xpath_str (str): The XPath query supplied as a string
 
         Returns:
             PyXdmItem: A single Xdm Item is returned 

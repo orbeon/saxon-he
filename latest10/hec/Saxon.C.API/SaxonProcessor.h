@@ -483,7 +483,6 @@ static bool registerNativeMethods(JNIEnv* env, const char* className,
    // static JNIEnv *env;
     static int jvmCreatedCPP;
     static sxnc_environment * sxn_environ;
-    static int refCount;
     std::string cwd; /*!< current working directory */
     jobject proc; /*!< Java Processor object */
     

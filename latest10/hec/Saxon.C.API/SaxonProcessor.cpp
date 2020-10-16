@@ -28,7 +28,6 @@
 //jobject cpp;
 const char * failure;
 sxnc_environment * SaxonProcessor::sxn_environ = 0;
-int SaxonProcessor::refCount = 0;
 int SaxonProcessor::jvmCreatedCPP=0;
 
 bool SaxonProcessor::exceptionOccurred(){
@@ -170,7 +169,6 @@ SaxonProcessor::SaxonProcessor(bool l){
     cwd="";
     licensei = l;
     versionStr = NULL;
-    SaxonProcessor::refCount++;
 
      if(SaxonProcessor::jvmCreatedCPP == 0){
 	SaxonProcessor::jvmCreatedCPP=1;
@@ -201,7 +199,8 @@ SaxonProcessor::SaxonProcessor(bool l){
     procClass = lookForClass(SaxonProcessor::sxn_environ->env, "net/sf/saxon/s9api/Processor");
     saxonCAPIClass = lookForClass(SaxonProcessor::sxn_environ->env, "net/sf/saxon/option/cpp/SaxonCAPI");
     
-    proc = createSaxonProcessor (SaxonProcessor::sxn_environ->env, procClass, "(Z)V", NULL, licensei);
+    jobject proci = createSaxonProcessor (SaxonProcessor::sxn_environ->env, procClass, "(Z)V", NULL, licensei);
+    proc = SaxonProcessor::sxn_environ->env->NewGlobalRef(proci);
 	if(!proc) {
 		std::cout<<"proc is NULL in SaxonProcessor constructor"<<std::endl;
 	}
@@ -216,7 +215,6 @@ SaxonProcessor::SaxonProcessor(bool l){
 SaxonProcessor::SaxonProcessor(const char * configFile){
     cwd="";
     versionStr = NULL;
-    SaxonProcessor::refCount++;
 
     if(SaxonProcessor::jvmCreatedCPP == 0){
 	SaxonProcessor::jvmCreatedCPP=1;
@@ -249,8 +247,8 @@ SaxonProcessor::SaxonProcessor(const char * configFile){
 				<< " not found\n" << std::endl;
 			return ;
 		}
-	proc = SaxonProcessor::sxn_environ->env->CallStaticObjectMethod(saxonCAPIClass, mIDcreateProc,SaxonProcessor::sxn_environ->env->NewStringUTF(configFile));
-		
+	jboject proci = SaxonProcessor::sxn_environ->env->CallStaticObjectMethod(saxonCAPIClass, mIDcreateProc,SaxonProcessor::sxn_environ->env->NewStringUTF(configFile));
+	proc = SaxonProcessor::sxn_environ->env->NewGlobalRef(proci);
 	if(!proc) {
 		checkAndCreateException(saxonCAPIClass);
 		std::cerr << "Error: "<<getDllname() << ". processor is NULL in constructor(configFile)"<< std::endl;
@@ -267,10 +265,10 @@ SaxonProcessor::SaxonProcessor(const char * configFile){
 
     SaxonProcessor::~SaxonProcessor(){
 	clearConfigurationProperties();
+	SaxonProcessor::sxn_environ->env->NewDeleteGlobalRef(proc);
 	if(versionStr != NULL) {
 		delete versionStr;
 	}
-	SaxonProcessor::refCount--;	//This might be redundant due to the bug fix 2670
    }
 
 
