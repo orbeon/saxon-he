@@ -134,13 +134,17 @@ public class DocumentSorter extends UnaryExpression {
                     ExpressionTool.copyLocationInfo(this, s1);
                     return new DocumentSorter(s1).optimize(visitor, contextInfo);
                 }
-                // docOrder(A/B) can be rewritten as docOrder(B) in the case where B returns nodes
+                // docOrder(A/B) can be rewritten as head(A)!docOrder(B) in the case where B returns nodes
                 // and is independent of the focus. We already know it returns nodes otherwise we wouldn't be here.
+                // SEE BUG 4640
                 if (!ExpressionTool.dependsOnFocus(rhs) &&
                         !rhs.hasSpecialProperty(StaticProperty.HAS_SIDE_EFFECTS) &&
                         rhs.hasSpecialProperty(StaticProperty.NO_NODES_NEWLY_CREATED)) {
-                    setBaseExpression(slash.getRhsExpression());
-                    return optimize(visitor, contextInfo);
+                    Expression e1 = FirstItemExpression.makeFirstItemExpression(slash.getLhsExpression());
+                    Expression e2 = new DocumentSorter(slash.getRhsExpression());
+                    SlashExpression e3 = new SlashExpression(e1, e2);
+                    ExpressionTool.copyLocationInfo(this, e3);
+                    return e3.optimize(visitor, contextInfo);
                 }
             }
             // Try once more after recomputing the static properties of the expression
